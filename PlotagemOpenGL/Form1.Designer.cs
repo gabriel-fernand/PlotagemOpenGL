@@ -95,7 +95,6 @@
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
             openglControl1.Size = new System.Drawing.Size(1637, 864);
             openglControl1.TabIndex = 1;
             // 
