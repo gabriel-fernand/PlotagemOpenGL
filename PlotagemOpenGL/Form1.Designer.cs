@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
             hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            openglControl1 = new SharpGL.OpenGLControl();
             ptsEmTela = new System.Windows.Forms.TextBox();
             inicioTela = new System.Windows.Forms.TextBox();
             fimTela = new System.Windows.Forms.TextBox();
@@ -77,31 +75,29 @@
             Scalle19 = new System.Windows.Forms.VScrollBar();
             Scalle20 = new System.Windows.Forms.VScrollBar();
             Scalle17 = new System.Windows.Forms.VScrollBar();
+            Play = new System.Windows.Forms.Button();
+            openglControl1 = new SharpGL.OpenGLControl();
+            painelExames = new System.Windows.Forms.Panel();
+            painelTelaGl = new System.Windows.Forms.Panel();
+            painelComando = new System.Windows.Forms.Panel();
+            qtdGraficos = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
+            painelExames.SuspendLayout();
+            painelTelaGl.SuspendLayout();
+            painelComando.SuspendLayout();
             SuspendLayout();
             // 
             // hScrollBar1
             // 
-            hScrollBar1.Location = new System.Drawing.Point(3, 969);
+            hScrollBar1.Location = new System.Drawing.Point(210, 3);
             hScrollBar1.Name = "hScrollBar1";
-            hScrollBar1.Size = new System.Drawing.Size(1899, 28);
+            hScrollBar1.Size = new System.Drawing.Size(787, 28);
             hScrollBar1.TabIndex = 0;
-            // 
-            // openglControl1
-            // 
-            openglControl1.DrawFPS = false;
-            openglControl1.Location = new System.Drawing.Point(265, 100);
-            openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            openglControl1.Name = "openglControl1";
-            openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
-            openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.Size = new System.Drawing.Size(1637, 864);
-            openglControl1.TabIndex = 1;
             // 
             // ptsEmTela
             // 
             ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ptsEmTela.Location = new System.Drawing.Point(10, 25);
+            ptsEmTela.Location = new System.Drawing.Point(3, 3);
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.Size = new System.Drawing.Size(86, 25);
             ptsEmTela.TabIndex = 2;
@@ -111,7 +107,7 @@
             // inicioTela
             // 
             inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            inicioTela.Location = new System.Drawing.Point(116, 25);
+            inicioTela.Location = new System.Drawing.Point(100, 3);
             inicioTela.Name = "inicioTela";
             inicioTela.Size = new System.Drawing.Size(119, 25);
             inicioTela.TabIndex = 3;
@@ -121,7 +117,7 @@
             // fimTela
             // 
             fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            fimTela.Location = new System.Drawing.Point(241, 25);
+            fimTela.Location = new System.Drawing.Point(225, 3);
             fimTela.Name = "fimTela";
             fimTela.Size = new System.Drawing.Size(119, 25);
             fimTela.TabIndex = 4;
@@ -135,7 +131,7 @@
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.Items.AddRange(new object[] { "8s", "12s", "30s", "60s", "90s", "120s" });
-            tempoEmTela.Location = new System.Drawing.Point(389, 25);
+            tempoEmTela.Location = new System.Drawing.Point(361, 3);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(86, 28);
             tempoEmTela.TabIndex = 6;
@@ -146,7 +142,7 @@
             velocidadeScroll.DisplayMember = "1.0x";
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
-            velocidadeScroll.Location = new System.Drawing.Point(481, 25);
+            velocidadeScroll.Location = new System.Drawing.Point(453, 3);
             velocidadeScroll.Name = "velocidadeScroll";
             velocidadeScroll.Size = new System.Drawing.Size(86, 28);
             velocidadeScroll.TabIndex = 7;
@@ -155,409 +151,477 @@
             // comboBox3
             // 
             comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new System.Drawing.Point(775, 24);
+            comboBox3.Items.AddRange(new object[] { "Series" });
+            comboBox3.Location = new System.Drawing.Point(684, 3);
             comboBox3.Name = "comboBox3";
             comboBox3.Size = new System.Drawing.Size(451, 28);
             comboBox3.TabIndex = 8;
+            comboBox3.Text = "Series";
+            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
             // 
             // ExameExemplo1
             // 
             ExameExemplo1.AutoSize = true;
-            ExameExemplo1.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo1.Location = new System.Drawing.Point(10, 100);
+            ExameExemplo1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo1.Location = new System.Drawing.Point(5, 9);
             ExameExemplo1.Name = "ExameExemplo1";
-            ExameExemplo1.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo1.Size = new System.Drawing.Size(135, 24);
             ExameExemplo1.TabIndex = 9;
             ExameExemplo1.Text = "ExameExemplo1";
             // 
             // ExameExemplo2
             // 
             ExameExemplo2.AutoSize = true;
-            ExameExemplo2.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo2.Location = new System.Drawing.Point(10, 143);
+            ExameExemplo2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo2.Location = new System.Drawing.Point(5, 43);
             ExameExemplo2.Name = "ExameExemplo2";
-            ExameExemplo2.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo2.Size = new System.Drawing.Size(135, 24);
             ExameExemplo2.TabIndex = 10;
             ExameExemplo2.Text = "ExameExemplo2";
             // 
             // ExameExemplo4
             // 
             ExameExemplo4.AutoSize = true;
-            ExameExemplo4.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo4.Location = new System.Drawing.Point(10, 229);
+            ExameExemplo4.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo4.Location = new System.Drawing.Point(5, 129);
             ExameExemplo4.Name = "ExameExemplo4";
-            ExameExemplo4.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo4.Size = new System.Drawing.Size(135, 24);
             ExameExemplo4.TabIndex = 12;
             ExameExemplo4.Text = "ExameExemplo4";
             // 
             // ExameExemplo3
             // 
             ExameExemplo3.AutoSize = true;
-            ExameExemplo3.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo3.Location = new System.Drawing.Point(10, 186);
+            ExameExemplo3.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo3.Location = new System.Drawing.Point(5, 86);
             ExameExemplo3.Name = "ExameExemplo3";
-            ExameExemplo3.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo3.Size = new System.Drawing.Size(135, 24);
             ExameExemplo3.TabIndex = 11;
             ExameExemplo3.Text = "ExameExemplo3";
             // 
             // ExameExemplo8
             // 
             ExameExemplo8.AutoSize = true;
-            ExameExemplo8.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo8.Location = new System.Drawing.Point(10, 403);
+            ExameExemplo8.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo8.Location = new System.Drawing.Point(5, 303);
             ExameExemplo8.Name = "ExameExemplo8";
-            ExameExemplo8.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo8.Size = new System.Drawing.Size(135, 24);
             ExameExemplo8.TabIndex = 16;
             ExameExemplo8.Text = "ExameExemplo8";
             // 
             // ExameExemplo7
             // 
             ExameExemplo7.AutoSize = true;
-            ExameExemplo7.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo7.Location = new System.Drawing.Point(10, 360);
+            ExameExemplo7.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo7.Location = new System.Drawing.Point(5, 260);
             ExameExemplo7.Name = "ExameExemplo7";
-            ExameExemplo7.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo7.Size = new System.Drawing.Size(135, 24);
             ExameExemplo7.TabIndex = 15;
             ExameExemplo7.Text = "ExameExemplo7";
             // 
             // ExameExemplo6
             // 
             ExameExemplo6.AutoSize = true;
-            ExameExemplo6.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo6.Location = new System.Drawing.Point(10, 316);
+            ExameExemplo6.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo6.Location = new System.Drawing.Point(5, 216);
             ExameExemplo6.Name = "ExameExemplo6";
-            ExameExemplo6.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo6.Size = new System.Drawing.Size(135, 24);
             ExameExemplo6.TabIndex = 14;
             ExameExemplo6.Text = "ExameExemplo6";
             // 
             // ExameExemplo5
             // 
             ExameExemplo5.AutoSize = true;
-            ExameExemplo5.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo5.Location = new System.Drawing.Point(10, 273);
+            ExameExemplo5.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo5.Location = new System.Drawing.Point(5, 173);
             ExameExemplo5.Name = "ExameExemplo5";
-            ExameExemplo5.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo5.Size = new System.Drawing.Size(135, 24);
             ExameExemplo5.TabIndex = 13;
             ExameExemplo5.Text = "ExameExemplo5";
             // 
             // ExameExempl16
             // 
             ExameExempl16.AutoSize = true;
-            ExameExempl16.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl16.Location = new System.Drawing.Point(10, 749);
+            ExameExempl16.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl16.Location = new System.Drawing.Point(5, 649);
             ExameExempl16.Name = "ExameExempl16";
-            ExameExempl16.Size = new System.Drawing.Size(231, 40);
+            ExameExempl16.Size = new System.Drawing.Size(200, 35);
             ExameExempl16.TabIndex = 24;
             ExameExempl16.Text = "ExameExempl16";
             // 
             // ExameExempl15
             // 
             ExameExempl15.AutoSize = true;
-            ExameExempl15.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl15.Location = new System.Drawing.Point(10, 704);
+            ExameExempl15.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl15.Location = new System.Drawing.Point(5, 604);
             ExameExempl15.Name = "ExameExempl15";
-            ExameExempl15.Size = new System.Drawing.Size(231, 40);
+            ExameExempl15.Size = new System.Drawing.Size(135, 24);
             ExameExempl15.TabIndex = 23;
             ExameExempl15.Text = "ExameExempl15";
             // 
             // ExameExempl14
             // 
             ExameExempl14.AutoSize = true;
-            ExameExempl14.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl14.Location = new System.Drawing.Point(10, 660);
+            ExameExempl14.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl14.Location = new System.Drawing.Point(5, 560);
             ExameExempl14.Name = "ExameExempl14";
-            ExameExempl14.Size = new System.Drawing.Size(231, 40);
+            ExameExempl14.Size = new System.Drawing.Size(135, 24);
             ExameExempl14.TabIndex = 22;
             ExameExempl14.Text = "ExameExempl14";
             // 
             // ExameExempl13
             // 
             ExameExempl13.AutoSize = true;
-            ExameExempl13.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl13.Location = new System.Drawing.Point(10, 616);
+            ExameExempl13.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl13.Location = new System.Drawing.Point(5, 516);
             ExameExempl13.Name = "ExameExempl13";
-            ExameExempl13.Size = new System.Drawing.Size(231, 40);
+            ExameExempl13.Size = new System.Drawing.Size(135, 24);
             ExameExempl13.TabIndex = 21;
             ExameExempl13.Text = "ExameExempl13";
             // 
             // ExameExempl12
             // 
             ExameExempl12.AutoSize = true;
-            ExameExempl12.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl12.Location = new System.Drawing.Point(10, 572);
+            ExameExempl12.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl12.Location = new System.Drawing.Point(5, 472);
             ExameExempl12.Name = "ExameExempl12";
-            ExameExempl12.Size = new System.Drawing.Size(231, 40);
+            ExameExempl12.Size = new System.Drawing.Size(135, 24);
             ExameExempl12.TabIndex = 20;
             ExameExempl12.Text = "ExameExempl12";
             // 
             // ExameExempl11
             // 
             ExameExempl11.AutoSize = true;
-            ExameExempl11.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl11.Location = new System.Drawing.Point(10, 530);
+            ExameExempl11.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl11.Location = new System.Drawing.Point(5, 430);
             ExameExempl11.Name = "ExameExempl11";
-            ExameExempl11.Size = new System.Drawing.Size(231, 40);
+            ExameExempl11.Size = new System.Drawing.Size(135, 24);
             ExameExempl11.TabIndex = 19;
             ExameExempl11.Text = "ExameExempl11";
             // 
             // ExameExempl10
             // 
             ExameExempl10.AutoSize = true;
-            ExameExempl10.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl10.Location = new System.Drawing.Point(10, 489);
+            ExameExempl10.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl10.Location = new System.Drawing.Point(5, 389);
             ExameExempl10.Name = "ExameExempl10";
-            ExameExempl10.Size = new System.Drawing.Size(231, 40);
+            ExameExempl10.Size = new System.Drawing.Size(135, 24);
             ExameExempl10.TabIndex = 18;
             ExameExempl10.Text = "ExameExempl10";
             // 
             // ExameExemplo9
             // 
             ExameExemplo9.AutoSize = true;
-            ExameExemplo9.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExemplo9.Location = new System.Drawing.Point(10, 446);
+            ExameExemplo9.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExemplo9.Location = new System.Drawing.Point(5, 346);
             ExameExemplo9.Name = "ExameExemplo9";
-            ExameExemplo9.Size = new System.Drawing.Size(231, 40);
+            ExameExemplo9.Size = new System.Drawing.Size(135, 24);
             ExameExemplo9.TabIndex = 17;
             ExameExemplo9.Text = "ExameExemplo9";
             // 
             // ExameExempl20
             // 
             ExameExempl20.AutoSize = true;
-            ExameExempl20.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl20.Location = new System.Drawing.Point(10, 924);
+            ExameExempl20.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl20.Location = new System.Drawing.Point(5, 824);
             ExameExempl20.Name = "ExameExempl20";
-            ExameExempl20.Size = new System.Drawing.Size(231, 40);
+            ExameExempl20.Size = new System.Drawing.Size(200, 35);
             ExameExempl20.TabIndex = 28;
             ExameExempl20.Text = "ExameExempl20";
             // 
             // ExameExempl19
             // 
             ExameExempl19.AutoSize = true;
-            ExameExempl19.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl19.Location = new System.Drawing.Point(10, 881);
+            ExameExempl19.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl19.Location = new System.Drawing.Point(5, 781);
             ExameExempl19.Name = "ExameExempl19";
-            ExameExempl19.Size = new System.Drawing.Size(231, 40);
+            ExameExempl19.Size = new System.Drawing.Size(200, 35);
             ExameExempl19.TabIndex = 27;
             ExameExempl19.Text = "ExameExempl19";
             // 
             // ExameExempl18
             // 
             ExameExempl18.AutoSize = true;
-            ExameExempl18.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl18.Location = new System.Drawing.Point(10, 837);
+            ExameExempl18.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl18.Location = new System.Drawing.Point(5, 737);
             ExameExempl18.Name = "ExameExempl18";
-            ExameExempl18.Size = new System.Drawing.Size(231, 40);
+            ExameExempl18.Size = new System.Drawing.Size(200, 35);
             ExameExempl18.TabIndex = 26;
             ExameExempl18.Text = "ExameExempl18";
             // 
             // ExameExempl17
             // 
             ExameExempl17.AutoSize = true;
-            ExameExempl17.Font = new System.Drawing.Font("Arial Narrow", 19.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ExameExempl17.Location = new System.Drawing.Point(10, 793);
+            ExameExempl17.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ExameExempl17.Location = new System.Drawing.Point(5, 693);
             ExameExempl17.Name = "ExameExempl17";
-            ExameExempl17.Size = new System.Drawing.Size(231, 40);
+            ExameExempl17.Size = new System.Drawing.Size(200, 35);
             ExameExempl17.TabIndex = 25;
             ExameExempl17.Text = "ExameExempl17";
             // 
             // Scalle1
             // 
-            Scalle1.Location = new System.Drawing.Point(238, 100);
+            Scalle1.Location = new System.Drawing.Point(153, 9);
             Scalle1.Name = "Scalle1";
-            Scalle1.Size = new System.Drawing.Size(19, 40);
+            Scalle1.Size = new System.Drawing.Size(19, 30);
             Scalle1.TabIndex = 29;
             // 
             // Scalle2
             // 
-            Scalle2.Location = new System.Drawing.Point(238, 143);
+            Scalle2.Location = new System.Drawing.Point(153, 43);
             Scalle2.Name = "Scalle2";
-            Scalle2.Size = new System.Drawing.Size(19, 40);
+            Scalle2.Size = new System.Drawing.Size(19, 30);
             Scalle2.TabIndex = 30;
             // 
             // Scalle3
             // 
-            Scalle3.Location = new System.Drawing.Point(238, 186);
+            Scalle3.Location = new System.Drawing.Point(143, 80);
             Scalle3.Name = "Scalle3";
-            Scalle3.Size = new System.Drawing.Size(19, 40);
+            Scalle3.Size = new System.Drawing.Size(19, 30);
             Scalle3.TabIndex = 31;
             // 
             // Scalle4
             // 
-            Scalle4.Location = new System.Drawing.Point(238, 229);
+            Scalle4.Location = new System.Drawing.Point(143, 123);
             Scalle4.Name = "Scalle4";
-            Scalle4.Size = new System.Drawing.Size(19, 40);
+            Scalle4.Size = new System.Drawing.Size(19, 30);
             Scalle4.TabIndex = 32;
             // 
             // Scalle5
             // 
-            Scalle5.Location = new System.Drawing.Point(238, 273);
+            Scalle5.Location = new System.Drawing.Point(143, 167);
             Scalle5.Name = "Scalle5";
-            Scalle5.Size = new System.Drawing.Size(19, 40);
+            Scalle5.Size = new System.Drawing.Size(19, 30);
             Scalle5.TabIndex = 33;
             // 
             // Scalle6
             // 
-            Scalle6.Location = new System.Drawing.Point(238, 316);
+            Scalle6.Location = new System.Drawing.Point(143, 210);
             Scalle6.Name = "Scalle6";
-            Scalle6.Size = new System.Drawing.Size(19, 40);
+            Scalle6.Size = new System.Drawing.Size(19, 30);
             Scalle6.TabIndex = 34;
             // 
             // Scalle7
             // 
-            Scalle7.Location = new System.Drawing.Point(238, 360);
+            Scalle7.Location = new System.Drawing.Point(143, 254);
             Scalle7.Name = "Scalle7";
-            Scalle7.Size = new System.Drawing.Size(19, 40);
+            Scalle7.Size = new System.Drawing.Size(19, 30);
             Scalle7.TabIndex = 35;
             // 
             // Scalle8
             // 
-            Scalle8.Location = new System.Drawing.Point(238, 403);
+            Scalle8.Location = new System.Drawing.Point(143, 297);
             Scalle8.Name = "Scalle8";
-            Scalle8.Size = new System.Drawing.Size(19, 40);
+            Scalle8.Size = new System.Drawing.Size(19, 30);
             Scalle8.TabIndex = 36;
             // 
             // Scalle9
             // 
-            Scalle9.Location = new System.Drawing.Point(238, 446);
+            Scalle9.Location = new System.Drawing.Point(143, 340);
             Scalle9.Name = "Scalle9";
-            Scalle9.Size = new System.Drawing.Size(19, 40);
+            Scalle9.Size = new System.Drawing.Size(19, 30);
             Scalle9.TabIndex = 37;
             // 
             // Scalle10
             // 
-            Scalle10.Location = new System.Drawing.Point(238, 489);
+            Scalle10.Location = new System.Drawing.Point(143, 383);
             Scalle10.Name = "Scalle10";
-            Scalle10.Size = new System.Drawing.Size(19, 40);
+            Scalle10.Size = new System.Drawing.Size(19, 30);
             Scalle10.TabIndex = 38;
             // 
             // Scalle11
             // 
-            Scalle11.Location = new System.Drawing.Point(238, 530);
+            Scalle11.Location = new System.Drawing.Point(143, 424);
             Scalle11.Name = "Scalle11";
-            Scalle11.Size = new System.Drawing.Size(19, 40);
+            Scalle11.Size = new System.Drawing.Size(19, 30);
             Scalle11.TabIndex = 39;
             // 
             // Scalle12
             // 
-            Scalle12.Location = new System.Drawing.Point(238, 572);
+            Scalle12.Location = new System.Drawing.Point(143, 466);
             Scalle12.Name = "Scalle12";
-            Scalle12.Size = new System.Drawing.Size(19, 40);
+            Scalle12.Size = new System.Drawing.Size(19, 30);
             Scalle12.TabIndex = 40;
             // 
             // Scalle13
             // 
-            Scalle13.Location = new System.Drawing.Point(238, 616);
+            Scalle13.Location = new System.Drawing.Point(143, 510);
             Scalle13.Name = "Scalle13";
-            Scalle13.Size = new System.Drawing.Size(19, 40);
+            Scalle13.Size = new System.Drawing.Size(19, 30);
             Scalle13.TabIndex = 41;
             // 
             // Scalle14
             // 
-            Scalle14.Location = new System.Drawing.Point(238, 660);
+            Scalle14.Location = new System.Drawing.Point(143, 554);
             Scalle14.Name = "Scalle14";
-            Scalle14.Size = new System.Drawing.Size(19, 40);
+            Scalle14.Size = new System.Drawing.Size(19, 30);
             Scalle14.TabIndex = 42;
             // 
             // Scalle15
             // 
-            Scalle15.Location = new System.Drawing.Point(238, 704);
+            Scalle15.Location = new System.Drawing.Point(208, 604);
             Scalle15.Name = "Scalle15";
-            Scalle15.Size = new System.Drawing.Size(19, 40);
+            Scalle15.Size = new System.Drawing.Size(19, 30);
             Scalle15.TabIndex = 43;
             // 
             // Scalle16
             // 
-            Scalle16.Location = new System.Drawing.Point(238, 749);
+            Scalle16.Location = new System.Drawing.Point(208, 649);
             Scalle16.Name = "Scalle16";
-            Scalle16.Size = new System.Drawing.Size(19, 40);
+            Scalle16.Size = new System.Drawing.Size(19, 30);
             Scalle16.TabIndex = 44;
             // 
             // Scalle18
             // 
-            Scalle18.Location = new System.Drawing.Point(238, 837);
+            Scalle18.Location = new System.Drawing.Point(208, 737);
             Scalle18.Name = "Scalle18";
-            Scalle18.Size = new System.Drawing.Size(19, 40);
+            Scalle18.Size = new System.Drawing.Size(19, 30);
             Scalle18.TabIndex = 45;
             // 
             // Scalle19
             // 
-            Scalle19.Location = new System.Drawing.Point(238, 881);
+            Scalle19.Location = new System.Drawing.Point(208, 781);
             Scalle19.Name = "Scalle19";
-            Scalle19.Size = new System.Drawing.Size(19, 40);
+            Scalle19.Size = new System.Drawing.Size(19, 30);
             Scalle19.TabIndex = 46;
             // 
             // Scalle20
             // 
-            Scalle20.Location = new System.Drawing.Point(238, 924);
+            Scalle20.Location = new System.Drawing.Point(208, 824);
             Scalle20.Name = "Scalle20";
-            Scalle20.Size = new System.Drawing.Size(19, 40);
+            Scalle20.Size = new System.Drawing.Size(19, 30);
             Scalle20.TabIndex = 47;
             // 
             // Scalle17
             // 
-            Scalle17.Location = new System.Drawing.Point(238, 793);
+            Scalle17.Location = new System.Drawing.Point(208, 693);
             Scalle17.Name = "Scalle17";
-            Scalle17.Size = new System.Drawing.Size(19, 40);
+            Scalle17.Size = new System.Drawing.Size(19, 30);
             Scalle17.TabIndex = 48;
+            // 
+            // Play
+            // 
+            Play.Location = new System.Drawing.Point(641, 3);
+            Play.Name = "Play";
+            Play.Size = new System.Drawing.Size(41, 29);
+            Play.TabIndex = 49;
+            Play.Text = ">";
+            Play.UseVisualStyleBackColor = true;
+            Play.Click += Play_Click;
+            // 
+            // openglControl1
+            // 
+            openglControl1.DrawFPS = false;
+            openglControl1.Location = new System.Drawing.Point(181, 79);
+            openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            openglControl1.Name = "openglControl1";
+            openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
+            openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
+            //openglControl1.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
+            openglControl1.Size = new System.Drawing.Size(816, 599);
+            openglControl1.TabIndex = 50;
+            // 
+            // painelExames
+            // 
+            painelExames.Controls.Add(ExameExemplo1);
+            painelExames.Controls.Add(Scalle1);
+            painelExames.Controls.Add(ExameExemplo7);
+            painelExames.Controls.Add(Scalle17);
+            painelExames.Controls.Add(ExameExemplo2);
+            painelExames.Controls.Add(Scalle20);
+            painelExames.Controls.Add(ExameExemplo3);
+            painelExames.Controls.Add(Scalle19);
+            painelExames.Controls.Add(ExameExemplo4);
+            painelExames.Controls.Add(Scalle18);
+            painelExames.Controls.Add(ExameExemplo5);
+            painelExames.Controls.Add(Scalle16);
+            painelExames.Controls.Add(ExameExemplo6);
+            painelExames.Controls.Add(Scalle15);
+            painelExames.Controls.Add(ExameExemplo8);
+            painelExames.Controls.Add(Scalle14);
+            painelExames.Controls.Add(ExameExemplo9);
+            painelExames.Controls.Add(Scalle13);
+            painelExames.Controls.Add(ExameExempl10);
+            painelExames.Controls.Add(Scalle12);
+            painelExames.Controls.Add(ExameExempl11);
+            painelExames.Controls.Add(Scalle11);
+            painelExames.Controls.Add(ExameExempl12);
+            painelExames.Controls.Add(Scalle10);
+            painelExames.Controls.Add(ExameExempl13);
+            painelExames.Controls.Add(Scalle9);
+            painelExames.Controls.Add(ExameExempl14);
+            painelExames.Controls.Add(Scalle8);
+            painelExames.Controls.Add(ExameExempl15);
+            painelExames.Controls.Add(Scalle7);
+            painelExames.Controls.Add(ExameExempl16);
+            painelExames.Controls.Add(Scalle6);
+            painelExames.Controls.Add(ExameExempl17);
+            painelExames.Controls.Add(Scalle5);
+            painelExames.Controls.Add(ExameExempl18);
+            painelExames.Controls.Add(Scalle4);
+            painelExames.Controls.Add(ExameExempl19);
+            painelExames.Controls.Add(Scalle3);
+            painelExames.Controls.Add(ExameExempl20);
+            painelExames.Controls.Add(Scalle2);
+            painelExames.Location = new System.Drawing.Point(5, 79);
+            painelExames.Name = "painelExames";
+            painelExames.Size = new System.Drawing.Size(158, 606);
+            painelExames.TabIndex = 51;
+            // 
+            // painelTelaGl
+            // 
+            painelTelaGl.AutoSize = true;
+            painelTelaGl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            painelTelaGl.Controls.Add(hScrollBar1);
+            painelTelaGl.Dock = System.Windows.Forms.DockStyle.Bottom;
+            painelTelaGl.Location = new System.Drawing.Point(0, 690);
+            painelTelaGl.Margin = new System.Windows.Forms.Padding(0);
+            painelTelaGl.Name = "painelTelaGl";
+            painelTelaGl.Size = new System.Drawing.Size(1006, 31);
+            painelTelaGl.TabIndex = 52;
+            // 
+            // painelComando
+            // 
+            painelComando.Controls.Add(qtdGraficos);
+            painelComando.Controls.Add(ptsEmTela);
+            painelComando.Controls.Add(inicioTela);
+            painelComando.Controls.Add(fimTela);
+            painelComando.Controls.Add(Play);
+            painelComando.Controls.Add(tempoEmTela);
+            painelComando.Controls.Add(comboBox3);
+            painelComando.Controls.Add(velocidadeScroll);
+            painelComando.Location = new System.Drawing.Point(2, 2);
+            painelComando.Name = "painelComando";
+            painelComando.Size = new System.Drawing.Size(1761, 69);
+            painelComando.TabIndex = 53;
+            // 
+            // qtdGraficos
+            // 
+            qtdGraficos.Location = new System.Drawing.Point(549, 3);
+            qtdGraficos.Name = "qtdGraficos";
+            qtdGraficos.Size = new System.Drawing.Size(86, 27);
+            qtdGraficos.TabIndex = 50;
+            qtdGraficos.TextChanged += qtdGraficos_TextChanged;
             // 
             // Tela_Plotagem
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1902, 1003);
-            Controls.Add(Scalle17);
-            Controls.Add(Scalle20);
-            Controls.Add(Scalle19);
-            Controls.Add(Scalle18);
-            Controls.Add(Scalle16);
-            Controls.Add(Scalle15);
-            Controls.Add(Scalle14);
-            Controls.Add(Scalle13);
-            Controls.Add(Scalle12);
-            Controls.Add(Scalle11);
-            Controls.Add(Scalle10);
-            Controls.Add(Scalle9);
-            Controls.Add(Scalle8);
-            Controls.Add(Scalle7);
-            Controls.Add(Scalle6);
-            Controls.Add(Scalle5);
-            Controls.Add(Scalle4);
-            Controls.Add(Scalle3);
-            Controls.Add(Scalle2);
-            Controls.Add(Scalle1);
-            Controls.Add(ExameExempl20);
-            Controls.Add(ExameExempl19);
-            Controls.Add(ExameExempl18);
-            Controls.Add(ExameExempl17);
-            Controls.Add(ExameExempl16);
-            Controls.Add(ExameExempl15);
-            Controls.Add(ExameExempl14);
-            Controls.Add(ExameExempl13);
-            Controls.Add(ExameExempl12);
-            Controls.Add(ExameExempl11);
-            Controls.Add(ExameExempl10);
-            Controls.Add(ExameExemplo9);
-            Controls.Add(ExameExemplo8);
-            Controls.Add(ExameExemplo7);
-            Controls.Add(ExameExemplo6);
-            Controls.Add(ExameExemplo5);
-            Controls.Add(ExameExemplo4);
-            Controls.Add(ExameExemplo3);
-            Controls.Add(ExameExemplo2);
-            Controls.Add(ExameExemplo1);
-            Controls.Add(comboBox3);
-            Controls.Add(velocidadeScroll);
-            Controls.Add(tempoEmTela);
-            Controls.Add(fimTela);
-            Controls.Add(inicioTela);
-            Controls.Add(ptsEmTela);
+            ClientSize = new System.Drawing.Size(1006, 721);
+            Controls.Add(painelTelaGl);
             Controls.Add(openglControl1);
-            Controls.Add(hScrollBar1);
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Controls.Add(painelComando);
+            Controls.Add(painelExames);
             Name = "Tela_Plotagem";
             Text = "Tela_Plotagem";
+            FormClosing += Tela_Plotagem_FormClosing;
             Load += Tela_Plotagem_Load;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
+            painelExames.ResumeLayout(false);
+            painelExames.PerformLayout();
+            painelTelaGl.ResumeLayout(false);
+            painelComando.ResumeLayout(false);
+            painelComando.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -565,7 +629,6 @@
         #endregion
 
         private System.Windows.Forms.HScrollBar hScrollBar1;
-        private SharpGL.OpenGLControl openglControl1;
         private System.Windows.Forms.TextBox ptsEmTela;
         private System.Windows.Forms.TextBox inicioTela;
         private System.Windows.Forms.TextBox fimTela;
@@ -612,5 +675,11 @@
         private System.Windows.Forms.VScrollBar Scalle19;
         private System.Windows.Forms.VScrollBar Scalle20;
         private System.Windows.Forms.VScrollBar Scalle17;
+        private System.Windows.Forms.Button Play;
+        private System.Windows.Forms.Panel painelExames;
+        private System.Windows.Forms.Panel painelTelaGl;
+        private System.Windows.Forms.Panel painelComando;
+        private System.Windows.Forms.TextBox qtdGraficos;
+        public static SharpGL.OpenGLControl openglControl1;
     }
 }
