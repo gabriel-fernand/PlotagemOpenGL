@@ -107,12 +107,13 @@
             tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
-            tempoEmTela.Items.AddRange(new object[] { "8s", "12s", "30s", "60s", "90s", "120s" });
+            tempoEmTela.Items.AddRange(new object[] { "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
             tempoEmTela.Location = new System.Drawing.Point(361, 3);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(86, 28);
             tempoEmTela.TabIndex = 6;
-            tempoEmTela.Text = "8s";
+            tempoEmTela.Text = "8 seg";
+            tempoEmTela.SelectedIndexChanged += tempoEmTela_SelectedIndexChanged;
             // 
             // velocidadeScroll
             // 
@@ -124,6 +125,7 @@
             velocidadeScroll.Size = new System.Drawing.Size(86, 28);
             velocidadeScroll.TabIndex = 7;
             velocidadeScroll.Text = "1.0x";
+            velocidadeScroll.SelectedIndexChanged += velocidadeScroll_SelectedIndexChanged;
             // 
             // comboBox3
             // 
@@ -206,8 +208,8 @@
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
             openglControl1.Size = new System.Drawing.Size(816, 599);
             openglControl1.TabIndex = 50;
-            openglControl1.MouseMove += openglControl1_MouseMove;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
+            openglControl1.MouseMove += openglControl1_MouseMove;
             // 
             // painelExames
             // 
