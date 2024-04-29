@@ -43,19 +43,19 @@
             Play = new System.Windows.Forms.Button();
             openglControl1 = new SharpGL.OpenGLControl();
             painelExames = new System.Windows.Forms.Panel();
+            minusSatu = new System.Windows.Forms.Button();
+            plusSatu = new System.Windows.Forms.Button();
+            minusRonco = new System.Windows.Forms.Button();
+            plusRonco = new System.Windows.Forms.Button();
+            minusAbdomen = new System.Windows.Forms.Button();
+            plusAbdomen = new System.Windows.Forms.Button();
+            minusFluxo = new System.Windows.Forms.Button();
+            plusFluxo = new System.Windows.Forms.Button();
+            minusCanula = new System.Windows.Forms.Button();
+            plusCanula = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
             qtdGraficos = new System.Windows.Forms.TextBox();
-            plusCanula = new System.Windows.Forms.Button();
-            minusCanula = new System.Windows.Forms.Button();
-            button3 = new System.Windows.Forms.Button();
-            button4 = new System.Windows.Forms.Button();
-            button5 = new System.Windows.Forms.Button();
-            button6 = new System.Windows.Forms.Button();
-            button7 = new System.Windows.Forms.Button();
-            button8 = new System.Windows.Forms.Button();
-            button9 = new System.Windows.Forms.Button();
-            button10 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             painelExames.SuspendLayout();
             painelTelaGl.SuspendLayout();
@@ -68,6 +68,8 @@
             hScrollBar1.Name = "hScrollBar1";
             hScrollBar1.Size = new System.Drawing.Size(787, 28);
             hScrollBar1.TabIndex = 0;
+            hScrollBar1.Scroll += hScrollBar1_Scroll;
+            hScrollBar1.KeyDown += TelaPlotagem_KeyDown;
             // 
             // ptsEmTela
             // 
@@ -202,21 +204,21 @@
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
             openglControl1.Size = new System.Drawing.Size(816, 599);
             openglControl1.TabIndex = 50;
             openglControl1.MouseMove += openglControl1_MouseMove;
+            openglControl1.KeyDown += TelaPlotagem_KeyDown;
             // 
             // painelExames
             // 
-            painelExames.Controls.Add(button9);
-            painelExames.Controls.Add(button10);
-            painelExames.Controls.Add(button5);
-            painelExames.Controls.Add(button6);
-            painelExames.Controls.Add(button7);
-            painelExames.Controls.Add(button8);
-            painelExames.Controls.Add(button4);
-            painelExames.Controls.Add(button3);
+            painelExames.Controls.Add(minusSatu);
+            painelExames.Controls.Add(plusSatu);
+            painelExames.Controls.Add(minusRonco);
+            painelExames.Controls.Add(plusRonco);
+            painelExames.Controls.Add(minusAbdomen);
+            painelExames.Controls.Add(plusAbdomen);
+            painelExames.Controls.Add(minusFluxo);
+            painelExames.Controls.Add(plusFluxo);
             painelExames.Controls.Add(minusCanula);
             painelExames.Controls.Add(plusCanula);
             painelExames.Controls.Add(Canula);
@@ -228,6 +230,118 @@
             painelExames.Name = "painelExames";
             painelExames.Size = new System.Drawing.Size(172, 599);
             painelExames.TabIndex = 51;
+            // 
+            // minusSatu
+            // 
+            minusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusSatu.Location = new System.Drawing.Point(124, 555);
+            minusSatu.Name = "minusSatu";
+            minusSatu.Size = new System.Drawing.Size(45, 23);
+            minusSatu.TabIndex = 23;
+            minusSatu.Text = "-";
+            minusSatu.UseVisualStyleBackColor = true;
+            minusSatu.Click += minusSatu_Click;
+            // 
+            // plusSatu
+            // 
+            plusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusSatu.Location = new System.Drawing.Point(124, 526);
+            plusSatu.Name = "plusSatu";
+            plusSatu.Size = new System.Drawing.Size(45, 23);
+            plusSatu.TabIndex = 22;
+            plusSatu.Text = "+";
+            plusSatu.UseVisualStyleBackColor = true;
+            plusSatu.Click += plusSatu_Click;
+            // 
+            // minusRonco
+            // 
+            minusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusRonco.Location = new System.Drawing.Point(124, 418);
+            minusRonco.Name = "minusRonco";
+            minusRonco.Size = new System.Drawing.Size(45, 23);
+            minusRonco.TabIndex = 21;
+            minusRonco.Text = "-";
+            minusRonco.UseVisualStyleBackColor = true;
+            minusRonco.Click += minusRonco_Click;
+            // 
+            // plusRonco
+            // 
+            plusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusRonco.Location = new System.Drawing.Point(124, 389);
+            plusRonco.Name = "plusRonco";
+            plusRonco.Size = new System.Drawing.Size(45, 23);
+            plusRonco.TabIndex = 20;
+            plusRonco.Text = "+";
+            plusRonco.UseVisualStyleBackColor = true;
+            plusRonco.Click += plusRonco_Click;
+            // 
+            // minusAbdomen
+            // 
+            minusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusAbdomen.Location = new System.Drawing.Point(126, 321);
+            minusAbdomen.Name = "minusAbdomen";
+            minusAbdomen.Size = new System.Drawing.Size(45, 23);
+            minusAbdomen.TabIndex = 19;
+            minusAbdomen.Text = "-";
+            minusAbdomen.UseVisualStyleBackColor = true;
+            minusAbdomen.Click += minusAbdomen_Click;
+            // 
+            // plusAbdomen
+            // 
+            plusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusAbdomen.Location = new System.Drawing.Point(126, 292);
+            plusAbdomen.Name = "plusAbdomen";
+            plusAbdomen.Size = new System.Drawing.Size(45, 23);
+            plusAbdomen.TabIndex = 18;
+            plusAbdomen.Text = "+";
+            plusAbdomen.UseVisualStyleBackColor = true;
+            plusAbdomen.Click += plusAbdomen_Click;
+            // 
+            // minusFluxo
+            // 
+            minusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusFluxo.Location = new System.Drawing.Point(124, 190);
+            minusFluxo.Name = "minusFluxo";
+            minusFluxo.Size = new System.Drawing.Size(45, 23);
+            minusFluxo.TabIndex = 17;
+            minusFluxo.Text = "-";
+            minusFluxo.UseVisualStyleBackColor = true;
+            minusFluxo.Click += minusFluxo_Click;
+            // 
+            // plusFluxo
+            // 
+            plusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusFluxo.Location = new System.Drawing.Point(124, 161);
+            plusFluxo.Name = "plusFluxo";
+            plusFluxo.Size = new System.Drawing.Size(45, 23);
+            plusFluxo.TabIndex = 16;
+            plusFluxo.Text = "+";
+            plusFluxo.UseVisualStyleBackColor = true;
+            plusFluxo.Click += plusFluxo_Click;
+            // 
+            // minusCanula
+            // 
+            minusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusCanula.Location = new System.Drawing.Point(124, 80);
+            minusCanula.Name = "minusCanula";
+            minusCanula.Size = new System.Drawing.Size(45, 23);
+            minusCanula.TabIndex = 15;
+            minusCanula.Text = "-";
+            minusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusCanula.UseVisualStyleBackColor = true;
+            minusCanula.Click += minusCanula_Click;
+            // 
+            // plusCanula
+            // 
+            plusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusCanula.Location = new System.Drawing.Point(124, 51);
+            plusCanula.Name = "plusCanula";
+            plusCanula.Size = new System.Drawing.Size(45, 23);
+            plusCanula.TabIndex = 14;
+            plusCanula.Text = "+";
+            plusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusCanula.UseVisualStyleBackColor = true;
+            plusCanula.Click += plusCanula_Click;
             // 
             // painelTelaGl
             // 
@@ -263,98 +377,6 @@
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
-            // 
-            // plusCanula
-            // 
-            plusCanula.Location = new System.Drawing.Point(124, 51);
-            plusCanula.Name = "plusCanula";
-            plusCanula.Size = new System.Drawing.Size(45, 23);
-            plusCanula.TabIndex = 14;
-            plusCanula.Text = "+";
-            plusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusCanula.UseVisualStyleBackColor = true;
-            // 
-            // minusCanula
-            // 
-            minusCanula.Location = new System.Drawing.Point(124, 80);
-            minusCanula.Name = "minusCanula";
-            minusCanula.Size = new System.Drawing.Size(45, 23);
-            minusCanula.TabIndex = 15;
-            minusCanula.Text = "-";
-            minusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusCanula.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            button3.Location = new System.Drawing.Point(124, 161);
-            button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(45, 23);
-            button3.TabIndex = 16;
-            button3.Text = "button3";
-            button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            button4.Location = new System.Drawing.Point(124, 190);
-            button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(45, 23);
-            button4.TabIndex = 17;
-            button4.Text = "button4";
-            button4.UseVisualStyleBackColor = true;
-            // 
-            // button5
-            // 
-            button5.Location = new System.Drawing.Point(124, 418);
-            button5.Name = "button5";
-            button5.Size = new System.Drawing.Size(45, 23);
-            button5.TabIndex = 21;
-            button5.Text = "button5";
-            button5.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            button6.Location = new System.Drawing.Point(124, 389);
-            button6.Name = "button6";
-            button6.Size = new System.Drawing.Size(45, 23);
-            button6.TabIndex = 20;
-            button6.Text = "button6";
-            button6.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            button7.Location = new System.Drawing.Point(126, 321);
-            button7.Name = "button7";
-            button7.Size = new System.Drawing.Size(45, 23);
-            button7.TabIndex = 19;
-            button7.Text = "button7";
-            button7.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            button8.Location = new System.Drawing.Point(126, 292);
-            button8.Name = "button8";
-            button8.Size = new System.Drawing.Size(45, 23);
-            button8.TabIndex = 18;
-            button8.Text = "button8";
-            button8.UseVisualStyleBackColor = true;
-            // 
-            // button9
-            // 
-            button9.Location = new System.Drawing.Point(124, 555);
-            button9.Name = "button9";
-            button9.Size = new System.Drawing.Size(45, 23);
-            button9.TabIndex = 23;
-            button9.Text = "button9";
-            button9.UseVisualStyleBackColor = true;
-            // 
-            // button10
-            // 
-            button10.Location = new System.Drawing.Point(124, 526);
-            button10.Name = "button10";
-            button10.Size = new System.Drawing.Size(45, 23);
-            button10.TabIndex = 22;
-            button10.Text = "button10";
-            button10.UseVisualStyleBackColor = true;
             // 
             // Tela_Plotagem
             // 
@@ -398,14 +420,14 @@
         private System.Windows.Forms.Panel painelComando;
         private System.Windows.Forms.TextBox qtdGraficos;
         public SharpGL.OpenGLControl openglControl1;
-        private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button minusSatu;
+        private System.Windows.Forms.Button plusSatu;
+        private System.Windows.Forms.Button minusRonco;
+        private System.Windows.Forms.Button plusRonco;
+        private System.Windows.Forms.Button minusAbdomen;
+        private System.Windows.Forms.Button plusAbdomen;
+        private System.Windows.Forms.Button minusFluxo;
+        private System.Windows.Forms.Button plusFluxo;
         private System.Windows.Forms.Button minusCanula;
         private System.Windows.Forms.Button plusCanula;
     }
