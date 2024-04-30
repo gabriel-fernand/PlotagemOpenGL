@@ -112,7 +112,7 @@
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(86, 28);
             tempoEmTela.TabIndex = 6;
-            tempoEmTela.Text = "8 seg";
+            tempoEmTela.Text = "30 seg";
             tempoEmTela.SelectedIndexChanged += tempoEmTela_SelectedIndexChanged;
             // 
             // velocidadeScroll
