@@ -151,6 +151,7 @@ namespace PlotagemOpenGL
 
                 hScrollBar1.Maximum = (GlobVar.canalA.Length);
                 hScrollBar1.Refresh();
+                UpdateInicioTela();
             }
         }
 
@@ -323,6 +324,9 @@ namespace PlotagemOpenGL
 
                     GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    //UpdateInicioTela();
                     break;
                 case Keys.A:
                     camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
@@ -330,13 +334,18 @@ namespace PlotagemOpenGL
 
                     GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                    GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    //UpdateInicioTela();
                     break;
             }
             int alturaTela = (int)openglControl1.Height;
             openglControl1.DoRender();
             plotagem.Margem(qtdGrafics, alturaTela);
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(camera.X, 0, 1);
+            gl.Translate(camera.X, 0, 1); 
+            UpdateInicioTela();
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -375,6 +384,8 @@ namespace PlotagemOpenGL
 
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
             GlobVar.saltoTelas = GlobVar.tmpEmTela - 50;
+            GlobVar.inicioTela = 0;
+            GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
         }
 
         private void velocidadeScroll_SelectedIndexChanged(object sender, EventArgs e)
@@ -398,6 +409,25 @@ namespace PlotagemOpenGL
                     GlobVar.SPEED = 5;
                     break;
             }
+        }
+
+        private void UpdateInicioTela()
+        {
+            int inicio = GlobVar.inicioTela;
+            TimeSpan tempo = TimeSpan.FromSeconds(inicio);
+            string horasI = tempo.Hours.ToString().PadLeft(2, '0');
+            string minutosI = tempo.Minutes.ToString().PadLeft(2, '0');
+            string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
+
+            inicioTela.Text = $"{horasI}:{minutosI}:{segundosI}";
+
+            int final = GlobVar.finalTela;
+            TimeSpan tempoF = TimeSpan.FromSeconds(final);
+
+            string horasF = tempoF.Hours.ToString().PadLeft(2, '0');
+            string minutosF = tempoF.Minutes.ToString().PadLeft(2, '0');
+            string segundosF = tempoF.Seconds.ToString().PadLeft(2, '0');
+            fimTela.Text = $"{horasF}:{minutosF}:{segundosF}";
         }
     }
 
@@ -439,6 +469,9 @@ namespace PlotagemOpenGL
         public static int namos = 8;
         public static int segundos = 30;
         public static int tmpEmTela = 240;
+
+        public static int inicioTela;
+        public static int finalTela;
 
         public static float escalaCanula = 1.0f;
         public static float escalaFluxo = 1.0f;
