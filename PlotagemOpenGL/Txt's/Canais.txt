@@ -1,0 +1,71 @@
+E1
+PZ
+PERNA_D
+FP1
+T6
+RONCO
+F7
+O2
+ABDOMEN
+FZ
+EOD
+CAN_FLUXO
+F8
+A1
+POSICAO
+EMG A
+F3
+C4
+EMG B
+RA-LL
+DC2
+T5
+QUEIXO
+DC4
+E2
+P4
+PERNA_E
+FP2
+OZ
+TORAX
+E3
+O1
+CAN_RONCO
+E4
+EOE
+FLUXO
+T3
+A2
+C3
+CZ
+F4
+DC1
+T4
+LA-LL
+DC3
+P3
+MASSETER
+DC5
+CPAP Manual
+%SpO2
+BPM
+PA máx
+PA mín
+PH can-1
+PH can-2
+PH can-3
+CO2 Exal
+CO2 Insp
+Freq Resp
+Pletismografia
+Foto estímulo
+PTT
+Plet_CO2
+Cap_RR
+Cap_SpO
+Cap_EtCO2
+Cap_2
+BPAP Manual
+aVF
+aVR
+aVL

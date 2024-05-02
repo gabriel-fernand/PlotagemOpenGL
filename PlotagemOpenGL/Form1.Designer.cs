@@ -43,60 +43,60 @@
             Play = new System.Windows.Forms.Button();
             openglControl1 = new SharpGL.OpenGLControl();
             painelExames = new System.Windows.Forms.Panel();
-            button31 = new System.Windows.Forms.Button();
-            button32 = new System.Windows.Forms.Button();
-            button33 = new System.Windows.Forms.Button();
-            button34 = new System.Windows.Forms.Button();
-            button35 = new System.Windows.Forms.Button();
-            button36 = new System.Windows.Forms.Button();
+            minusLb23 = new System.Windows.Forms.Button();
+            label23 = new System.Windows.Forms.Label();
+            plusLb23 = new System.Windows.Forms.Button();
+            minusLb22 = new System.Windows.Forms.Button();
+            plusLb22 = new System.Windows.Forms.Button();
+            minusLb21 = new System.Windows.Forms.Button();
+            plusLb21 = new System.Windows.Forms.Button();
+            label21 = new System.Windows.Forms.Label();
+            label22 = new System.Windows.Forms.Label();
+            minusLb20 = new System.Windows.Forms.Button();
+            plusLb20 = new System.Windows.Forms.Button();
+            minusLb19 = new System.Windows.Forms.Button();
+            plusLb19 = new System.Windows.Forms.Button();
+            minusLb18 = new System.Windows.Forms.Button();
+            plusLb18 = new System.Windows.Forms.Button();
+            plusLb17 = new System.Windows.Forms.Button();
+            minusLb17 = new System.Windows.Forms.Button();
+            minusLb16 = new System.Windows.Forms.Button();
+            plusLb16 = new System.Windows.Forms.Button();
             label16 = new System.Windows.Forms.Label();
             label17 = new System.Windows.Forms.Label();
             label18 = new System.Windows.Forms.Label();
-            button11 = new System.Windows.Forms.Button();
-            button12 = new System.Windows.Forms.Button();
-            button13 = new System.Windows.Forms.Button();
-            button14 = new System.Windows.Forms.Button();
-            button15 = new System.Windows.Forms.Button();
-            button16 = new System.Windows.Forms.Button();
-            button17 = new System.Windows.Forms.Button();
-            button18 = new System.Windows.Forms.Button();
-            button19 = new System.Windows.Forms.Button();
-            button20 = new System.Windows.Forms.Button();
-            label6 = new System.Windows.Forms.Label();
-            label7 = new System.Windows.Forms.Label();
-            label8 = new System.Windows.Forms.Label();
-            label9 = new System.Windows.Forms.Label();
-            label10 = new System.Windows.Forms.Label();
-            button21 = new System.Windows.Forms.Button();
-            button22 = new System.Windows.Forms.Button();
-            button23 = new System.Windows.Forms.Button();
-            button24 = new System.Windows.Forms.Button();
-            button25 = new System.Windows.Forms.Button();
-            button26 = new System.Windows.Forms.Button();
-            button27 = new System.Windows.Forms.Button();
-            button28 = new System.Windows.Forms.Button();
-            button29 = new System.Windows.Forms.Button();
-            button30 = new System.Windows.Forms.Button();
+            label19 = new System.Windows.Forms.Label();
+            label20 = new System.Windows.Forms.Label();
+            minusLb15 = new System.Windows.Forms.Button();
+            plusLb15 = new System.Windows.Forms.Button();
+            minusLb14 = new System.Windows.Forms.Button();
+            plusLb14 = new System.Windows.Forms.Button();
+            minusLb13 = new System.Windows.Forms.Button();
+            plusLb13 = new System.Windows.Forms.Button();
+            plusLb12 = new System.Windows.Forms.Button();
+            minusLb12 = new System.Windows.Forms.Button();
+            minusLb11 = new System.Windows.Forms.Button();
+            plusLb11 = new System.Windows.Forms.Button();
             label11 = new System.Windows.Forms.Label();
             label12 = new System.Windows.Forms.Label();
             label13 = new System.Windows.Forms.Label();
             label14 = new System.Windows.Forms.Label();
             label15 = new System.Windows.Forms.Label();
-            button1 = new System.Windows.Forms.Button();
-            button2 = new System.Windows.Forms.Button();
-            button3 = new System.Windows.Forms.Button();
-            button4 = new System.Windows.Forms.Button();
-            button5 = new System.Windows.Forms.Button();
-            button6 = new System.Windows.Forms.Button();
-            button7 = new System.Windows.Forms.Button();
-            button8 = new System.Windows.Forms.Button();
-            button9 = new System.Windows.Forms.Button();
-            button10 = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
-            label4 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
+            minusLb10 = new System.Windows.Forms.Button();
+            plusLb10 = new System.Windows.Forms.Button();
+            minusLb9 = new System.Windows.Forms.Button();
+            plusLb9 = new System.Windows.Forms.Button();
+            minusLb8 = new System.Windows.Forms.Button();
+            plusLb8 = new System.Windows.Forms.Button();
+            plusLb7 = new System.Windows.Forms.Button();
+            minusLb7 = new System.Windows.Forms.Button();
+            minusLb6 = new System.Windows.Forms.Button();
+            plusLb6 = new System.Windows.Forms.Button();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
             minusSatu = new System.Windows.Forms.Button();
             plusSatu = new System.Windows.Forms.Button();
             minusRonco = new System.Windows.Forms.Button();
@@ -118,9 +118,9 @@
             // 
             // hScrollBar1
             // 
-            hScrollBar1.Location = new System.Drawing.Point(210, 3);
+            hScrollBar1.Location = new System.Drawing.Point(5, 1);
             hScrollBar1.Name = "hScrollBar1";
-            hScrollBar1.Size = new System.Drawing.Size(787, 28);
+            hScrollBar1.Size = new System.Drawing.Size(992, 31);
             hScrollBar1.TabIndex = 0;
             hScrollBar1.Scroll += hScrollBar1_Scroll;
             hScrollBar1.KeyDown += TelaPlotagem_KeyDown;
@@ -130,7 +130,7 @@
             ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             ptsEmTela.Location = new System.Drawing.Point(3, 3);
             ptsEmTela.Name = "ptsEmTela";
-            ptsEmTela.Size = new System.Drawing.Size(86, 25);
+            ptsEmTela.Size = new System.Drawing.Size(81, 25);
             ptsEmTela.TabIndex = 2;
             ptsEmTela.Text = "ptsEmTela";
             ptsEmTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -141,7 +141,7 @@
             inicioTela.Location = new System.Drawing.Point(100, 3);
             inicioTela.Name = "inicioTela";
             inicioTela.ReadOnly = true;
-            inicioTela.Size = new System.Drawing.Size(119, 25);
+            inicioTela.Size = new System.Drawing.Size(72, 25);
             inicioTela.TabIndex = 3;
             inicioTela.Text = "00-00-00";
             inicioTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -149,10 +149,10 @@
             // fimTela
             // 
             fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            fimTela.Location = new System.Drawing.Point(225, 3);
+            fimTela.Location = new System.Drawing.Point(178, 3);
             fimTela.Name = "fimTela";
             fimTela.ReadOnly = true;
-            fimTela.Size = new System.Drawing.Size(119, 25);
+            fimTela.Size = new System.Drawing.Size(72, 25);
             fimTela.TabIndex = 4;
             fimTela.Text = "99-99-99";
             fimTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -160,13 +160,15 @@
             // tempoEmTela
             // 
             tempoEmTela.DisplayMember = "8s";
+            tempoEmTela.FlatStyle = System.Windows.Forms.FlatStyle.System;
             tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
+            tempoEmTela.IntegralHeight = false;
             tempoEmTela.Items.AddRange(new object[] { "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
-            tempoEmTela.Location = new System.Drawing.Point(361, 3);
+            tempoEmTela.Location = new System.Drawing.Point(271, 3);
             tempoEmTela.Name = "tempoEmTela";
-            tempoEmTela.Size = new System.Drawing.Size(86, 28);
+            tempoEmTela.Size = new System.Drawing.Size(65, 28);
             tempoEmTela.TabIndex = 6;
             tempoEmTela.Text = "30 seg";
             tempoEmTela.SelectedIndexChanged += tempoEmTela_SelectedIndexChanged;
@@ -174,11 +176,13 @@
             // velocidadeScroll
             // 
             velocidadeScroll.DisplayMember = "1.0x";
+            velocidadeScroll.FlatStyle = System.Windows.Forms.FlatStyle.System;
             velocidadeScroll.FormattingEnabled = true;
+            velocidadeScroll.IntegralHeight = false;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
-            velocidadeScroll.Location = new System.Drawing.Point(453, 3);
+            velocidadeScroll.Location = new System.Drawing.Point(342, 3);
             velocidadeScroll.Name = "velocidadeScroll";
-            velocidadeScroll.Size = new System.Drawing.Size(86, 28);
+            velocidadeScroll.Size = new System.Drawing.Size(63, 28);
             velocidadeScroll.TabIndex = 7;
             velocidadeScroll.Text = "1.0x";
             velocidadeScroll.SelectedIndexChanged += velocidadeScroll_SelectedIndexChanged;
@@ -187,66 +191,17 @@
             // 
             comboBox3.FormattingEnabled = true;
             comboBox3.Items.AddRange(new object[] { "Series" });
-            comboBox3.Location = new System.Drawing.Point(684, 3);
+            comboBox3.Location = new System.Drawing.Point(634, 3);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new System.Drawing.Size(451, 28);
+            comboBox3.Size = new System.Drawing.Size(358, 28);
             comboBox3.TabIndex = 8;
             comboBox3.Text = "Series";
             comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
-            // 
-            // Canula
-            // 
-            Canula.AutoSize = true;
-            Canula.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Canula.Location = new System.Drawing.Point(3, 1);
-            Canula.Name = "Canula";
-            Canula.Size = new System.Drawing.Size(61, 24);
-            Canula.TabIndex = 9;
-            Canula.Text = "Canula";
-            // 
-            // Fluxo
-            // 
-            Fluxo.AutoSize = true;
-            Fluxo.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Fluxo.Location = new System.Drawing.Point(3, 27);
-            Fluxo.Name = "Fluxo";
-            Fluxo.Size = new System.Drawing.Size(49, 24);
-            Fluxo.TabIndex = 10;
-            Fluxo.Text = "Fluxo";
-            // 
-            // Ronco
-            // 
-            Ronco.AutoSize = true;
-            Ronco.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Ronco.Location = new System.Drawing.Point(3, 79);
-            Ronco.Name = "Ronco";
-            Ronco.Size = new System.Drawing.Size(57, 24);
-            Ronco.TabIndex = 12;
-            Ronco.Text = "Ronco";
-            // 
-            // Abdomen
-            // 
-            Abdomen.AutoSize = true;
-            Abdomen.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Abdomen.Location = new System.Drawing.Point(3, 53);
-            Abdomen.Name = "Abdomen";
-            Abdomen.Size = new System.Drawing.Size(81, 24);
-            Abdomen.TabIndex = 11;
-            Abdomen.Text = "Abdomen";
-            // 
-            // SaturacaoO2
-            // 
-            SaturacaoO2.AutoSize = true;
-            SaturacaoO2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            SaturacaoO2.Location = new System.Drawing.Point(3, 105);
-            SaturacaoO2.Name = "SaturacaoO2";
-            SaturacaoO2.Size = new System.Drawing.Size(111, 24);
-            SaturacaoO2.TabIndex = 13;
-            SaturacaoO2.Text = "Saturacao O2";
+            
             // 
             // Play
             // 
-            Play.Location = new System.Drawing.Point(641, 3);
+            Play.Location = new System.Drawing.Point(564, 3);
             Play.Name = "Play";
             Play.Size = new System.Drawing.Size(41, 29);
             Play.TabIndex = 49;
@@ -269,60 +224,60 @@
             // 
             // painelExames
             // 
-            painelExames.Controls.Add(button31);
-            painelExames.Controls.Add(button32);
-            painelExames.Controls.Add(button33);
-            painelExames.Controls.Add(button34);
-            painelExames.Controls.Add(button35);
-            painelExames.Controls.Add(button36);
+            painelExames.Controls.Add(minusLb23);
+            painelExames.Controls.Add(label23);
+            painelExames.Controls.Add(plusLb23);
+            painelExames.Controls.Add(minusLb22);
+            painelExames.Controls.Add(plusLb22);
+            painelExames.Controls.Add(minusLb21);
+            painelExames.Controls.Add(plusLb21);
+            painelExames.Controls.Add(label21);
+            painelExames.Controls.Add(label22);
+            painelExames.Controls.Add(minusLb20);
+            painelExames.Controls.Add(plusLb20);
+            painelExames.Controls.Add(minusLb19);
+            painelExames.Controls.Add(plusLb19);
+            painelExames.Controls.Add(minusLb18);
+            painelExames.Controls.Add(plusLb18);
+            painelExames.Controls.Add(plusLb17);
+            painelExames.Controls.Add(minusLb17);
+            painelExames.Controls.Add(minusLb16);
+            painelExames.Controls.Add(plusLb16);
             painelExames.Controls.Add(label16);
             painelExames.Controls.Add(label17);
             painelExames.Controls.Add(label18);
-            painelExames.Controls.Add(button11);
-            painelExames.Controls.Add(button12);
-            painelExames.Controls.Add(button13);
-            painelExames.Controls.Add(button14);
-            painelExames.Controls.Add(button15);
-            painelExames.Controls.Add(button16);
-            painelExames.Controls.Add(button17);
-            painelExames.Controls.Add(button18);
-            painelExames.Controls.Add(button19);
-            painelExames.Controls.Add(button20);
-            painelExames.Controls.Add(label6);
-            painelExames.Controls.Add(label7);
-            painelExames.Controls.Add(label8);
-            painelExames.Controls.Add(label9);
-            painelExames.Controls.Add(label10);
-            painelExames.Controls.Add(button21);
-            painelExames.Controls.Add(button22);
-            painelExames.Controls.Add(button23);
-            painelExames.Controls.Add(button24);
-            painelExames.Controls.Add(button25);
-            painelExames.Controls.Add(button26);
-            painelExames.Controls.Add(button27);
-            painelExames.Controls.Add(button28);
-            painelExames.Controls.Add(button29);
-            painelExames.Controls.Add(button30);
+            painelExames.Controls.Add(label19);
+            painelExames.Controls.Add(label20);
+            painelExames.Controls.Add(minusLb15);
+            painelExames.Controls.Add(plusLb15);
+            painelExames.Controls.Add(minusLb14);
+            painelExames.Controls.Add(plusLb14);
+            painelExames.Controls.Add(minusLb13);
+            painelExames.Controls.Add(plusLb13);
+            painelExames.Controls.Add(plusLb12);
+            painelExames.Controls.Add(minusLb12);
+            painelExames.Controls.Add(minusLb11);
+            painelExames.Controls.Add(plusLb11);
             painelExames.Controls.Add(label11);
             painelExames.Controls.Add(label12);
             painelExames.Controls.Add(label13);
             painelExames.Controls.Add(label14);
             painelExames.Controls.Add(label15);
-            painelExames.Controls.Add(button1);
-            painelExames.Controls.Add(button2);
-            painelExames.Controls.Add(button3);
-            painelExames.Controls.Add(button4);
-            painelExames.Controls.Add(button5);
-            painelExames.Controls.Add(button6);
-            painelExames.Controls.Add(button7);
-            painelExames.Controls.Add(button8);
-            painelExames.Controls.Add(button9);
-            painelExames.Controls.Add(button10);
-            painelExames.Controls.Add(label1);
-            painelExames.Controls.Add(label2);
-            painelExames.Controls.Add(label3);
-            painelExames.Controls.Add(label4);
-            painelExames.Controls.Add(label5);
+            painelExames.Controls.Add(minusLb10);
+            painelExames.Controls.Add(plusLb10);
+            painelExames.Controls.Add(minusLb9);
+            painelExames.Controls.Add(plusLb9);
+            painelExames.Controls.Add(minusLb8);
+            painelExames.Controls.Add(plusLb8);
+            painelExames.Controls.Add(plusLb7);
+            painelExames.Controls.Add(minusLb7);
+            painelExames.Controls.Add(minusLb6);
+            painelExames.Controls.Add(plusLb6);
+            painelExames.Controls.Add(label6);
+            painelExames.Controls.Add(label7);
+            painelExames.Controls.Add(label8);
+            painelExames.Controls.Add(label9);
+            painelExames.Controls.Add(label10);
             painelExames.Controls.Add(minusSatu);
             painelExames.Controls.Add(plusSatu);
             painelExames.Controls.Add(minusRonco);
@@ -343,355 +298,355 @@
             painelExames.Size = new System.Drawing.Size(172, 599);
             painelExames.TabIndex = 51;
             // 
-            // button31
+            // minusLb23
             // 
-            button31.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button31.Location = new System.Drawing.Point(120, 585);
-            button31.Name = "button31";
-            button31.Size = new System.Drawing.Size(45, 13);
-            button31.TabIndex = 77;
-            button31.Text = "-";
-            button31.UseVisualStyleBackColor = true;
+            minusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb23.Location = new System.Drawing.Point(-500, 585);
+            minusLb23.Name = "minusLb23";
+            minusLb23.Size = new System.Drawing.Size(45, 13);
+            minusLb23.TabIndex = 77;
+            minusLb23.Text = "-";
+            minusLb23.UseVisualStyleBackColor = true;
             // 
-            // button32
+            // label23
             // 
-            button32.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button32.Location = new System.Drawing.Point(120, 572);
-            button32.Name = "button32";
-            button32.Size = new System.Drawing.Size(45, 13);
-            button32.TabIndex = 76;
-            button32.Text = "+";
-            button32.UseVisualStyleBackColor = true;
+            label23.AutoSize = true;
+            label23.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label23.Location = new System.Drawing.Point(-500, 573);
+            label23.Name = "label23";
+            label23.Size = new System.Drawing.Size(61, 24);
+            label23.TabIndex = 71;
+            label23.Text = "label23";
             // 
-            // button33
+            // plusLb23
             // 
-            button33.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button33.Location = new System.Drawing.Point(120, 559);
-            button33.Name = "button33";
-            button33.Size = new System.Drawing.Size(45, 13);
-            button33.TabIndex = 75;
-            button33.Text = "-";
-            button33.UseVisualStyleBackColor = true;
+            plusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb23.Location = new System.Drawing.Point(-500, 572);
+            plusLb23.Name = "plusLb23";
+            plusLb23.Size = new System.Drawing.Size(45, 13);
+            plusLb23.TabIndex = 76;
+            plusLb23.Text = "+";
+            plusLb23.UseVisualStyleBackColor = true;
             // 
-            // button34
+            // minusLb22
             // 
-            button34.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button34.Location = new System.Drawing.Point(120, 546);
-            button34.Name = "button34";
-            button34.Size = new System.Drawing.Size(45, 13);
-            button34.TabIndex = 74;
-            button34.Text = "+";
-            button34.UseVisualStyleBackColor = true;
+            minusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb22.Location = new System.Drawing.Point(-500, 559);
+            minusLb22.Name = "minusLb22";
+            minusLb22.Size = new System.Drawing.Size(45, 13);
+            minusLb22.TabIndex = 75;
+            minusLb22.Text = "-";
+            minusLb22.UseVisualStyleBackColor = true;
             // 
-            // button35
+            // plusLb22
             // 
-            button35.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button35.Location = new System.Drawing.Point(120, 533);
-            button35.Name = "button35";
-            button35.Size = new System.Drawing.Size(45, 13);
-            button35.TabIndex = 73;
-            button35.Text = "-";
-            button35.UseVisualStyleBackColor = true;
+            plusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb22.Location = new System.Drawing.Point(-500, 546);
+            plusLb22.Name = "plusLb22";
+            plusLb22.Size = new System.Drawing.Size(45, 13);
+            plusLb22.TabIndex = 74;
+            plusLb22.Text = "+";
+            plusLb22.UseVisualStyleBackColor = true;
             // 
-            // button36
+            // minusLb21
             // 
-            button36.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button36.Location = new System.Drawing.Point(120, 520);
-            button36.Name = "button36";
-            button36.Size = new System.Drawing.Size(45, 13);
-            button36.TabIndex = 72;
-            button36.Text = "+";
-            button36.UseVisualStyleBackColor = true;
+            minusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb21.Location = new System.Drawing.Point(-500, 533);
+            minusLb21.Name = "minusLb21";
+            minusLb21.Size = new System.Drawing.Size(45, 13);
+            minusLb21.TabIndex = 73;
+            minusLb21.Text = "-";
+            minusLb21.UseVisualStyleBackColor = true;
+            // 
+            // plusLb21
+            // 
+            plusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb21.Location = new System.Drawing.Point(-500, 520);
+            plusLb21.Name = "plusLb21";
+            plusLb21.Size = new System.Drawing.Size(45, 13);
+            plusLb21.TabIndex = 72;
+            plusLb21.Text = "+";
+            plusLb21.UseVisualStyleBackColor = true;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label21.Location = new System.Drawing.Point(-500, 521);
+            label21.Name = "label21";
+            label21.Size = new System.Drawing.Size(61, 24);
+            label21.TabIndex = 69;
+            label21.Text = "label21";
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label22.Location = new System.Drawing.Point(-500, 547);
+            label22.Name = "label22";
+            label22.Size = new System.Drawing.Size(61, 24);
+            label22.TabIndex = 70;
+            label22.Text = "label22";
+            // 
+            // minusLb20
+            // 
+            minusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb20.Location = new System.Drawing.Point(-500, 507);
+            minusLb20.Name = "minusLb20";
+            minusLb20.Size = new System.Drawing.Size(45, 13);
+            minusLb20.TabIndex = 68;
+            minusLb20.Text = "-";
+            minusLb20.UseVisualStyleBackColor = true;
+            // 
+            // plusLb20
+            // 
+            plusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb20.Location = new System.Drawing.Point(-500, 494);
+            plusLb20.Name = "plusLb20";
+            plusLb20.Size = new System.Drawing.Size(45, 13);
+            plusLb20.TabIndex = 67;
+            plusLb20.Text = "+";
+            plusLb20.UseVisualStyleBackColor = true;
+            // 
+            // minusLb19
+            // 
+            minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb19.Location = new System.Drawing.Point(-500, 481);
+            minusLb19.Name = "minusLb19";
+            minusLb19.Size = new System.Drawing.Size(45, 13);
+            minusLb19.TabIndex = 66;
+            minusLb19.Text = "-";
+            minusLb19.UseVisualStyleBackColor = true;
+            // 
+            // plusLb19
+            // 
+            plusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb19.Location = new System.Drawing.Point(-500, 468);
+            plusLb19.Name = "plusLb19";
+            plusLb19.Size = new System.Drawing.Size(45, 13);
+            plusLb19.TabIndex = 65;
+            plusLb19.Text = "+";
+            plusLb19.UseVisualStyleBackColor = true;
+            // 
+            // minusLb18
+            // 
+            minusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb18.Location = new System.Drawing.Point(-500, 455);
+            minusLb18.Name = "minusLb18";
+            minusLb18.Size = new System.Drawing.Size(45, 13);
+            minusLb18.TabIndex = 64;
+            minusLb18.Text = "-";
+            minusLb18.UseVisualStyleBackColor = true;
+            // 
+            // plusLb18
+            // 
+            plusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb18.Location = new System.Drawing.Point(-500, 442);
+            plusLb18.Name = "plusLb18";
+            plusLb18.Size = new System.Drawing.Size(45, 13);
+            plusLb18.TabIndex = 63;
+            plusLb18.Text = "+";
+            plusLb18.UseVisualStyleBackColor = true;
+            // 
+            // plusLb17
+            // 
+            plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb17.Location = new System.Drawing.Point(-500, 416);
+            plusLb17.Name = "plusLb17";
+            plusLb17.Size = new System.Drawing.Size(45, 13);
+            plusLb17.TabIndex = 62;
+            plusLb17.Text = "-";
+            plusLb17.UseVisualStyleBackColor = true;
+            // 
+            // minusLb17
+            // 
+            minusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb17.Location = new System.Drawing.Point(-500, 429);
+            minusLb17.Name = "minusLb17";
+            minusLb17.Size = new System.Drawing.Size(45, 13);
+            minusLb17.TabIndex = 61;
+            minusLb17.Text = "+";
+            minusLb17.UseVisualStyleBackColor = true;
+            // 
+            // minusLb16
+            // 
+            minusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb16.Location = new System.Drawing.Point(-500, 403);
+            minusLb16.Name = "minusLb16";
+            minusLb16.Size = new System.Drawing.Size(45, 13);
+            minusLb16.TabIndex = 60;
+            minusLb16.Text = "-";
+            minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb16.UseVisualStyleBackColor = true;
+            // 
+            // plusLb16
+            // 
+            plusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb16.Location = new System.Drawing.Point(-500, 390);
+            plusLb16.Name = "plusLb16";
+            plusLb16.Size = new System.Drawing.Size(45, 13);
+            plusLb16.TabIndex = 59;
+            plusLb16.Text = "+";
+            plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb16.UseVisualStyleBackColor = true;
             // 
             // label16
             // 
             label16.AutoSize = true;
             label16.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label16.Location = new System.Drawing.Point(3, 521);
+            label16.Location = new System.Drawing.Point(-500, 391);
             label16.Name = "label16";
             label16.Size = new System.Drawing.Size(61, 24);
-            label16.TabIndex = 69;
+            label16.TabIndex = 54;
             label16.Text = "label16";
             // 
             // label17
             // 
             label17.AutoSize = true;
             label17.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label17.Location = new System.Drawing.Point(3, 547);
+            label17.Location = new System.Drawing.Point(-500, 417);
             label17.Name = "label17";
             label17.Size = new System.Drawing.Size(61, 24);
-            label17.TabIndex = 70;
+            label17.TabIndex = 55;
             label17.Text = "label17";
             // 
             // label18
             // 
             label18.AutoSize = true;
             label18.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label18.Location = new System.Drawing.Point(3, 573);
+            label18.Location = new System.Drawing.Point(-500, 443);
             label18.Name = "label18";
-            label18.Size = new System.Drawing.Size(111, 24);
-            label18.TabIndex = 71;
-            label18.Text = "Saturacao O2";
+            label18.Size = new System.Drawing.Size(61, 24);
+            label18.TabIndex = 56;
+            label18.Text = "label18";
             // 
-            // button11
+            // label19
             // 
-            button11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button11.Location = new System.Drawing.Point(120, 507);
-            button11.Name = "button11";
-            button11.Size = new System.Drawing.Size(45, 13);
-            button11.TabIndex = 68;
-            button11.Text = "-";
-            button11.UseVisualStyleBackColor = true;
+            label19.AutoSize = true;
+            label19.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label19.Location = new System.Drawing.Point(-500, 469);
+            label19.Name = "label19";
+            label19.Size = new System.Drawing.Size(61, 24);
+            label19.TabIndex = 57;
+            label19.Text = "label19";
             // 
-            // button12
+            // label20
             // 
-            button12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button12.Location = new System.Drawing.Point(120, 494);
-            button12.Name = "button12";
-            button12.Size = new System.Drawing.Size(45, 13);
-            button12.TabIndex = 67;
-            button12.Text = "+";
-            button12.UseVisualStyleBackColor = true;
+            label20.AutoSize = true;
+            label20.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label20.Location = new System.Drawing.Point(-500, 495);
+            label20.Name = "label20";
+            label20.Size = new System.Drawing.Size(61, 24);
+            label20.TabIndex = 58;
+            label20.Text = "label20";
             // 
-            // button13
+            // minusLb15
             // 
-            button13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button13.Location = new System.Drawing.Point(120, 481);
-            button13.Name = "button13";
-            button13.Size = new System.Drawing.Size(45, 13);
-            button13.TabIndex = 66;
-            button13.Text = "-";
-            button13.UseVisualStyleBackColor = true;
+            minusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb15.Location = new System.Drawing.Point(-500, 377);
+            minusLb15.Name = "minusLb15";
+            minusLb15.Size = new System.Drawing.Size(45, 13);
+            minusLb15.TabIndex = 53;
+            minusLb15.Text = "-";
+            minusLb15.UseVisualStyleBackColor = true;
             // 
-            // button14
+            // plusLb15
             // 
-            button14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button14.Location = new System.Drawing.Point(120, 468);
-            button14.Name = "button14";
-            button14.Size = new System.Drawing.Size(45, 13);
-            button14.TabIndex = 65;
-            button14.Text = "+";
-            button14.UseVisualStyleBackColor = true;
+            plusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb15.Location = new System.Drawing.Point(-500, 364);
+            plusLb15.Name = "plusLb15";
+            plusLb15.Size = new System.Drawing.Size(45, 13);
+            plusLb15.TabIndex = 52;
+            plusLb15.Text = "+";
+            plusLb15.UseVisualStyleBackColor = true;
             // 
-            // button15
+            // minusLb14
             // 
-            button15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button15.Location = new System.Drawing.Point(120, 455);
-            button15.Name = "button15";
-            button15.Size = new System.Drawing.Size(45, 13);
-            button15.TabIndex = 64;
-            button15.Text = "-";
-            button15.UseVisualStyleBackColor = true;
+            minusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb14.Location = new System.Drawing.Point(-500, 351);
+            minusLb14.Name = "minusLb14";
+            minusLb14.Size = new System.Drawing.Size(45, 13);
+            minusLb14.TabIndex = 51;
+            minusLb14.Text = "-";
+            minusLb14.UseVisualStyleBackColor = true;
             // 
-            // button16
+            // plusLb14
             // 
-            button16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button16.Location = new System.Drawing.Point(120, 442);
-            button16.Name = "button16";
-            button16.Size = new System.Drawing.Size(45, 13);
-            button16.TabIndex = 63;
-            button16.Text = "+";
-            button16.UseVisualStyleBackColor = true;
+            plusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb14.Location = new System.Drawing.Point(-500, 338);
+            plusLb14.Name = "plusLb14";
+            plusLb14.Size = new System.Drawing.Size(45, 13);
+            plusLb14.TabIndex = 50;
+            plusLb14.Text = "+";
+            plusLb14.UseVisualStyleBackColor = true;
             // 
-            // button17
+            // minusLb13
             // 
-            button17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button17.Location = new System.Drawing.Point(120, 416);
-            button17.Name = "button17";
-            button17.Size = new System.Drawing.Size(45, 13);
-            button17.TabIndex = 62;
-            button17.Text = "-";
-            button17.UseVisualStyleBackColor = true;
+            minusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb13.Location = new System.Drawing.Point(-500, 325);
+            minusLb13.Name = "minusLb13";
+            minusLb13.Size = new System.Drawing.Size(45, 13);
+            minusLb13.TabIndex = 49;
+            minusLb13.Text = "-";
+            minusLb13.UseVisualStyleBackColor = true;
             // 
-            // button18
+            // plusLb13
             // 
-            button18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button18.Location = new System.Drawing.Point(120, 429);
-            button18.Name = "button18";
-            button18.Size = new System.Drawing.Size(45, 13);
-            button18.TabIndex = 61;
-            button18.Text = "+";
-            button18.UseVisualStyleBackColor = true;
+            plusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb13.Location = new System.Drawing.Point(-500, 312);
+            plusLb13.Name = "plusLb13";
+            plusLb13.Size = new System.Drawing.Size(45, 13);
+            plusLb13.TabIndex = 48;
+            plusLb13.Text = "+";
+            plusLb13.UseVisualStyleBackColor = true;
             // 
-            // button19
+            // plusLb12
             // 
-            button19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button19.Location = new System.Drawing.Point(120, 403);
-            button19.Name = "button19";
-            button19.Size = new System.Drawing.Size(45, 13);
-            button19.TabIndex = 60;
-            button19.Text = "-";
-            button19.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button19.UseVisualStyleBackColor = true;
+            plusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb12.Location = new System.Drawing.Point(-500, 286);
+            plusLb12.Name = "plusLb12";
+            plusLb12.Size = new System.Drawing.Size(45, 13);
+            plusLb12.TabIndex = 47;
+            plusLb12.Text = "-";
+            plusLb12.UseVisualStyleBackColor = true;
             // 
-            // button20
+            // minusLb12
             // 
-            button20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button20.Location = new System.Drawing.Point(120, 390);
-            button20.Name = "button20";
-            button20.Size = new System.Drawing.Size(45, 13);
-            button20.TabIndex = 59;
-            button20.Text = "+";
-            button20.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button20.UseVisualStyleBackColor = true;
+            minusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb12.Location = new System.Drawing.Point(-500, 299);
+            minusLb12.Name = "minusLb12";
+            minusLb12.Size = new System.Drawing.Size(45, 13);
+            minusLb12.TabIndex = 46;
+            minusLb12.Text = "+";
+            minusLb12.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // minusLb11
             // 
-            label6.AutoSize = true;
-            label6.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label6.Location = new System.Drawing.Point(3, 391);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(52, 24);
-            label6.TabIndex = 54;
-            label6.Text = "label6";
+            minusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb11.Location = new System.Drawing.Point(-500, 273);
+            minusLb11.Name = "minusLb11";
+            minusLb11.Size = new System.Drawing.Size(45, 13);
+            minusLb11.TabIndex = 45;
+            minusLb11.Text = "-";
+            minusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb11.UseVisualStyleBackColor = true;
             // 
-            // label7
+            // plusLb11
             // 
-            label7.AutoSize = true;
-            label7.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label7.Location = new System.Drawing.Point(3, 417);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(52, 24);
-            label7.TabIndex = 55;
-            label7.Text = "label7";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label8.Location = new System.Drawing.Point(3, 443);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(52, 24);
-            label8.TabIndex = 56;
-            label8.Text = "label8";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label9.Location = new System.Drawing.Point(3, 469);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(52, 24);
-            label9.TabIndex = 57;
-            label9.Text = "label9";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label10.Location = new System.Drawing.Point(3, 495);
-            label10.Name = "label10";
-            label10.Size = new System.Drawing.Size(111, 24);
-            label10.TabIndex = 58;
-            label10.Text = "Saturacao O2";
-            // 
-            // button21
-            // 
-            button21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button21.Location = new System.Drawing.Point(120, 377);
-            button21.Name = "button21";
-            button21.Size = new System.Drawing.Size(45, 13);
-            button21.TabIndex = 53;
-            button21.Text = "-";
-            button21.UseVisualStyleBackColor = true;
-            // 
-            // button22
-            // 
-            button22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button22.Location = new System.Drawing.Point(120, 364);
-            button22.Name = "button22";
-            button22.Size = new System.Drawing.Size(45, 13);
-            button22.TabIndex = 52;
-            button22.Text = "+";
-            button22.UseVisualStyleBackColor = true;
-            // 
-            // button23
-            // 
-            button23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button23.Location = new System.Drawing.Point(120, 351);
-            button23.Name = "button23";
-            button23.Size = new System.Drawing.Size(45, 13);
-            button23.TabIndex = 51;
-            button23.Text = "-";
-            button23.UseVisualStyleBackColor = true;
-            // 
-            // button24
-            // 
-            button24.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button24.Location = new System.Drawing.Point(120, 338);
-            button24.Name = "button24";
-            button24.Size = new System.Drawing.Size(45, 13);
-            button24.TabIndex = 50;
-            button24.Text = "+";
-            button24.UseVisualStyleBackColor = true;
-            // 
-            // button25
-            // 
-            button25.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button25.Location = new System.Drawing.Point(120, 325);
-            button25.Name = "button25";
-            button25.Size = new System.Drawing.Size(45, 13);
-            button25.TabIndex = 49;
-            button25.Text = "-";
-            button25.UseVisualStyleBackColor = true;
-            // 
-            // button26
-            // 
-            button26.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button26.Location = new System.Drawing.Point(120, 312);
-            button26.Name = "button26";
-            button26.Size = new System.Drawing.Size(45, 13);
-            button26.TabIndex = 48;
-            button26.Text = "+";
-            button26.UseVisualStyleBackColor = true;
-            // 
-            // button27
-            // 
-            button27.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button27.Location = new System.Drawing.Point(120, 286);
-            button27.Name = "button27";
-            button27.Size = new System.Drawing.Size(45, 13);
-            button27.TabIndex = 47;
-            button27.Text = "-";
-            button27.UseVisualStyleBackColor = true;
-            // 
-            // button28
-            // 
-            button28.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button28.Location = new System.Drawing.Point(120, 299);
-            button28.Name = "button28";
-            button28.Size = new System.Drawing.Size(45, 13);
-            button28.TabIndex = 46;
-            button28.Text = "+";
-            button28.UseVisualStyleBackColor = true;
-            // 
-            // button29
-            // 
-            button29.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button29.Location = new System.Drawing.Point(120, 273);
-            button29.Name = "button29";
-            button29.Size = new System.Drawing.Size(45, 13);
-            button29.TabIndex = 45;
-            button29.Text = "-";
-            button29.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button29.UseVisualStyleBackColor = true;
-            // 
-            // button30
-            // 
-            button30.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button30.Location = new System.Drawing.Point(120, 260);
-            button30.Name = "button30";
-            button30.Size = new System.Drawing.Size(45, 13);
-            button30.TabIndex = 44;
-            button30.Text = "+";
-            button30.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button30.UseVisualStyleBackColor = true;
+            plusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb11.Location = new System.Drawing.Point(-500, 260);
+            plusLb11.Name = "plusLb11";
+            plusLb11.Size = new System.Drawing.Size(45, 13);
+            plusLb11.TabIndex = 44;
+            plusLb11.Text = "+";
+            plusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb11.UseVisualStyleBackColor = true;
             // 
             // label11
             // 
             label11.AutoSize = true;
             label11.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label11.Location = new System.Drawing.Point(3, 261);
+            label11.Location = new System.Drawing.Point(-500, 261);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(61, 24);
             label11.TabIndex = 39;
@@ -701,7 +656,7 @@
             // 
             label12.AutoSize = true;
             label12.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label12.Location = new System.Drawing.Point(3, 287);
+            label12.Location = new System.Drawing.Point(-500, 287);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(61, 24);
             label12.TabIndex = 40;
@@ -711,7 +666,7 @@
             // 
             label13.AutoSize = true;
             label13.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label13.Location = new System.Drawing.Point(3, 313);
+            label13.Location = new System.Drawing.Point(-500, 313);
             label13.Name = "label13";
             label13.Size = new System.Drawing.Size(61, 24);
             label13.TabIndex = 41;
@@ -721,7 +676,7 @@
             // 
             label14.AutoSize = true;
             label14.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label14.Location = new System.Drawing.Point(3, 339);
+            label14.Location = new System.Drawing.Point(-500, 339);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(61, 24);
             label14.TabIndex = 42;
@@ -731,168 +686,168 @@
             // 
             label15.AutoSize = true;
             label15.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label15.Location = new System.Drawing.Point(3, 365);
+            label15.Location = new System.Drawing.Point(-500, 365);
             label15.Name = "label15";
-            label15.Size = new System.Drawing.Size(111, 24);
+            label15.Size = new System.Drawing.Size(61, 24);
             label15.TabIndex = 43;
-            label15.Text = "Saturacao O2";
+            label15.Text = "label15";
             // 
-            // button1
+            // minusLb10
             // 
-            button1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button1.Location = new System.Drawing.Point(120, 247);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(45, 13);
-            button1.TabIndex = 38;
-            button1.Text = "-";
-            button1.UseVisualStyleBackColor = true;
+            minusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb10.Location = new System.Drawing.Point(-500, 247);
+            minusLb10.Name = "minusLb10";
+            minusLb10.Size = new System.Drawing.Size(45, 13);
+            minusLb10.TabIndex = 38;
+            minusLb10.Text = "-";
+            minusLb10.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // plusLb10
             // 
-            button2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button2.Location = new System.Drawing.Point(120, 234);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(45, 13);
-            button2.TabIndex = 37;
-            button2.Text = "+";
-            button2.UseVisualStyleBackColor = true;
+            plusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb10.Location = new System.Drawing.Point(-500, 234);
+            plusLb10.Name = "plusLb10";
+            plusLb10.Size = new System.Drawing.Size(45, 13);
+            plusLb10.TabIndex = 37;
+            plusLb10.Text = "+";
+            plusLb10.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // minusLb9
             // 
-            button3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button3.Location = new System.Drawing.Point(120, 221);
-            button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(45, 13);
-            button3.TabIndex = 36;
-            button3.Text = "-";
-            button3.UseVisualStyleBackColor = true;
+            minusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb9.Location = new System.Drawing.Point(-500, 221);
+            minusLb9.Name = "minusLb9";
+            minusLb9.Size = new System.Drawing.Size(45, 13);
+            minusLb9.TabIndex = 36;
+            minusLb9.Text = "-";
+            minusLb9.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // plusLb9
             // 
-            button4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button4.Location = new System.Drawing.Point(120, 208);
-            button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(45, 13);
-            button4.TabIndex = 35;
-            button4.Text = "+";
-            button4.UseVisualStyleBackColor = true;
+            plusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb9.Location = new System.Drawing.Point(-500, 208);
+            plusLb9.Name = "plusLb9";
+            plusLb9.Size = new System.Drawing.Size(45, 13);
+            plusLb9.TabIndex = 35;
+            plusLb9.Text = "+";
+            plusLb9.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // minusLb8
             // 
-            button5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button5.Location = new System.Drawing.Point(120, 195);
-            button5.Name = "button5";
-            button5.Size = new System.Drawing.Size(45, 13);
-            button5.TabIndex = 34;
-            button5.Text = "-";
-            button5.UseVisualStyleBackColor = true;
+            minusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb8.Location = new System.Drawing.Point(-500, 195);
+            minusLb8.Name = "minusLb8";
+            minusLb8.Size = new System.Drawing.Size(45, 13);
+            minusLb8.TabIndex = 34;
+            minusLb8.Text = "-";
+            minusLb8.UseVisualStyleBackColor = true;
             // 
-            // button6
+            // plusLb8
             // 
-            button6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button6.Location = new System.Drawing.Point(120, 182);
-            button6.Name = "button6";
-            button6.Size = new System.Drawing.Size(45, 13);
-            button6.TabIndex = 33;
-            button6.Text = "+";
-            button6.UseVisualStyleBackColor = true;
+            plusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb8.Location = new System.Drawing.Point(-500, 182);
+            plusLb8.Name = "plusLb8";
+            plusLb8.Size = new System.Drawing.Size(45, 13);
+            plusLb8.TabIndex = 33;
+            plusLb8.Text = "+";
+            plusLb8.UseVisualStyleBackColor = true;
             // 
-            // button7
+            // plusLb7
             // 
-            button7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button7.Location = new System.Drawing.Point(120, 156);
-            button7.Name = "button7";
-            button7.Size = new System.Drawing.Size(45, 13);
-            button7.TabIndex = 32;
-            button7.Text = "-";
-            button7.UseVisualStyleBackColor = true;
+            plusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb7.Location = new System.Drawing.Point(-500, 156);
+            plusLb7.Name = "plusLb7";
+            plusLb7.Size = new System.Drawing.Size(45, 13);
+            plusLb7.TabIndex = 32;
+            plusLb7.Text = "-";
+            plusLb7.UseVisualStyleBackColor = true;
             // 
-            // button8
+            // minusLb7
             // 
-            button8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button8.Location = new System.Drawing.Point(120, 169);
-            button8.Name = "button8";
-            button8.Size = new System.Drawing.Size(45, 13);
-            button8.TabIndex = 31;
-            button8.Text = "+";
-            button8.UseVisualStyleBackColor = true;
+            minusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb7.Location = new System.Drawing.Point(-500, 169);
+            minusLb7.Name = "minusLb7";
+            minusLb7.Size = new System.Drawing.Size(45, 13);
+            minusLb7.TabIndex = 31;
+            minusLb7.Text = "+";
+            minusLb7.UseVisualStyleBackColor = true;
             // 
-            // button9
+            // minusLb6
             // 
-            button9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button9.Location = new System.Drawing.Point(120, 143);
-            button9.Name = "button9";
-            button9.Size = new System.Drawing.Size(45, 13);
-            button9.TabIndex = 30;
-            button9.Text = "-";
-            button9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button9.UseVisualStyleBackColor = true;
+            minusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb6.Location = new System.Drawing.Point(-500, 143);
+            minusLb6.Name = "minusLb6";
+            minusLb6.Size = new System.Drawing.Size(45, 13);
+            minusLb6.TabIndex = 30;
+            minusLb6.Text = "-";
+            minusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb6.UseVisualStyleBackColor = true;
             // 
-            // button10
+            // plusLb6
             // 
-            button10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            button10.Location = new System.Drawing.Point(120, 130);
-            button10.Name = "button10";
-            button10.Size = new System.Drawing.Size(45, 13);
-            button10.TabIndex = 29;
-            button10.Text = "+";
-            button10.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            button10.UseVisualStyleBackColor = true;
+            plusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb6.Location = new System.Drawing.Point(-500, 130);
+            plusLb6.Name = "plusLb6";
+            plusLb6.Size = new System.Drawing.Size(45, 13);
+            plusLb6.TabIndex = 29;
+            plusLb6.Text = "+";
+            plusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb6.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // label6
             // 
-            label1.AutoSize = true;
-            label1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label1.Location = new System.Drawing.Point(3, 131);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(52, 24);
-            label1.TabIndex = 24;
-            label1.Text = "label1";
+            label6.AutoSize = true;
+            label6.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label6.Location = new System.Drawing.Point(-500, 131);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(52, 24);
+            label6.TabIndex = 24;
+            label6.Text = "label6";
             // 
-            // label2
+            // label7
             // 
-            label2.AutoSize = true;
-            label2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label2.Location = new System.Drawing.Point(3, 157);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(52, 24);
-            label2.TabIndex = 25;
-            label2.Text = "label2";
+            label7.AutoSize = true;
+            label7.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label7.Location = new System.Drawing.Point(-500, 157);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(52, 24);
+            label7.TabIndex = 25;
+            label7.Text = "label7";
             // 
-            // label3
+            // label8
             // 
-            label3.AutoSize = true;
-            label3.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label3.Location = new System.Drawing.Point(3, 183);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(52, 24);
-            label3.TabIndex = 26;
-            label3.Text = "label3";
+            label8.AutoSize = true;
+            label8.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label8.Location = new System.Drawing.Point(-500, 183);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(52, 24);
+            label8.TabIndex = 26;
+            label8.Text = "label8";
             // 
-            // label4
+            // label9
             // 
-            label4.AutoSize = true;
-            label4.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label4.Location = new System.Drawing.Point(3, 209);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(52, 24);
-            label4.TabIndex = 27;
-            label4.Text = "label4";
+            label9.AutoSize = true;
+            label9.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label9.Location = new System.Drawing.Point(-500, 209);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(52, 24);
+            label9.TabIndex = 27;
+            label9.Text = "label9";
             // 
-            // label5
+            // label10
             // 
-            label5.AutoSize = true;
-            label5.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label5.Location = new System.Drawing.Point(3, 235);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(111, 24);
-            label5.TabIndex = 28;
-            label5.Text = "Saturacao O2";
+            label10.AutoSize = true;
+            label10.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label10.Location = new System.Drawing.Point(-500, 235);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(61, 24);
+            label10.TabIndex = 28;
+            label10.Text = "label10";
             // 
             // minusSatu
             // 
             minusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusSatu.Location = new System.Drawing.Point(120, 117);
+            minusSatu.Location = new System.Drawing.Point(-500, 117);
             minusSatu.Name = "minusSatu";
             minusSatu.Size = new System.Drawing.Size(45, 13);
             minusSatu.TabIndex = 23;
@@ -903,7 +858,7 @@
             // plusSatu
             // 
             plusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusSatu.Location = new System.Drawing.Point(120, 104);
+            plusSatu.Location = new System.Drawing.Point(-500, 104);
             plusSatu.Name = "plusSatu";
             plusSatu.Size = new System.Drawing.Size(45, 13);
             plusSatu.TabIndex = 22;
@@ -914,7 +869,7 @@
             // minusRonco
             // 
             minusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusRonco.Location = new System.Drawing.Point(120, 91);
+            minusRonco.Location = new System.Drawing.Point(-500, 91);
             minusRonco.Name = "minusRonco";
             minusRonco.Size = new System.Drawing.Size(45, 13);
             minusRonco.TabIndex = 21;
@@ -925,7 +880,7 @@
             // plusRonco
             // 
             plusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusRonco.Location = new System.Drawing.Point(120, 78);
+            plusRonco.Location = new System.Drawing.Point(-500, 78);
             plusRonco.Name = "plusRonco";
             plusRonco.Size = new System.Drawing.Size(45, 13);
             plusRonco.TabIndex = 20;
@@ -936,7 +891,7 @@
             // minusAbdomen
             // 
             minusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusAbdomen.Location = new System.Drawing.Point(120, 65);
+            minusAbdomen.Location = new System.Drawing.Point(-500, 65);
             minusAbdomen.Name = "minusAbdomen";
             minusAbdomen.Size = new System.Drawing.Size(45, 13);
             minusAbdomen.TabIndex = 19;
@@ -947,7 +902,7 @@
             // plusAbdomen
             // 
             plusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusAbdomen.Location = new System.Drawing.Point(120, 52);
+            plusAbdomen.Location = new System.Drawing.Point(-500, 52);
             plusAbdomen.Name = "plusAbdomen";
             plusAbdomen.Size = new System.Drawing.Size(45, 13);
             plusAbdomen.TabIndex = 18;
@@ -958,7 +913,7 @@
             // minusFluxo
             // 
             minusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusFluxo.Location = new System.Drawing.Point(120, 39);
+            minusFluxo.Location = new System.Drawing.Point(-500, 39);
             minusFluxo.Name = "minusFluxo";
             minusFluxo.Size = new System.Drawing.Size(45, 13);
             minusFluxo.TabIndex = 17;
@@ -969,7 +924,7 @@
             // plusFluxo
             // 
             plusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusFluxo.Location = new System.Drawing.Point(120, 26);
+            plusFluxo.Location = new System.Drawing.Point(-500, 26);
             plusFluxo.Name = "plusFluxo";
             plusFluxo.Size = new System.Drawing.Size(45, 13);
             plusFluxo.TabIndex = 16;
@@ -980,7 +935,7 @@
             // minusCanula
             // 
             minusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusCanula.Location = new System.Drawing.Point(120, 13);
+            minusCanula.Location = new System.Drawing.Point(-500, 13);
             minusCanula.Name = "minusCanula";
             minusCanula.Size = new System.Drawing.Size(45, 13);
             minusCanula.TabIndex = 15;
@@ -992,14 +947,63 @@
             // plusCanula
             // 
             plusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusCanula.Location = new System.Drawing.Point(120, 0);
+            plusCanula.Location = new System.Drawing.Point(-500, 0);
             plusCanula.Name = "plusCanula";
             plusCanula.Size = new System.Drawing.Size(45, 13);
             plusCanula.TabIndex = 14;
             plusCanula.Text = "+";
             plusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusCanula.UseVisualStyleBackColor = true;
-            plusCanula.Click += plusCanula_Click;
+            plusCanula.Click += plusCanula_Click;// 
+            // Canula
+            // 
+            Canula.AutoSize = true;
+            Canula.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Canula.Location = new System.Drawing.Point(-500, 1);
+            Canula.Name = "Canula";
+            Canula.Size = new System.Drawing.Size(61, 24);
+            Canula.TabIndex = 9;
+            Canula.Text = "Canula";
+            // 
+            // Fluxo
+            // 
+            Fluxo.AutoSize = true;
+            Fluxo.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Fluxo.Location = new System.Drawing.Point(-500, 27);
+            Fluxo.Name = "Fluxo";
+            Fluxo.Size = new System.Drawing.Size(49, 24);
+            Fluxo.TabIndex = 10;
+            Fluxo.Text = "Fluxo";
+            // 
+            // Ronco
+            // 
+            Ronco.AutoSize = true;
+            Ronco.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Ronco.Location = new System.Drawing.Point(-500, 79);
+            Ronco.Name = "Ronco";
+            Ronco.Size = new System.Drawing.Size(57, 24);
+            Ronco.TabIndex = 12;
+            Ronco.Text = "Ronco";
+            // 
+            // Abdomen
+            // 
+            Abdomen.AutoSize = true;
+            Abdomen.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Abdomen.Location = new System.Drawing.Point(-500, 53);
+            Abdomen.Name = "Abdomen";
+            Abdomen.Size = new System.Drawing.Size(81, 24);
+            Abdomen.TabIndex = 11;
+            Abdomen.Text = "Abdomen";
+            // 
+            // SaturacaoO2
+            // 
+            SaturacaoO2.AutoSize = true;
+            SaturacaoO2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            SaturacaoO2.Location = new System.Drawing.Point(-500, 105);
+            SaturacaoO2.Name = "SaturacaoO2";
+            SaturacaoO2.Size = new System.Drawing.Size(111, 24);
+            SaturacaoO2.TabIndex = 13;
+            SaturacaoO2.Text = "Saturacao O2";
             // 
             // painelTelaGl
             // 
@@ -1007,10 +1011,10 @@
             painelTelaGl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             painelTelaGl.Controls.Add(hScrollBar1);
             painelTelaGl.Dock = System.Windows.Forms.DockStyle.Bottom;
-            painelTelaGl.Location = new System.Drawing.Point(0, 690);
+            painelTelaGl.Location = new System.Drawing.Point(0, 689);
             painelTelaGl.Margin = new System.Windows.Forms.Padding(0);
             painelTelaGl.Name = "painelTelaGl";
-            painelTelaGl.Size = new System.Drawing.Size(1006, 31);
+            painelTelaGl.Size = new System.Drawing.Size(1006, 32);
             painelTelaGl.TabIndex = 52;
             // 
             // painelComando
@@ -1030,7 +1034,7 @@
             // 
             // qtdGraficos
             // 
-            qtdGraficos.Location = new System.Drawing.Point(549, 3);
+            qtdGraficos.Location = new System.Drawing.Point(472, 3);
             qtdGraficos.Name = "qtdGraficos";
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
@@ -1060,87 +1064,89 @@
 
         #endregion
 
-        private System.Windows.Forms.HScrollBar hScrollBar1;
-        private System.Windows.Forms.TextBox ptsEmTela;
-        private System.Windows.Forms.TextBox inicioTela;
-        private System.Windows.Forms.TextBox fimTela;
-        private System.Windows.Forms.ComboBox tempoEmTela;
-        private System.Windows.Forms.ComboBox velocidadeScroll;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.Label Canula;
-        private System.Windows.Forms.Label Fluxo;
-        private System.Windows.Forms.Label Ronco;
-        private System.Windows.Forms.Label Abdomen;
-        private System.Windows.Forms.Label SaturacaoO2;
-        private System.Windows.Forms.Button Play;
-        private System.Windows.Forms.Panel painelExames;
-        private System.Windows.Forms.Panel painelTelaGl;
-        private System.Windows.Forms.Panel painelComando;
-        private System.Windows.Forms.TextBox qtdGraficos;
-        public SharpGL.OpenGLControl openglControl1;
-        private System.Windows.Forms.Button minusSatu;
-        private System.Windows.Forms.Button plusSatu;
-        private System.Windows.Forms.Button minusRonco;
-        private System.Windows.Forms.Button plusRonco;
-        private System.Windows.Forms.Button minusAbdomen;
-        private System.Windows.Forms.Button plusAbdomen;
-        private System.Windows.Forms.Button minusFluxo;
-        private System.Windows.Forms.Button plusFluxo;
-        private System.Windows.Forms.Button minusCanula;
-        private System.Windows.Forms.Button plusCanula;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button31;
-        private System.Windows.Forms.Button button32;
-        private System.Windows.Forms.Button button33;
-        private System.Windows.Forms.Button button34;
-        private System.Windows.Forms.Button button35;
-        private System.Windows.Forms.Button button36;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button13;
-        private System.Windows.Forms.Button button14;
-        private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.Button button16;
-        private System.Windows.Forms.Button button17;
-        private System.Windows.Forms.Button button18;
-        private System.Windows.Forms.Button button19;
-        private System.Windows.Forms.Button button20;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button button21;
-        private System.Windows.Forms.Button button22;
-        private System.Windows.Forms.Button button23;
-        private System.Windows.Forms.Button button24;
-        private System.Windows.Forms.Button button25;
-        private System.Windows.Forms.Button button26;
-        private System.Windows.Forms.Button button27;
-        private System.Windows.Forms.Button button28;
-        private System.Windows.Forms.Button button29;
-        private System.Windows.Forms.Button button30;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
+        public static System.Windows.Forms.HScrollBar hScrollBar1;
+        public static System.Windows.Forms.TextBox ptsEmTela;
+        public static System.Windows.Forms.TextBox inicioTela;
+        public static System.Windows.Forms.TextBox fimTela;
+        public static System.Windows.Forms.ComboBox tempoEmTela;
+        public static System.Windows.Forms.ComboBox velocidadeScroll;
+        public static System.Windows.Forms.ComboBox comboBox3;
+        public static System.Windows.Forms.Label Canula;
+        public static System.Windows.Forms.Label Fluxo;
+        public static System.Windows.Forms.Label Ronco;
+        public static System.Windows.Forms.Label Abdomen;
+        public static System.Windows.Forms.Label SaturacaoO2;
+        public static System.Windows.Forms.Button Play;
+        public static System.Windows.Forms.Panel painelExames;
+        public static System.Windows.Forms.Panel painelTelaGl;
+        public static System.Windows.Forms.Panel painelComando;
+        public static System.Windows.Forms.TextBox qtdGraficos;
+        public static SharpGL.OpenGLControl openglControl1;
+        public static System.Windows.Forms.Button minusSatu;
+        public static System.Windows.Forms.Button plusSatu;
+        public static System.Windows.Forms.Button minusRonco;
+        public static System.Windows.Forms.Button plusRonco;
+        public static System.Windows.Forms.Button minusAbdomen;
+        public static System.Windows.Forms.Button plusAbdomen;
+        public static System.Windows.Forms.Button minusFluxo;
+        public static System.Windows.Forms.Button plusFluxo;
+        public static System.Windows.Forms.Button minusCanula;
+        public static System.Windows.Forms.Button plusCanula;
+        public static System.Windows.Forms.Button minusLb10;
+        public static System.Windows.Forms.Button plusLb10;
+        public static System.Windows.Forms.Button minusLb9;
+        public static System.Windows.Forms.Button plusLb9;
+        public static System.Windows.Forms.Button minusLb8;
+        public static System.Windows.Forms.Button plusLb8;
+        public static System.Windows.Forms.Button plusLb7;
+        public static System.Windows.Forms.Button minusLb7;
+        public static System.Windows.Forms.Button minusLb6;
+        public static System.Windows.Forms.Button plusLb6;
+        public static System.Windows.Forms.Label label6;
+        public static System.Windows.Forms.Label label7;
+        public static System.Windows.Forms.Label label8;
+        public static System.Windows.Forms.Label label9;
+        public static System.Windows.Forms.Label label10;
+        public static System.Windows.Forms.Button minusLb23;
+        public static System.Windows.Forms.Button plusLb23;
+        public static System.Windows.Forms.Button minusLb22;
+        public static System.Windows.Forms.Button plusLb22;
+        public static System.Windows.Forms.Button minusLb21;
+        public static System.Windows.Forms.Button plusLb21;
+        public static System.Windows.Forms.Label label21;
+        public static System.Windows.Forms.Label label22;
+        public static System.Windows.Forms.Label label23;
+        public static System.Windows.Forms.Button minusLb20;
+        public static System.Windows.Forms.Button plusLb20;
+        public static System.Windows.Forms.Button minusLb19;
+        public static System.Windows.Forms.Button plusLb19;
+        public static System.Windows.Forms.Button minusLb18;
+        public static System.Windows.Forms.Button plusLb18;
+        public static System.Windows.Forms.Button plusLb17;
+        public static System.Windows.Forms.Button minusLb17;
+        public static System.Windows.Forms.Button minusLb16;
+        public static System.Windows.Forms.Button plusLb16;
+        public static System.Windows.Forms.Label label16;
+        public static System.Windows.Forms.Label label17;
+        public static System.Windows.Forms.Label label18;
+        public static System.Windows.Forms.Label label19;
+        public static System.Windows.Forms.Label label20;
+        public static System.Windows.Forms.Button minusLb15;
+        public static System.Windows.Forms.Button plusLb15;
+        public static System.Windows.Forms.Button minusLb14;
+        public static System.Windows.Forms.Button plusLb14;
+        public static System.Windows.Forms.Button minusLb13;
+        public static System.Windows.Forms.Button plusLb13;
+        public static System.Windows.Forms.Button plusLb12;
+        public static System.Windows.Forms.Button minusLb12;
+        public static System.Windows.Forms.Button minusLb11;
+        public static System.Windows.Forms.Button plusLb11;
+        public static System.Windows.Forms.Label label11;
+        public static System.Windows.Forms.Label label12;
+        public static System.Windows.Forms.Label label13;
+        public static System.Windows.Forms.Label label14;
+        public static System.Windows.Forms.Label label15;
+
+
     }
 }

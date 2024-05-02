@@ -8,9 +8,8 @@ using SharpGL;
 using System.Runtime.InteropServices;
 using Size = System.Drawing.Size;
 using Point = System.Drawing.Point;
-using System.Data;
 using System.Text.RegularExpressions;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
+using PlotagemOpenGL.auxi;
 
 namespace PlotagemOpenGL
 {
@@ -20,12 +19,82 @@ namespace PlotagemOpenGL
         Plotagem plotagem;
 
         private Size formOriginalSize;
+        private Size painelOriginalSize;
 
         private Rectangle comando;
         private Rectangle exExam;
         private Rectangle telaGl;
-
         private Rectangle OGLS;
+
+        private Rectangle can;
+        private Rectangle btPlusCan;
+        private Rectangle btMinusCan;
+        private Rectangle flux;
+        private Rectangle btPlusFlux;
+        private Rectangle btMinusFlux;
+        private Rectangle ronc;
+        private Rectangle btPlusRonc;
+        private Rectangle btMinusRonc;
+        private Rectangle abdo;
+        private Rectangle btPlusAbdo;
+        private Rectangle btMinusAbdo;
+        private Rectangle sat;
+        private Rectangle btPlusSat;
+        private Rectangle btMinusSat;
+        private Rectangle lb6;
+        private Rectangle lb7;
+        private Rectangle lb8;
+        private Rectangle lb9;
+        private Rectangle lb10;
+        private Rectangle lb11;
+        private Rectangle lb12;
+        private Rectangle lb13;
+        private Rectangle lb14;
+        private Rectangle lb15;
+        private Rectangle lb16;
+        private Rectangle lb17;
+        private Rectangle lb18;
+        private Rectangle lb19;
+        private Rectangle lb20;
+        private Rectangle lb21;
+        private Rectangle lb22;
+        private Rectangle lb23;
+        private Rectangle btPlusLb6;
+        private Rectangle btMinusLb6;
+        private Rectangle btPlusLb7;
+        private Rectangle btMinusLb7;
+        private Rectangle btPlusLb8;
+        private Rectangle btMinusLb8;
+        private Rectangle btPlusLb9;
+        private Rectangle btMinusLb9;
+        private Rectangle btPlusLb10;
+        private Rectangle btMinusLb10;
+        private Rectangle btPlusLb11;
+        private Rectangle btMinusLb11;
+        private Rectangle btPlusLb12;
+        private Rectangle btMinusLb12;
+        private Rectangle btPlusLb13;
+        private Rectangle btMinusLb13;
+        private Rectangle btPlusLb14;
+        private Rectangle btMinusLb14;
+        private Rectangle btPlusLb15;
+        private Rectangle btMinusLb15;
+        private Rectangle btPlusLb16;
+        private Rectangle btMinusLb16;
+        private Rectangle btPlusLb17;
+        private Rectangle btMinusLb17;
+        private Rectangle btPlusLb18;
+        private Rectangle btMinusLb18;
+        private Rectangle btPlusLb19;
+        private Rectangle btMinusLb19;
+        private Rectangle btPlusLb20;
+        private Rectangle btMinusLb20;
+        private Rectangle btPlusLb21;
+        private Rectangle btMinusLb21;
+        private Rectangle btPlusLb22;
+        private Rectangle btMinusLb22;
+        private Rectangle btPlusLb23;
+        private Rectangle btMinusLb23;
 
         public static Point? prevPosition = null;
         public static ToolTip tooltip = new ToolTip();
@@ -58,37 +127,111 @@ namespace PlotagemOpenGL
         {
             InitializeComponent();
             InitializeDedicatedGraphics();
-
+            Canais.LerCanais();
             Leitura.LerArquivo();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
+            this.Resize += Painel_resiz;
             formOriginalSize = this.Size;
+            painelOriginalSize = painelExames.Size;
             UpdateStyles();
             qtdGraficos.Text = "1";
+
             comando = new Rectangle(painelComando.Location, painelComando.Size);
             exExam = new Rectangle(painelExames.Location, painelExames.Size);
             telaGl = new Rectangle(painelTelaGl.Location, painelTelaGl.Size);
             OGLS = new Rectangle(openglControl1.Location, openglControl1.Size);
+
+            can = new Rectangle(Canula.Location, Canula.Size);
+            btPlusCan = new Rectangle(plusCanula.Location, plusCanula.Size);
+            btMinusCan = new Rectangle(minusCanula.Location, minusCanula.Size);
+
+            flux = new Rectangle(Fluxo.Location, Fluxo.Size);
+            btPlusFlux = new Rectangle(plusFluxo.Location, plusFluxo.Size);
+            btMinusFlux = new Rectangle(minusFluxo.Location, minusFluxo.Size);
+
+            ronc = new Rectangle(Ronco.Location, Ronco.Size);
+            btPlusRonc = new Rectangle(plusRonco.Location, plusRonco.Size);
+            btMinusRonc = new Rectangle(minusRonco.Location, minusRonco.Size);
+
+            abdo = new Rectangle(Abdomen.Location, Abdomen.Size);
+            btPlusAbdo = new Rectangle(plusAbdomen.Location, plusAbdomen.Size);
+            btMinusAbdo = new Rectangle(minusAbdomen.Location, minusAbdomen.Size);
+
+            sat = new Rectangle(SaturacaoO2.Location, SaturacaoO2.Size);
+            btPlusSat = new Rectangle(plusSatu.Location, plusSatu.Size);
+            btMinusSat = new Rectangle(minusSatu.Location, minusSatu.Size);
+
+            lb6 = new Rectangle(label6.Location, label6.Size);
+            lb7 = new Rectangle(label7.Location, label7.Size);
+            lb8 = new Rectangle(label8.Location, label8.Size);
+            lb9 = new Rectangle(label9.Location, label9.Size);
+            lb10 = new Rectangle(label10.Location, label10.Size);
+            lb11 = new Rectangle(label11.Location, label11.Size);
+            lb12 = new Rectangle(label12.Location, label12.Size);
+            lb13 = new Rectangle(label13.Location, label13.Size);
+            lb14 = new Rectangle(label14.Location, label14.Size);
+            lb15 = new Rectangle(label15.Location, label15.Size);
+            lb16 = new Rectangle(label16.Location, label16.Size);
+            lb17 = new Rectangle(label17.Location, label17.Size);
+            lb18 = new Rectangle(label18.Location, label18.Size);
+            lb19 = new Rectangle(label19.Location, label19.Size);
+            lb20 = new Rectangle(label20.Location, label20.Size);
+            lb21 = new Rectangle(label21.Location, label21.Size);
+            lb22 = new Rectangle(label22.Location, label22.Size);
+            lb23 = new Rectangle(label23.Location, label23.Size);
+
+            btPlusLb6 = new Rectangle(plusLb6.Location, plusLb6.Size);
+            btPlusLb7 = new Rectangle(plusLb7.Location, plusLb7.Size);
+            btPlusLb8 = new Rectangle(plusLb8.Location, plusLb8.Size);
+            btPlusLb9 = new Rectangle(plusLb9.Location, plusLb9.Size);
+            btPlusLb10 = new Rectangle(plusLb10.Location, plusLb10.Size);
+            btPlusLb11 = new Rectangle(plusLb11.Location, plusLb11.Size);
+            btPlusLb12 = new Rectangle(plusLb12.Location, plusLb12.Size);
+            btPlusLb13 = new Rectangle(plusLb13.Location, plusLb13.Size);
+            btPlusLb14 = new Rectangle(plusLb14.Location, plusLb14.Size);
+            btPlusLb15 = new Rectangle(plusLb15.Location, plusLb15.Size);
+            btPlusLb16 = new Rectangle(plusLb16.Location, plusLb16.Size);
+            btPlusLb17 = new Rectangle(plusLb17.Location, plusLb17.Size);
+            btPlusLb18 = new Rectangle(plusLb18.Location, plusLb18.Size);
+            btPlusLb19 = new Rectangle(plusLb19.Location, plusLb19.Size);
+            btPlusLb20 = new Rectangle(plusLb20.Location, plusLb20.Size);
+            btPlusLb21 = new Rectangle(plusLb21.Location, plusLb21.Size);
+            btPlusLb22 = new Rectangle(plusLb22.Location, plusLb22.Size);
+            btPlusLb23 = new Rectangle(plusLb23.Location, plusLb23.Size);
+
+            btMinusLb6 = new Rectangle(minusLb6.Location, minusLb6.Size);
+            btMinusLb7 = new Rectangle(minusLb7.Location, minusLb7.Size);
+            btMinusLb8 = new Rectangle(minusLb8.Location, minusLb8.Size);
+            btMinusLb9 = new Rectangle(minusLb9.Location, minusLb9.Size);
+            btMinusLb10 = new Rectangle(minusLb10.Location, minusLb10.Size);
+            btMinusLb11 = new Rectangle(minusLb11.Location, minusLb11.Size);
+            btMinusLb12 = new Rectangle(minusLb12.Location, minusLb12.Size);
+            btMinusLb13 = new Rectangle(minusLb13.Location, minusLb13.Size);
+            btMinusLb14 = new Rectangle(minusLb14.Location, minusLb14.Size);
+            btMinusLb15 = new Rectangle(minusLb15.Location, minusLb15.Size);
+            btMinusLb16 = new Rectangle(minusLb16.Location, minusLb16.Size);
+            btMinusLb17 = new Rectangle(minusLb17.Location, minusLb17.Size);
+            btMinusLb18 = new Rectangle(minusLb18.Location, minusLb18.Size);
+            btMinusLb19 = new Rectangle(minusLb19.Location, minusLb19.Size);
+            btMinusLb20 = new Rectangle(minusLb20.Location, minusLb20.Size);
+            btMinusLb21 = new Rectangle(minusLb21.Location, minusLb21.Size);
+            btMinusLb22 = new Rectangle(minusLb22.Location, minusLb22.Size);
+            btMinusLb23 = new Rectangle(minusLb23.Location, minusLb23.Size);
+
             openglControl1.Focus();
-            //openglControl1.KeyDown += TelaPlotagem_KeyDown;
 
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
+            GlobVar.sizePainelExams.X = painelExames.Width;
+            GlobVar.sizePainelExams.Y = painelExames.Height;
+
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
-            //Play.PerformClick();
-            //InitializeGLControl();
-            //this.WindowState = FormWindowState.Maximized;
-            //var size = Screen.PrimaryScreen.WorkingArea.Size;
-            //var glSize = openglControl1.Size;
-
-            //ClientSize = new System.Drawing.Size(size.Width, size.Height);
-            //this.MaximizeBox = false;
         }
         private void resize_Control(Control c, Rectangle r)
         {
-
             float xRatio = (float)(this.Width) / (float)(formOriginalSize.Width);
             float yRatio = (float)(this.Height) / (float)(formOriginalSize.Height);
             int newX = (int)(r.X * xRatio);
@@ -100,8 +243,8 @@ namespace PlotagemOpenGL
         }
         private void painel_Resize_Control(Control c, Rectangle r)
         {
-            float xRatio = (float)(painelExames.Width) / (float)(formOriginalSize.Width);
-            float yRatio = (float)(painelExames.Height) / (float)(formOriginalSize.Height);
+            float xRatio = (float)(painelExames.Width) / (float)(painelOriginalSize.Width);
+            float yRatio = (float)(painelExames.Height) / (float)(painelOriginalSize.Height);
             int newX = (int)(r.X * xRatio);
             int newY = (int)(r.Y * yRatio);
             int newWidth = (int)(r.Width * xRatio);
@@ -120,6 +263,91 @@ namespace PlotagemOpenGL
 
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
+
+            GlobVar.sizePainelExams.X = painelExames.Width;
+            GlobVar.sizePainelExams.Y = painelExames.Height;
+        }
+        private void Painel_resiz(object sender, EventArgs e)
+        {
+
+            painel_Resize_Control(Canula, can);
+            painel_Resize_Control(plusCanula, btPlusCan);
+            painel_Resize_Control(minusCanula, btMinusCan);
+
+            painel_Resize_Control(Fluxo, flux);
+            painel_Resize_Control(plusFluxo, btPlusFlux);
+            painel_Resize_Control(minusFluxo, btMinusFlux);
+
+            painel_Resize_Control(Ronco, ronc);
+            painel_Resize_Control(plusRonco, btPlusRonc);
+            painel_Resize_Control(minusRonco, btMinusRonc);
+
+            painel_Resize_Control(Abdomen, abdo);
+            painel_Resize_Control(plusAbdomen, btPlusAbdo);
+            painel_Resize_Control(minusAbdomen, btMinusAbdo);
+
+            painel_Resize_Control(SaturacaoO2, sat);
+            painel_Resize_Control(plusSatu, btPlusSat);
+            painel_Resize_Control(minusSatu, btMinusSat);
+
+            painel_Resize_Control(label6, lb6);
+            painel_Resize_Control(label7, lb7);
+            painel_Resize_Control(label8, lb8);
+            painel_Resize_Control(label9, lb9);
+            painel_Resize_Control(label10, lb10);
+            painel_Resize_Control(label11, lb11);
+            painel_Resize_Control(label12, lb12);
+            painel_Resize_Control(label13, lb13);
+            painel_Resize_Control(label14, lb14);
+            painel_Resize_Control(label15, lb15);
+            painel_Resize_Control(label16, lb16);
+            painel_Resize_Control(label17, lb17);
+            painel_Resize_Control(label18, lb18);
+            painel_Resize_Control(label19, lb19);
+            painel_Resize_Control(label20, lb20);
+            painel_Resize_Control(label21, lb21);
+            painel_Resize_Control(label22, lb22);
+            painel_Resize_Control(label23, lb23);
+
+            painel_Resize_Control(plusLb6, btPlusLb6);
+            painel_Resize_Control(plusLb7, btPlusLb7);
+            painel_Resize_Control(plusLb8, btPlusLb8);
+            painel_Resize_Control(plusLb9, btPlusLb9);
+            painel_Resize_Control(plusLb10, btPlusLb10);
+            painel_Resize_Control(plusLb11, btPlusLb11);
+            painel_Resize_Control(plusLb12, btPlusLb12);
+            painel_Resize_Control(plusLb13, btPlusLb13);
+            painel_Resize_Control(plusLb14, btPlusLb14);
+            painel_Resize_Control(plusLb15, btPlusLb15);
+            painel_Resize_Control(plusLb16, btPlusLb16);
+            painel_Resize_Control(plusLb17, btPlusLb17);
+            painel_Resize_Control(plusLb18, btPlusLb18);
+            painel_Resize_Control(plusLb19, btPlusLb19);
+            painel_Resize_Control(plusLb20, btPlusLb20);
+            painel_Resize_Control(plusLb21, btPlusLb21);
+            painel_Resize_Control(plusLb22, btPlusLb22);
+            painel_Resize_Control(plusLb23, btPlusLb23);
+
+            painel_Resize_Control(minusLb6, btMinusLb6);
+            painel_Resize_Control(minusLb7, btMinusLb7);
+            painel_Resize_Control(minusLb8, btMinusLb8);
+            painel_Resize_Control(minusLb9, btMinusLb9);
+            painel_Resize_Control(minusLb10, btMinusLb10);
+            painel_Resize_Control(minusLb11, btMinusLb11);
+            painel_Resize_Control(minusLb12, btMinusLb12);
+            painel_Resize_Control(minusLb13, btMinusLb13);
+            painel_Resize_Control(minusLb14, btMinusLb14);
+            painel_Resize_Control(minusLb15, btMinusLb15);
+            painel_Resize_Control(minusLb16, btMinusLb16);
+            painel_Resize_Control(minusLb17, btMinusLb17);
+            painel_Resize_Control(minusLb18, btMinusLb18);
+            painel_Resize_Control(minusLb19, btMinusLb19);
+            painel_Resize_Control(minusLb20, btMinusLb20);
+            painel_Resize_Control(minusLb21, btMinusLb21);
+            painel_Resize_Control(minusLb22, btMinusLb22);
+            painel_Resize_Control(minusLb23, btMinusLb23);
+
+
         }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e) { }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
@@ -149,8 +377,12 @@ namespace PlotagemOpenGL
             }
             else
             {
-
                 int alturaTela = (int)openglControl1.Height;
+
+                Canais.RealocLabel(qtdGrafics, 24);
+                Canais.RealocButton(qtdGrafics, 13);
+                Canais.quantidadeGraf(qtdGrafics);
+
 
                 this.gl = openglControl1.OpenGL;
                 plotagem = new Plotagem(gl);
@@ -210,8 +442,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaCanula += 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
         }
         private void minusCanula_Click(object sender, EventArgs e)
@@ -222,10 +452,9 @@ namespace PlotagemOpenGL
             GlobVar.escalaCanula -= 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
         }
+
         private void plusFluxo_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -233,8 +462,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaFluxo += 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
@@ -245,11 +472,10 @@ namespace PlotagemOpenGL
             GlobVar.escalaFluxo -= 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
+
         private void plusAbdomen_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -257,8 +483,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaAbdomen += 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
@@ -269,11 +493,10 @@ namespace PlotagemOpenGL
             GlobVar.escalaAbdomen -= 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
+
         private void plusRonco_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -281,8 +504,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaRonco += 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
@@ -293,11 +514,10 @@ namespace PlotagemOpenGL
             GlobVar.escalaRonco -= 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
+
         private void plusSatu_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -305,8 +525,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaSatO2 += 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
@@ -317,8 +535,6 @@ namespace PlotagemOpenGL
             GlobVar.escalaSatO2 -= 0.1f;
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             gl.Translate(0, 0, 1);
 
         }
@@ -395,7 +611,7 @@ namespace PlotagemOpenGL
             }
 
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
-            GlobVar.saltoTelas = GlobVar.tmpEmTela - 50;
+            GlobVar.saltoTelas = GlobVar.tmpEmTela;
             GlobVar.inicioTela = 0;
             GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
         }
@@ -471,6 +687,7 @@ namespace PlotagemOpenGL
 
 
         public static Vector2 sizeOpenGl;
+        public static Vector2 sizePainelExams;
 
         public static int maximaVect = 2000;
         public static int indice = 0;
