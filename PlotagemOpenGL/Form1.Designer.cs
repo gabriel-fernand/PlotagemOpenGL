@@ -1,4 +1,6 @@
-﻿namespace PlotagemOpenGL
+﻿using Accord.IO;
+
+namespace PlotagemOpenGL
 {
     partial class Tela_Plotagem
     {
@@ -35,11 +37,11 @@
             tempoEmTela = new System.Windows.Forms.ComboBox();
             velocidadeScroll = new System.Windows.Forms.ComboBox();
             comboBox3 = new System.Windows.Forms.ComboBox();
-            Canula = new System.Windows.Forms.Label();
-            Fluxo = new System.Windows.Forms.Label();
-            Ronco = new System.Windows.Forms.Label();
-            Abdomen = new System.Windows.Forms.Label();
-            SaturacaoO2 = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
             Play = new System.Windows.Forms.Button();
             openglControl1 = new SharpGL.OpenGLControl();
             painelExames = new System.Windows.Forms.Panel();
@@ -97,16 +99,16 @@
             label8 = new System.Windows.Forms.Label();
             label9 = new System.Windows.Forms.Label();
             label10 = new System.Windows.Forms.Label();
-            minusSatu = new System.Windows.Forms.Button();
-            plusSatu = new System.Windows.Forms.Button();
-            minusRonco = new System.Windows.Forms.Button();
-            plusRonco = new System.Windows.Forms.Button();
-            minusAbdomen = new System.Windows.Forms.Button();
-            plusAbdomen = new System.Windows.Forms.Button();
-            minusFluxo = new System.Windows.Forms.Button();
-            plusFluxo = new System.Windows.Forms.Button();
-            minusCanula = new System.Windows.Forms.Button();
-            plusCanula = new System.Windows.Forms.Button();
+            minusLb5 = new System.Windows.Forms.Button();
+            plusLb5 = new System.Windows.Forms.Button();
+            minusLb4 = new System.Windows.Forms.Button();
+            plusLb4 = new System.Windows.Forms.Button();
+            minusLb3 = new System.Windows.Forms.Button();
+            plusLb3 = new System.Windows.Forms.Button();
+            minusLb2 = new System.Windows.Forms.Button();
+            plusLb2 = new System.Windows.Forms.Button();
+            minusLb1 = new System.Windows.Forms.Button();
+            plusLb1 = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
             qtdGraficos = new System.Windows.Forms.TextBox();
@@ -127,9 +129,11 @@
             // 
             // ptsEmTela
             // 
+            ptsEmTela.Anchor = System.Windows.Forms.AnchorStyles.None;
             ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ptsEmTela.Location = new System.Drawing.Point(3, 3);
+            ptsEmTela.Location = new System.Drawing.Point(10, 5);
             ptsEmTela.Name = "ptsEmTela";
+            ptsEmTela.ReadOnly = true;
             ptsEmTela.Size = new System.Drawing.Size(81, 25);
             ptsEmTela.TabIndex = 2;
             ptsEmTela.Text = "ptsEmTela";
@@ -160,6 +164,7 @@
             // tempoEmTela
             // 
             tempoEmTela.DisplayMember = "8s";
+            tempoEmTela.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             tempoEmTela.FlatStyle = System.Windows.Forms.FlatStyle.System;
             tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             tempoEmTela.FormatString = "N1";
@@ -170,12 +175,12 @@
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
             tempoEmTela.TabIndex = 6;
-            tempoEmTela.Text = "30 seg";
             tempoEmTela.SelectedIndexChanged += tempoEmTela_SelectedIndexChanged;
             // 
             // velocidadeScroll
             // 
             velocidadeScroll.DisplayMember = "1.0x";
+            velocidadeScroll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             velocidadeScroll.FlatStyle = System.Windows.Forms.FlatStyle.System;
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.IntegralHeight = false;
@@ -184,7 +189,6 @@
             velocidadeScroll.Name = "velocidadeScroll";
             velocidadeScroll.Size = new System.Drawing.Size(63, 28);
             velocidadeScroll.TabIndex = 7;
-            velocidadeScroll.Text = "1.0x";
             velocidadeScroll.SelectedIndexChanged += velocidadeScroll_SelectedIndexChanged;
             // 
             // comboBox3
@@ -197,7 +201,56 @@
             comboBox3.TabIndex = 8;
             comboBox3.Text = "Series";
             comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
-            
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label1.Location = new System.Drawing.Point(-500, 1);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(52, 24);
+            label1.TabIndex = 9;
+            label1.Text = "label1";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label2.Location = new System.Drawing.Point(-500, 27);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(52, 24);
+            label2.TabIndex = 10;
+            label2.Text = "label2";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label4.Location = new System.Drawing.Point(-500, 79);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(52, 24);
+            label4.TabIndex = 12;
+            label4.Text = "label4";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label3.Location = new System.Drawing.Point(-500, 53);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(52, 24);
+            label3.TabIndex = 11;
+            label3.Text = "label3";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label5.Location = new System.Drawing.Point(-500, 105);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(52, 24);
+            label5.TabIndex = 13;
+            label5.Text = "label5";
             // 
             // Play
             // 
@@ -278,21 +331,21 @@
             painelExames.Controls.Add(label8);
             painelExames.Controls.Add(label9);
             painelExames.Controls.Add(label10);
-            painelExames.Controls.Add(minusSatu);
-            painelExames.Controls.Add(plusSatu);
-            painelExames.Controls.Add(minusRonco);
-            painelExames.Controls.Add(plusRonco);
-            painelExames.Controls.Add(minusAbdomen);
-            painelExames.Controls.Add(plusAbdomen);
-            painelExames.Controls.Add(minusFluxo);
-            painelExames.Controls.Add(plusFluxo);
-            painelExames.Controls.Add(minusCanula);
-            painelExames.Controls.Add(plusCanula);
-            painelExames.Controls.Add(Canula);
-            painelExames.Controls.Add(Fluxo);
-            painelExames.Controls.Add(Abdomen);
-            painelExames.Controls.Add(Ronco);
-            painelExames.Controls.Add(SaturacaoO2);
+            painelExames.Controls.Add(minusLb5);
+            painelExames.Controls.Add(plusLb5);
+            painelExames.Controls.Add(minusLb4);
+            painelExames.Controls.Add(plusLb4);
+            painelExames.Controls.Add(minusLb3);
+            painelExames.Controls.Add(plusLb3);
+            painelExames.Controls.Add(minusLb2);
+            painelExames.Controls.Add(plusLb2);
+            painelExames.Controls.Add(minusLb1);
+            painelExames.Controls.Add(plusLb1);
+            painelExames.Controls.Add(label1);
+            painelExames.Controls.Add(label2);
+            painelExames.Controls.Add(label3);
+            painelExames.Controls.Add(label4);
+            painelExames.Controls.Add(label5);
             painelExames.Location = new System.Drawing.Point(2, 79);
             painelExames.Name = "painelExames";
             painelExames.Size = new System.Drawing.Size(172, 599);
@@ -307,6 +360,7 @@
             minusLb23.TabIndex = 77;
             minusLb23.Text = "-";
             minusLb23.UseVisualStyleBackColor = true;
+            minusLb23.Click += minusLb23_Click;
             // 
             // label23
             // 
@@ -327,6 +381,7 @@
             plusLb23.TabIndex = 76;
             plusLb23.Text = "+";
             plusLb23.UseVisualStyleBackColor = true;
+            plusLb23.Click += plusLb23_Click;
             // 
             // minusLb22
             // 
@@ -337,6 +392,7 @@
             minusLb22.TabIndex = 75;
             minusLb22.Text = "-";
             minusLb22.UseVisualStyleBackColor = true;
+            minusLb22.Click += minusLb22_Click;
             // 
             // plusLb22
             // 
@@ -347,6 +403,7 @@
             plusLb22.TabIndex = 74;
             plusLb22.Text = "+";
             plusLb22.UseVisualStyleBackColor = true;
+            plusLb22.Click += plusLb22_Click;
             // 
             // minusLb21
             // 
@@ -357,6 +414,7 @@
             minusLb21.TabIndex = 73;
             minusLb21.Text = "-";
             minusLb21.UseVisualStyleBackColor = true;
+            minusLb21.Click += minusLb21_Click;
             // 
             // plusLb21
             // 
@@ -367,6 +425,7 @@
             plusLb21.TabIndex = 72;
             plusLb21.Text = "+";
             plusLb21.UseVisualStyleBackColor = true;
+            plusLb21.Click += plusLb21_Click;
             // 
             // label21
             // 
@@ -397,6 +456,7 @@
             minusLb20.TabIndex = 68;
             minusLb20.Text = "-";
             minusLb20.UseVisualStyleBackColor = true;
+            minusLb20.Click += minusLb20_Click;
             // 
             // plusLb20
             // 
@@ -407,6 +467,7 @@
             plusLb20.TabIndex = 67;
             plusLb20.Text = "+";
             plusLb20.UseVisualStyleBackColor = true;
+            plusLb20.Click += plusLb20_Click;
             // 
             // minusLb19
             // 
@@ -417,6 +478,7 @@
             minusLb19.TabIndex = 66;
             minusLb19.Text = "-";
             minusLb19.UseVisualStyleBackColor = true;
+            minusLb19.Click += minusLb19_Click;
             // 
             // plusLb19
             // 
@@ -427,6 +489,7 @@
             plusLb19.TabIndex = 65;
             plusLb19.Text = "+";
             plusLb19.UseVisualStyleBackColor = true;
+            plusLb19.Click += plusLb19_Click;
             // 
             // minusLb18
             // 
@@ -437,6 +500,7 @@
             minusLb18.TabIndex = 64;
             minusLb18.Text = "-";
             minusLb18.UseVisualStyleBackColor = true;
+            minusLb18.Click += minusLb18_Click;
             // 
             // plusLb18
             // 
@@ -447,6 +511,7 @@
             plusLb18.TabIndex = 63;
             plusLb18.Text = "+";
             plusLb18.UseVisualStyleBackColor = true;
+            plusLb18.Click += plusLb18_Click;
             // 
             // plusLb17
             // 
@@ -457,6 +522,7 @@
             plusLb17.TabIndex = 62;
             plusLb17.Text = "-";
             plusLb17.UseVisualStyleBackColor = true;
+            plusLb17.Click += plusLb17_Click;
             // 
             // minusLb17
             // 
@@ -467,6 +533,7 @@
             minusLb17.TabIndex = 61;
             minusLb17.Text = "+";
             minusLb17.UseVisualStyleBackColor = true;
+            minusLb17.Click += minusLb17_Click;
             // 
             // minusLb16
             // 
@@ -478,6 +545,7 @@
             minusLb16.Text = "-";
             minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb16.UseVisualStyleBackColor = true;
+            minusLb16.Click += minusLb16_Click;
             // 
             // plusLb16
             // 
@@ -489,6 +557,7 @@
             plusLb16.Text = "+";
             plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb16.UseVisualStyleBackColor = true;
+            plusLb16.Click += plusLb16_Click;
             // 
             // label16
             // 
@@ -549,6 +618,7 @@
             minusLb15.TabIndex = 53;
             minusLb15.Text = "-";
             minusLb15.UseVisualStyleBackColor = true;
+            minusLb15.Click += minusLb15_Click;
             // 
             // plusLb15
             // 
@@ -559,6 +629,7 @@
             plusLb15.TabIndex = 52;
             plusLb15.Text = "+";
             plusLb15.UseVisualStyleBackColor = true;
+            plusLb15.Click += plusLb15_Click;
             // 
             // minusLb14
             // 
@@ -569,6 +640,7 @@
             minusLb14.TabIndex = 51;
             minusLb14.Text = "-";
             minusLb14.UseVisualStyleBackColor = true;
+            minusLb14.Click += minusLb14_Click;
             // 
             // plusLb14
             // 
@@ -579,6 +651,7 @@
             plusLb14.TabIndex = 50;
             plusLb14.Text = "+";
             plusLb14.UseVisualStyleBackColor = true;
+            plusLb14.Click += plusLb14_Click;
             // 
             // minusLb13
             // 
@@ -589,6 +662,7 @@
             minusLb13.TabIndex = 49;
             minusLb13.Text = "-";
             minusLb13.UseVisualStyleBackColor = true;
+            minusLb13.Click += minusLb13_Click;
             // 
             // plusLb13
             // 
@@ -599,6 +673,7 @@
             plusLb13.TabIndex = 48;
             plusLb13.Text = "+";
             plusLb13.UseVisualStyleBackColor = true;
+            plusLb13.Click += plusLb13_Click;
             // 
             // plusLb12
             // 
@@ -609,6 +684,7 @@
             plusLb12.TabIndex = 47;
             plusLb12.Text = "-";
             plusLb12.UseVisualStyleBackColor = true;
+            plusLb12.Click += plusLb12_Click;
             // 
             // minusLb12
             // 
@@ -619,6 +695,7 @@
             minusLb12.TabIndex = 46;
             minusLb12.Text = "+";
             minusLb12.UseVisualStyleBackColor = true;
+            minusLb12.Click += minusLb12_Click;
             // 
             // minusLb11
             // 
@@ -630,6 +707,7 @@
             minusLb11.Text = "-";
             minusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb11.UseVisualStyleBackColor = true;
+            minusLb11.Click += minusLb11_Click;
             // 
             // plusLb11
             // 
@@ -641,6 +719,7 @@
             plusLb11.Text = "+";
             plusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb11.UseVisualStyleBackColor = true;
+            plusLb11.Click += plusLb11_Click;
             // 
             // label11
             // 
@@ -701,6 +780,7 @@
             minusLb10.TabIndex = 38;
             minusLb10.Text = "-";
             minusLb10.UseVisualStyleBackColor = true;
+            minusLb10.Click += minusLb10_Click;
             // 
             // plusLb10
             // 
@@ -711,6 +791,7 @@
             plusLb10.TabIndex = 37;
             plusLb10.Text = "+";
             plusLb10.UseVisualStyleBackColor = true;
+            plusLb10.Click += plusLb10_Click;
             // 
             // minusLb9
             // 
@@ -721,6 +802,7 @@
             minusLb9.TabIndex = 36;
             minusLb9.Text = "-";
             minusLb9.UseVisualStyleBackColor = true;
+            minusLb9.Click += minusLb9_Click;
             // 
             // plusLb9
             // 
@@ -731,6 +813,7 @@
             plusLb9.TabIndex = 35;
             plusLb9.Text = "+";
             plusLb9.UseVisualStyleBackColor = true;
+            plusLb9.Click += plusLb9_Click;
             // 
             // minusLb8
             // 
@@ -741,6 +824,7 @@
             minusLb8.TabIndex = 34;
             minusLb8.Text = "-";
             minusLb8.UseVisualStyleBackColor = true;
+            minusLb8.Click += minusLb8_Click;
             // 
             // plusLb8
             // 
@@ -751,6 +835,7 @@
             plusLb8.TabIndex = 33;
             plusLb8.Text = "+";
             plusLb8.UseVisualStyleBackColor = true;
+            plusLb8.Click += plusLb8_Click;
             // 
             // plusLb7
             // 
@@ -761,6 +846,7 @@
             plusLb7.TabIndex = 32;
             plusLb7.Text = "-";
             plusLb7.UseVisualStyleBackColor = true;
+            plusLb7.Click += plusLb7_Click;
             // 
             // minusLb7
             // 
@@ -771,6 +857,7 @@
             minusLb7.TabIndex = 31;
             minusLb7.Text = "+";
             minusLb7.UseVisualStyleBackColor = true;
+            minusLb7.Click += minusLb7_Click;
             // 
             // minusLb6
             // 
@@ -782,6 +869,7 @@
             minusLb6.Text = "-";
             minusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb6.UseVisualStyleBackColor = true;
+            minusLb6.Click += minusLb6_Click;
             // 
             // plusLb6
             // 
@@ -793,6 +881,7 @@
             plusLb6.Text = "+";
             plusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb6.UseVisualStyleBackColor = true;
+            plusLb6.Click += plusLb6_Click;
             // 
             // label6
             // 
@@ -844,166 +933,117 @@
             label10.TabIndex = 28;
             label10.Text = "label10";
             // 
-            // minusSatu
+            // minusLb5
             // 
-            minusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusSatu.Location = new System.Drawing.Point(-500, 117);
-            minusSatu.Name = "minusSatu";
-            minusSatu.Size = new System.Drawing.Size(45, 13);
-            minusSatu.TabIndex = 23;
-            minusSatu.Text = "-";
-            minusSatu.UseVisualStyleBackColor = true;
-            minusSatu.Click += minusSatu_Click;
+            minusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb5.Location = new System.Drawing.Point(-500, 117);
+            minusLb5.Name = "minusLb5";
+            minusLb5.Size = new System.Drawing.Size(45, 13);
+            minusLb5.TabIndex = 23;
+            minusLb5.Text = "-";
+            minusLb5.UseVisualStyleBackColor = true;
+            minusLb5.Click += minusLb5_Click;
             // 
-            // plusSatu
+            // plusLb5
             // 
-            plusSatu.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusSatu.Location = new System.Drawing.Point(-500, 104);
-            plusSatu.Name = "plusSatu";
-            plusSatu.Size = new System.Drawing.Size(45, 13);
-            plusSatu.TabIndex = 22;
-            plusSatu.Text = "+";
-            plusSatu.UseVisualStyleBackColor = true;
-            plusSatu.Click += plusSatu_Click;
+            plusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb5.Location = new System.Drawing.Point(-500, 104);
+            plusLb5.Name = "plusLb5";
+            plusLb5.Size = new System.Drawing.Size(45, 13);
+            plusLb5.TabIndex = 22;
+            plusLb5.Text = "+";
+            plusLb5.UseVisualStyleBackColor = true;
+            plusLb5.Click += plusLb5_Click;
             // 
-            // minusRonco
+            // minusLb4
             // 
-            minusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusRonco.Location = new System.Drawing.Point(-500, 91);
-            minusRonco.Name = "minusRonco";
-            minusRonco.Size = new System.Drawing.Size(45, 13);
-            minusRonco.TabIndex = 21;
-            minusRonco.Text = "-";
-            minusRonco.UseVisualStyleBackColor = true;
-            minusRonco.Click += minusRonco_Click;
+            minusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb4.Location = new System.Drawing.Point(-500, 91);
+            minusLb4.Name = "minusLb4";
+            minusLb4.Size = new System.Drawing.Size(45, 13);
+            minusLb4.TabIndex = 21;
+            minusLb4.Text = "-";
+            minusLb4.UseVisualStyleBackColor = true;
+            minusLb4.Click += minusLb4_Click;
             // 
-            // plusRonco
+            // plusLb4
             // 
-            plusRonco.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusRonco.Location = new System.Drawing.Point(-500, 78);
-            plusRonco.Name = "plusRonco";
-            plusRonco.Size = new System.Drawing.Size(45, 13);
-            plusRonco.TabIndex = 20;
-            plusRonco.Text = "+";
-            plusRonco.UseVisualStyleBackColor = true;
-            plusRonco.Click += plusRonco_Click;
+            plusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb4.Location = new System.Drawing.Point(-500, 78);
+            plusLb4.Name = "plusLb4";
+            plusLb4.Size = new System.Drawing.Size(45, 13);
+            plusLb4.TabIndex = 20;
+            plusLb4.Text = "+";
+            plusLb4.UseVisualStyleBackColor = true;
+            plusLb4.Click += plusLb4_Click;
             // 
-            // minusAbdomen
+            // minusLb3
             // 
-            minusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusAbdomen.Location = new System.Drawing.Point(-500, 65);
-            minusAbdomen.Name = "minusAbdomen";
-            minusAbdomen.Size = new System.Drawing.Size(45, 13);
-            minusAbdomen.TabIndex = 19;
-            minusAbdomen.Text = "-";
-            minusAbdomen.UseVisualStyleBackColor = true;
-            minusAbdomen.Click += minusAbdomen_Click;
+            minusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb3.Location = new System.Drawing.Point(-500, 65);
+            minusLb3.Name = "minusLb3";
+            minusLb3.Size = new System.Drawing.Size(45, 13);
+            minusLb3.TabIndex = 19;
+            minusLb3.Text = "-";
+            minusLb3.UseVisualStyleBackColor = true;
+            minusLb3.Click += minusLb3_Click;
             // 
-            // plusAbdomen
+            // plusLb3
             // 
-            plusAbdomen.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusAbdomen.Location = new System.Drawing.Point(-500, 52);
-            plusAbdomen.Name = "plusAbdomen";
-            plusAbdomen.Size = new System.Drawing.Size(45, 13);
-            plusAbdomen.TabIndex = 18;
-            plusAbdomen.Text = "+";
-            plusAbdomen.UseVisualStyleBackColor = true;
-            plusAbdomen.Click += plusAbdomen_Click;
+            plusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb3.Location = new System.Drawing.Point(-500, 52);
+            plusLb3.Name = "plusLb3";
+            plusLb3.Size = new System.Drawing.Size(45, 13);
+            plusLb3.TabIndex = 18;
+            plusLb3.Text = "+";
+            plusLb3.UseVisualStyleBackColor = true;
+            plusLb3.Click += plusLb3_Click;
             // 
-            // minusFluxo
+            // minusLb2
             // 
-            minusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusFluxo.Location = new System.Drawing.Point(-500, 39);
-            minusFluxo.Name = "minusFluxo";
-            minusFluxo.Size = new System.Drawing.Size(45, 13);
-            minusFluxo.TabIndex = 17;
-            minusFluxo.Text = "-";
-            minusFluxo.UseVisualStyleBackColor = true;
-            minusFluxo.Click += minusFluxo_Click;
+            minusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb2.Location = new System.Drawing.Point(-500, 39);
+            minusLb2.Name = "minusLb2";
+            minusLb2.Size = new System.Drawing.Size(45, 13);
+            minusLb2.TabIndex = 17;
+            minusLb2.Text = "-";
+            minusLb2.UseVisualStyleBackColor = true;
+            minusLb2.Click += minusLb2_Click;
             // 
-            // plusFluxo
+            // plusLb2
             // 
-            plusFluxo.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusFluxo.Location = new System.Drawing.Point(-500, 26);
-            plusFluxo.Name = "plusFluxo";
-            plusFluxo.Size = new System.Drawing.Size(45, 13);
-            plusFluxo.TabIndex = 16;
-            plusFluxo.Text = "+";
-            plusFluxo.UseVisualStyleBackColor = true;
-            plusFluxo.Click += plusFluxo_Click;
+            plusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb2.Location = new System.Drawing.Point(-500, 26);
+            plusLb2.Name = "plusLb2";
+            plusLb2.Size = new System.Drawing.Size(45, 13);
+            plusLb2.TabIndex = 16;
+            plusLb2.Text = "+";
+            plusLb2.UseVisualStyleBackColor = true;
+            plusLb2.Click += plusLb2_Click;
             // 
-            // minusCanula
+            // minusLb1
             // 
-            minusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusCanula.Location = new System.Drawing.Point(-500, 13);
-            minusCanula.Name = "minusCanula";
-            minusCanula.Size = new System.Drawing.Size(45, 13);
-            minusCanula.TabIndex = 15;
-            minusCanula.Text = "-";
-            minusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusCanula.UseVisualStyleBackColor = true;
-            minusCanula.Click += minusCanula_Click;
+            minusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb1.Location = new System.Drawing.Point(-500, 13);
+            minusLb1.Name = "minusLb1";
+            minusLb1.Size = new System.Drawing.Size(45, 13);
+            minusLb1.TabIndex = 15;
+            minusLb1.Text = "-";
+            minusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb1.UseVisualStyleBackColor = true;
+            minusLb1.Click += minusLb1_Click;
             // 
-            // plusCanula
+            // plusLb1
             // 
-            plusCanula.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusCanula.Location = new System.Drawing.Point(-500, 0);
-            plusCanula.Name = "plusCanula";
-            plusCanula.Size = new System.Drawing.Size(45, 13);
-            plusCanula.TabIndex = 14;
-            plusCanula.Text = "+";
-            plusCanula.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusCanula.UseVisualStyleBackColor = true;
-            plusCanula.Click += plusCanula_Click;// 
-            // Canula
-            // 
-            Canula.AutoSize = true;
-            Canula.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Canula.Location = new System.Drawing.Point(-500, 1);
-            Canula.Name = "Canula";
-            Canula.Size = new System.Drawing.Size(61, 24);
-            Canula.TabIndex = 9;
-            Canula.Text = "Canula";
-            // 
-            // Fluxo
-            // 
-            Fluxo.AutoSize = true;
-            Fluxo.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Fluxo.Location = new System.Drawing.Point(-500, 27);
-            Fluxo.Name = "Fluxo";
-            Fluxo.Size = new System.Drawing.Size(49, 24);
-            Fluxo.TabIndex = 10;
-            Fluxo.Text = "Fluxo";
-            // 
-            // Ronco
-            // 
-            Ronco.AutoSize = true;
-            Ronco.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Ronco.Location = new System.Drawing.Point(-500, 79);
-            Ronco.Name = "Ronco";
-            Ronco.Size = new System.Drawing.Size(57, 24);
-            Ronco.TabIndex = 12;
-            Ronco.Text = "Ronco";
-            // 
-            // Abdomen
-            // 
-            Abdomen.AutoSize = true;
-            Abdomen.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            Abdomen.Location = new System.Drawing.Point(-500, 53);
-            Abdomen.Name = "Abdomen";
-            Abdomen.Size = new System.Drawing.Size(81, 24);
-            Abdomen.TabIndex = 11;
-            Abdomen.Text = "Abdomen";
-            // 
-            // SaturacaoO2
-            // 
-            SaturacaoO2.AutoSize = true;
-            SaturacaoO2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            SaturacaoO2.Location = new System.Drawing.Point(-500, 105);
-            SaturacaoO2.Name = "SaturacaoO2";
-            SaturacaoO2.Size = new System.Drawing.Size(111, 24);
-            SaturacaoO2.TabIndex = 13;
-            SaturacaoO2.Text = "Saturacao O2";
+            plusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb1.Location = new System.Drawing.Point(-500, 0);
+            plusLb1.Name = "plusLb1";
+            plusLb1.Size = new System.Drawing.Size(45, 13);
+            plusLb1.TabIndex = 14;
+            plusLb1.Text = "+";
+            plusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb1.UseVisualStyleBackColor = true;
+            plusLb1.Click += plusLb1_Click;
             // 
             // painelTelaGl
             // 
@@ -1064,6 +1104,7 @@
 
         #endregion
 
+
         public static System.Windows.Forms.HScrollBar hScrollBar1;
         public static System.Windows.Forms.TextBox ptsEmTela;
         public static System.Windows.Forms.TextBox inicioTela;
@@ -1071,27 +1112,27 @@
         public static System.Windows.Forms.ComboBox tempoEmTela;
         public static System.Windows.Forms.ComboBox velocidadeScroll;
         public static System.Windows.Forms.ComboBox comboBox3;
-        public static System.Windows.Forms.Label Canula;
-        public static System.Windows.Forms.Label Fluxo;
-        public static System.Windows.Forms.Label Ronco;
-        public static System.Windows.Forms.Label Abdomen;
-        public static System.Windows.Forms.Label SaturacaoO2;
+        public static System.Windows.Forms.Label label1;
+        public static System.Windows.Forms.Label label2;
+        public static System.Windows.Forms.Label label4;
+        public static System.Windows.Forms.Label label3;
+        public static System.Windows.Forms.Label label5;
         public static System.Windows.Forms.Button Play;
         public static System.Windows.Forms.Panel painelExames;
         public static System.Windows.Forms.Panel painelTelaGl;
         public static System.Windows.Forms.Panel painelComando;
         public static System.Windows.Forms.TextBox qtdGraficos;
         public static SharpGL.OpenGLControl openglControl1;
-        public static System.Windows.Forms.Button minusSatu;
-        public static System.Windows.Forms.Button plusSatu;
-        public static System.Windows.Forms.Button minusRonco;
-        public static System.Windows.Forms.Button plusRonco;
-        public static System.Windows.Forms.Button minusAbdomen;
-        public static System.Windows.Forms.Button plusAbdomen;
-        public static System.Windows.Forms.Button minusFluxo;
-        public static System.Windows.Forms.Button plusFluxo;
-        public static System.Windows.Forms.Button minusCanula;
-        public static System.Windows.Forms.Button plusCanula;
+        public static System.Windows.Forms.Button minusLb5;
+        public static System.Windows.Forms.Button plusLb5;
+        public static System.Windows.Forms.Button minusLb4;
+        public static System.Windows.Forms.Button plusLb4;
+        public static System.Windows.Forms.Button minusLb3;
+        public static System.Windows.Forms.Button plusLb3;
+        public static System.Windows.Forms.Button minusLb2;
+        public static System.Windows.Forms.Button plusLb2;
+        public static System.Windows.Forms.Button minusLb1;
+        public static System.Windows.Forms.Button plusLb1;
         public static System.Windows.Forms.Button minusLb10;
         public static System.Windows.Forms.Button plusLb10;
         public static System.Windows.Forms.Button minusLb9;
@@ -1146,7 +1187,6 @@
         public static System.Windows.Forms.Label label13;
         public static System.Windows.Forms.Label label14;
         public static System.Windows.Forms.Label label15;
-
 
     }
 }
