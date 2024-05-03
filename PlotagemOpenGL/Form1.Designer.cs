@@ -135,7 +135,7 @@ namespace PlotagemOpenGL
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.ReadOnly = true;
             ptsEmTela.Size = new System.Drawing.Size(81, 25);
-            ptsEmTela.TabIndex = 2;
+            ptsEmTela.TabIndex = 2; 
             ptsEmTela.Text = "ptsEmTela";
             ptsEmTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -274,6 +274,7 @@ namespace PlotagemOpenGL
             openglControl1.TabIndex = 50;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.MouseMove += openglControl1_MouseMove;
+            openglControl1.Scroll += hScrollBar1_Scroll;
             // 
             // painelExames
             // 
@@ -1103,7 +1104,6 @@ namespace PlotagemOpenGL
         }
 
         #endregion
-
 
         public static System.Windows.Forms.HScrollBar hScrollBar1;
         public static System.Windows.Forms.TextBox ptsEmTela;

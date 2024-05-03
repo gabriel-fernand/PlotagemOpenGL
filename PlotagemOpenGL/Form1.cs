@@ -20,18 +20,27 @@ namespace PlotagemOpenGL
 
         private Size formOriginalSize;
         private Size painelOriginalSize;
+        private Size painelComandoOriginalSize;
 
         private Rectangle comando;
         private Rectangle exExam;
         private Rectangle telaGl;
         private Rectangle OGLS;
 
+        private Rectangle ptTela;
+        private Rectangle inTela;
+        private Rectangle fnTela;
+        private Rectangle tpTela;
+        private Rectangle vlScroll;
+        private Rectangle qtGraf;
+        private Rectangle play;
+        private Rectangle box3;
+
         private Rectangle lb1;
         private Rectangle lb2;
         private Rectangle lb3;
         private Rectangle lb4;
         private Rectangle lb5;
-
         private Rectangle lb6;
         private Rectangle lb7;
         private Rectangle lb8;
@@ -60,7 +69,6 @@ namespace PlotagemOpenGL
         private Rectangle btMinusLb4;
         private Rectangle btPlusLb5;
         private Rectangle btMinusLb5;
-
         private Rectangle btPlusLb6;
         private Rectangle btMinusLb6;
         private Rectangle btPlusLb7;
@@ -133,9 +141,11 @@ namespace PlotagemOpenGL
             Leitura.LerArquivo();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
+            this.Resize += painelComando_Resiz;
             this.Resize += Painel_resiz;
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
+            painelComandoOriginalSize = painelComando.Size;
             UpdateStyles();
             qtdGraficos.Text = "1";
 
@@ -144,26 +154,30 @@ namespace PlotagemOpenGL
             telaGl = new Rectangle(painelTelaGl.Location, painelTelaGl.Size);
             OGLS = new Rectangle(openglControl1.Location, openglControl1.Size);
 
+            ptTela = new Rectangle(ptsEmTela.Location, ptsEmTela.Size);
+            inTela = new Rectangle(inicioTela.Location, inicioTela.Size);
+            fnTela = new Rectangle(fimTela.Location, fimTela.Size);
+            tpTela = new Rectangle(tempoEmTela.Location, tempoEmTela.Size);
+            vlScroll = new Rectangle(velocidadeScroll.Location, velocidadeScroll.Size);
+            qtGraf = new Rectangle(qtdGraficos.Location, qtdGraficos.Size);
+            play = new Rectangle (Play.Location, Play.Size);
+            box3 = new Rectangle(comboBox3.Location, comboBox3.Size);
+
             lb1 = new Rectangle(label1.Location, label1.Size);
             btPlusLb1 = new Rectangle(plusLb1.Location, plusLb1.Size);
             btMinusLb1 = new Rectangle(minusLb1.Location, minusLb1.Size);
-
             lb2 = new Rectangle(label2.Location, label2.Size);
             btPlusLb2 = new Rectangle(plusLb2.Location, plusLb2.Size);
             btMinusLb2 = new Rectangle(minusLb2.Location, minusLb2.Size);
-
             lb3 = new Rectangle(label4.Location, label4.Size);
             btPlusLb3 = new Rectangle(plusLb4.Location, plusLb4.Size);
             btMinusLb3 = new Rectangle(minusLb4.Location, minusLb4.Size);
-
             lb4 = new Rectangle(label3.Location, label3.Size);
             btPlusLb4 = new Rectangle(plusLb3.Location, plusLb3.Size);
             btMinusLb4 = new Rectangle(minusLb3.Location, minusLb3.Size);
-
             lb5 = new Rectangle(label5.Location, label5.Size);
             btPlusLb5 = new Rectangle(plusLb5.Location, plusLb5.Size);
             btMinusLb5 = new Rectangle(minusLb5.Location, minusLb5.Size);
-
             lb6 = new Rectangle(label6.Location, label6.Size);
             lb7 = new Rectangle(label7.Location, label7.Size);
             lb8 = new Rectangle(label8.Location, label8.Size);
@@ -255,6 +269,28 @@ namespace PlotagemOpenGL
             int newHeight = (int)(r.Height * yRatio);
             c.Location = new Point(newX, newY);
             c.Size = new Size(newWidth, newHeight);
+        }
+        private void painelComando_Resize_Control(Control c, Rectangle r)
+        {
+            float xRatio = (float)(painelComando.Width) / (float)(painelComandoOriginalSize.Width);
+            float yRatio = (float)(painelComando.Height) / (float)(painelComandoOriginalSize.Height);
+            int newX = (int)(r.X * xRatio);
+            int newY = (int)(r.Y * yRatio);
+            int newWidth = (int)(r.Width * xRatio);
+            int newHeight = (int)(r.Height * yRatio);
+            c.Location = new Point(newX, newY);
+            //c.Size = new Size(newWidth, newHeight);
+        }
+        private void painelComando_Resiz(object sender, EventArgs e)
+        {
+            painelComando_Resize_Control(ptsEmTela, ptTela);
+            painelComando_Resize_Control(inicioTela, inTela);
+            painelComando_Resize_Control(fimTela, fnTela);
+            painelComando_Resize_Control(tempoEmTela, tpTela);
+            painelComando_Resize_Control(velocidadeScroll, vlScroll);
+            painelComando_Resize_Control(qtdGraficos, qtGraf);
+            painelComando_Resize_Control(Play, play);
+            painelComando_Resize_Control(comboBox3, box3);
         }
 
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
@@ -917,7 +953,7 @@ namespace PlotagemOpenGL
             {
                 case Keys.D:
                     camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                    //if (camera.X > 0 ) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    if (camera.X > 0 ) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                     GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -927,7 +963,7 @@ namespace PlotagemOpenGL
                     break;
                 case Keys.A:
                     camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                    //if (camera.X > 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    if (camera.X > 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                     GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -947,27 +983,35 @@ namespace PlotagemOpenGL
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
-            /*bool isRight = e.NewValue > hScrollBar1.Value;
+            bool isRight = e.NewValue > hScrollBar1.Value;
+
             if (!isRight) // Se estiver indo para a esquerda
             {
-                camera.X -= e.NewValue;
+                camera.X -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
             }
             else // Se estiver indo para a direita
             {
-                camera.X += e.NewValue;
+                camera.X += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
             }
+
             int alturaTela = (int)openglControl1.Height;
             openglControl1.DoRender();
             plotagem.Margem(qtdGrafics, alturaTela);
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(camera.X, 0, 1);*/
-
+            gl.Translate(camera.X, 0, 1);
+            UpdateInicioTela();
         }
 
         private void tempoEmTela_SelectedIndexChanged(object sender, EventArgs e)
@@ -1025,6 +1069,9 @@ namespace PlotagemOpenGL
             string minutosF = tempoF.Minutes.ToString().PadLeft(2, '0');
             string segundosF = tempoF.Seconds.ToString().PadLeft(2, '0');
             fimTela.Text = $"{horasF}:{minutosF}:{segundosF}";
+
+            string ptEmTela = Convert.ToString(GlobVar.tmpEmTela);
+            ptsEmTela.Text = ptEmTela;
         }
     }
 
