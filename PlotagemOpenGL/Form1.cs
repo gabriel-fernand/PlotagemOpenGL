@@ -469,6 +469,10 @@ namespace PlotagemOpenGL
                 System.Windows.MessageBox.Show(message);
             }
         }
+        private void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         private void plusLb1_Click(object sender, EventArgs e)
         {
@@ -945,7 +949,7 @@ namespace PlotagemOpenGL
 
 
         private bool isScrollingRight = true;
-
+        
 
         private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         {

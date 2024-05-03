@@ -275,6 +275,7 @@ namespace PlotagemOpenGL
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.MouseMove += openglControl1_MouseMove;
             openglControl1.Scroll += hScrollBar1_Scroll;
+            openglControl1.MouseWheel += OpenglControl1_MouseWheel;
             // 
             // painelExames
             // 
@@ -1102,6 +1103,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
         #endregion
 
