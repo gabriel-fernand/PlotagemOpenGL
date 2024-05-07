@@ -1415,11 +1415,11 @@ namespace PlotagemOpenGL
             {
                 float loc = ((float)altura / (float)qtdGraf) / 2;
                 float aux = loc;
-                float[] taco = new float[qtdGraf];
+                traco = new float[qtdGraf];
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    taco[i] = aux;
+                    traco[i] = aux;
                     aux += loc * 2;
                 }
             }
@@ -1473,7 +1473,7 @@ namespace PlotagemOpenGL
                 gl.End();
             }
 
-            /*for (int i = 0; i < qtdGraf; i++)
+            for (int i = 0; i < qtdGraf; i++)
             {
                 gl.LineStipple(1, 0xAAAA);
                 gl.Enable(OpenGL.GL_LINE_STIPPLE);
@@ -1482,7 +1482,7 @@ namespace PlotagemOpenGL
                 gl.Vertex(1, traco[i]);
                 gl.Vertex(GlobVar.canalA.Length, traco[i]);
                 gl.End();
-            }*/
+            }
 
             gl.Disable(OpenGL.GL_LINE_STIPPLE);
 
