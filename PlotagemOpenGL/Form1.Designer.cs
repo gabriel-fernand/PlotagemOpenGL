@@ -30,6 +30,7 @@ namespace PlotagemOpenGL
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
             hScrollBar1 = new System.Windows.Forms.HScrollBar();
             ptsEmTela = new System.Windows.Forms.TextBox();
             inicioTela = new System.Windows.Forms.TextBox();
@@ -111,7 +112,12 @@ namespace PlotagemOpenGL
             plusLb1 = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
+            playFilter = new System.Windows.Forms.Button();
+            Filters = new System.Windows.Forms.ComboBox();
+            selectLabel = new System.Windows.Forms.ComboBox();
             qtdGraficos = new System.Windows.Forms.TextBox();
+            plusAll = new System.Windows.Forms.Button();
+            minusAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             painelExames.SuspendLayout();
             painelTelaGl.SuspendLayout();
@@ -131,11 +137,11 @@ namespace PlotagemOpenGL
             // 
             ptsEmTela.Anchor = System.Windows.Forms.AnchorStyles.None;
             ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ptsEmTela.Location = new System.Drawing.Point(10, 5);
+            ptsEmTela.Location = new System.Drawing.Point(5, 3);
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.ReadOnly = true;
             ptsEmTela.Size = new System.Drawing.Size(81, 25);
-            ptsEmTela.TabIndex = 2; 
+            ptsEmTela.TabIndex = 2;
             ptsEmTela.Text = "ptsEmTela";
             ptsEmTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -272,9 +278,9 @@ namespace PlotagemOpenGL
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
             openglControl1.Size = new System.Drawing.Size(816, 599);
             openglControl1.TabIndex = 50;
+            openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.MouseMove += openglControl1_MouseMove;
-            openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.MouseWheel += OpenglControl1_MouseWheel;
             // 
             // painelExames
@@ -1061,6 +1067,11 @@ namespace PlotagemOpenGL
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(minusAll);
+            painelComando.Controls.Add(plusAll);
+            painelComando.Controls.Add(playFilter);
+            painelComando.Controls.Add(Filters);
+            painelComando.Controls.Add(selectLabel);
             painelComando.Controls.Add(qtdGraficos);
             painelComando.Controls.Add(ptsEmTela);
             painelComando.Controls.Add(inicioTela);
@@ -1069,10 +1080,47 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(tempoEmTela);
             painelComando.Controls.Add(comboBox3);
             painelComando.Controls.Add(velocidadeScroll);
-            painelComando.Location = new System.Drawing.Point(2, 2);
+            painelComando.Location = new System.Drawing.Point(0, 4);
             painelComando.Name = "painelComando";
-            painelComando.Size = new System.Drawing.Size(1761, 69);
+            painelComando.Size = new System.Drawing.Size(997, 69);
             painelComando.TabIndex = 53;
+            // 
+            // playFilter
+            // 
+            playFilter.Location = new System.Drawing.Point(951, 36);
+            playFilter.Name = "playFilter";
+            playFilter.Size = new System.Drawing.Size(41, 29);
+            playFilter.TabIndex = 53;
+            playFilter.Text = ">";
+            playFilter.UseVisualStyleBackColor = true;
+            playFilter.Click += playFilter_Click;
+            // 
+            // Filters
+            // 
+            Filters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            Filters.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            Filters.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Filters.FormatString = "N1";
+            Filters.FormattingEnabled = true;
+            Filters.IntegralHeight = false;
+            Filters.Items.AddRange(new object[] { "Low Pass", "High Pass", "Band Pass", "Band Reject", "FWT" });
+            Filters.Location = new System.Drawing.Point(705, 37);
+            Filters.Name = "Filters";
+            Filters.Size = new System.Drawing.Size(239, 28);
+            Filters.TabIndex = 52;
+            // 
+            // selectLabel
+            // 
+            selectLabel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            selectLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            selectLabel.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            selectLabel.FormatString = "N1";
+            selectLabel.FormattingEnabled = true;
+            selectLabel.IntegralHeight = false;
+            selectLabel.Location = new System.Drawing.Point(634, 37);
+            selectLabel.Name = "selectLabel";
+            selectLabel.Size = new System.Drawing.Size(65, 28);
+            selectLabel.TabIndex = 51;
             // 
             // qtdGraficos
             // 
@@ -1081,6 +1129,26 @@ namespace PlotagemOpenGL
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
+            // 
+            // plusAll
+            // 
+            plusAll.Location = new System.Drawing.Point(52, 34);
+            plusAll.Name = "plusAll";
+            plusAll.Size = new System.Drawing.Size(41, 29);
+            plusAll.TabIndex = 54;
+            plusAll.Text = "+";
+            plusAll.UseVisualStyleBackColor = true;
+            plusAll.Click += plusAll_Click;
+            // 
+            // minusAll
+            // 
+            minusAll.Location = new System.Drawing.Point(5, 34);
+            minusAll.Name = "minusAll";
+            minusAll.Size = new System.Drawing.Size(41, 29);
+            minusAll.TabIndex = 55;
+            minusAll.Text = "-";
+            minusAll.UseVisualStyleBackColor = true;
+            minusAll.Click += minusAll_Click;
             // 
             // Tela_Plotagem
             // 
@@ -1091,9 +1159,11 @@ namespace PlotagemOpenGL
             Controls.Add(painelTelaGl);
             Controls.Add(openglControl1);
             Controls.Add(painelComando);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "Tela_Plotagem";
             Text = "Tela_Plotagem";
             Load += Tela_Plotagem_Load;
+            ResizeBegin += Tela_Plotagem_ResizeBegin;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
             painelExames.ResumeLayout(false);
             painelExames.PerformLayout();
@@ -1104,9 +1174,12 @@ namespace PlotagemOpenGL
             PerformLayout();
         }
 
-
         #endregion
-
+        public static System.Windows.Forms.Button plusAll;
+        public static System.Windows.Forms.Button minusAll;
+        public static System.Windows.Forms.Button playFilter;
+        public static System.Windows.Forms.ComboBox Filters;
+        public static System.Windows.Forms.ComboBox selectLabel;
         public static System.Windows.Forms.HScrollBar hScrollBar1;
         public static System.Windows.Forms.TextBox ptsEmTela;
         public static System.Windows.Forms.TextBox inicioTela;
