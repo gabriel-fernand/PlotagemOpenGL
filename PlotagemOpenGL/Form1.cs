@@ -603,6 +603,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void minusAll_Click(object sender, EventArgs e)
@@ -637,6 +638,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void plusLb1_Click(object sender, EventArgs e)
         {
@@ -646,6 +648,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb1_Click(object sender, EventArgs e)
         {
@@ -656,6 +659,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb2_Click(object sender, EventArgs e)
@@ -667,6 +671,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb2_Click(object sender, EventArgs e)
         {
@@ -677,6 +682,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb3_Click(object sender, EventArgs e)
@@ -688,6 +694,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb3_Click(object sender, EventArgs e)
         {
@@ -698,6 +705,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb4_Click(object sender, EventArgs e)
@@ -709,6 +717,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb4_Click(object sender, EventArgs e)
         {
@@ -719,6 +728,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb5_Click(object sender, EventArgs e)
@@ -730,6 +740,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb5_Click(object sender, EventArgs e)
         {
@@ -740,6 +751,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb6_Click(object sender, EventArgs e)
@@ -751,6 +763,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb6_Click(object sender, EventArgs e)
         {
@@ -761,6 +774,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb7_Click(object sender, EventArgs e)
@@ -772,6 +786,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb7_Click(object sender, EventArgs e)
         {
@@ -782,6 +797,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb8_Click(object sender, EventArgs e)
@@ -793,6 +809,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb8_Click(object sender, EventArgs e)
         {
@@ -803,6 +820,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb9_Click(object sender, EventArgs e)
@@ -814,6 +832,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb9_Click(object sender, EventArgs e)
         {
@@ -824,6 +843,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb10_Click(object sender, EventArgs e)
@@ -835,6 +855,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
         private void minusLb10_Click(object sender, EventArgs e)
         {
@@ -845,6 +866,7 @@ namespace PlotagemOpenGL
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
 
+            UpdateInicioTela();
         }
 
         private void plusLb11_Click(object sender, EventArgs e)
@@ -855,6 +877,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb11_Click(object sender, EventArgs e)
         {
@@ -865,6 +888,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb12_Click(object sender, EventArgs e)
@@ -875,6 +899,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb12_Click(object sender, EventArgs e)
         {
@@ -885,6 +910,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb13_Click(object sender, EventArgs e)
@@ -895,6 +921,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb13_Click(object sender, EventArgs e)
         {
@@ -905,6 +932,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb14_Click(object sender, EventArgs e)
@@ -915,6 +943,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb14_Click(object sender, EventArgs e)
         {
@@ -925,6 +954,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb15_Click(object sender, EventArgs e)
@@ -935,6 +965,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb15_Click(object sender, EventArgs e)
         {
@@ -945,6 +976,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb16_Click(object sender, EventArgs e)
@@ -955,6 +987,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb16_Click(object sender, EventArgs e)
         {
@@ -965,6 +998,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb17_Click(object sender, EventArgs e)
@@ -975,6 +1009,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb17_Click(object sender, EventArgs e)
         {
@@ -985,6 +1020,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb18_Click(object sender, EventArgs e)
@@ -995,6 +1031,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb18_Click(object sender, EventArgs e)
         {
@@ -1005,6 +1042,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb19_Click(object sender, EventArgs e)
@@ -1015,6 +1053,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
         private void minusLb19_Click(object sender, EventArgs e)
         {
@@ -1025,6 +1064,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
+            UpdateInicioTela();
         }
 
         private void plusLb20_Click(object sender, EventArgs e)
@@ -1035,7 +1075,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();;
         }
         private void minusLb20_Click(object sender, EventArgs e)
         {
@@ -1045,7 +1085,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
 
         private void plusLb21_Click(object sender, EventArgs e)
@@ -1056,7 +1096,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
         private void minusLb21_Click(object sender, EventArgs e)
         {
@@ -1066,7 +1106,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
 
         private void plusLb22_Click(object sender, EventArgs e)
@@ -1077,7 +1117,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
         private void minusLb22_Click(object sender, EventArgs e)
         {
@@ -1087,7 +1127,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
 
         private void plusLb23_Click(object sender, EventArgs e)
@@ -1098,7 +1138,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
         private void minusLb23_Click(object sender, EventArgs e)
         {
@@ -1108,7 +1148,7 @@ namespace PlotagemOpenGL
             openglControl1.DoRender();
             plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             gl.Translate(0, 0, 1);
-
+            UpdateInicioTela();
         }
 
 
@@ -1241,6 +1281,31 @@ namespace PlotagemOpenGL
 
             string ptEmTela = Convert.ToString(GlobVar.tmpEmTela);
             ptsEmTela.Text = ptEmTela;
+
+            scalaLb1.Text = GlobVar.escalaLb1.ToString("0.00");
+            scalaLb2.Text = GlobVar.escalaLb2.ToString("0.00");
+            scalaLb3.Text = GlobVar.escalaLb3.ToString("0.00");
+            scalaLb4.Text = GlobVar.escalaLb4.ToString("0.00");
+            scalaLb5.Text = GlobVar.escalaLb5.ToString("0.00");
+            scalaLb6.Text = GlobVar.escalaLb6.ToString("0.00");
+            scalaLb7.Text = GlobVar.escalaLb7.ToString("0.00");
+            scalaLb8.Text = GlobVar.escalaLb8.ToString("0.00");
+            scalaLb9.Text = GlobVar.escalaLb9.ToString("0.00");
+            scalaLb10.Text = GlobVar.escalaLb10.ToString("0.00");
+            scalaLb11.Text = GlobVar.escalaLb11.ToString("0.00");
+            scalaLb12.Text = GlobVar.escalaLb12.ToString("0.00");
+            scalaLb13.Text = GlobVar.escalaLb13.ToString("0.00");
+            scalaLb14.Text = GlobVar.escalaLb14.ToString("0.00");
+            scalaLb15.Text = GlobVar.escalaLb15.ToString("0.00");
+            scalaLb16.Text = GlobVar.escalaLb16.ToString("0.00");
+            scalaLb17.Text = GlobVar.escalaLb17.ToString("0.00");
+            scalaLb18.Text = GlobVar.escalaLb18.ToString("0.00");
+            scalaLb19.Text = GlobVar.escalaLb19.ToString("0.00");
+            scalaLb20.Text = GlobVar.escalaLb20.ToString("0.00");
+            scalaLb21.Text = GlobVar.escalaLb21.ToString("0.00");
+            scalaLb22.Text = GlobVar.escalaLb22.ToString("0.00");
+            scalaLb23.Text = GlobVar.escalaLb23.ToString("0.00");
+
         }
 
         private void Tela_Plotagem_ResizeBegin(object sender, EventArgs e)
