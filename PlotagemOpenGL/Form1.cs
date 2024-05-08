@@ -18,10 +18,12 @@ namespace PlotagemOpenGL
     {
         private OpenGL gl;
         Plotagem plotagem;
+        Canais canais;
 
         private Size formOriginalSize;
         private Size painelOriginalSize;
         private Size painelComandoOriginalSize;
+        private Size panelLb;
 
         private Rectangle comando;
         private Rectangle exExam;
@@ -110,6 +112,30 @@ namespace PlotagemOpenGL
         private Rectangle btPlusLb23;
         private Rectangle btMinusLb23;
 
+        private Rectangle pn1;
+        private Rectangle pn2;
+        private Rectangle pn3;
+        private Rectangle pn4;
+        private Rectangle pn5;
+        private Rectangle pn6;
+        private Rectangle pn7;
+        private Rectangle pn8;
+        private Rectangle pn9;
+        private Rectangle pn10;
+        private Rectangle pn11;
+        private Rectangle pn12;
+        private Rectangle pn13;
+        private Rectangle pn14;
+        private Rectangle pn15;
+        private Rectangle pn16;
+        private Rectangle pn17;
+        private Rectangle pn18;
+        private Rectangle pn19;
+        private Rectangle pn20;
+        private Rectangle pn21;
+        private Rectangle pn22;
+        private Rectangle pn23;
+
         public static Point? prevPosition = null;
         public static ToolTip tooltip = new ToolTip();
 
@@ -141,15 +167,18 @@ namespace PlotagemOpenGL
         {
             InitializeComponent();
             InitializeDedicatedGraphics();
-            Canais.LerCanais();
+            //Canais.LerCanais();
             Leitura.LerArquivo();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
             this.Resize += painelComando_Resiz;
             this.Resize += Painel_resiz;
+            this.Resize += panelLb_Resiz;
+
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
+            panelLb = panel1.Size;
             UpdateStyles();
             qtdGraficos.Text = "1";
 
@@ -242,12 +271,45 @@ namespace PlotagemOpenGL
             btMinusLb22 = new Rectangle(minusLb22.Location, minusLb22.Size);
             btMinusLb23 = new Rectangle(minusLb23.Location, minusLb23.Size);
 
+            pn1 = new Rectangle(panel1.Location, panel1.Size);
+            pn2 = new Rectangle(panel2.Location, panel2.Size);
+            pn3 = new Rectangle(panel3.Location, panel3.Size);
+            pn4 = new Rectangle(panel4.Location, panel4.Size);
+            pn5 = new Rectangle(panel5.Location, panel5.Size);
+            pn6 = new Rectangle(panel6.Location, panel6.Size);
+            pn7 = new Rectangle(panel7.Location, panel7.Size);
+            pn8 = new Rectangle(panel8.Location, panel8.Size);
+            pn9 = new Rectangle(panel9.Location, panel9.Size);
+            pn10 = new Rectangle(panel10.Location, panel10.Size);
+            pn11 = new Rectangle(panel11.Location, panel11.Size);
+            pn12 = new Rectangle(panel12.Location, panel12.Size);
+            pn13 = new Rectangle(panel13.Location, panel13.Size);
+            pn14 = new Rectangle(panel14.Location, panel14.Size);
+            pn15 = new Rectangle(panel15.Location, panel15.Size);
+            pn16 = new Rectangle(panel16.Location, panel16.Size);
+            pn17 = new Rectangle(panel17.Location, panel17.Size);
+            pn18 = new Rectangle(panel18.Location, panel18.Size);
+            pn19 = new Rectangle(panel19.Location, panel19.Size);
+            pn20 = new Rectangle(panel20.Location, panel20.Size);
+            pn21 = new Rectangle(panel21.Location, panel21.Size);
+            pn22 = new Rectangle(panel22.Location, panel22.Size);
+            pn23 = new Rectangle(panel23.Location, panel23.Size);
+
             openglControl1.Focus();
 
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
             GlobVar.sizePainelExams.X = painelExames.Width;
             GlobVar.sizePainelExams.Y = painelExames.Height;
+
+            GlobVar.sizeButtons.X = plusLb1.Width;
+            GlobVar.sizeButtons.Y = plusLb1.Height;
+            GlobVar.sizeLabelExams.X = label1.Width;
+            GlobVar.sizeLabelExams.Y = label1.Height;
+            GlobVar.sizePanelLb.X = panel1.Width;
+            GlobVar.sizePanelLb.Y = panel1.Height;
+
+            GlobVar.locBut.X = plusLb1.Location.X;
 
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -319,80 +381,47 @@ namespace PlotagemOpenGL
         }
         private void Painel_resiz(object sender, EventArgs e)
         {
+            painel_Resize_Control(panel1, pn1);
+            painel_Resize_Control(panel2, pn2);
+            painel_Resize_Control(panel3, pn3);
+            painel_Resize_Control(panel4, pn4);
+            painel_Resize_Control(panel5, pn5);
+            painel_Resize_Control(panel6, pn6);
+            painel_Resize_Control(panel7, pn7);
+            painel_Resize_Control(panel8, pn8);
+            painel_Resize_Control(panel9, pn9);
+            painel_Resize_Control(panel10, pn10);
+            painel_Resize_Control(panel11, pn11);
+            painel_Resize_Control(panel12, pn12);
+            painel_Resize_Control(panel13, pn13);
+            painel_Resize_Control(panel14, pn14);
+            painel_Resize_Control(panel15, pn15);
+            painel_Resize_Control(panel16, pn16);
+            painel_Resize_Control(panel17, pn17);
+            painel_Resize_Control(panel18, pn18);
+            painel_Resize_Control(panel19, pn19);
+            painel_Resize_Control(panel20, pn20);
+            painel_Resize_Control(panel21, pn21);
+            painel_Resize_Control(panel22, pn22);
+            painel_Resize_Control(panel23, pn23);
 
-            painel_Resize_Control(label1, lb1);
-            painel_Resize_Control(label2, lb2);
-            painel_Resize_Control(label3, lb3);
-            painel_Resize_Control(label4, lb4);
-            painel_Resize_Control(label5, lb5);
-            painel_Resize_Control(label6, lb6);
-            painel_Resize_Control(label7, lb7);
-            painel_Resize_Control(label8, lb8);
-            painel_Resize_Control(label9, lb9);
-            painel_Resize_Control(label10, lb10);
-            painel_Resize_Control(label11, lb11);
-            painel_Resize_Control(label12, lb12);
-            painel_Resize_Control(label13, lb13);
-            painel_Resize_Control(label14, lb14);
-            painel_Resize_Control(label15, lb15);
-            painel_Resize_Control(label16, lb16);
-            painel_Resize_Control(label17, lb17);
-            painel_Resize_Control(label18, lb18);
-            painel_Resize_Control(label19, lb19);
-            painel_Resize_Control(label20, lb20);
-            painel_Resize_Control(label21, lb21);
-            painel_Resize_Control(label22, lb22);
-            painel_Resize_Control(label23, lb23);
+        }
 
+        private void PainelLb_Resize_Control(Control c, Rectangle r)
+        {
+            float xRatio = (float)(panelLb.Width) / (float)(panelLb.Width);
+            float yRatio = (float)(panelLb.Height) / (float)(panelLb.Height);
+            int newX = (int)(r.X * xRatio);
+            int newY = (int)(r.Y * yRatio);
+            int newWidth = (int)(r.Width * xRatio);
+            int newHeight = (int)(r.Height * yRatio);
+            c.Location = new Point(newX, newY);
+            c.Size = new Size(newWidth, newHeight);
+        }
+        private void panelLb_Resiz(object sender, EventArgs e)
+        {
             painel_Resize_Control(plusLb1, btPlusLb1);
-            painel_Resize_Control(plusLb2, btPlusLb2);
-            painel_Resize_Control(plusLb3, btPlusLb3);
-            painel_Resize_Control(plusLb4, btPlusLb4);
-            painel_Resize_Control(plusLb5, btPlusLb5);
-            painel_Resize_Control(plusLb6, btPlusLb6);
-            painel_Resize_Control(plusLb7, btPlusLb7);
-            painel_Resize_Control(plusLb8, btPlusLb8);
-            painel_Resize_Control(plusLb9, btPlusLb9);
-            painel_Resize_Control(plusLb10, btPlusLb10);
-            painel_Resize_Control(plusLb11, btPlusLb11);
-            painel_Resize_Control(plusLb12, btPlusLb12);
-            painel_Resize_Control(plusLb13, btPlusLb13);
-            painel_Resize_Control(plusLb14, btPlusLb14);
-            painel_Resize_Control(plusLb15, btPlusLb15);
-            painel_Resize_Control(plusLb16, btPlusLb16);
-            painel_Resize_Control(plusLb17, btPlusLb17);
-            painel_Resize_Control(plusLb18, btPlusLb18);
-            painel_Resize_Control(plusLb19, btPlusLb19);
-            painel_Resize_Control(plusLb20, btPlusLb20);
-            painel_Resize_Control(plusLb21, btPlusLb21);
-            painel_Resize_Control(plusLb22, btPlusLb22);
-            painel_Resize_Control(plusLb23, btPlusLb23);
-
             painel_Resize_Control(minusLb1, btMinusLb1);
-            painel_Resize_Control(minusLb2, btMinusLb2);
-            painel_Resize_Control(minusLb3, btMinusLb3);
-            painel_Resize_Control(minusLb4, btMinusLb4);
-            painel_Resize_Control(minusLb5, btMinusLb5);
-            painel_Resize_Control(minusLb6, btMinusLb6);
-            painel_Resize_Control(minusLb7, btMinusLb7);
-            painel_Resize_Control(minusLb8, btMinusLb8);
-            painel_Resize_Control(minusLb9, btMinusLb9);
-            painel_Resize_Control(minusLb10, btMinusLb10);
-            painel_Resize_Control(minusLb11, btMinusLb11);
-            painel_Resize_Control(minusLb12, btMinusLb12);
-            painel_Resize_Control(minusLb13, btMinusLb13);
-            painel_Resize_Control(minusLb14, btMinusLb14);
-            painel_Resize_Control(minusLb15, btMinusLb15);
-            painel_Resize_Control(minusLb16, btMinusLb16);
-            painel_Resize_Control(minusLb17, btMinusLb17);
-            painel_Resize_Control(minusLb18, btMinusLb18);
-            painel_Resize_Control(minusLb19, btMinusLb19);
-            painel_Resize_Control(minusLb20, btMinusLb20);
-            painel_Resize_Control(minusLb21, btMinusLb21);
-            painel_Resize_Control(minusLb22, btMinusLb22);
-            painel_Resize_Control(minusLb23, btMinusLb23);
-
-
         }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e) { }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
@@ -470,9 +499,13 @@ namespace PlotagemOpenGL
             {
                 int alturaTela = (int)openglControl1.Height;
 
-                Canais.RealocLabel(qtdGrafics, 24);
-                Canais.RealocButton(qtdGrafics, 13);
-                Canais.quantidadeGraf(qtdGrafics);
+                canais = new Canais(qtdGrafics);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
+                canais.RealocPanel(qtdGrafics);
+                canais.quantidadeGraf(qtdGrafics);
+                canais.reloc();
+
 
 
                 this.gl = openglControl1.OpenGL;
@@ -488,6 +521,7 @@ namespace PlotagemOpenGL
                 hScrollBar1.Maximum = (GlobVar.canalA.Length);
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
+
             }
             selectLabel.Items.Clear();
             for (int i = 1; i <= qtdGrafics; i++)
@@ -1247,6 +1281,12 @@ namespace PlotagemOpenGL
         public static Vector2 sizeOpenGl;
         public static Vector2 sizePainelExams;
 
+        public static Vector2 sizeLabelExams;
+        public static Vector2 sizeButtons;
+        public static Vector2 sizePanelLb;
+
+        public static Vector2 locBut;
+
         public static int maximaVect = 2000;
         public static int indice = 0;
 
@@ -1460,32 +1500,18 @@ namespace PlotagemOpenGL
             gl.PointSize(3.0f); // Define o tamanho dos pontos
             gl.Color(0.0f, 0.0f, 0.0f); // Define a cor das linhas (preto)
             gl.Scale(1, 1, 1);// state.yScale, 1);
-            // Define a primeira projeção ortográfica para o primeiro conjunto de pontos (canalA)             
+                              // Define a primeira projeção ortográfica para o primeiro conjunto de pontos (canalA)             
 
-            for (int i = 0; i < qtdGraf; i++)
+
+            
+
+            /*for (int i = 0; i < qtdGraf; i++)
             {
-                gl.LineStipple(1, 0xAAAA);
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-
                 gl.Begin(OpenGL.GL_LINES);
                 gl.Vertex(0, margem[i]);
                 gl.Vertex(GlobVar.canalA.Length, margem[i]);
                 gl.End();
-            }
-
-            for (int i = 0; i < qtdGraf; i++)
-            {
-                gl.LineStipple(1, 0xAAAA);
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-
-                gl.Begin(OpenGL.GL_LINES);
-                gl.Vertex(1, traco[i]);
-                gl.Vertex(GlobVar.canalA.Length, traco[i]);
-                gl.End();
-            }
-
-            gl.Disable(OpenGL.GL_LINE_STIPPLE);
-
+            }*/
             int ind = 0;
             for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
             {
@@ -3775,7 +3801,23 @@ namespace PlotagemOpenGL
                     gl.End();
                     break;
             }
+
+            
             gl.Flush();
+            for (int i = 0; i < qtdGraf; i++)
+            {
+                gl.LineStipple(1, 0xAAAA);
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Color(0.752941f, 0.752941f, 0.752941f);
+                gl.Vertex(1, traco[i]);
+                gl.Vertex(GlobVar.canalA.Length, traco[i]);
+                gl.End();
+            }
+
+            gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+
 
 
             //System.Windows.MessageBox.Show("Tamanho da janela openGl " + Tela_Plotagem.openglControl1.Height + " x " + Tela_Plotagem.openglControl1.Width);
