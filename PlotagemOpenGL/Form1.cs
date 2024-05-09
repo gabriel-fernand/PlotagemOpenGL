@@ -42,29 +42,6 @@ namespace PlotagemOpenGL
         private Rectangle fil;
         private Rectangle playFil;
 
-        private Rectangle lb1;
-        private Rectangle lb2;
-        private Rectangle lb3;
-        private Rectangle lb4;
-        private Rectangle lb5;
-        private Rectangle lb6;
-        private Rectangle lb7;
-        private Rectangle lb8;
-        private Rectangle lb9;
-        private Rectangle lb10;
-        private Rectangle lb11;
-        private Rectangle lb12;
-        private Rectangle lb13;
-        private Rectangle lb14;
-        private Rectangle lb15;
-        private Rectangle lb16;
-        private Rectangle lb17;
-        private Rectangle lb18;
-        private Rectangle lb19;
-        private Rectangle lb20;
-        private Rectangle lb21;
-        private Rectangle lb22;
-        private Rectangle lb23;
         private Rectangle btPlusLb1;
         private Rectangle btMinusLb1;
         private Rectangle btPlusLb2;
@@ -111,6 +88,30 @@ namespace PlotagemOpenGL
         private Rectangle btMinusLb22;
         private Rectangle btPlusLb23;
         private Rectangle btMinusLb23;
+
+        private Rectangle lbScale1;
+        private Rectangle lbScale2;
+        private Rectangle lbScale3;
+        private Rectangle lbScale4;
+        private Rectangle lbScale5;
+        private Rectangle lbScale6;
+        private Rectangle lbScale7;
+        private Rectangle lbScale8;
+        private Rectangle lbScale9;
+        private Rectangle lbScale10;
+        private Rectangle lbScale11;
+        private Rectangle lbScale12;
+        private Rectangle lbScale13;
+        private Rectangle lbScale14;
+        private Rectangle lbScale15;
+        private Rectangle lbScale16;
+        private Rectangle lbScale17;
+        private Rectangle lbScale18;
+        private Rectangle lbScale19;
+        private Rectangle lbScale20;
+        private Rectangle lbScale21;
+        private Rectangle lbScale22;
+        private Rectangle lbScale23;
 
         private Rectangle pn1;
         private Rectangle pn2;
@@ -199,39 +200,41 @@ namespace PlotagemOpenGL
             fil = new Rectangle(Filters.Location, Filters.Size);
             playFil = new Rectangle(playFilter.Location, playFilter.Size);
 
-            lb1 = new Rectangle(label1.Location, label1.Size);
             btPlusLb1 = new Rectangle(plusLb1.Location, plusLb1.Size);
             btMinusLb1 = new Rectangle(minusLb1.Location, minusLb1.Size);
-            lb2 = new Rectangle(label2.Location, label2.Size);
             btPlusLb2 = new Rectangle(plusLb2.Location, plusLb2.Size);
             btMinusLb2 = new Rectangle(minusLb2.Location, minusLb2.Size);
-            lb3 = new Rectangle(label4.Location, label4.Size);
             btPlusLb3 = new Rectangle(plusLb4.Location, plusLb4.Size);
             btMinusLb3 = new Rectangle(minusLb4.Location, minusLb4.Size);
-            lb4 = new Rectangle(label3.Location, label3.Size);
             btPlusLb4 = new Rectangle(plusLb3.Location, plusLb3.Size);
             btMinusLb4 = new Rectangle(minusLb3.Location, minusLb3.Size);
-            lb5 = new Rectangle(label5.Location, label5.Size);
             btPlusLb5 = new Rectangle(plusLb5.Location, plusLb5.Size);
             btMinusLb5 = new Rectangle(minusLb5.Location, minusLb5.Size);
-            lb6 = new Rectangle(label6.Location, label6.Size);
-            lb7 = new Rectangle(label7.Location, label7.Size);
-            lb8 = new Rectangle(label8.Location, label8.Size);
-            lb9 = new Rectangle(label9.Location, label9.Size);
-            lb10 = new Rectangle(label10.Location, label10.Size);
-            lb11 = new Rectangle(label11.Location, label11.Size);
-            lb12 = new Rectangle(label12.Location, label12.Size);
-            lb13 = new Rectangle(label13.Location, label13.Size);
-            lb14 = new Rectangle(label14.Location, label14.Size);
-            lb15 = new Rectangle(label15.Location, label15.Size);
-            lb16 = new Rectangle(label16.Location, label16.Size);
-            lb17 = new Rectangle(label17.Location, label17.Size);
-            lb18 = new Rectangle(label18.Location, label18.Size);
-            lb19 = new Rectangle(label19.Location, label19.Size);
-            lb20 = new Rectangle(label20.Location, label20.Size);
-            lb21 = new Rectangle(label21.Location, label21.Size);
-            lb22 = new Rectangle(label22.Location, label22.Size);
-            lb23 = new Rectangle(label23.Location, label23.Size);
+
+            lbScale1 = new Rectangle(scalaLb1.Location, scalaLb1.Size);
+            lbScale2 = new Rectangle(scalaLb2.Location, scalaLb2.Size);
+            lbScale3 = new Rectangle(scalaLb3.Location, scalaLb3.Size);
+            lbScale4 = new Rectangle(scalaLb4.Location, scalaLb4.Size);
+            lbScale5 = new Rectangle(scalaLb5.Location, scalaLb5.Size);
+            lbScale6 = new Rectangle(scalaLb6.Location, scalaLb6.Size);
+            lbScale7 = new Rectangle(scalaLb7.Location, scalaLb7.Size);
+            lbScale8 = new Rectangle(scalaLb8.Location, scalaLb8.Size);
+            lbScale9 = new Rectangle(scalaLb9.Location, scalaLb9.Size);
+            lbScale10 = new Rectangle(scalaLb10.Location, scalaLb10.Size);
+            lbScale11 = new Rectangle(scalaLb11.Location, scalaLb11.Size);
+            lbScale12 = new Rectangle(scalaLb12.Location, scalaLb12.Size);
+            lbScale13 = new Rectangle(scalaLb13.Location, scalaLb13.Size);
+            lbScale14 = new Rectangle(scalaLb14.Location, scalaLb14.Size);
+            lbScale15 = new Rectangle(scalaLb15.Location, scalaLb15.Size);
+            lbScale16 = new Rectangle(scalaLb16.Location, scalaLb16.Size);
+            lbScale17 = new Rectangle(scalaLb17.Location, scalaLb17.Size);
+            lbScale18 = new Rectangle(scalaLb18.Location, scalaLb18.Size);
+            lbScale19 = new Rectangle(scalaLb19.Location, scalaLb19.Size);
+            lbScale20 = new Rectangle(scalaLb20.Location, scalaLb20.Size);
+            lbScale21 = new Rectangle(scalaLb21.Location, scalaLb21.Size);
+            lbScale22 = new Rectangle(scalaLb22.Location, scalaLb22.Size);
+            lbScale23 = new Rectangle(scalaLb23.Location, scalaLb23.Size);
+
 
             btPlusLb6 = new Rectangle(plusLb6.Location, plusLb6.Size);
             btPlusLb7 = new Rectangle(plusLb7.Location, plusLb7.Size);
@@ -310,6 +313,7 @@ namespace PlotagemOpenGL
             GlobVar.sizePanelLb.Y = panel1.Height;
 
             GlobVar.locBut.X = plusLb1.Location.X;
+            GlobVar.locScale.X = scalaLb1.Location.X;
 
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -407,21 +411,82 @@ namespace PlotagemOpenGL
 
         }
 
-        private void PainelLb_Resize_Control(Control c, Rectangle r)
-        {
-            float xRatio = (float)(panelLb.Width) / (float)(panelLb.Width);
-            float yRatio = (float)(panelLb.Height) / (float)(panelLb.Height);
-            int newX = (int)(r.X * xRatio);
-            int newY = (int)(r.Y * yRatio);
-            int newWidth = (int)(r.Width * xRatio);
-            int newHeight = (int)(r.Height * yRatio);
-            c.Location = new Point(newX, newY);
-            c.Size = new Size(newWidth, newHeight);
-        }
         private void panelLb_Resiz(object sender, EventArgs e)
         {
             painel_Resize_Control(plusLb1, btPlusLb1);
+            painel_Resize_Control(plusLb2, btPlusLb2);
+            painel_Resize_Control(plusLb3, btPlusLb3);
+            painel_Resize_Control(plusLb4, btPlusLb4);
+            painel_Resize_Control(plusLb5, btPlusLb5);
+            painel_Resize_Control(plusLb6, btPlusLb6);
+            painel_Resize_Control(plusLb7, btPlusLb7);
+            painel_Resize_Control(plusLb8, btPlusLb8);
+            painel_Resize_Control(plusLb9, btPlusLb9);
+            painel_Resize_Control(plusLb10, btPlusLb10);
+            painel_Resize_Control(plusLb11, btPlusLb11);
+            painel_Resize_Control(plusLb12, btPlusLb12);
+            painel_Resize_Control(plusLb13, btPlusLb13);
+            painel_Resize_Control(plusLb14, btPlusLb14);
+            painel_Resize_Control(plusLb15, btPlusLb15);
+            painel_Resize_Control(plusLb16, btPlusLb16);
+            painel_Resize_Control(plusLb17, btPlusLb17);
+            painel_Resize_Control(plusLb18, btPlusLb18);
+            painel_Resize_Control(plusLb19, btPlusLb19);
+            painel_Resize_Control(plusLb20, btPlusLb20);
+            painel_Resize_Control(plusLb21, btPlusLb21);
+            painel_Resize_Control(plusLb22, btPlusLb22);
+            painel_Resize_Control(plusLb23, btPlusLb23);
+
             painel_Resize_Control(minusLb1, btMinusLb1);
+            painel_Resize_Control(minusLb2, btMinusLb2);
+            painel_Resize_Control(minusLb3, btMinusLb3);
+            painel_Resize_Control(minusLb4, btMinusLb4);
+            painel_Resize_Control(minusLb5, btMinusLb5);
+            painel_Resize_Control(minusLb6, btMinusLb6);
+            painel_Resize_Control(minusLb7, btMinusLb7);
+            painel_Resize_Control(minusLb8, btMinusLb8);
+            painel_Resize_Control(minusLb9, btMinusLb9);
+            painel_Resize_Control(minusLb10, btMinusLb10);
+            painel_Resize_Control(minusLb11, btMinusLb11);
+            painel_Resize_Control(minusLb12, btMinusLb12);
+            painel_Resize_Control(minusLb13, btMinusLb13);
+            painel_Resize_Control(minusLb14, btMinusLb14);
+            painel_Resize_Control(minusLb15, btMinusLb15);
+            painel_Resize_Control(minusLb16, btMinusLb16);
+            painel_Resize_Control(minusLb17, btMinusLb17);
+            painel_Resize_Control(minusLb18, btMinusLb18);
+            painel_Resize_Control(minusLb19, btMinusLb19);
+            painel_Resize_Control(minusLb20, btMinusLb20);
+            painel_Resize_Control(minusLb21, btMinusLb21);
+            painel_Resize_Control(minusLb22, btMinusLb22);
+            painel_Resize_Control(minusLb23, btMinusLb23);
+
+            painel_Resize_Control(scalaLb1, lbScale1);
+            painel_Resize_Control(scalaLb2, lbScale2);
+            painel_Resize_Control(scalaLb3, lbScale3);
+            painel_Resize_Control(scalaLb4, lbScale4);
+            painel_Resize_Control(scalaLb5, lbScale5);
+            painel_Resize_Control(scalaLb6, lbScale6);
+            painel_Resize_Control(scalaLb7, lbScale7);
+            painel_Resize_Control(scalaLb8, lbScale8);
+            painel_Resize_Control(scalaLb9, lbScale9);
+            painel_Resize_Control(scalaLb10, lbScale10);
+            painel_Resize_Control(scalaLb11, lbScale11);
+            painel_Resize_Control(scalaLb12, lbScale12);
+            painel_Resize_Control(scalaLb13, lbScale13);
+            painel_Resize_Control(scalaLb14, lbScale14);
+            painel_Resize_Control(scalaLb15, lbScale15);
+            painel_Resize_Control(scalaLb16, lbScale16);
+            painel_Resize_Control(scalaLb17, lbScale17);
+            painel_Resize_Control(scalaLb18, lbScale18);
+            painel_Resize_Control(scalaLb19, lbScale19);
+            painel_Resize_Control(scalaLb20, lbScale20);
+            painel_Resize_Control(scalaLb21, lbScale21);
+            painel_Resize_Control(scalaLb22, lbScale22);
+            painel_Resize_Control(scalaLb23, lbScale23);
+
+            GlobVar.locBut.X = plusLb1.Location.X;
+            GlobVar.locScale.X = scalaLb1.Location.X;
         }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e) { }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
@@ -453,28 +518,28 @@ namespace PlotagemOpenGL
 
             if (filtro.Equals("Low Pass"))
             {
-                GlobVar.canalC = LowPassFilter.ApplyLowPassFilter(GlobVar.canalC, 0.6);
+                GlobVar.canalC = LowPassFilter.ApplyLowPassFilter(GlobVar.canalC, 0.1);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             }
             else if (filtro.Equals("High Pass"))
             {
-                GlobVar.canalD = HighPassFilter.ApplyHighPassFilter(GlobVar.canalD, 0.6);
+                GlobVar.canalD = HighPassFilter.ApplyHighPassFilter(GlobVar.canalD, 0.5);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             }
             else if (filtro.Equals("Band Pass"))
             {
-                GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 10, 50);
+               // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
             }
             else if (filtro.Equals("Band Reject"))
             {
-                GlobVar.canalF = BandRejectFilter.ApplyBandRejectFilter(GlobVar.canalF, 0.1, 50);
+                //GlobVar.canalF = BandRejectFilter.ApplyBandRejectFilter(GlobVar.canalF, 0.1);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
@@ -1351,6 +1416,7 @@ namespace PlotagemOpenGL
         public static Vector2 sizePanelLb;
 
         public static Vector2 locBut;
+        public static Vector2 locScale;
 
         public static int maximaVect = 2000;
         public static int indice = 0;

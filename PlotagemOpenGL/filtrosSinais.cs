@@ -5,6 +5,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Numerics;
 using System.Text;
 using DSP;
+using Accord.Audio;
 
 namespace PlotagemOpenGL
 {
@@ -44,6 +45,7 @@ namespace PlotagemOpenGL
     {
         private double _alpha;
         private double _prevOutput;
+        public static Accord.Audio.Filters.LowPassFilter lowFilt;
 
         public LowPassFilter(double alpha)
         {
@@ -59,8 +61,15 @@ namespace PlotagemOpenGL
         }
         public static double[] ApplyLowPassFilter(double[] input, double alpha)
         {
-            LowPassFilter lowPassFilter = new LowPassFilter(alpha);
             double[] output = new double[input.Length];
+            lowFilt = new Accord.Audio.Filters.LowPassFilter(15, 8);
+            Signal sig = Signal.FromArray(input, 8);
+            lowFilt.Apply(sig);
+            
+            LowPassFilter lowPassFilter = new LowPassFilter(alpha);
+            
+            output = sig.ToDouble();
+
             for (int i = 0; i < input.Length; i++)
             {
                 output[i] = lowPassFilter.Apply(input[i]);
@@ -70,33 +79,37 @@ namespace PlotagemOpenGL
     }
     public class HighPassFilter
     {
-        private double _alpha;
-        private double _prevOutput;
+        private double alpha;
+        private double prevInput = 0;
+        private double prevOutput = 0;
 
         public HighPassFilter(double alpha)
         {
-            _alpha = alpha;
-            _prevOutput = 0;
+            this.alpha = alpha;
+            prevOutput = 0;
         }
 
         public double Apply(double input)
         {
-            double output = input - (_alpha * input + (1 - _alpha) * _prevOutput);
-            _prevOutput = output;
+            // Calcula a saída do filtro usando a equação de diferença
+            double output = input - (alpha * input + (1 - alpha) * prevOutput);
+            prevOutput = output;
             return output;
         }
         public static double[] ApplyHighPassFilter(double[] input, double alpha)
         {
             HighPassFilter highPassFilter = new HighPassFilter(alpha);
+
             double[] output = new double[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
+
                 output[i] = highPassFilter.Apply(input[i]);
             }
             return output;
         }
     }
-    public class BandPassFilter
+    /*public class BandPassFilter
     {
         private LowPassFilter _lowPassFilter;
         private HighPassFilter _highPassFilter;
@@ -128,12 +141,10 @@ namespace PlotagemOpenGL
     {
         private LowPassFilter _lowPassFilter;
         private HighPassFilter _highPassFilter;
-        private double _notchFrequency;
         private double _alpha;
 
-        public BandRejectFilter(double notchFrequency, double alpha)
+        public BandRejectFilter(double alpha)
         {
-            _notchFrequency = notchFrequency;
             _alpha = alpha;
             _lowPassFilter = new LowPassFilter(alpha);
             _highPassFilter = new HighPassFilter(alpha);
@@ -144,9 +155,9 @@ namespace PlotagemOpenGL
             double notchOutput = _lowPassFilter.Apply(input) + _highPassFilter.Apply(input);
             return input - (alpha * notchOutput);
         }
-        public static double[] ApplyBandRejectFilter(double[] input,double alpha, double notchFrequency)
+        public static double[] ApplyBandRejectFilter(double[] input,double alpha)
         {
-            BandRejectFilter bandRejectFilter = new BandRejectFilter(notchFrequency, alpha);
+            BandRejectFilter bandRejectFilter = new BandRejectFilter(alpha);
             double[] output = new double[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
@@ -154,6 +165,6 @@ namespace PlotagemOpenGL
             }
             return output;
         }
-    }
-
+    }*/
+    
 }

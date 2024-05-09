@@ -73,118 +73,118 @@ namespace PlotagemOpenGL.auxi
             Tela_Plotagem.label1.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb1.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb1.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb1.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb1.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
 
             Tela_Plotagem.label2.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb2.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb2.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb2.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb2.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label3.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb3.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb3.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb3.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb3.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label4.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb4.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb4.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb4.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb4.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label5.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb5.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb5.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb5.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb5.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label6.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb6.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb6.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb6.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb6.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label7.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb7.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb7.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb7.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb7.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label8.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb8.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb8.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb8.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb8.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label9.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb9.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb9.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb9.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb9.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label10.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb10.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb10.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb10.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb10.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label11.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb11.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb11.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb11.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb11.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label12.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb12.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb12.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb12.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb12.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label13.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb13.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb13.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb13.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb13.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label14.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb14.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb14.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb14.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb14.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label15.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb15.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb15.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb15.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb15.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label16.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb16.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb16.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb16.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb16.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label17.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb17.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb17.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb17.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb17.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label18.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb18.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb18.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb18.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb18.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label19.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb19.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb19.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb19.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb19.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label20.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb20.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb20.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb20.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb20.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label21.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb21.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb21.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb21.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb21.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label22.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb22.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb22.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb22.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb22.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
             Tela_Plotagem.label23.Location = new System.Drawing.Point(3, labelLocY);
             Tela_Plotagem.plusLb23.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
             Tela_Plotagem.minusLb23.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
-            Tela_Plotagem.scalaLb23.Location = new System.Drawing.Point(87, labelLocY);
+            Tela_Plotagem.scalaLb23.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
 
         }
         public void quantidadeGraf(int qtdGraf)
