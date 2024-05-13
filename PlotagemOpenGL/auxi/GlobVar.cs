@@ -7,12 +7,12 @@ namespace PlotagemOpenGL.auxi
 {
     public class GlobVar
     {
-        public static string textFile = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Txt's\01368_01.dat";
+        public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string cabecalho;
         public static int npagin;
         public static string npag;
         public static string tipocanais;
-        public static int COD = 11;
+        public static string COD = "11";
         public static int amos;
         public static int startpos;
         public static int sizesample;

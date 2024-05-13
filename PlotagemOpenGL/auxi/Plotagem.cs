@@ -152,7 +152,7 @@ namespace PlotagemOpenGL.auxi
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                     {
-                        if (j > 0) gl.Vertex(j, ((float)GlobVar.canalA[j] * GlobVar.escalaLb1) + desenhoLoc[0]); // Define cada ponto do gráfico
+                        if (j > 0) gl.Vertex(j, ((float)GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[0]); // Define cada ponto do gráfico
                                                                                                                  //por mais que o canal A, B, C sejam o mesmo valor, tem que plotar sinais diferentes
                     }
                     gl.End();
@@ -161,7 +161,7 @@ namespace PlotagemOpenGL.auxi
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                     {
-                        if (j > 0) gl.Vertex(j, (GlobVar.canalA[j] * GlobVar.escalaLb1) + desenhoLoc[1]); // Define cada ponto do gráfico
+                        if (j > 0) gl.Vertex(j, (GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[1]); // Define cada ponto do gráfico
                                                                                                           //aqui tem plotar 3 graficos diferentes
                                                                                                           //por mais que o canal A, B, C sejam o mesmo valor, tem que plotar sinais diferentes
                     }
