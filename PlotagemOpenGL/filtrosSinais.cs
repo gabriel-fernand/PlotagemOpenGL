@@ -5,6 +5,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Numerics;
 using System.Text;
 using DSP;
+using PlotagemOpenGL.auxi;
 using Accord.Audio;
 
 namespace PlotagemOpenGL
