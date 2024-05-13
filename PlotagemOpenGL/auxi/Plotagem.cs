@@ -152,8 +152,8 @@ namespace PlotagemOpenGL.auxi
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                     {
-                        if (j > 0) gl.Vertex(j, ((float)GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[0]); // Define cada ponto do gráfico
-                                                                                                                 //por mais que o canal A, B, C sejam o mesmo valor, tem que plotar sinais diferentes
+                        if (j <= 0 || j >= GlobVar.mean.Length) gl.Vertex(j, desenhoLoc[0]); // Define cada ponto do gráfico
+                        else gl.Vertex(j, (GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[0]);                                                                                  //aqui tem plotar 3 graficos diferentes
                     }
                     gl.End();
                     break;
@@ -161,8 +161,8 @@ namespace PlotagemOpenGL.auxi
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                     {
-                        if (j > 0) gl.Vertex(j, (GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[1]); // Define cada ponto do gráfico
-                                                                                                          //aqui tem plotar 3 graficos diferentes
+                        if (j <= 0 || j >= GlobVar.mean.Length) gl.Vertex(j, desenhoLoc[1]); // Define cada ponto do gráfico
+                        else gl.Vertex(j, (GlobVar.mean[j] * GlobVar.escalaLb1) + desenhoLoc[1]);                                                                                  //aqui tem plotar 3 graficos diferentes
                                                                                                           //por mais que o canal A, B, C sejam o mesmo valor, tem que plotar sinais diferentes
                     }
                     gl.End();

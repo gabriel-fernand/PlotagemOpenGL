@@ -171,6 +171,7 @@ namespace PlotagemOpenGL
             InitializeDedicatedGraphics();
             //Canais.LerCanais();
             Leitura.LerArquivo();
+            Leitura.QuantidadeCanais();
             Leitura.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
@@ -564,6 +565,30 @@ namespace PlotagemOpenGL
             }
             else
             {
+                label1.Text = GlobVar.nameCanalA.Trim();
+                label2.Text = GlobVar.nameCanalB.Trim();
+                label3.Text = GlobVar.nameCanalC.Trim();
+                label4.Text = GlobVar.nameCanalD.Trim();
+                label5.Text = GlobVar.nameCanalE.Trim();
+                label6.Text = GlobVar.nameCanalF.Trim();
+                label7.Text = GlobVar.nameCanalG.Trim();
+                label8.Text = GlobVar.nameCanalH.Trim();
+                label9.Text = GlobVar.nameCanalI.Trim();
+                label10.Text = GlobVar.nameCanalJ.Trim();
+                label11.Text = GlobVar.nameCanalK.Trim();
+                label12.Text = GlobVar.nameCanalL.Trim();
+                label13.Text = GlobVar.nameCanalM.Trim();
+                label14.Text = GlobVar.nameCanalN.Trim();
+                label15.Text = GlobVar.nameCanalO.Trim();
+                label16.Text = GlobVar.nameCanalP.Trim();
+                label17.Text = GlobVar.nameCanalQ.Trim();
+                label18.Text = GlobVar.nameCanalR.Trim();
+                label19.Text = GlobVar.nameCanalS.Trim();
+                label20.Text = GlobVar.nameCanalT.Trim();
+                label21.Text = GlobVar.nameCanalU.Trim();
+                label22.Text = GlobVar.nameCanalV.Trim();
+                label23.Text = GlobVar.nameCanalW.Trim();
+
                 int alturaTela = (int)openglControl1.Height;
 
                 canais = new Canais(qtdGrafics);
@@ -641,70 +666,132 @@ namespace PlotagemOpenGL
         private void plusAll_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
+            if (GlobVar.escalaLb1 < 0.09)
+            {
 
-            GlobVar.escalaLb1 += 0.1f;
-            GlobVar.escalaLb2 += 0.1f;
-            GlobVar.escalaLb3 += 0.1f;
-            GlobVar.escalaLb4 += 0.1f;
-            GlobVar.escalaLb5 += 0.1f;
-            GlobVar.escalaLb6 += 0.1f;
-            GlobVar.escalaLb7 += 0.1f;
-            GlobVar.escalaLb8 += 0.1f;
-            GlobVar.escalaLb9 += 0.1f;
-            GlobVar.escalaLb10 += 0.1f;
-            GlobVar.escalaLb11 += 0.1f;
-            GlobVar.escalaLb12 += 0.1f;
-            GlobVar.escalaLb13 += 0.1f;
-            GlobVar.escalaLb14 += 0.1f;
-            GlobVar.escalaLb15 += 0.1f;
-            GlobVar.escalaLb16 += 0.1f;
-            GlobVar.escalaLb17 += 0.1f;
-            GlobVar.escalaLb18 += 0.1f;
-            GlobVar.escalaLb19 += 0.1f;
-            GlobVar.escalaLb20 += 0.1f;
-            GlobVar.escalaLb21 += 0.1f;
-            GlobVar.escalaLb22 += 0.1f;
-            GlobVar.escalaLb23 += 0.1f;
+                GlobVar.escalaLb1 += 0.01f;
+                GlobVar.escalaLb2 += 0.01f;
+                GlobVar.escalaLb3 += 0.01f;
+                GlobVar.escalaLb4 += 0.01f;
+                GlobVar.escalaLb5 += 0.01f;
+                GlobVar.escalaLb6 += 0.01f;
+                GlobVar.escalaLb7 += 0.01f;
+                GlobVar.escalaLb8 += 0.01f;
+                GlobVar.escalaLb9 += 0.01f;
+                GlobVar.escalaLb10 += 0.01f;
+                GlobVar.escalaLb11 += 0.01f;
+                GlobVar.escalaLb12 += 0.01f;
+                GlobVar.escalaLb13 += 0.01f;
+                GlobVar.escalaLb14 += 0.01f;
+                GlobVar.escalaLb15 += 0.01f;
+                GlobVar.escalaLb16 += 0.01f;
+                GlobVar.escalaLb17 += 0.01f;
+                GlobVar.escalaLb18 += 0.01f;
+                GlobVar.escalaLb19 += 0.01f;
+                GlobVar.escalaLb20 += 0.01f;
+                GlobVar.escalaLb21 += 0.01f;
+                GlobVar.escalaLb22 += 0.01f;
+                GlobVar.escalaLb23 += 0.01f;
 
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(0, 0, 1);
+            }
+            else
+            {
+                GlobVar.escalaLb1 += 0.1f;
+                GlobVar.escalaLb2 += 0.1f;
+                GlobVar.escalaLb3 += 0.1f;
+                GlobVar.escalaLb4 += 0.1f;
+                GlobVar.escalaLb5 += 0.1f;
+                GlobVar.escalaLb6 += 0.1f;
+                GlobVar.escalaLb7 += 0.1f;
+                GlobVar.escalaLb8 += 0.1f;
+                GlobVar.escalaLb9 += 0.1f;
+                GlobVar.escalaLb10 += 0.1f;
+                GlobVar.escalaLb11 += 0.1f;
+                GlobVar.escalaLb12 += 0.1f;
+                GlobVar.escalaLb13 += 0.1f;
+                GlobVar.escalaLb14 += 0.1f;
+                GlobVar.escalaLb15 += 0.1f;
+                GlobVar.escalaLb16 += 0.1f;
+                GlobVar.escalaLb17 += 0.1f;
+                GlobVar.escalaLb18 += 0.1f;
+                GlobVar.escalaLb19 += 0.1f;
+                GlobVar.escalaLb20 += 0.1f;
+                GlobVar.escalaLb21 += 0.1f;
+                GlobVar.escalaLb22 += 0.1f;
+                GlobVar.escalaLb23 += 0.1f;
 
-            openglControl1.DoRender();
-            plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(0, 0, 1);
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(0, 0, 1);
+            }
+
             UpdateInicioTela();
         }
 
         private void minusAll_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-
-            GlobVar.escalaLb1 -= 0.1f;
-            GlobVar.escalaLb2 -= 0.1f;
-            GlobVar.escalaLb3 -= 0.1f;
-            GlobVar.escalaLb4 -= 0.1f;
-            GlobVar.escalaLb5 -= 0.1f;
-            GlobVar.escalaLb6 -= 0.1f;
-            GlobVar.escalaLb7 -= 0.1f;
-            GlobVar.escalaLb8 -= 0.1f;
-            GlobVar.escalaLb9 -= 0.1f;
-            GlobVar.escalaLb10 -= 0.1f;
-            GlobVar.escalaLb11 -= 0.1f;
-            GlobVar.escalaLb12 -= 0.1f;
-            GlobVar.escalaLb13 -= 0.1f;
-            GlobVar.escalaLb14 -= 0.1f;
-            GlobVar.escalaLb15 -= 0.1f;
-            GlobVar.escalaLb16 -= 0.1f;
-            GlobVar.escalaLb17 -= 0.1f;
-            GlobVar.escalaLb18 -= 0.1f;
-            GlobVar.escalaLb19 -= 0.1f;
-            GlobVar.escalaLb20 -= 0.1f;
-            GlobVar.escalaLb21 -= 0.1f;
-            GlobVar.escalaLb22 -= 0.1f;
-            GlobVar.escalaLb23 -= 0.1f;
-
-            openglControl1.DoRender();
-            plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(0, 0, 1);
-
+            if (GlobVar.escalaLb1 <= 0.1)
+            {
+                GlobVar.escalaLb1 -= 0.01f;
+                GlobVar.escalaLb2 -= 0.01f;
+                GlobVar.escalaLb3 -= 0.01f;
+                GlobVar.escalaLb4 -= 0.01f;
+                GlobVar.escalaLb5 -= 0.01f;
+                GlobVar.escalaLb6 -= 0.01f;
+                GlobVar.escalaLb7 -= 0.01f;
+                GlobVar.escalaLb8 -= 0.01f;
+                GlobVar.escalaLb9 -= 0.01f;
+                GlobVar.escalaLb10 -= 0.01f;
+                GlobVar.escalaLb11 -= 0.01f;
+                GlobVar.escalaLb12 -= 0.01f;
+                GlobVar.escalaLb13 -= 0.01f;
+                GlobVar.escalaLb14 -= 0.01f;
+                GlobVar.escalaLb15 -= 0.01f;
+                GlobVar.escalaLb16 -= 0.01f;
+                GlobVar.escalaLb17 -= 0.01f;
+                GlobVar.escalaLb18 -= 0.01f;
+                GlobVar.escalaLb19 -= 0.01f;
+                GlobVar.escalaLb20 -= 0.01f;
+                GlobVar.escalaLb21 -= 0.01f;
+                GlobVar.escalaLb22 -= 0.01f;
+                GlobVar.escalaLb23 -= 0.01f;
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(0, 0, 1);
+            }
+            else
+            {
+                GlobVar.escalaLb1 -= 0.1f;
+                GlobVar.escalaLb2 -= 0.1f;
+                GlobVar.escalaLb3 -= 0.1f;
+                GlobVar.escalaLb4 -= 0.1f;
+                GlobVar.escalaLb5 -= 0.1f;
+                GlobVar.escalaLb6 -= 0.1f;
+                GlobVar.escalaLb7 -= 0.1f;
+                GlobVar.escalaLb8 -= 0.1f;
+                GlobVar.escalaLb9 -= 0.1f;
+                GlobVar.escalaLb10 -= 0.1f;
+                GlobVar.escalaLb11 -= 0.1f;
+                GlobVar.escalaLb12 -= 0.1f;
+                GlobVar.escalaLb13 -= 0.1f;
+                GlobVar.escalaLb14 -= 0.1f;
+                GlobVar.escalaLb15 -= 0.1f;
+                GlobVar.escalaLb16 -= 0.1f;
+                GlobVar.escalaLb17 -= 0.1f;
+                GlobVar.escalaLb18 -= 0.1f;
+                GlobVar.escalaLb19 -= 0.1f;
+                GlobVar.escalaLb20 -= 0.1f;
+                GlobVar.escalaLb21 -= 0.1f;
+                GlobVar.escalaLb22 -= 0.1f;
+                GlobVar.escalaLb23 -= 0.1f;
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(0, 0, 1);
+            }
             UpdateInicioTela();
         }
         private void plusLb1_Click(object sender, EventArgs e)
