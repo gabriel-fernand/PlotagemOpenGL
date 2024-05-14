@@ -24,7 +24,6 @@ namespace PlotagemOpenGL.auxi
     {
         public static void QuantidadeCanais()
         {
-            int ntotal = 0;
             string[] dadoscanal = new string[47];
             byte[] buffer0 = new byte[395];
             byte[] buffer1 = new byte[8];
@@ -146,8 +145,6 @@ namespace PlotagemOpenGL.auxi
         public static void LeituraDat()
         {
             int ntotal = 0;
-            int numeroAVG = 8;
-            double[] valor = new double[] { };
             string[] dadoscanal = new string[47];
             byte[] buffer0 = new byte[395];
             byte[] buffer1 = new byte[8];
@@ -155,7 +152,6 @@ namespace PlotagemOpenGL.auxi
             byte[] buffer3 = new byte[47];
             for (int ind = 0; ind < GlobVar.qtdCanais.Length; ind++)
             {
-                if(ind == 7) { ind++; }
                 try
                 {
                     using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -218,48 +214,10 @@ namespace PlotagemOpenGL.auxi
 
                         GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
 
-                        valor = new double[GlobVar.indiceDat];
-
                         GlobVar.valorout = new Double[GlobVar.indiceDat];
 
-                        GlobVar.avg1 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg2 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg3 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg4 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg5 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg6 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg7 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.avg8 = new Double[GlobVar.amos / numeroAVG];
-
-                        GlobVar.mean = new Double[GlobVar.npagin * numeroAVG];
-
-
-
-                        int amostraMin = GlobVar.amos / GlobVar.numeroAmos;
-
-                        GlobVar.indiceAmostra1 = 0;
-                        GlobVar.indiceAmostra2 = amostraMin * 1;
-                        GlobVar.indiceAmostra3 = amostraMin * 2;
-                        GlobVar.indiceAmostra4 = amostraMin * 3;
-                        GlobVar.indiceAmostra5 = amostraMin * 4;
-                        GlobVar.indiceAmostra6 = amostraMin * 5;
-                        GlobVar.indiceAmostra7 = amostraMin * 6;
-                        GlobVar.indiceAmostra8 = amostraMin * 7;
-                        GlobVar.indiceAmostra9 = amostraMin * 8;
 
                         GlobVar.lastcall = 0;
-
-                        int i2r2 = 0;
-
-                        GlobVar.metadeavg = GlobVar.sizesample / 16;
-
 
 
                         for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo
@@ -277,14 +235,9 @@ namespace PlotagemOpenGL.auxi
                             {
                                 bitstring[j] = BitConverter.ToInt16(buffer4, i);
 
-                                //this.chart1.Series["Series1"].Points.AddXY(i, bitstring[j]);
-                                //uint result2 = BitConverter.ToUInt16(buffer4, i);
-                                //this.chart1.Series["Series1"].Points.AddXY(bitstring[j], j);
                             }
                             for (int i2r = 0, i2r1 = 0; i2r < GlobVar.sizesample / 2; i2r++, i2r1++)
                             {
-                                //this.chart2.Series["Series1"].Points.AddXY(sizesample, valorout[lastcall]);
-                                //valor[lastcall] = Convert.ToDouble(bitstring[i2r]);
                                 GlobVar.valorout[GlobVar.lastcall] = Convert.ToDouble(bitstring[i2r]);
 
                                 GlobVar.lisup = GlobVar.amos - 1;
@@ -294,204 +247,105 @@ namespace PlotagemOpenGL.auxi
 
 
                             }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra1) < GlobVar.indiceAmostra2; i++)
-                            {
-                                GlobVar.avg1[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra1]);
-                                //indiceAmostra1++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra2) < GlobVar.indiceAmostra3; i++)
-                            {
-                                GlobVar.avg2[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra2]);
-                                //indiceAmostra2++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra3) < GlobVar.indiceAmostra4; i++)
-                            {
-                                GlobVar.avg3[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra3]);
-                                //indiceAmostra3++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra4) < GlobVar.indiceAmostra5; i++)
-                            {
-                                GlobVar.avg4[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra4]);
-                                //indiceAmostra4++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra5) < GlobVar.indiceAmostra6; i++)
-                            {
-                                GlobVar.avg5[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra5]);
-                                //indiceAmostra5++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra6) < GlobVar.indiceAmostra7; i++)
-                            {
-                                GlobVar.avg6[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra6]);
-                                //indiceAmostra6++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra7) < GlobVar.indiceAmostra8; i++)
-                            {
-                                GlobVar.avg7[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra7]);
-                                //indiceAmostra7++;
-
-                            }
-
-                            for (int i = 0; (i + GlobVar.indiceAmostra8) < GlobVar.indiceAmostra9; i++)
-                            {
-                                GlobVar.avg8[i] = Convert.ToDouble(bitstring[i + GlobVar.indiceAmostra8]);
-                                //indiceAmostra8++;
-
-                            }
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg1), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg1), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg2), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg2), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg3), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg3), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg4), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg4), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg5), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg5), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg6), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg6), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg7), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg7), 2));
-                            i2r2++;
-
-                            //globVar.mean[i2r2] = Math.Abs(Math.Round(Accord.Statistics.Measures.Mean(globVar.avg8), 2));
-                            GlobVar.mean[i2r2] = Convert.ToInt32(Math.Round(Accord.Statistics.Measures.Mean(GlobVar.avg8), 2));
-                            i2r2++;
-
-                            Array.Clear(GlobVar.avg1, 0, GlobVar.avg1.Length);
-                            Array.Clear(GlobVar.avg2, 0, GlobVar.avg2.Length);
-                            Array.Clear(GlobVar.avg3, 0, GlobVar.avg3.Length);
-                            Array.Clear(GlobVar.avg4, 0, GlobVar.avg4.Length);
-                            Array.Clear(GlobVar.avg5, 0, GlobVar.avg5.Length);
-                            Array.Clear(GlobVar.avg6, 0, GlobVar.avg6.Length);
-                            Array.Clear(GlobVar.avg7, 0, GlobVar.avg7.Length);
-                            Array.Clear(GlobVar.avg8, 0, GlobVar.avg8.Length);
-
-                            //this.chart1.Series["Series1"].Points.AddXY(ich1, valorout[ich1]);
                         }
 
                         switch (ind)
                         {
                             case 0:
-                                GlobVar.canalA = new double[GlobVar.mean.Length];
-                                GlobVar.canalA = GlobVar.mean;
+                                GlobVar.canalA = new double[GlobVar.valorout.Length];
+                                GlobVar.canalA = GlobVar.valorout;
                                 break;
                             case 1:
-                                GlobVar.canalB = new double[GlobVar.mean.Length];
-                                GlobVar.canalB = GlobVar.mean;
+                                GlobVar.canalB = new double[GlobVar.valorout.Length];
+                                GlobVar.canalB = GlobVar.valorout;
                                 break;
                             case 2:
-                                GlobVar.canalC = new double[GlobVar.mean.Length];
-                                GlobVar.canalC = GlobVar.mean;
+                                GlobVar.canalC = new double[GlobVar.valorout.Length];
+                                GlobVar.canalC = GlobVar.valorout;
                                 break;
                             case 3:
-                                GlobVar.canalD = new double[GlobVar.mean.Length];
-                                GlobVar.canalD = GlobVar.mean;
+                                GlobVar.canalD = new double[GlobVar.valorout.Length];
+                                GlobVar.canalD = GlobVar.valorout;
                                 break;
                             case 4:
-                                GlobVar.canalE = new double[GlobVar.mean.Length];
-                                GlobVar.canalE = GlobVar.mean;
+                                GlobVar.canalE = new double[GlobVar.valorout.Length];
+                                GlobVar.canalE = GlobVar.valorout;
                                 break;
                             case 5:
-                                GlobVar.canalF = new double[GlobVar.mean.Length];
-                                GlobVar.canalF = GlobVar.mean;
+                                GlobVar.canalF = new double[GlobVar.valorout.Length];
+                                GlobVar.canalF = GlobVar.valorout;
                                 break;
                             case 6:
-                                GlobVar.canalG = new double[GlobVar.mean.Length];
-                                GlobVar.canalG = GlobVar.mean;
+                                GlobVar.canalG = new double[GlobVar.valorout.Length];
+                                GlobVar.canalG = GlobVar.valorout;
                                 break;
-                            case 24:
-                                //GlobVar.canalH = new double[GlobVar.mean.Length];
-                                //GlobVar.canalH = GlobVar.mean;
+                            case 7:
+                                GlobVar.canalH = new double[GlobVar.valorout.Length];
+                                GlobVar.canalH = GlobVar.valorout;
                                 break;
                             case 8:
-                                GlobVar.canalI = new double[GlobVar.mean.Length];
-                                GlobVar.canalI = GlobVar.mean;
+                                GlobVar.canalI = new double[GlobVar.valorout.Length];
+                                GlobVar.canalI = GlobVar.valorout;
                                 break;
                             case 9:
-                                GlobVar.canalJ = new double[GlobVar.mean.Length];
-                                GlobVar.canalJ = GlobVar.mean;
+                                GlobVar.canalJ = new double[GlobVar.valorout.Length];
+                                GlobVar.canalJ = GlobVar.valorout;
                                 break;
                             case 10:
-                                GlobVar.canalK = new double[GlobVar.mean.Length];
-                                GlobVar.canalK = GlobVar.mean;
+                                GlobVar.canalK = new double[GlobVar.valorout.Length];
+                                GlobVar.canalK = GlobVar.valorout;
                                 break;
                             case 11:
-                                GlobVar.canalL = new double[GlobVar.mean.Length];
-                                GlobVar.canalL = GlobVar.mean;
+                                GlobVar.canalL = new double[GlobVar.valorout.Length];
+                                GlobVar.canalL = GlobVar.valorout;
                                 break;
                             case 12:
-                                GlobVar.canalM = new double[GlobVar.mean.Length];
-                                GlobVar.canalM = GlobVar.mean;
+                                GlobVar.canalM = new double[GlobVar.valorout.Length];
+                                GlobVar.canalM = GlobVar.valorout;
                                 break;
                             case 13:
-                                GlobVar.canalN = new double[GlobVar.mean.Length];
-                                GlobVar.canalN = GlobVar.mean;
+                                GlobVar.canalN = new double[GlobVar.valorout.Length];
+                                GlobVar.canalN = GlobVar.valorout;
                                 break;
                             case 14:
-                                GlobVar.canalO = new double[GlobVar.mean.Length];
-                                GlobVar.canalO = GlobVar.mean;
+                                GlobVar.canalO = new double[GlobVar.valorout.Length];
+                                GlobVar.canalO = GlobVar.valorout;
                                 break;
                             case 15:
-                                GlobVar.canalP = new double[GlobVar.mean.Length];
-                                GlobVar.canalP = GlobVar.mean;
+                                GlobVar.canalP = new double[GlobVar.valorout.Length];
+                                GlobVar.canalP = GlobVar.valorout;
                                 break;
                             case 16:
-                                GlobVar.canalQ = new double[GlobVar.mean.Length];
-                                GlobVar.canalQ = GlobVar.mean;
+                                GlobVar.canalQ = new double[GlobVar.valorout.Length];
+                                GlobVar.canalQ = GlobVar.valorout;
                                 break;
                             case 17:
-                                GlobVar.canalR = new double[GlobVar.mean.Length];
-                                GlobVar.canalR = GlobVar.mean;
+                                GlobVar.canalR = new double[GlobVar.valorout.Length];
+                                GlobVar.canalR = GlobVar.valorout;
                                 break;
                             case 18:
-                                GlobVar.canalS = new double[GlobVar.mean.Length];
-                                GlobVar.canalS = GlobVar.mean;
+                                GlobVar.canalS = new double[GlobVar.valorout.Length];
+                                GlobVar.canalS = GlobVar.valorout;
                                 break;
                             case 19:
-                                GlobVar.canalT = new double[GlobVar.mean.Length];
-                                GlobVar.canalT = GlobVar.mean;
+                                GlobVar.canalT = new double[GlobVar.valorout.Length];
+                                GlobVar.canalT = GlobVar.valorout;
                                 break;
                             case 20:
-                                GlobVar.canalU = new double[GlobVar.mean.Length];
-                                GlobVar.canalU = GlobVar.mean;
+                                GlobVar.canalU = new double[GlobVar.valorout.Length];
+                                GlobVar.canalU = GlobVar.valorout;
                                 break;
                             case 21:
-                                GlobVar.canalV = new double[GlobVar.mean.Length];
-                                GlobVar.canalV = GlobVar.mean;
+                                GlobVar.canalV = new double[GlobVar.valorout.Length];
+                                GlobVar.canalV = GlobVar.valorout;
                                 break;
                             case 22:
-                                //GlobVar.canalW = new double[GlobVar.mean.Length];
-                                //GlobVar.canalW = GlobVar.mean;
+                                GlobVar.canalW = new double[GlobVar.valorout.Length];
+                                GlobVar.canalW = GlobVar.valorout;
                                 break;
                             case 23:
-                                //GlobVar.canalW = new double[GlobVar.mean.Length];
-                                //GlobVar.canalW = GlobVar.mean;
+                                GlobVar.canalW = new double[GlobVar.valorout.Length];
+                                GlobVar.canalW = GlobVar.valorout;
                                 break;
                             default:
                                 // Lidar com o caso padrão, se necessário

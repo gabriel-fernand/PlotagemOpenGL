@@ -131,13 +131,13 @@ namespace PlotagemOpenGL.auxi
         public static Vector2 locBut;
         public static Vector2 locScale;
 
-        public static int maximaVect = 2000;
+        public static int maximaVect = 20000;
         public static int indice = 0;
 
         public static float saltoTelas;
         public static float SPEED = 1.0f;
 
-        public static int namos = 8;
+        public static int namos = 512;
         public static int segundos = 30;
         public static int tmpEmTela = 240;
 

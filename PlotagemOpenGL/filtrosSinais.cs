@@ -63,8 +63,8 @@ namespace PlotagemOpenGL
         public static double[] ApplyLowPassFilter(double[] input, double alpha)
         {
             double[] output = new double[input.Length];
-            lowFilt = new Accord.Audio.Filters.LowPassFilter(15, 8);
-            Signal sig = Signal.FromArray(input, 8);
+            lowFilt = new Accord.Audio.Filters.LowPassFilter(15, 512);
+            Signal sig = Signal.FromArray(input, 512);
             lowFilt.Apply(sig);
             
             LowPassFilter lowPassFilter = new LowPassFilter(alpha);
