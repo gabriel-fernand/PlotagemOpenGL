@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Threading;
 //using CenterSpace.NMath.Core;
 using System.Reflection;
+using SharpGL.SceneGraph.Raytracing;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -86,7 +87,7 @@ namespace PlotagemOpenGL.auxi
                             case 6:
                                 GlobVar.nameCanalG = phrase.Substring(11, 10);
                                 break;
-                            case 24:
+                            case 7:
                                 GlobVar.nameCanalH = phrase.Substring(11, 10);
                                 break;
                             case 8:
@@ -144,14 +145,16 @@ namespace PlotagemOpenGL.auxi
         }
         public static void LeituraDat()
         {
-            int ntotal = 0;
             string[] dadoscanal = new string[47];
             byte[] buffer0 = new byte[395];
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
             byte[] buffer3 = new byte[47];
+            GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
             for (int ind = 0; ind < GlobVar.qtdCanais.Length; ind++)
             {
+                int ntotal = 0;
+
                 try
                 {
                     using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -175,7 +178,7 @@ namespace PlotagemOpenGL.auxi
                         GlobVar.tipocanais = tipocanais1.Replace(" ", "");
 
                         int ncanint = Convert.ToInt16(tipocanais1.Replace(" ", "")); //Int16.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
-
+                        int txPorSeg = 0;
                         for (int ich = 0; ich < ncanint; ich++)
                         {
                             fs.Read(buffer3, 0, buffer3.Length);
@@ -187,8 +190,10 @@ namespace PlotagemOpenGL.auxi
                             string phrase = dadoscanal[ich];
 
                             GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
-
-
+                            string sizesample3 = phrase.Substring(8, 4);
+                            string aux = sizesample3.Replace(" ", "");
+                            int auxx = Convert.ToInt16(aux);
+                            GlobVar.txPorCanal[ich] = auxx;
 
                             if (cod.Equals(GlobVar.qtdCanais[ind]))
                             {
@@ -204,6 +209,7 @@ namespace PlotagemOpenGL.auxi
                             ntotal = ntotal + (GlobVar.amos * 2);
 
                             int ponteirostr = Convert.ToInt16(fs.Position);
+                            txPorSeg += auxx;
                         }
 
                         GlobVar.size = Convert.ToInt32(GlobVar.npag);
@@ -220,7 +226,7 @@ namespace PlotagemOpenGL.auxi
                         GlobVar.lastcall = 0;
 
 
-                        for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo
+                        for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat
                         {
 
                             byte[] buffer4 = new byte[ntotal];
@@ -239,16 +245,25 @@ namespace PlotagemOpenGL.auxi
                             for (int i2r = 0, i2r1 = 0; i2r < GlobVar.sizesample / 2; i2r++, i2r1++)
                             {
                                 GlobVar.valorout[GlobVar.lastcall] = Convert.ToDouble(bitstring[i2r]);
-
-                                GlobVar.lisup = GlobVar.amos - 1;
-
-
                                 GlobVar.lastcall++;
 
 
                             }
                         }
-
+                        //for (int i = 0; i < GlobVar.valorout.Length; i++)
+                        //{
+                        //    GlobVar.valorout[i] *= -1;
+                        //}
+                        
+                        if (GlobVar.txPorCanal[ind] == 256)
+                        {
+                            RemoverMetadeParaFrente(GlobVar.valorout);
+                            DuplicarArray(GlobVar.valorout);
+                        }
+                        //for (int i = 0; i < GlobVar.valorout.Length; i++)
+                        //{
+                        //    GlobVar.valorout[i] = Math.Abs(GlobVar.valorout[i]);
+                        //}
                         switch (ind)
                         {
                             case 0:
@@ -384,6 +399,27 @@ namespace PlotagemOpenGL.auxi
 
 
 
+        }
+        public static double[] DuplicarArray(double[] array)
+        {
+            double[] novoArray = new double[array.Length * 2];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                novoArray[i * 2] = novoArray[i * 2 + 1] = array[i];
+            }
+
+            return novoArray;
+        }
+
+        public static double[] RemoverMetadeParaFrente(double[] array)
+        {
+            int novaTamanho = array.Length / 2;
+            double[] novoArray = new double[novaTamanho];
+
+            Array.Copy(array, novaTamanho, novoArray, 0, novaTamanho);
+
+            return novoArray;
         }
 
 

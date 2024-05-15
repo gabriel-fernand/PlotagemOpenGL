@@ -541,6 +541,11 @@ namespace PlotagemOpenGL
                         openglControl1.DoRender();
                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                         break;
+                    case 14:
+                        GlobVar.canalN = LowPassFilter.ApplyLowPassFilter(GlobVar.canalN, 0.15);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        break;
                 }
             }
             else if (filtro.Equals("High Pass"))
@@ -566,8 +571,8 @@ namespace PlotagemOpenGL
             }
             else if (filtro.Equals("FWT"))
             {
-                filtrosSinais.FWT(GlobVar.mean);
-                GlobVar.mean = filtrosSinais.alterado;
+                filtrosSinais.FWT(GlobVar.canalA);
+                GlobVar.canalA = filtrosSinais.alterado;
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
@@ -1574,7 +1579,7 @@ namespace PlotagemOpenGL
 
             if (GlobVar.escalaLb18 <= 0.1)
             {
-                GlobVar.escalaLb1 -= 0.01f;
+                GlobVar.escalaLb18 -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);

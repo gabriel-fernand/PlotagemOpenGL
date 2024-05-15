@@ -9,34 +9,16 @@ namespace PlotagemOpenGL.auxi
     {
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string cabecalho;
+        public static int[] txPorCanal;
         public static int npagin;
         public static string npag;
         public static string tipocanais;
-        public static string COD = "5 ";
         public static int amos;
         public static int startpos;
         public static int sizesample;
         public static int size;
         public static double[] valorout;
-        public static double[] avg1;
-        public static double[] avg2;
-        public static double[] avg3;
-        public static double[] avg4;
-        public static double[] avg5;
-        public static double[] avg6;
-        public static double[] avg7;
-        public static double[] avg8;
-        public static double[] mean;
         public static int numeroAmos = 8;
-        public static int indiceAmostra1;
-        public static int indiceAmostra2;
-        public static int indiceAmostra3;
-        public static int indiceAmostra4;
-        public static int indiceAmostra5;
-        public static int indiceAmostra6;
-        public static int indiceAmostra7;
-        public static int indiceAmostra8;
-        public static int indiceAmostra9;
         public static int indiceDat = 0;
 
 
@@ -137,7 +119,7 @@ namespace PlotagemOpenGL.auxi
         public static float saltoTelas;
         public static float SPEED = 1.0f;
 
-        public static int namos = 512;
+        public static int namos = 256;
         public static int segundos = 30;
         public static int tmpEmTela = 240;
 
