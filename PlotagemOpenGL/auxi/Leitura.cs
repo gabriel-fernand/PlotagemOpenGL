@@ -240,7 +240,7 @@ namespace PlotagemOpenGL.auxi
                             for (int i = GlobVar.startpos, j = 0; i < limite; i += 2, j++)
                             {
                                 bitstring[j] = BitConverter.ToInt16(buffer4, i);
-
+                                 
                             }
                             for (int i2r = 0, i2r1 = 0; i2r < GlobVar.sizesample / 2; i2r++, i2r1++)
                             {
@@ -257,8 +257,15 @@ namespace PlotagemOpenGL.auxi
                         
                         if (GlobVar.txPorCanal[ind] == 256)
                         {
-                            RemoverMetadeParaFrente(GlobVar.valorout);
-                            DuplicarArray(GlobVar.valorout);
+                            double[] aux = GlobVar.valorout;
+                            aux = RemoverMetadeParaFrente(aux);
+                            GlobVar.valorout = DuplicarArray(aux);
+                        }else if (GlobVar.txPorCanal[ind] == 8)
+                        {
+                            double[] aux = GlobVar.valorout;
+                            aux = AjustarArray8Tx(aux);
+                            GlobVar.valorout = DuplicarArray64Vezes(aux);
+                            
                         }
                         //for (int i = 0; i < GlobVar.valorout.Length; i++)
                         //{
@@ -411,13 +418,42 @@ namespace PlotagemOpenGL.auxi
 
             return novoArray;
         }
+        public static double[] DuplicarArray64Vezes(double[] array)
+        {
+            double[] novoArray = new double[array.Length * 64];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    novoArray[i * 64 + j] = array[i];
+                }
+            }
+
+            return novoArray;
+        }
+
 
         public static double[] RemoverMetadeParaFrente(double[] array)
         {
             int novaTamanho = array.Length / 2;
             double[] novoArray = new double[novaTamanho];
 
-            Array.Copy(array, novaTamanho, novoArray, 0, novaTamanho);
+            for (int i = 0; i < novaTamanho; i++)
+            {
+                novoArray[i] = array[i];
+            }
+
+            return novoArray;
+        }
+        public static double[] AjustarArray8Tx(double[] array)
+        {
+            int novaTamanho = array.Length / 64;
+            double[] novoArray = new double[novaTamanho];
+            for(int i = 0;i < novaTamanho; i++)
+            {
+                novoArray[i] = array[i];
+            }
 
             return novoArray;
         }

@@ -172,7 +172,8 @@ namespace PlotagemOpenGL
             //Canais.LerCanais();
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
-            Leitura.LeituraDat();
+            //Leitura.LeituraDat();
+            LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
             this.Resize += painelComando_Resiz;
@@ -525,7 +526,7 @@ namespace PlotagemOpenGL
                 switch (selecao) 
                 {
                     case 1:
-                        GlobVar.canalA = LowPassFilter.ApplyLowPassFilter(GlobVar.canalA, 0.1);
+                        GlobVar.canalA = LowPassFilter.ApplyLowPassFilter(GlobVar.canalA, 0.7);
                         openglControl1.DoRender();
                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
@@ -541,6 +542,12 @@ namespace PlotagemOpenGL
                         openglControl1.DoRender();
                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                         break;
+                    case 4:
+                        GlobVar.canalD = LowPassFilter.ApplyLowPassFilter(GlobVar.canalD, 0.1);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        break;
+
                     case 14:
                         GlobVar.canalN = LowPassFilter.ApplyLowPassFilter(GlobVar.canalN, 0.15);
                         openglControl1.DoRender();
@@ -550,10 +557,37 @@ namespace PlotagemOpenGL
             }
             else if (filtro.Equals("High Pass"))
             {
-                GlobVar.canalD = HighPassFilter.ApplyHighPassFilter(GlobVar.canalD, 0.5);
-                int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                switch (selecao)
+                {
+                    case 1:
+                        GlobVar.canalA = HighPassFilter.ApplyHighPassFilter(GlobVar.canalA, 0.1);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                        break;
+                    case 2:
+                        GlobVar.canalB = HighPassFilter.ApplyHighPassFilter(GlobVar.canalB, 0.4);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                        break;
+                    case 3:
+                        GlobVar.canalC = HighPassFilter.ApplyHighPassFilter(GlobVar.canalC, 0.4);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        break;
+                    case 4:
+                        GlobVar.canalD = HighPassFilter.ApplyHighPassFilter(GlobVar.canalD, 0.4);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        break;
+
+                    case 14:
+                        GlobVar.canalN = HighPassFilter.ApplyHighPassFilter(GlobVar.canalN, 0.4);
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        break;
+                }
             }
             else if (filtro.Equals("Band Pass"))
             {
