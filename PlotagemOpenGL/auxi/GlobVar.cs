@@ -9,7 +9,6 @@ namespace PlotagemOpenGL.auxi
     {
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string cabecalho;
-        public static int[] txPorCanal;
         public static int npagin;
         public static string npag;
         public static string tipocanais;
@@ -113,8 +112,13 @@ namespace PlotagemOpenGL.auxi
         public static Vector2 locBut;
         public static Vector2 locScale;
 
-        public static float[,] matrizCompleta;
+        public static int[,] matrizCompleta;
+        public static double[,] matrizCanal;
         public static int[] ponteiro;
+
+        public static string[] nomeCanais;
+        public static int[] txPorCanal;
+
 
         public static int maximaVect = 20000;
         public static int indice = 0;

@@ -19,8 +19,10 @@ namespace PlotagemOpenGL.auxi
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
             byte[] buffer3 = new byte[47];
+            GlobVar.nomeCanais = new string[GlobVar.qtdCanais.Length];
             GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
             GlobVar.ponteiro = new int[GlobVar.qtdCanais.Length];
+            int[] pontI = new int[GlobVar.qtdCanais.Length];
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
             {
@@ -54,14 +56,12 @@ namespace PlotagemOpenGL.auxi
                     string cod = dadoscanal[ich].Substring(0, 2);
                     GlobVar.qtdCanais[ich] = cod;
                     string phrase = dadoscanal[ich];
-
+                    GlobVar.nomeCanais[ich] = phrase.Substring(11, 10);
                     GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
                     string sizesample3 = phrase.Substring(8, 4);
                     string aux = sizesample3.Replace(" ", "");
                     int auxx = Convert.ToInt16(aux);
                     GlobVar.txPorCanal[ich] = auxx;
-
-                        //string[] hexValuesSplit = dadoscanal[ich].Split(' ');
 
                         GlobVar.startpos = Convert.ToInt32(ntotal);
                         string sizesample1 = phrase.Substring(8, 4);
@@ -71,12 +71,13 @@ namespace PlotagemOpenGL.auxi
                     ntotal = ntotal + (GlobVar.amos * 2);
 
                     int ponteirostr = Convert.ToInt16(fs.Position);
+                    pontI[ich] = txPorSeg;
                     txPorSeg += auxx;
                     GlobVar.ponteiro[ich] = txPorSeg;
 
                 }
 
-                GlobVar.matrizCompleta = new float[GlobVar.npagin, txPorSeg];
+                GlobVar.matrizCompleta = new int[GlobVar.npagin, txPorSeg];
 
 
                 GlobVar.size = Convert.ToInt32(GlobVar.npag);
@@ -100,6 +101,35 @@ namespace PlotagemOpenGL.auxi
                     {
                         GlobVar.matrizCompleta[ich1, j] = BitConverter.ToInt16(buffer4, i);
 
+                    }
+                }
+                GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
+                int[] pontF = GlobVar.ponteiro;
+                GlobVar.matrizCanal = new double[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
+
+                for (int linhaCanais = 0; linhaCanais < GlobVar.matrizCanal.GetLength(0); linhaCanais++)
+                {
+                    int colunaCanalIndex = 0;
+
+                    // Percorre as linhas da matrizCompleta
+                    for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
+                    {
+                        // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF
+                        for (int colunaComp = pontI[linhaCanais]; colunaComp < pontF[linhaCanais]; colunaComp++)
+                        {
+                            // Certifique-se de não exceder os limites da matrizCanais
+                            if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
+                            {
+                                // Copia o valor de matrizCompleta para matrizCanal
+                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = GlobVar.matrizCompleta[linhaComp, colunaComp];
+                                colunaCanalIndex++;
+                            }
+                            else
+                            {
+                                // Se exceder os limites da matrizCanal, saia do loop
+                                break;
+                            }
+                        }
                     }
                 }
             }

@@ -64,6 +64,7 @@ namespace PlotagemOpenGL.auxi
                         string cod = dadoscanal[ich].Substring(0, 2);
                         GlobVar.qtdCanais[ich] = cod;
                         string phrase = dadoscanal[ich];
+
                         switch (ich)
                         {
                             case 0:
@@ -150,6 +151,7 @@ namespace PlotagemOpenGL.auxi
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
             byte[] buffer3 = new byte[47];
+            GlobVar.nomeCanais = new string[GlobVar.qtdCanais.Length];
             GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
             for (int ind = 0; ind < GlobVar.qtdCanais.Length; ind++)
             {
@@ -188,6 +190,8 @@ namespace PlotagemOpenGL.auxi
                             string cod = dadoscanal[ich].Substring(0, 2);
 
                             string phrase = dadoscanal[ich];
+                            GlobVar.nomeCanais[ich] = phrase.Substring(11, 10);
+
 
                             GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
                             string sizesample3 = phrase.Substring(8, 4);
