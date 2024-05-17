@@ -144,9 +144,21 @@ namespace PlotagemOpenGL.auxi
                 i += GlobVar.namos;
                 ind++;
             }
+            int des = qtdGraf - 1;
+            for (int i = 0 ; i < qtdGraf; i++)
+            {                
+                gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
+                for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
+                {
+                    if (j <= 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j, desenhoLoc[des]); // Define cada ponto do gráfico
+                    else gl.Vertex(j, (GlobVar.matrizCanal[i,j] * GlobVar.scale[i]) + desenhoLoc[des]);                                                                                  //aqui tem plotar 3 graficos diferentes
+                }
+                des--;
 
+                gl.End();
+            }
 
-            switch (qtdGraf)
+            /*switch (qtdGraf)
             {
                 case 1:
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
@@ -2404,7 +2416,7 @@ namespace PlotagemOpenGL.auxi
                     gl.End();
                     break;
             }
-
+            */
 
             gl.Flush();
             for (int i = 0; i < qtdGraf; i++)
@@ -2414,7 +2426,7 @@ namespace PlotagemOpenGL.auxi
                 gl.Begin(OpenGL.GL_LINES);
                 gl.Color(0.752941f, 0.752941f, 0.752941f);
                 gl.Vertex(1, traco[i]);
-                gl.Vertex(GlobVar.canalA.Length, traco[i]);
+                gl.Vertex(GlobVar.matrizCanal.GetLength(1), traco[i]);
                 gl.End();
             }
 

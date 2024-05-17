@@ -172,7 +172,7 @@ namespace PlotagemOpenGL
             //Canais.LerCanais();
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
-            Leitura.LeituraDat();
+            //Leitura.LeituraDat();
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
@@ -666,7 +666,7 @@ namespace PlotagemOpenGL
                 gl.LoadIdentity();
                 gl.Translate(0, 0, 1);
 
-                hScrollBar1.Maximum = (GlobVar.canalA.Length);
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
 

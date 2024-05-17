@@ -22,6 +22,7 @@ namespace PlotagemOpenGL.auxi
             GlobVar.nomeCanais = new string[GlobVar.qtdCanais.Length];
             GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
             GlobVar.ponteiro = new int[GlobVar.qtdCanais.Length];
+            GlobVar.scale = new double[GlobVar.qtdCanais.Length];
             int[] pontI = new int[GlobVar.qtdCanais.Length];
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -132,9 +133,61 @@ namespace PlotagemOpenGL.auxi
                         }
                     }
                 }
+                for (int i = 0; i < GlobVar.matrizCanal.GetLength(0); i++)
+                {
+                    if (GlobVar.txPorCanal[i] < 512)
+                    {
+                        int aux = 512 / GlobVar.txPorCanal[i];
+                        int[] auxx = new int[GlobVar.matrizCanal.GetLength(1)];
+                        for(int j = 0; j < auxx.Length; j++)
+                        {
+                            auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[i, j]);
+                        }
+                        auxx = RemoverMetadeParaFrente(auxx, aux);
+                        auxx = DuplicarArray(auxx, aux);
+                        for (int j = 0; j < GlobVar.matrizCanal.GetLength(1); j++)
+                        {
+                            GlobVar.matrizCanal[i, j] = auxx[j];
+                        }
+                    }
+                }
+                for(int i = 0; i < GlobVar.scale.Length; i++)
+                {
+                    GlobVar.scale[i] = 0.01f;
+                }
             }
 
         }
+        public static int[] RemoverMetadeParaFrente(int[] array, int vezes)
+        {
+            int novaTamanho = array.Length / vezes;
+            int[] novoArray = new int[novaTamanho];
+
+            for (int i = 0; i < novaTamanho; i++)
+            {
+                novoArray[i] = array[i];
+            }
+
+            return novoArray;
+        }
+        public static int[] DuplicarArray(int[] array, int multiplicacao)
+        {
+            // Cria um novo array com o tamanho necessário
+            int[] novoArray = new int[array.Length * multiplicacao];
+
+            // Itera sobre os elementos do array original
+            for (int i = 0; i < array.Length; i++)
+            {
+                // Duplica o valor do elemento atual no novo array
+                for (int j = 0; j < multiplicacao; j++)
+                {
+                    novoArray[i * multiplicacao + j] = array[i];
+                }
+            }
+
+            return novoArray;
+        }
+
     }
 }
 

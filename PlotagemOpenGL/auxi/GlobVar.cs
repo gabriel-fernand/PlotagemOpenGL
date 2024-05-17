@@ -115,6 +115,7 @@ namespace PlotagemOpenGL.auxi
         public static int[,] matrizCompleta;
         public static double[,] matrizCanal;
         public static int[] ponteiro;
+        public static double[] scale;
 
         public static string[] nomeCanais;
         public static int[] txPorCanal;
