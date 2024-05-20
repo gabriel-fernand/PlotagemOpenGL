@@ -11,6 +11,9 @@ using Point = System.Drawing.Point;
 using System.Text.RegularExpressions;
 using PlotagemOpenGL.auxi;
 using Accord.Audio.Filters;
+using static System.Windows.Forms.AxHost;
+using System.Windows.Media;
+using SharpGL.WPF;
 
 
 namespace PlotagemOpenGL
@@ -179,7 +182,7 @@ namespace PlotagemOpenGL
             this.Resize += painelComando_Resiz;
             this.Resize += Painel_resiz;
             this.Resize += panelLb_Resiz;
-
+            this.Controls.Add(openglControl1);
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
@@ -523,71 +526,23 @@ namespace PlotagemOpenGL
 
             if (filtro.Equals("Low Pass"))
             {
-                switch (selecao) 
-                {
-                    case 1:
-                        GlobVar.canalA = LowPassFilter.ApplyLowPassFilter(GlobVar.canalA, 0.7);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
+                for(int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(selecao - 1), i]; }
+                aux = LowPassFilter.ApplyLowPassFilter(aux, 0.15);
+                for(int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[selecao - 1, i] = aux[i]; }
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-                        break;
-                    case 2:
-                        GlobVar.canalB = LowPassFilter.ApplyLowPassFilter(GlobVar.canalB, 0.1);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-                        break;
-                    case 3:
-                        GlobVar.canalC = LowPassFilter.ApplyLowPassFilter(GlobVar.canalC, 0.1);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-                    case 4:
-                        GlobVar.canalD = LowPassFilter.ApplyLowPassFilter(GlobVar.canalD, 0.1);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-
-                    case 14:
-                        GlobVar.canalN = LowPassFilter.ApplyLowPassFilter(GlobVar.canalN, 0.15);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-                }
             }
             else if (filtro.Equals("High Pass"))
             {
-                switch (selecao)
-                {
-                    case 1:
-                        GlobVar.canalA = HighPassFilter.ApplyHighPassFilter(GlobVar.canalA, 0.1);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
+                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(selecao - 1), i]; }
+                aux = HighPassFilter.ApplyHighPassFilter(aux, 0.4);
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[selecao - 1, i] = aux[i]; }
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-                        break;
-                    case 2:
-                        GlobVar.canalB = HighPassFilter.ApplyHighPassFilter(GlobVar.canalB, 0.4);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-                        break;
-                    case 3:
-                        GlobVar.canalC = HighPassFilter.ApplyHighPassFilter(GlobVar.canalC, 0.4);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-                    case 4:
-                        GlobVar.canalD = HighPassFilter.ApplyHighPassFilter(GlobVar.canalD, 0.4);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-
-                    case 14:
-                        GlobVar.canalN = HighPassFilter.ApplyHighPassFilter(GlobVar.canalN, 0.4);
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                        break;
-                }
             }
             else if (filtro.Equals("Band Pass"))
             {
@@ -695,7 +650,8 @@ namespace PlotagemOpenGL
 
 
         }
-
+        
+        private bool isDrawing = false;
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -716,38 +672,94 @@ namespace PlotagemOpenGL
         }
         private void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
         {
-            throw new NotImplementedException();
+        }
+
+        private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isDrawing = true;
+
+                // Convert window coordinates to OpenGL coordinates
+                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.startX, out plotagem.startY);
+
+                // Set the initial end coordinates to the starting coordinates
+                plotagem.endX = plotagem.startX;
+                plotagem.endY = plotagem.startY;
+
+                // Redraw the control
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+            }
+        }
+
+        private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrawing)
+            {
+                // Update end coordinates as mouse moves
+                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.endX, out plotagem.endY);
+
+                // Redraw the control
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+            }
+        }
+
+        private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isDrawing = false;
+
+                // Update end coordinates when the mouse button is released
+                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.endX, out plotagem.endY);
+
+                // Redraw the control
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+            }
+        }
+
+        private void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
+        {
+            var gl = openglControl1.OpenGL;
+
+            // Get the viewport and projection/modelview matrices
+            int[] viewport = new int[4];
+            gl.GetInteger(OpenGL.GL_VIEWPORT, viewport);
+
+            double[] modelview = new double[16];
+            gl.GetDouble(OpenGL.GL_MODELVIEW_MATRIX, modelview);
+
+            double[] projection = new double[16];
+            gl.GetDouble(OpenGL.GL_PROJECTION_MATRIX, projection);
+
+            // Convert mouse coordinates to OpenGL coordinates
+            float winX = (float)mouseX;
+            float winY = (float)viewport[3] - (float)mouseY; // invert Y coordinate
+            double objX, objY, objZ;
+            objX = 0;
+            objY = 0;
+            objZ = 0;
+            gl.UnProject(winX, winY, 0, modelview, projection, viewport, ref objX, ref objY, ref objZ);
+
+            openGLX = (float)objX;
+            openGLY = (float)objY;
         }
 
         private void plusAll_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb1 < 0.09)
+            if (GlobVar.scale[0] < 0.09)
             {
-
-                GlobVar.escalaLb1 += 0.01f;
-                GlobVar.escalaLb2 += 0.01f;
-                GlobVar.escalaLb3 += 0.01f;
-                GlobVar.escalaLb4 += 0.01f;
-                GlobVar.escalaLb5 += 0.01f;
-                GlobVar.escalaLb6 += 0.01f;
-                GlobVar.escalaLb7 += 0.01f;
-                GlobVar.escalaLb8 += 0.01f;
-                GlobVar.escalaLb9 += 0.01f;
-                GlobVar.escalaLb10 += 0.01f;
-                GlobVar.escalaLb11 += 0.01f;
-                GlobVar.escalaLb12 += 0.01f;
-                GlobVar.escalaLb13 += 0.01f;
-                GlobVar.escalaLb14 += 0.01f;
-                GlobVar.escalaLb15 += 0.01f;
-                GlobVar.escalaLb16 += 0.01f;
-                GlobVar.escalaLb17 += 0.01f;
-                GlobVar.escalaLb18 += 0.01f;
-                GlobVar.escalaLb19 += 0.01f;
-                GlobVar.escalaLb20 += 0.01f;
-                GlobVar.escalaLb21 += 0.01f;
-                GlobVar.escalaLb22 += 0.01f;
-                GlobVar.escalaLb23 += 0.01f;
+                for(int i = 0; i < GlobVar.scale.Length; i++)
+                {
+                    GlobVar.scale[i] += 0.01f;
+                }
 
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
@@ -755,29 +767,10 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb1 += 0.1f;
-                GlobVar.escalaLb2 += 0.1f;
-                GlobVar.escalaLb3 += 0.1f;
-                GlobVar.escalaLb4 += 0.1f;
-                GlobVar.escalaLb5 += 0.1f;
-                GlobVar.escalaLb6 += 0.1f;
-                GlobVar.escalaLb7 += 0.1f;
-                GlobVar.escalaLb8 += 0.1f;
-                GlobVar.escalaLb9 += 0.1f;
-                GlobVar.escalaLb10 += 0.1f;
-                GlobVar.escalaLb11 += 0.1f;
-                GlobVar.escalaLb12 += 0.1f;
-                GlobVar.escalaLb13 += 0.1f;
-                GlobVar.escalaLb14 += 0.1f;
-                GlobVar.escalaLb15 += 0.1f;
-                GlobVar.escalaLb16 += 0.1f;
-                GlobVar.escalaLb17 += 0.1f;
-                GlobVar.escalaLb18 += 0.1f;
-                GlobVar.escalaLb19 += 0.1f;
-                GlobVar.escalaLb20 += 0.1f;
-                GlobVar.escalaLb21 += 0.1f;
-                GlobVar.escalaLb22 += 0.1f;
-                GlobVar.escalaLb23 += 0.1f;
+                for (int i = 0; i < GlobVar.scale.Length; i++)
+                {
+                    GlobVar.scale[i] += 0.1f;
+                }
 
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
@@ -790,60 +783,22 @@ namespace PlotagemOpenGL
         private void minusAll_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb1 <= 0.1)
+            if (GlobVar.scale[0] <= 0.1)
             {
-                GlobVar.escalaLb1 -= 0.01f;
-                GlobVar.escalaLb2 -= 0.01f;
-                GlobVar.escalaLb3 -= 0.01f;
-                GlobVar.escalaLb4 -= 0.01f;
-                GlobVar.escalaLb5 -= 0.01f;
-                GlobVar.escalaLb6 -= 0.01f;
-                GlobVar.escalaLb7 -= 0.01f;
-                GlobVar.escalaLb8 -= 0.01f;
-                GlobVar.escalaLb9 -= 0.01f;
-                GlobVar.escalaLb10 -= 0.01f;
-                GlobVar.escalaLb11 -= 0.01f;
-                GlobVar.escalaLb12 -= 0.01f;
-                GlobVar.escalaLb13 -= 0.01f;
-                GlobVar.escalaLb14 -= 0.01f;
-                GlobVar.escalaLb15 -= 0.01f;
-                GlobVar.escalaLb16 -= 0.01f;
-                GlobVar.escalaLb17 -= 0.01f;
-                GlobVar.escalaLb18 -= 0.01f;
-                GlobVar.escalaLb19 -= 0.01f;
-                GlobVar.escalaLb20 -= 0.01f;
-                GlobVar.escalaLb21 -= 0.01f;
-                GlobVar.escalaLb22 -= 0.01f;
-                GlobVar.escalaLb23 -= 0.01f;
+                for (int i = 0; i < GlobVar.scale.Length; i++)
+                {
+                    GlobVar.scale[i] -= 0.01f;
+                }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
             }
             else
             {
-                GlobVar.escalaLb1 -= 0.1f;
-                GlobVar.escalaLb2 -= 0.1f;
-                GlobVar.escalaLb3 -= 0.1f;
-                GlobVar.escalaLb4 -= 0.1f;
-                GlobVar.escalaLb5 -= 0.1f;
-                GlobVar.escalaLb6 -= 0.1f;
-                GlobVar.escalaLb7 -= 0.1f;
-                GlobVar.escalaLb8 -= 0.1f;
-                GlobVar.escalaLb9 -= 0.1f;
-                GlobVar.escalaLb10 -= 0.1f;
-                GlobVar.escalaLb11 -= 0.1f;
-                GlobVar.escalaLb12 -= 0.1f;
-                GlobVar.escalaLb13 -= 0.1f;
-                GlobVar.escalaLb14 -= 0.1f;
-                GlobVar.escalaLb15 -= 0.1f;
-                GlobVar.escalaLb16 -= 0.1f;
-                GlobVar.escalaLb17 -= 0.1f;
-                GlobVar.escalaLb18 -= 0.1f;
-                GlobVar.escalaLb19 -= 0.1f;
-                GlobVar.escalaLb20 -= 0.1f;
-                GlobVar.escalaLb21 -= 0.1f;
-                GlobVar.escalaLb22 -= 0.1f;
-                GlobVar.escalaLb23 -= 0.1f;
+                for (int i = 0; i < GlobVar.scale.Length; i++)
+                {
+                    GlobVar.scale[i] -= 0.1f;
+                }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -853,9 +808,9 @@ namespace PlotagemOpenGL
         private void plusLb1_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb1 < 0.09)
+            if (GlobVar.scale[0] < 0.09)
             {
-                GlobVar.escalaLb1 += 0.01f;
+                GlobVar.scale[0] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -863,7 +818,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb1 += 0.1f;
+                GlobVar.scale[0] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -874,9 +829,9 @@ namespace PlotagemOpenGL
         {
 
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb1 <= 0.1)
+            if (GlobVar.scale[0] <= 0.1)
             {
-                GlobVar.escalaLb1 -= 0.01f;
+                GlobVar.scale[0] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -884,7 +839,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb1 -= 0.1f;
+                GlobVar.scale[0] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -895,9 +850,9 @@ namespace PlotagemOpenGL
         private void plusLb2_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb2 < 0.09)
+            if (GlobVar.scale[1] < 0.09)
             {
-                GlobVar.escalaLb2 += 0.01f;
+                GlobVar.scale[1] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -905,7 +860,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb2 += 0.1f;
+                GlobVar.scale[1] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -916,9 +871,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb2 <= 0.1)
+            if (GlobVar.scale[1] <= 0.1)
             {
-                GlobVar.escalaLb2 -= 0.01f;
+                GlobVar.scale[1] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -926,7 +881,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb2 -= 0.1f;
+                GlobVar.scale[1] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -937,9 +892,9 @@ namespace PlotagemOpenGL
         private void plusLb3_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.escalaLb3 < 0.09)
+            if (GlobVar.scale[2] < 0.09)
             {
-                GlobVar.escalaLb3 += 0.01f;
+                GlobVar.scale[2] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -947,7 +902,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb3 += 0.1f;
+                GlobVar.scale[2] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -958,9 +913,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb3 <= 0.1)
+            if (GlobVar.scale[2] <= 0.1)
             {
-                GlobVar.escalaLb3 -= 0.01f;
+                GlobVar.scale[2] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -968,7 +923,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb3 -= 0.1f;
+                GlobVar.scale[2] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -980,9 +935,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb4 < 0.09)
+            if (GlobVar.scale[3] < 0.09)
             {
-                GlobVar.escalaLb4 += 0.01f;
+                GlobVar.scale[3] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -990,7 +945,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb4 += 0.1f;
+                GlobVar.scale[3] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1001,9 +956,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb4 <= 0.1)
+            if (GlobVar.scale[3] <= 0.1)
             {
-                GlobVar.escalaLb4 -= 0.01f;
+                GlobVar.scale[3] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1011,7 +966,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb4 -= 0.1f;
+                GlobVar.scale[3] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1023,9 +978,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb5 < 0.09)
+            if (GlobVar.scale[4] < 0.09)
             {
-                GlobVar.escalaLb5 += 0.01f;
+                GlobVar.scale[4] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1033,7 +988,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb5 += 0.1f;
+                GlobVar.scale[4] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1044,9 +999,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb5 <= 0.1)
+            if (GlobVar.scale[4] <= 0.1)
             {
-                GlobVar.escalaLb5 -= 0.01f;
+                GlobVar.scale[4] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1054,7 +1009,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb5 -= 0.1f;
+                GlobVar.scale[4] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1066,9 +1021,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb6 < 0.09)
+            if (GlobVar.scale[5] < 0.09)
             {
-                GlobVar.escalaLb6 += 0.01f;
+                GlobVar.scale[5] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1076,7 +1031,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb6 += 0.1f;
+                GlobVar.scale[5] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1087,9 +1042,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb6 <= 0.1)
+            if (GlobVar.scale[5] <= 0.1)
             {
-                GlobVar.escalaLb6 -= 0.01f;
+                GlobVar.scale[5] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1097,7 +1052,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb6 -= 0.1f;
+                GlobVar.scale[5] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1109,9 +1064,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb7 < 0.09)
+            if (GlobVar.scale[6] < 0.09)
             {
-                GlobVar.escalaLb7 += 0.01f;
+                GlobVar.scale[6] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1119,7 +1074,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb7 += 0.1f;
+                GlobVar.scale[6] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1130,9 +1085,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb7 <= 0.1)
+            if (GlobVar.scale[6] <= 0.1)
             {
-                GlobVar.escalaLb7 -= 0.01f;
+                GlobVar.scale[6] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1140,7 +1095,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb7 -= 0.1f;
+                GlobVar.scale[6] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1152,9 +1107,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb8 < 0.09)
+            if (GlobVar.scale[7] < 0.09)
             {
-                GlobVar.escalaLb8 += 0.01f;
+                GlobVar.scale[7] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1162,7 +1117,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb8 += 0.1f;
+                GlobVar.scale[7] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1173,9 +1128,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb8 <= 0.1)
+            if (GlobVar.scale[7] <= 0.1)
             {
-                GlobVar.escalaLb8 -= 0.01f;
+                GlobVar.scale[7] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1183,7 +1138,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb8 -= 0.1f;
+                GlobVar.scale[7] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1195,9 +1150,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb9 < 0.09)
+            if (GlobVar.scale[8] < 0.09)
             {
-                GlobVar.escalaLb9 += 0.01f;
+                GlobVar.scale[8] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1205,7 +1160,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb9 += 0.1f;
+                GlobVar.scale[8] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1216,9 +1171,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb9 <= 0.1)
+            if (GlobVar.scale[8] <= 0.1)
             {
-                GlobVar.escalaLb9 -= 0.01f;
+                GlobVar.scale[8] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1226,7 +1181,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb9 -= 0.1f;
+                GlobVar.scale[8] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1238,9 +1193,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb10 < 0.09)
+            if (GlobVar.scale[9] < 0.09)
             {
-                GlobVar.escalaLb10 += 0.01f;
+                GlobVar.scale[9] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1248,7 +1203,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb10 += 0.1f;
+                GlobVar.scale[9] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1259,9 +1214,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb10 <= 0.1)
+            if (GlobVar.scale[9] <= 0.1)
             {
-                GlobVar.escalaLb10 -= 0.01f;
+                GlobVar.scale[9] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1269,7 +1224,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb10 -= 0.1f;
+                GlobVar.scale[9] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1281,9 +1236,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb11 < 0.09)
+            if (GlobVar.scale[10] < 0.09)
             {
-                GlobVar.escalaLb11 += 0.01f;
+                GlobVar.scale[10] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1291,7 +1246,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb11 += 0.1f;
+                GlobVar.scale[10] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1303,9 +1258,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb11 <= 0.1)
+            if (GlobVar.scale[10] <= 0.1)
             {
-                GlobVar.escalaLb11 -= 0.01f;
+                GlobVar.scale[10] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1313,7 +1268,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb11 -= 0.1f;
+                GlobVar.scale[10] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1325,9 +1280,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb12 < 0.09)
+            if (GlobVar.scale[11] < 0.09)
             {
-                GlobVar.escalaLb12 += 0.01f;
+                GlobVar.scale[11] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1335,7 +1290,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb12 += 0.1f;
+                GlobVar.scale[11] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1347,9 +1302,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb12 <= 0.1)
+            if (GlobVar.scale[11] <= 0.1)
             {
-                GlobVar.escalaLb12 -= 0.01f;
+                GlobVar.scale[11] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1357,7 +1312,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb12 -= 0.1f;
+                GlobVar.scale[11] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1369,9 +1324,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb13 < 0.09)
+            if (GlobVar.scale[12] < 0.09)
             {
-                GlobVar.escalaLb13 += 0.01f;
+                GlobVar.scale[12] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1379,7 +1334,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb13 += 0.1f;
+                GlobVar.scale[12] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1391,9 +1346,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb13 <= 0.1)
+            if (GlobVar.scale[12] <= 0.1)
             {
-                GlobVar.escalaLb13 -= 0.01f;
+                GlobVar.scale[12] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1401,7 +1356,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb13 -= 0.1f;
+                GlobVar.scale[12] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1413,9 +1368,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb14 < 0.09)
+            if (GlobVar.scale[13] < 0.09)
             {
-                GlobVar.escalaLb14 += 0.01f;
+                GlobVar.scale[13] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1423,7 +1378,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb14 += 0.1f;
+                GlobVar.scale[13] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1435,9 +1390,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb14 <= 0.1)
+            if (GlobVar.scale[13] <= 0.1)
             {
-                GlobVar.escalaLb14 -= 0.01f;
+                GlobVar.scale[13] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1445,7 +1400,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb14 -= 0.1f;
+                GlobVar.scale[13] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1457,9 +1412,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb15 < 0.09)
+            if (GlobVar.scale[14] < 0.09)
             {
-                GlobVar.escalaLb15 += 0.01f;
+                GlobVar.scale[14] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1467,7 +1422,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb15 += 0.1f;
+                GlobVar.scale[14] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1479,9 +1434,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb15 <= 0.1)
+            if (GlobVar.scale[14] <= 0.1)
             {
-                GlobVar.escalaLb15 -= 0.01f;
+                GlobVar.scale[14] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1489,7 +1444,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb15 -= 0.1f;
+                GlobVar.scale[14] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1501,9 +1456,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb16 < 0.09)
+            if (GlobVar.scale[15] < 0.09)
             {
-                GlobVar.escalaLb16 += 0.01f;
+                GlobVar.scale[15] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1511,7 +1466,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb16 += 0.1f;
+                GlobVar.scale[15] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1523,9 +1478,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb16 <= 0.1)
+            if (GlobVar.scale[15] <= 0.1)
             {
-                GlobVar.escalaLb16 -= 0.01f;
+                GlobVar.scale[15] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1533,7 +1488,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb16 -= 0.1f;
+                GlobVar.scale[15] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1545,9 +1500,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb17 < 0.09)
+            if (GlobVar.scale[16] < 0.09)
             {
-                GlobVar.escalaLb17 += 0.01f;
+                GlobVar.scale[16] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1555,7 +1510,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb17 += 0.1f;
+                GlobVar.scale[16] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1567,9 +1522,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb17 <= 0.1)
+            if (GlobVar.scale[16] <= 0.1)
             {
-                GlobVar.escalaLb17 -= 0.01f;
+                GlobVar.scale[16] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1577,7 +1532,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb17 -= 0.1f;
+                GlobVar.scale[16] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1589,9 +1544,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb18 < 0.09)
+            if (GlobVar.scale[17] < 0.09)
             {
-                GlobVar.escalaLb18 += 0.01f;
+                GlobVar.scale[17] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1599,7 +1554,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb18 += 0.1f;
+                GlobVar.scale[17] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1611,9 +1566,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb18 <= 0.1)
+            if (GlobVar.scale[17] <= 0.1)
             {
-                GlobVar.escalaLb18 -= 0.01f;
+                GlobVar.scale[17] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1621,7 +1576,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb18 -= 0.1f;
+                GlobVar.scale[17] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1633,9 +1588,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb19 < 0.09)
+            if (GlobVar.scale[18] < 0.09)
             {
-                GlobVar.escalaLb19 += 0.01f;
+                GlobVar.scale[18] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1643,7 +1598,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb19 += 0.1f;
+                GlobVar.scale[18] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1655,9 +1610,9 @@ namespace PlotagemOpenGL
 
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb19 <= 0.1)
+            if (GlobVar.scale[18] <= 0.1)
             {
-                GlobVar.escalaLb19 -= 0.01f;
+                GlobVar.scale[18] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1665,7 +1620,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb19 -= 0.1f;
+                GlobVar.scale[18] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1677,7 +1632,7 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb20 < 0.09)
+            if (GlobVar.scale[19] < 0.09)
             {
                 GlobVar.escalaLb20 += 0.01f;
                 openglControl1.DoRender();
@@ -1687,7 +1642,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb20 += 0.1f;
+                GlobVar.scale[19] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1698,9 +1653,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb20 <= 0.1)
+            if (GlobVar.scale[19] <= 0.1)
             {
-                GlobVar.escalaLb20 -= 0.01f;
+                GlobVar.scale[19] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1708,7 +1663,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb20 -= 0.1f;
+                GlobVar.scale[19] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1720,9 +1675,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb21 < 0.09)
+            if (GlobVar.scale[20] < 0.09)
             {
-                GlobVar.escalaLb21 += 0.01f;
+                GlobVar.scale[20] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1730,7 +1685,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb21 += 0.1f;
+                GlobVar.scale[20] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1741,9 +1696,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb21 <= 0.1)
+            if (GlobVar.scale[20] <= 0.1)
             {
-                GlobVar.escalaLb21 -= 0.01f;
+                GlobVar.scale[20] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1751,7 +1706,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb21 -= 0.1f;
+                GlobVar.scale[20] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1763,9 +1718,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb22 < 0.09)
+            if (GlobVar.scale[21] < 0.09)
             {
-                GlobVar.escalaLb22 += 0.01f;
+                GlobVar.scale[21] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1773,7 +1728,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb22 += 0.1f;
+                GlobVar.scale[21] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1784,9 +1739,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb22 <= 0.1)
+            if (GlobVar.scale[21] <= 0.1)
             {
-                GlobVar.escalaLb22 -= 0.01f;
+                GlobVar.scale[21] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1794,7 +1749,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb22 -= 0.1f;
+                GlobVar.scale[21] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1806,9 +1761,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb23 < 0.09)
+            if (GlobVar.scale[22] < 0.09)
             {
-                GlobVar.escalaLb23 += 0.01f;
+                GlobVar.scale[22] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1816,7 +1771,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb23 += 0.1f;
+                GlobVar.scale[22] += 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1827,9 +1782,9 @@ namespace PlotagemOpenGL
         {
             int alturaTela = (int)openglControl1.Height;
 
-            if (GlobVar.escalaLb23 <= 0.1)
+            if (GlobVar.scale[22] <= 0.1)
             {
-                GlobVar.escalaLb23 -= 0.01f;
+                GlobVar.scale[22] -= 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1837,7 +1792,7 @@ namespace PlotagemOpenGL
             }
             else
             {
-                GlobVar.escalaLb23 -= 0.1f;
+                GlobVar.scale[22] -= 0.1f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1929,10 +1884,10 @@ namespace PlotagemOpenGL
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
             GlobVar.inicioTela = 0;
-            if (GlobVar.segundos >= 120)
-            {
-                GlobVar.maximaVect *= 10;
-            }
+            //if (GlobVar.segundos >= 120)
+            //{
+            //    GlobVar.maximaVect *= 10;
+            //}
             GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
         }
 
@@ -1980,29 +1935,29 @@ namespace PlotagemOpenGL
             string ptEmTela = Convert.ToString(GlobVar.tmpEmTela);
             ptsEmTela.Text = ptEmTela;
 
-            scalaLb1.Text = GlobVar.escalaLb1.ToString("0.00");
-            scalaLb2.Text = GlobVar.escalaLb2.ToString("0.00");
-            scalaLb3.Text = GlobVar.escalaLb3.ToString("0.00");
-            scalaLb4.Text = GlobVar.escalaLb4.ToString("0.00");
-            scalaLb5.Text = GlobVar.escalaLb5.ToString("0.00");
-            scalaLb6.Text = GlobVar.escalaLb6.ToString("0.00");
-            scalaLb7.Text = GlobVar.escalaLb7.ToString("0.00");
-            scalaLb8.Text = GlobVar.escalaLb8.ToString("0.00");
-            scalaLb9.Text = GlobVar.escalaLb9.ToString("0.00");
-            scalaLb10.Text = GlobVar.escalaLb10.ToString("0.00");
-            scalaLb11.Text = GlobVar.escalaLb11.ToString("0.00");
-            scalaLb12.Text = GlobVar.escalaLb12.ToString("0.00");
-            scalaLb13.Text = GlobVar.escalaLb13.ToString("0.00");
-            scalaLb14.Text = GlobVar.escalaLb14.ToString("0.00");
-            scalaLb15.Text = GlobVar.escalaLb15.ToString("0.00");
-            scalaLb16.Text = GlobVar.escalaLb16.ToString("0.00");
-            scalaLb17.Text = GlobVar.escalaLb17.ToString("0.00");
-            scalaLb18.Text = GlobVar.escalaLb18.ToString("0.00");
-            scalaLb19.Text = GlobVar.escalaLb19.ToString("0.00");
-            scalaLb20.Text = GlobVar.escalaLb20.ToString("0.00");
-            scalaLb21.Text = GlobVar.escalaLb21.ToString("0.00");
-            scalaLb22.Text = GlobVar.escalaLb22.ToString("0.00");
-            scalaLb23.Text = GlobVar.escalaLb23.ToString("0.00");
+            scalaLb1.Text = GlobVar.scale[0].ToString("0.00");
+            scalaLb2.Text = GlobVar.scale[1].ToString("0.00");
+            scalaLb3.Text = GlobVar.scale[2].ToString("0.00");
+            scalaLb4.Text = GlobVar.scale[3].ToString("0.00");
+            scalaLb5.Text = GlobVar.scale[4].ToString("0.00");
+            scalaLb6.Text = GlobVar.scale[5].ToString("0.00");
+            scalaLb7.Text = GlobVar.scale[6].ToString("0.00");
+            scalaLb8.Text = GlobVar.scale[7].ToString("0.00");
+            scalaLb9.Text = GlobVar.scale[8].ToString("0.00");
+            scalaLb10.Text = GlobVar.scale[9].ToString("0.00");
+            scalaLb11.Text = GlobVar.scale[10].ToString("0.00");
+            scalaLb12.Text = GlobVar.scale[11].ToString("0.00");
+            scalaLb13.Text = GlobVar.scale[12].ToString("0.00");
+            scalaLb14.Text = GlobVar.scale[13].ToString("0.00");
+            scalaLb15.Text = GlobVar.scale[14].ToString("0.00");
+            scalaLb16.Text = GlobVar.scale[15].ToString("0.00");
+            scalaLb17.Text = GlobVar.scale[16].ToString("0.00");
+            scalaLb18.Text = GlobVar.scale[17].ToString("0.00");
+            scalaLb19.Text = GlobVar.scale[18].ToString("0.00");
+            scalaLb20.Text = GlobVar.scale[19].ToString("0.00");
+            scalaLb21.Text = GlobVar.scale[20].ToString("0.00");
+            scalaLb22.Text = GlobVar.scale[21].ToString("0.00");
+            scalaLb23.Text = GlobVar.scale[22].ToString("0.00");
 
         }
 

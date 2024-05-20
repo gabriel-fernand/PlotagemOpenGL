@@ -115,7 +115,7 @@ namespace PlotagemOpenGL.auxi
                     // Percorre as linhas da matrizCompleta
                     for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
                     {
-                        // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF
+                        // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
                         for (int colunaComp = pontI[linhaCanais]; colunaComp < pontF[linhaCanais]; colunaComp++)
                         {
                             // Certifique-se de não exceder os limites da matrizCanais

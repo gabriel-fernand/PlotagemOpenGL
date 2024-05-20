@@ -108,6 +108,7 @@ namespace PlotagemOpenGL.auxi
         public static Vector2 sizeLabelExams;
         public static Vector2 sizeButtons;
         public static Vector2 sizePanelLb;
+        public static Vector3[] colors;
 
         public static Vector2 locBut;
         public static Vector2 locScale;
@@ -121,7 +122,7 @@ namespace PlotagemOpenGL.auxi
         public static int[] txPorCanal;
 
 
-        public static int maximaVect = 20000;
+        public static int maximaVect = 130000;
         public static int indice = 0;
 
         public static float saltoTelas;

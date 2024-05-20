@@ -1,7 +1,10 @@
 ﻿using SharpGL;
+using SharpGL.SceneGraph;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
+using static System.Windows.Forms.AxHost;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -10,6 +13,8 @@ namespace PlotagemOpenGL.auxi
         private OpenGL gl;
         private float[] margem;
         private float[] traco;
+        public float startX, startY, endX, endY;
+
         public Plotagem(OpenGL gl)
         {
             this.gl = gl;
@@ -158,6 +163,38 @@ namespace PlotagemOpenGL.auxi
                 gl.End();
             }
 
+            gl.Flush();
+            for (int i = 0; i < qtdGraf; i++)
+            {
+                gl.LineStipple(1, 0xAAAA);
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Color(0.752941f, 0.752941f, 0.752941f);
+                gl.Vertex(1, traco[i]);
+                gl.Vertex(GlobVar.matrizCanal.GetLength(1), traco[i]);
+                gl.End();
+            }
+
+            gl.Disable(OpenGL.GL_LINE_STIPPLE);
+            (double, double, double) pale_turquoise = (175 / 255.0f, 238 / 255.0f, 238 / 255.0f);
+            // Draw the rectangle
+            float red = 176 / 255.0f;
+            float green = 196 / 255.0f;
+            float blue = 222 / 255.0f;
+            //byte red = 75;
+            //byte green = 0;
+            //byte blue = 130;
+            byte alpha = 10;
+            gl.Begin(OpenGL.GL_QUADS);
+            gl.PointSize(3.0f); // Define o tamanho dos pontos
+            gl.Color(pale_turquoise.Item1, pale_turquoise.Item2, pale_turquoise.Item3, 0.001);
+            //gl.ColorMask(3, 6, 7, alpha);
+            gl.Vertex(startX, startY, -1.9f);
+            gl.Vertex(endX, startY, -1.9f);
+            gl.Vertex(endX, endY, -1.9f);
+            gl.Vertex(startX, endY, -1.9f);
+            gl.End();
+            gl.Flush();
             /*switch (qtdGraf)
             {
                 case 1:
@@ -2417,24 +2454,6 @@ namespace PlotagemOpenGL.auxi
                     break;
             }
             */
-
-            gl.Flush();
-            for (int i = 0; i < qtdGraf; i++)
-            {
-                gl.LineStipple(1, 0xAAAA);
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-                gl.Begin(OpenGL.GL_LINES);
-                gl.Color(0.752941f, 0.752941f, 0.752941f);
-                gl.Vertex(1, traco[i]);
-                gl.Vertex(GlobVar.matrizCanal.GetLength(1), traco[i]);
-                gl.End();
-            }
-
-            gl.Disable(OpenGL.GL_LINE_STIPPLE);
-
-
-
-
             //System.Windows.MessageBox.Show("Tamanho da janela openGl " + Tela_Plotagem.openglControl1.Height + " x " + Tela_Plotagem.openglControl1.Width);
 
         }

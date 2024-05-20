@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Documents;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -191,7 +194,91 @@ namespace PlotagemOpenGL.auxi
         {
             
             int pnSizeX = (int)GlobVar.sizePainelExams.X;
-            switch (qtdGraf)
+            Tela_Plotagem.panel1.Location = new System.Drawing.Point(-500, 26);
+            Tela_Plotagem.panel1.Size = new System.Drawing.Size(pnSizeX, pnSize);
+
+            Tela_Plotagem.panel2.Location = new System.Drawing.Point(-500, 26);
+            Tela_Plotagem.panel2.Size = new System.Drawing.Size(pnSizeX, 25);
+
+            Tela_Plotagem.panel3.Location = new System.Drawing.Point(-500, 52);
+            Tela_Plotagem.panel3.Size = new System.Drawing.Size(pnSizeX, 25);
+
+            Tela_Plotagem.panel4.Location = new System.Drawing.Point(-500, 78);
+            Tela_Plotagem.panel4.Size = new System.Drawing.Size(pnSizeX, 25);
+
+            Tela_Plotagem.panel5.Location = new System.Drawing.Point(-500, 104);
+            Tela_Plotagem.panel5.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel6.Location = new System.Drawing.Point(-500, 130);
+            Tela_Plotagem.panel6.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel7.Location = new System.Drawing.Point(-500, 156);
+            Tela_Plotagem.panel7.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel8.Location = new System.Drawing.Point(-500, 182);
+            Tela_Plotagem.panel8.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel9.Location = new System.Drawing.Point(-500, 208);
+            Tela_Plotagem.panel9.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel10.Location = new System.Drawing.Point(-500, 234);
+            Tela_Plotagem.panel10.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel11.Location = new System.Drawing.Point(-500, 260);
+            Tela_Plotagem.panel11.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel12.Location = new System.Drawing.Point(-500, 286);
+            Tela_Plotagem.panel12.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel13.Location = new System.Drawing.Point(-500, 312);
+            Tela_Plotagem.panel13.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel14.Location = new System.Drawing.Point(-500, 338);
+            Tela_Plotagem.panel14.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel15.Location = new System.Drawing.Point(-500, 363);
+            Tela_Plotagem.panel15.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel16.Location = new System.Drawing.Point(-500, 390);
+            Tela_Plotagem.panel16.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel17.Location = new System.Drawing.Point(-500, 416);
+            Tela_Plotagem.panel17.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel18.Location = new System.Drawing.Point(-500, 442);
+            Tela_Plotagem.panel18.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel19.Location = new System.Drawing.Point(-500, 468);
+            Tela_Plotagem.panel19.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel20.Location = new System.Drawing.Point(-500, 494);
+            Tela_Plotagem.panel20.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel21.Location = new System.Drawing.Point(-500, 520);
+            Tela_Plotagem.panel21.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel22.Location = new System.Drawing.Point(-500, 546);
+            Tela_Plotagem.panel22.Size = new System.Drawing.Size(172, 25);
+
+            Tela_Plotagem.panel23.Location = new System.Drawing.Point(-500, 572);
+            Tela_Plotagem.panel23.Size = new System.Drawing.Size(172, 25);
+            int j = 0;
+            for (int i = 1; i <= qtdGraf; i++)
+            {
+                FieldInfo field = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
+                if (field != null )
+                {
+                    Panel panel = (Panel)field.GetValue(this);
+
+                    if (panel != null )
+                    {
+                        panel.Location = new System.Drawing.Point(0, (int)yCanais[j]);
+                        panel.Size = new System.Drawing.Size(pnSizeX, pnSize);
+                        j++;
+                    }                    
+                }                
+            }
+            /*switch (qtdGraf)
             {
                 case 1:
                     Tela_Plotagem.panel1.Location = new System.Drawing.Point(0, (int)yCanais[0]);
@@ -1832,7 +1919,7 @@ namespace PlotagemOpenGL.auxi
                 default:
                     break;
 
-            }
+            }*/
             try
             {
             }
