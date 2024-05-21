@@ -25,11 +25,9 @@ namespace PlotagemOpenGL.auxi
     {
         public static void QuantidadeCanais()
         {
-            string[] dadoscanal = new string[47];
             byte[] buffer0 = new byte[395];
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
-            byte[] buffer3 = new byte[47];
 
             try
             {
@@ -55,90 +53,6 @@ namespace PlotagemOpenGL.auxi
 
                     int ncanint = Convert.ToInt16(tipocanais1.Replace(" ", "")); //Int16.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
                     GlobVar.qtdCanais = new string[ncanint];
-                    for (int ich = 0; ich < ncanint; ich++)
-                    {
-                        fs.Read(buffer3, 0, buffer3.Length);
-
-                        dadoscanal[ich] = (Encoding.UTF8.GetString(buffer3));
-
-                        string cod = dadoscanal[ich].Substring(0, 2);
-                        GlobVar.qtdCanais[ich] = cod;
-                        string phrase = dadoscanal[ich];
-
-                        switch (ich)
-                        {
-                            case 0:
-                                GlobVar.nameCanalA = phrase.Substring(11, 10);
-                                break;
-                            case 1:
-                                GlobVar.nameCanalB = phrase.Substring(11, 10);
-                                break;
-                            case 2:
-                                GlobVar.nameCanalC = phrase.Substring(11, 10);
-                                break;
-                            case 3:
-                                GlobVar.nameCanalD = phrase.Substring(11, 10);
-                                break;
-                            case 4:
-                                GlobVar.nameCanalE = phrase.Substring(11, 10);
-                                break;
-                            case 5:
-                                GlobVar.nameCanalF = phrase.Substring(11, 10);
-                                break;
-                            case 6:
-                                GlobVar.nameCanalG = phrase.Substring(11, 10);
-                                break;
-                            case 7:
-                                GlobVar.nameCanalH = phrase.Substring(11, 10);
-                                break;
-                            case 8:
-                                GlobVar.nameCanalI = phrase.Substring(11, 10);
-                                break;
-                            case 9:
-                                GlobVar.nameCanalJ = phrase.Substring(11, 10);
-                                break;
-                            case 10:
-                                GlobVar.nameCanalK = phrase.Substring(11, 10);
-                                break;
-                            case 11:
-                                GlobVar.nameCanalL = phrase.Substring(11, 10);
-                                break;
-                            case 12:
-                                GlobVar.nameCanalM = phrase.Substring(11, 10);
-                                break;
-                            case 13:
-                                GlobVar.nameCanalN = phrase.Substring(11, 10);
-                                break;
-                            case 14:
-                                GlobVar.nameCanalO = phrase.Substring(11, 10);
-                                break;
-                            case 15:
-                                GlobVar.nameCanalP = phrase.Substring(11, 10);
-                                break;
-                            case 16:
-                                GlobVar.nameCanalQ = phrase.Substring(11, 10);
-                                break;
-                            case 17:
-                                GlobVar.nameCanalR = phrase.Substring(11, 10);
-                                break;
-                            case 18:
-                                GlobVar.nameCanalS = phrase.Substring(11, 10);
-                                break;
-                            case 19:
-                                GlobVar.nameCanalT = phrase.Substring(11, 10);
-                                break;
-                            case 20:
-                                GlobVar.nameCanalU = phrase.Substring(11, 10);
-                                break;
-                            case 21:
-                                GlobVar.nameCanalV = phrase.Substring(11, 10);
-                                break;
-                            case 22:
-                                GlobVar.nameCanalW = phrase.Substring(11, 10);
-                                break;
-                        }
-
-                    }
                     fs.Close();
                 }
                 }

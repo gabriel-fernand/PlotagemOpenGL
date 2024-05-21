@@ -32,74 +32,50 @@ namespace PlotagemOpenGL.auxi
         public static string[] qtdCanais;
 
         public static double[] canalA;
-        public static string nameCanalA;
 
         public static double[] canalB;
-        public static string nameCanalB;
 
         public static double[] canalC;
-        public static string nameCanalC;
 
         public static double[] canalD;
-        public static string nameCanalD;
 
         public static double[] canalE;
-        public static string nameCanalE;
 
         public static double[] canalF;
-        public static string nameCanalF;
 
         public static double[] canalG;
-        public static string nameCanalG;
 
         public static double[] canalH;
-        public static string nameCanalH;
 
         public static double[] canalI;
-        public static string nameCanalI;
 
         public static double[] canalJ;
-        public static string nameCanalJ;
 
         public static double[] canalK;
-        public static string nameCanalK;
 
         public static double[] canalL;
-        public static string nameCanalL;
 
         public static double[] canalM;
-        public static string nameCanalM;
 
         public static double[] canalN;
-        public static string nameCanalN;
 
         public static double[] canalO;
-        public static string nameCanalO;
 
         public static double[] canalP;
-        public static string nameCanalP;
 
         public static double[] canalQ;
-        public static string nameCanalQ;
 
         public static double[] canalR;
-        public static string nameCanalR;
 
         public static double[] canalS;
-        public static string nameCanalS;
 
         public static double[] canalT;
-        public static string nameCanalT;
 
         public static double[] canalU;
-        public static string nameCanalU;
-
 
         public static double[] canalV;
-        public static string nameCanalV;
 
         public static double[] canalW;
-        public static string nameCanalW;
 
 
         public static Vector2 sizeOpenGl;
@@ -112,6 +88,8 @@ namespace PlotagemOpenGL.auxi
 
         public static Vector2 locBut;
         public static Vector2 locScale;
+
+
 
         public static int[,] matrizCompleta;
         public static double[,] matrizCanal;

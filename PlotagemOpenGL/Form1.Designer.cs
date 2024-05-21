@@ -343,6 +343,7 @@ namespace PlotagemOpenGL
             openglControl1.Location = new System.Drawing.Point(181, 79);
             openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
+            openglControl1.RenderContextType = SharpGL.RenderContextType.FBO;
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
             openglControl1.Size = new System.Drawing.Size(816, 599);

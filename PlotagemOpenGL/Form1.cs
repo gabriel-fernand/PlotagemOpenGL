@@ -306,7 +306,15 @@ namespace PlotagemOpenGL
             pn23 = new Rectangle(panel23.Location, panel23.Size);
 
             openglControl1.Focus();
-
+            GlobVar.colors = new Vector3[]
+            {
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f)
+            };
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
             GlobVar.sizePainelExams.X = painelExames.Width;
@@ -570,35 +578,13 @@ namespace PlotagemOpenGL
         }
         private void Play_Click(object sender, EventArgs e)
         {
+
             if (String.IsNullOrEmpty(qtdGraficos.Text))
             {
                 System.Windows.MessageBox.Show("Por favor, informe a quantidade de graficos a serem mostradas.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
             }
             else
             {
-                label1.Text  = GlobVar.nameCanalA.Trim();
-                label2.Text  = GlobVar.nameCanalB.Trim();
-                label3.Text  = GlobVar.nameCanalC.Trim();
-                label4.Text  = GlobVar.nameCanalD.Trim();
-                label5.Text  = GlobVar.nameCanalE.Trim();
-                label6.Text  = GlobVar.nameCanalF.Trim();
-                label7.Text  = GlobVar.nameCanalG.Trim();
-                label8.Text  = GlobVar.nameCanalH.Trim();
-                label9.Text  = GlobVar.nameCanalI.Trim();
-                label10.Text = GlobVar.nameCanalJ.Trim();
-                label11.Text = GlobVar.nameCanalK.Trim();
-                label12.Text = GlobVar.nameCanalL.Trim();
-                label13.Text = GlobVar.nameCanalM.Trim();
-                label14.Text = GlobVar.nameCanalN.Trim();
-                label15.Text = GlobVar.nameCanalO.Trim();
-                label16.Text = GlobVar.nameCanalP.Trim();
-                label17.Text = GlobVar.nameCanalQ.Trim();
-                label18.Text = GlobVar.nameCanalR.Trim();
-                label19.Text = GlobVar.nameCanalS.Trim();
-                label20.Text = GlobVar.nameCanalT.Trim();
-                label21.Text = GlobVar.nameCanalU.Trim();
-                label22.Text = GlobVar.nameCanalV.Trim();
-                label23.Text = GlobVar.nameCanalW.Trim();
 
                 int alturaTela = (int)openglControl1.Height;
 

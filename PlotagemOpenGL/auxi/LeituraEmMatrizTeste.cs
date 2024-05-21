@@ -57,18 +57,18 @@ namespace PlotagemOpenGL.auxi
                     string cod = dadoscanal[ich].Substring(0, 2);
                     GlobVar.qtdCanais[ich] = cod;
                     string phrase = dadoscanal[ich];
-                    GlobVar.nomeCanais[ich] = phrase.Substring(11, 10);
+                    GlobVar.nomeCanais[ich] = phrase.Substring(11, 10).Trim(); //Faz a leitura dos nomes de cada canal e armazena em um array
                     GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
                     string sizesample3 = phrase.Substring(8, 4);
                     string aux = sizesample3.Replace(" ", "");
                     int auxx = Convert.ToInt16(aux);
                     GlobVar.txPorCanal[ich] = auxx;
 
-                        GlobVar.startpos = Convert.ToInt32(ntotal);
-                        string sizesample1 = phrase.Substring(8, 4);
-                        string banana = sizesample1.Replace(" ", "");
+                    GlobVar.startpos = Convert.ToInt32(ntotal);
+                    string sizesample1 = phrase.Substring(8, 4);
+                    string banana = sizesample1.Replace(" ", "");
 
-                        GlobVar.sizesample = (Convert.ToInt16(banana) * 2);
+                    GlobVar.sizesample = (Convert.ToInt16(banana) * 2);
                     ntotal = ntotal + (GlobVar.amos * 2);
 
                     int ponteirostr = Convert.ToInt16(fs.Position);
@@ -80,14 +80,13 @@ namespace PlotagemOpenGL.auxi
 
                 GlobVar.matrizCompleta = new int[GlobVar.npagin, txPorSeg];
 
-
                 GlobVar.size = Convert.ToInt32(GlobVar.npag);
 
                 int recntotal = ntotal;
 
                 fs.Position = fs.Position - 1;
 
-                for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat
+                for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat, trazendo a Matriz completa de todos canais juntos
                 {
 
                     byte[] buffer4 = new byte[ntotal];
@@ -108,6 +107,7 @@ namespace PlotagemOpenGL.auxi
                 int[] pontF = GlobVar.ponteiro;
                 GlobVar.matrizCanal = new double[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
 
+                //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
                 for (int linhaCanais = 0; linhaCanais < GlobVar.matrizCanal.GetLength(0); linhaCanais++)
                 {
                     int colunaCanalIndex = 0;
@@ -133,6 +133,7 @@ namespace PlotagemOpenGL.auxi
                         }
                     }
                 }
+                //faz a leitura das taixa de amostra para cada canal, para ajustar as amostras de outros valores a tela de 512 amostras por segundo
                 for (int i = 0; i < GlobVar.matrizCanal.GetLength(0); i++)
                 {
                     if (GlobVar.txPorCanal[i] < 512)
