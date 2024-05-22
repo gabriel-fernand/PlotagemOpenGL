@@ -21,14 +21,13 @@ namespace PlotagemOpenGL
 {
     public partial class Tela_Plotagem : Form
     {
-        private OpenGL gl;
-        Plotagem plotagem;
-        Canais canais;
+        public static OpenGL gl;
+        public static Plotagem plotagem;
+        public static Canais canais;
 
         private Size formOriginalSize;
         private Size painelOriginalSize;
         private Size painelComandoOriginalSize;
-        private Size panelLb;
 
         private Rectangle comando;
         private Rectangle exExam;
@@ -46,6 +45,7 @@ namespace PlotagemOpenGL
         private Rectangle slLabel;
         private Rectangle fil;
         private Rectangle playFil;
+        private Rectangle mtg;
 
         private Rectangle btPlusLb1;
         private Rectangle btMinusLb1;
@@ -178,7 +178,6 @@ namespace PlotagemOpenGL
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
             LeituraEmMatrizTeste.LeituraDat();
-            InitializeCheckedListBox();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
             this.Resize += painelComando_Resiz;
@@ -188,7 +187,6 @@ namespace PlotagemOpenGL
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
-            panelLb = panel1.Size;
             UpdateStyles();
             qtdGraficos.Text = "1";
 
@@ -208,6 +206,7 @@ namespace PlotagemOpenGL
             slLabel = new Rectangle(selectLabel.Location, selectLabel.Size);
             fil = new Rectangle(Filters.Location, Filters.Size);
             playFil = new Rectangle(playFilter.Location, playFilter.Size);
+            mtg = new Rectangle(playSelect.Location, playSelect.Size);
 
             btPlusLb1 = new Rectangle(plusLb1.Location, plusLb1.Size);
             btMinusLb1 = new Rectangle(minusLb1.Location, minusLb1.Size);
@@ -365,7 +364,7 @@ namespace PlotagemOpenGL
         {
             float xRatio = (float)(painelComando.Width) / (float)(painelComandoOriginalSize.Width);
             float yRatio = (float)(painelComando.Height) / (float)(painelComandoOriginalSize.Height);
-            int newX = (int)(r.X * xRatio);
+            int newX = r.X;
             int newY = (int)(r.Y * yRatio);
             int newWidth = (int)(r.Width * xRatio);
             int newHeight = (int)(r.Height * yRatio);
@@ -385,6 +384,7 @@ namespace PlotagemOpenGL
             painelComando_Resize_Control(selectLabel, slLabel);
             painelComando_Resize_Control(Filters, fil);
             painelComando_Resize_Control(playFilter, playFil);
+            painelComando_Resize_Control(playSelect, mtg);
         }
 
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
@@ -543,20 +543,22 @@ namespace PlotagemOpenGL
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
             }
             else if (filtro.Equals("High Pass"))
             {
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1] - 1), i]; }
-                aux = HighPassFilter.ApplyHighPassFilter(aux, 0.04);
+                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
+                aux = HighPassFilter.ApplyHighPassFilter(aux, 0.4);
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
             }
             else if (filtro.Equals("Band Pass"))
             {
+                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
+                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
+                aux = BandPassFilter.ApplyBandPassFilter(aux, 0.015,0.04);
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
@@ -600,7 +602,7 @@ namespace PlotagemOpenGL
 
 
 
-                this.gl = openglControl1.OpenGL;
+                gl = openglControl1.OpenGL;
                 plotagem = new Plotagem(gl);
                 openglControl1.DoRender();
                 plotagem.Margem(qtdGrafics, alturaTela);
@@ -1788,10 +1790,7 @@ namespace PlotagemOpenGL
                 UpdateInicioTela();
             }
         }
-
-
         private bool isScrollingRight = true;
-
 
         private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1903,7 +1902,7 @@ namespace PlotagemOpenGL
             }
         }
 
-        private void UpdateInicioTela()
+        public static void UpdateInicioTela()
         {
             int inicio = GlobVar.inicioTela;
             TimeSpan tempo = TimeSpan.FromSeconds(inicio);
@@ -1954,38 +1953,14 @@ namespace PlotagemOpenGL
         {
 
         }
-        private void InitializeCheckedListBox()
+        
+        public static int aux;
+        //Metodo que faz com que plote com base na montagem
+        public static void elementoX() 
         {
-            // Preenche o CheckedListBox com os valores de nomeCanais
-            checkedListBox1.Items.AddRange(GlobVar.nomeCanais);
-
-        }
-        int aux;
-        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Atualiza grafSelected com os índices dos itens selecionados
-            var selectedIndices = checkedListBox1.CheckedIndices;
-            List<int> selectedIndicesList = new List<int>();
-
-            foreach (int index in selectedIndices)
-            {
-                selectedIndicesList.Add(index);
-            }
-            for(int index = 0; index < GlobVar.grafSelected.Length; index++)
-            {
-                GlobVar.grafSelected[index] = 0;
-            }
-            // Inicializa grafSelected com o tamanho de nomeCanais
-            for (int i = 0; i < selectedIndicesList.Count; i++)
-            {
-                GlobVar.grafSelected[i] = selectedIndicesList[i];
-            }
-            aux = selectedIndicesList.Count;
-        }
-
-        private void playSelect_Click(object sender, EventArgs e)
-        {
+           
             qtdGraficos.Text = $"{aux}";
+            int qtdGrafic = aux;
             if (String.IsNullOrEmpty(qtdGraficos.Text))
             {
                 System.Windows.MessageBox.Show("Por favor, informe a quantidade de graficos a serem mostradas.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
@@ -1995,21 +1970,20 @@ namespace PlotagemOpenGL
 
                 int alturaTela = (int)openglControl1.Height;
 
-                canais = new Canais(qtdGrafics);
+                canais = new Canais(qtdGrafic);
                 canais.RealocButton();
                 canais.PainelLb_Resize();
-                canais.RealocPanel(qtdGrafics);
-                canais.quantidadeGraf(qtdGrafics);
+                canais.RealocPanel(qtdGrafic);
+                canais.quantidadeGraf(qtdGrafic);
                 canais.reloc();
 
 
-
-                this.gl = openglControl1.OpenGL;
+                gl = openglControl1.OpenGL;
                 plotagem = new Plotagem(gl);
                 openglControl1.DoRender();
-                plotagem.Margem(qtdGrafics, alturaTela);
-                plotagem.Traco(qtdGrafics, alturaTela);
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                plotagem.Margem(qtdGrafic, alturaTela);
+                plotagem.Traco(qtdGrafic, alturaTela);
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafic);
                 gl.MatrixMode(OpenGL.GL_MODELVIEW);
                 gl.LoadIdentity();
                 gl.Translate(0, 0, 1);
@@ -2025,14 +1999,14 @@ namespace PlotagemOpenGL
                 string qt = Convert.ToString(i);
                 selectLabel.Items.Add(qt);
             }
+
+        }
+
+        private void playSelect_Click(object sender, EventArgs e)
+        {
+
+            montagem mont = new montagem();
+            mont.Show();
         }
     }
-
-    public class Optimus
-    {
-        [DllImport("nvapi.dll")]
-        public static extern int NvAPI_Initialize();
-    }
-
-    
 }

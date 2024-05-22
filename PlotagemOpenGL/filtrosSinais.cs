@@ -110,7 +110,7 @@ namespace PlotagemOpenGL
             return output;
         }
     }
-    /*public class BandPassFilter
+    public class BandPassFilter
     {
         private LowPassFilter _lowPassFilter;
         private HighPassFilter _highPassFilter;
@@ -137,7 +137,7 @@ namespace PlotagemOpenGL
             return output;
         }
 
-    }
+    }/*
     public class BandRejectFilter
     {
         private LowPassFilter _lowPassFilter;

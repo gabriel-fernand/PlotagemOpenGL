@@ -158,14 +158,13 @@ namespace PlotagemOpenGL
             plusLb23 = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
-            checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            playSelect = new System.Windows.Forms.Button();
             minusAll = new System.Windows.Forms.Button();
             plusAll = new System.Windows.Forms.Button();
             playFilter = new System.Windows.Forms.Button();
             Filters = new System.Windows.Forms.ComboBox();
             selectLabel = new System.Windows.Forms.ComboBox();
             qtdGraficos = new System.Windows.Forms.TextBox();
-            playSelect = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             painelExames.SuspendLayout();
             panel1.SuspendLayout();
@@ -208,7 +207,7 @@ namespace PlotagemOpenGL
             // 
             ptsEmTela.Anchor = System.Windows.Forms.AnchorStyles.None;
             ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            ptsEmTela.Location = new System.Drawing.Point(5, 3);
+            ptsEmTela.Location = new System.Drawing.Point(5, 4);
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.ReadOnly = true;
             ptsEmTela.Size = new System.Drawing.Size(81, 25);
@@ -219,7 +218,7 @@ namespace PlotagemOpenGL
             // inicioTela
             // 
             inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            inicioTela.Location = new System.Drawing.Point(100, 3);
+            inicioTela.Location = new System.Drawing.Point(100, 4);
             inicioTela.Name = "inicioTela";
             inicioTela.ReadOnly = true;
             inicioTela.Size = new System.Drawing.Size(72, 25);
@@ -230,7 +229,7 @@ namespace PlotagemOpenGL
             // fimTela
             // 
             fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            fimTela.Location = new System.Drawing.Point(178, 3);
+            fimTela.Location = new System.Drawing.Point(178, 4);
             fimTela.Name = "fimTela";
             fimTela.ReadOnly = true;
             fimTela.Size = new System.Drawing.Size(72, 25);
@@ -248,7 +247,7 @@ namespace PlotagemOpenGL
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
             tempoEmTela.Items.AddRange(new object[] { "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
-            tempoEmTela.Location = new System.Drawing.Point(271, 3);
+            tempoEmTela.Location = new System.Drawing.Point(256, 4);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
             tempoEmTela.TabIndex = 6;
@@ -262,7 +261,7 @@ namespace PlotagemOpenGL
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.IntegralHeight = false;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
-            velocidadeScroll.Location = new System.Drawing.Point(342, 3);
+            velocidadeScroll.Location = new System.Drawing.Point(327, 4);
             velocidadeScroll.Name = "velocidadeScroll";
             velocidadeScroll.Size = new System.Drawing.Size(63, 28);
             velocidadeScroll.TabIndex = 7;
@@ -272,9 +271,9 @@ namespace PlotagemOpenGL
             // 
             comboBox3.FormattingEnabled = true;
             comboBox3.Items.AddRange(new object[] { "Series" });
-            comboBox3.Location = new System.Drawing.Point(634, 3);
+            comboBox3.Location = new System.Drawing.Point(535, 4);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new System.Drawing.Size(358, 28);
+            comboBox3.Size = new System.Drawing.Size(340, 28);
             comboBox3.TabIndex = 8;
             comboBox3.Text = "Series";
             comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
@@ -331,7 +330,7 @@ namespace PlotagemOpenGL
             // 
             // Play
             // 
-            Play.Location = new System.Drawing.Point(564, 3);
+            Play.Location = new System.Drawing.Point(488, 4);
             Play.Name = "Play";
             Play.Size = new System.Drawing.Size(41, 29);
             Play.TabIndex = 49;
@@ -342,12 +341,12 @@ namespace PlotagemOpenGL
             // openglControl1
             // 
             openglControl1.DrawFPS = false;
-            openglControl1.Location = new System.Drawing.Point(181, 79);
+            openglControl1.Location = new System.Drawing.Point(181, 81);
             openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.Size = new System.Drawing.Size(816, 599);
+            openglControl1.Size = new System.Drawing.Size(816, 597);
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
@@ -1595,13 +1594,12 @@ namespace PlotagemOpenGL
             painelTelaGl.Location = new System.Drawing.Point(0, 689);
             painelTelaGl.Margin = new System.Windows.Forms.Padding(0);
             painelTelaGl.Name = "painelTelaGl";
-            painelTelaGl.Size = new System.Drawing.Size(1006, 32);
+            painelTelaGl.Size = new System.Drawing.Size(1005, 32);
             painelTelaGl.TabIndex = 52;
             // 
             // painelComando
             // 
             painelComando.Controls.Add(playSelect);
-            painelComando.Controls.Add(checkedListBox1);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
             painelComando.Controls.Add(playFilter);
@@ -1615,19 +1613,20 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(tempoEmTela);
             painelComando.Controls.Add(comboBox3);
             painelComando.Controls.Add(velocidadeScroll);
-            painelComando.Location = new System.Drawing.Point(0, 4);
+            painelComando.Location = new System.Drawing.Point(0, 2);
             painelComando.Name = "painelComando";
-            painelComando.Size = new System.Drawing.Size(997, 69);
+            painelComando.Size = new System.Drawing.Size(997, 71);
             painelComando.TabIndex = 53;
             // 
-            // checkedListBox1
+            // playSelect
             // 
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new System.Drawing.Point(418, 36);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new System.Drawing.Size(140, 26);
-            checkedListBox1.TabIndex = 56;
-            checkedListBox1.SelectedIndexChanged += checkedListBox1_SelectedIndexChanged;
+            playSelect.Location = new System.Drawing.Point(881, 4);
+            playSelect.Name = "playSelect";
+            playSelect.Size = new System.Drawing.Size(110, 29);
+            playSelect.TabIndex = 57;
+            playSelect.Text = "Montagem";
+            playSelect.UseVisualStyleBackColor = true;
+            playSelect.Click += playSelect_Click;
             // 
             // minusAll
             // 
@@ -1651,7 +1650,7 @@ namespace PlotagemOpenGL
             // 
             // playFilter
             // 
-            playFilter.Location = new System.Drawing.Point(951, 36);
+            playFilter.Location = new System.Drawing.Point(950, 34);
             playFilter.Name = "playFilter";
             playFilter.Size = new System.Drawing.Size(41, 29);
             playFilter.TabIndex = 53;
@@ -1668,7 +1667,7 @@ namespace PlotagemOpenGL
             Filters.FormattingEnabled = true;
             Filters.IntegralHeight = false;
             Filters.Items.AddRange(new object[] { "Low Pass", "High Pass", "Band Pass", "Band Reject", "FWT" });
-            Filters.Location = new System.Drawing.Point(705, 37);
+            Filters.Location = new System.Drawing.Point(705, 34);
             Filters.Name = "Filters";
             Filters.Size = new System.Drawing.Size(239, 28);
             Filters.TabIndex = 52;
@@ -1681,34 +1680,24 @@ namespace PlotagemOpenGL
             selectLabel.FormatString = "N1";
             selectLabel.FormattingEnabled = true;
             selectLabel.IntegralHeight = false;
-            selectLabel.Location = new System.Drawing.Point(634, 37);
+            selectLabel.Location = new System.Drawing.Point(634, 34);
             selectLabel.Name = "selectLabel";
             selectLabel.Size = new System.Drawing.Size(65, 28);
             selectLabel.TabIndex = 51;
             // 
             // qtdGraficos
             // 
-            qtdGraficos.Location = new System.Drawing.Point(472, 3);
+            qtdGraficos.Location = new System.Drawing.Point(396, 4);
             qtdGraficos.Name = "qtdGraficos";
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
             // 
-            // playSelect
-            // 
-            playSelect.Location = new System.Drawing.Point(564, 33);
-            playSelect.Name = "playSelect";
-            playSelect.Size = new System.Drawing.Size(41, 29);
-            playSelect.TabIndex = 57;
-            playSelect.Text = ">";
-            playSelect.UseVisualStyleBackColor = true;
-            playSelect.Click += playSelect_Click;
-            // 
             // Tela_Plotagem
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1006, 721);
+            ClientSize = new System.Drawing.Size(1005, 721);
             Controls.Add(painelExames);
             Controls.Add(painelTelaGl);
             Controls.Add(openglControl1);
@@ -1776,7 +1765,6 @@ namespace PlotagemOpenGL
         #endregion
 
         public static System.Windows.Forms.Button playSelect;
-        public static System.Windows.Forms.CheckedListBox checkedListBox1;
         public static System.Windows.Forms.Label scalaLb1;
         public static System.Windows.Forms.Panel panel23;
         public static System.Windows.Forms.Panel panel22;
