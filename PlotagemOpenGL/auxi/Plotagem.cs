@@ -161,14 +161,15 @@ namespace PlotagemOpenGL.auxi
                 i += GlobVar.namos;
                 ind++;
             }
+
             int des = qtdGraf - 1;
             for (int i = 0 ; i < qtdGraf; i++)
             {                
                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                 for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                 {
-                    if (j <= 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j, desenhoLoc[des]); // Define cada ponto do gráfico
-                    else gl.Vertex(j, (GlobVar.matrizCanal[i,j] * GlobVar.scale[i]) + desenhoLoc[des]);                                                                                  //aqui tem plotar 3 graficos diferentes
+                    if (j <= 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                    else gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]);                                                                                  //aqui tem plotar 3 graficos diferentes
                 }
                 des--;
 

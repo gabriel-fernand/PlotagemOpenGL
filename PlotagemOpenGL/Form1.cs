@@ -14,6 +14,7 @@ using Accord.Audio.Filters;
 using static System.Windows.Forms.AxHost;
 using System.Windows.Media;
 using SharpGL.WPF;
+using System.Collections.Generic;
 
 
 namespace PlotagemOpenGL
@@ -177,6 +178,7 @@ namespace PlotagemOpenGL
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
             LeituraEmMatrizTeste.LeituraDat();
+            InitializeCheckedListBox();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
             this.Resize += painelComando_Resiz;
@@ -329,6 +331,7 @@ namespace PlotagemOpenGL
 
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
+            GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
 
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -535,9 +538,9 @@ namespace PlotagemOpenGL
             if (filtro.Equals("Low Pass"))
             {
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for(int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(selecao - 1), i]; }
-                aux = LowPassFilter.ApplyLowPassFilter(aux, 0.15);
-                for(int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[selecao - 1, i] = aux[i]; }
+                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
+                aux = LowPassFilter.ApplyLowPassFilter(aux, 0.015);
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
@@ -545,16 +548,16 @@ namespace PlotagemOpenGL
             else if (filtro.Equals("High Pass"))
             {
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(selecao - 1), i]; }
-                aux = HighPassFilter.ApplyHighPassFilter(aux, 0.4);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[selecao - 1, i] = aux[i]; }
+                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1] - 1), i]; }
+                aux = HighPassFilter.ApplyHighPassFilter(aux, 0.04);
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
             }
             else if (filtro.Equals("Band Pass"))
             {
-               // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
+                // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
@@ -578,7 +581,7 @@ namespace PlotagemOpenGL
         }
         private void Play_Click(object sender, EventArgs e)
         {
-
+            LeituraEmMatrizTeste.reorganize();
             if (String.IsNullOrEmpty(qtdGraficos.Text))
             {
                 System.Windows.MessageBox.Show("Por favor, informe a quantidade de graficos a serem mostradas.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
@@ -636,7 +639,7 @@ namespace PlotagemOpenGL
 
 
         }
-        
+
         private bool isDrawing = false;
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -742,7 +745,7 @@ namespace PlotagemOpenGL
             int alturaTela = (int)openglControl1.Height;
             if (GlobVar.scale[0] < 0.09)
             {
-                for(int i = 0; i < GlobVar.scale.Length; i++)
+                for (int i = 0; i < GlobVar.scale.Length; i++)
                 {
                     GlobVar.scale[i] += 0.01f;
                 }
@@ -1951,8 +1954,78 @@ namespace PlotagemOpenGL
         {
 
         }
+        private void InitializeCheckedListBox()
+        {
+            // Preenche o CheckedListBox com os valores de nomeCanais
+            checkedListBox1.Items.AddRange(GlobVar.nomeCanais);
 
-        
+        }
+        int aux;
+        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Atualiza grafSelected com os índices dos itens selecionados
+            var selectedIndices = checkedListBox1.CheckedIndices;
+            List<int> selectedIndicesList = new List<int>();
+
+            foreach (int index in selectedIndices)
+            {
+                selectedIndicesList.Add(index);
+            }
+            for(int index = 0; index < GlobVar.grafSelected.Length; index++)
+            {
+                GlobVar.grafSelected[index] = 0;
+            }
+            // Inicializa grafSelected com o tamanho de nomeCanais
+            for (int i = 0; i < selectedIndicesList.Count; i++)
+            {
+                GlobVar.grafSelected[i] = selectedIndicesList[i];
+            }
+            aux = selectedIndicesList.Count;
+        }
+
+        private void playSelect_Click(object sender, EventArgs e)
+        {
+            qtdGraficos.Text = $"{aux}";
+            if (String.IsNullOrEmpty(qtdGraficos.Text))
+            {
+                System.Windows.MessageBox.Show("Por favor, informe a quantidade de graficos a serem mostradas.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+            }
+            else
+            {
+
+                int alturaTela = (int)openglControl1.Height;
+
+                canais = new Canais(qtdGrafics);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
+                canais.RealocPanel(qtdGrafics);
+                canais.quantidadeGraf(qtdGrafics);
+                canais.reloc();
+
+
+
+                this.gl = openglControl1.OpenGL;
+                plotagem = new Plotagem(gl);
+                openglControl1.DoRender();
+                plotagem.Margem(qtdGrafics, alturaTela);
+                plotagem.Traco(qtdGrafics, alturaTela);
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                gl.LoadIdentity();
+                gl.Translate(0, 0, 1);
+
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Refresh();
+                UpdateInicioTela();
+
+            }
+            selectLabel.Items.Clear();
+            for (int i = 1; i <= qtdGrafics; i++)
+            {
+                string qt = Convert.ToString(i);
+                selectLabel.Items.Add(qt);
+            }
+        }
     }
 
     public class Optimus

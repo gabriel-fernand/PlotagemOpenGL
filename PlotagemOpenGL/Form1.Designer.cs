@@ -47,123 +47,125 @@ namespace PlotagemOpenGL
             openglControl1 = new SharpGL.OpenGLControl();
             painelExames = new System.Windows.Forms.Panel();
             panel1 = new System.Windows.Forms.Panel();
+            scalaLb1 = new System.Windows.Forms.Label();
             minusLb1 = new System.Windows.Forms.Button();
             plusLb1 = new System.Windows.Forms.Button();
             panel2 = new System.Windows.Forms.Panel();
+            scalaLb2 = new System.Windows.Forms.Label();
             minusLb2 = new System.Windows.Forms.Button();
             plusLb2 = new System.Windows.Forms.Button();
             panel3 = new System.Windows.Forms.Panel();
+            scalaLb3 = new System.Windows.Forms.Label();
             minusLb3 = new System.Windows.Forms.Button();
             plusLb3 = new System.Windows.Forms.Button();
             panel4 = new System.Windows.Forms.Panel();
+            scalaLb4 = new System.Windows.Forms.Label();
             minusLb4 = new System.Windows.Forms.Button();
             plusLb4 = new System.Windows.Forms.Button();
             panel5 = new System.Windows.Forms.Panel();
+            scalaLb5 = new System.Windows.Forms.Label();
             minusLb5 = new System.Windows.Forms.Button();
             plusLb5 = new System.Windows.Forms.Button();
             panel6 = new System.Windows.Forms.Panel();
+            scalaLb6 = new System.Windows.Forms.Label();
             minusLb6 = new System.Windows.Forms.Button();
             plusLb6 = new System.Windows.Forms.Button();
             label6 = new System.Windows.Forms.Label();
             panel7 = new System.Windows.Forms.Panel();
+            scalaLb7 = new System.Windows.Forms.Label();
             plusLb7 = new System.Windows.Forms.Button();
             minusLb7 = new System.Windows.Forms.Button();
             label7 = new System.Windows.Forms.Label();
             panel8 = new System.Windows.Forms.Panel();
+            scalaLb8 = new System.Windows.Forms.Label();
             minusLb8 = new System.Windows.Forms.Button();
             plusLb8 = new System.Windows.Forms.Button();
             label8 = new System.Windows.Forms.Label();
             panel9 = new System.Windows.Forms.Panel();
+            scalaLb9 = new System.Windows.Forms.Label();
             minusLb9 = new System.Windows.Forms.Button();
             plusLb9 = new System.Windows.Forms.Button();
             label9 = new System.Windows.Forms.Label();
             panel10 = new System.Windows.Forms.Panel();
+            scalaLb10 = new System.Windows.Forms.Label();
             minusLb10 = new System.Windows.Forms.Button();
             plusLb10 = new System.Windows.Forms.Button();
             label10 = new System.Windows.Forms.Label();
             panel11 = new System.Windows.Forms.Panel();
+            scalaLb11 = new System.Windows.Forms.Label();
             minusLb11 = new System.Windows.Forms.Button();
             plusLb11 = new System.Windows.Forms.Button();
             label11 = new System.Windows.Forms.Label();
             panel12 = new System.Windows.Forms.Panel();
+            scalaLb12 = new System.Windows.Forms.Label();
             plusLb12 = new System.Windows.Forms.Button();
             minusLb12 = new System.Windows.Forms.Button();
             label12 = new System.Windows.Forms.Label();
             panel13 = new System.Windows.Forms.Panel();
+            scalaLb13 = new System.Windows.Forms.Label();
             minusLb13 = new System.Windows.Forms.Button();
             plusLb13 = new System.Windows.Forms.Button();
             label13 = new System.Windows.Forms.Label();
             panel14 = new System.Windows.Forms.Panel();
+            scalaLb14 = new System.Windows.Forms.Label();
             minusLb14 = new System.Windows.Forms.Button();
             plusLb14 = new System.Windows.Forms.Button();
             label14 = new System.Windows.Forms.Label();
             panel15 = new System.Windows.Forms.Panel();
+            scalaLb15 = new System.Windows.Forms.Label();
             minusLb15 = new System.Windows.Forms.Button();
             plusLb15 = new System.Windows.Forms.Button();
             label15 = new System.Windows.Forms.Label();
             panel16 = new System.Windows.Forms.Panel();
+            scalaLb16 = new System.Windows.Forms.Label();
             minusLb16 = new System.Windows.Forms.Button();
             plusLb16 = new System.Windows.Forms.Button();
             label16 = new System.Windows.Forms.Label();
             panel17 = new System.Windows.Forms.Panel();
+            scalaLb17 = new System.Windows.Forms.Label();
             plusLb17 = new System.Windows.Forms.Button();
             minusLb17 = new System.Windows.Forms.Button();
             label17 = new System.Windows.Forms.Label();
             panel18 = new System.Windows.Forms.Panel();
+            scalaLb18 = new System.Windows.Forms.Label();
             minusLb18 = new System.Windows.Forms.Button();
             plusLb18 = new System.Windows.Forms.Button();
             label18 = new System.Windows.Forms.Label();
             panel19 = new System.Windows.Forms.Panel();
+            scalaLb19 = new System.Windows.Forms.Label();
             minusLb19 = new System.Windows.Forms.Button();
             plusLb19 = new System.Windows.Forms.Button();
             label19 = new System.Windows.Forms.Label();
             panel20 = new System.Windows.Forms.Panel();
+            scalaLb20 = new System.Windows.Forms.Label();
             minusLb20 = new System.Windows.Forms.Button();
             plusLb20 = new System.Windows.Forms.Button();
             label20 = new System.Windows.Forms.Label();
             panel21 = new System.Windows.Forms.Panel();
+            scalaLb21 = new System.Windows.Forms.Label();
             minusLb21 = new System.Windows.Forms.Button();
             plusLb21 = new System.Windows.Forms.Button();
             label21 = new System.Windows.Forms.Label();
             panel22 = new System.Windows.Forms.Panel();
+            scalaLb22 = new System.Windows.Forms.Label();
             minusLb22 = new System.Windows.Forms.Button();
             plusLb22 = new System.Windows.Forms.Button();
             label22 = new System.Windows.Forms.Label();
             panel23 = new System.Windows.Forms.Panel();
+            scalaLb23 = new System.Windows.Forms.Label();
             minusLb23 = new System.Windows.Forms.Button();
             label23 = new System.Windows.Forms.Label();
             plusLb23 = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
+            checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             minusAll = new System.Windows.Forms.Button();
             plusAll = new System.Windows.Forms.Button();
             playFilter = new System.Windows.Forms.Button();
             Filters = new System.Windows.Forms.ComboBox();
             selectLabel = new System.Windows.Forms.ComboBox();
             qtdGraficos = new System.Windows.Forms.TextBox();
-            scalaLb1 = new System.Windows.Forms.Label();
-            scalaLb2 = new System.Windows.Forms.Label();
-            scalaLb3 = new System.Windows.Forms.Label();
-            scalaLb4 = new System.Windows.Forms.Label();
-            scalaLb5 = new System.Windows.Forms.Label();
-            scalaLb6 = new System.Windows.Forms.Label();
-            scalaLb7 = new System.Windows.Forms.Label();
-            scalaLb8 = new System.Windows.Forms.Label();
-            scalaLb9 = new System.Windows.Forms.Label();
-            scalaLb10 = new System.Windows.Forms.Label();
-            scalaLb11 = new System.Windows.Forms.Label();
-            scalaLb12 = new System.Windows.Forms.Label();
-            scalaLb13 = new System.Windows.Forms.Label();
-            scalaLb14 = new System.Windows.Forms.Label();
-            scalaLb15 = new System.Windows.Forms.Label();
-            scalaLb16 = new System.Windows.Forms.Label();
-            scalaLb17 = new System.Windows.Forms.Label();
-            scalaLb18 = new System.Windows.Forms.Label();
-            scalaLb19 = new System.Windows.Forms.Label();
-            scalaLb20 = new System.Windows.Forms.Label();
-            scalaLb21 = new System.Windows.Forms.Label();
-            scalaLb22 = new System.Windows.Forms.Label();
-            scalaLb23 = new System.Windows.Forms.Label();
+            playSelect = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             painelExames.SuspendLayout();
             panel1.SuspendLayout();
@@ -343,19 +345,16 @@ namespace PlotagemOpenGL
             openglControl1.Location = new System.Drawing.Point(181, 79);
             openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
-            openglControl1.RenderContextType = SharpGL.RenderContextType.FBO;
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
             openglControl1.Size = new System.Drawing.Size(816, 599);
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
-            openglControl1.MouseMove += openglControl1_MouseMove;
             openglControl1.MouseDown += OpenGLControl_MouseDown;
             openglControl1.MouseMove += OpenGLControl_MouseMove;
             openglControl1.MouseUp += OpenGLControl_MouseUp;
-
-            openglControl1.MouseWheel += OpenglControl1_MouseWheel;            
+            openglControl1.MouseWheel += OpenglControl1_MouseWheel;
             // 
             // painelExames
             // 
@@ -399,6 +398,16 @@ namespace PlotagemOpenGL
             panel1.Size = new System.Drawing.Size(172, 25);
             panel1.TabIndex = 78;
             // 
+            // scalaLb1
+            // 
+            scalaLb1.AutoSize = true;
+            scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb1.Location = new System.Drawing.Point(87, 0);
+            scalaLb1.Name = "scalaLb1";
+            scalaLb1.Size = new System.Drawing.Size(29, 20);
+            scalaLb1.TabIndex = 16;
+            scalaLb1.Text = "1.0f";
+            // 
             // minusLb1
             // 
             minusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -435,6 +444,16 @@ namespace PlotagemOpenGL
             panel2.Size = new System.Drawing.Size(172, 25);
             panel2.TabIndex = 79;
             // 
+            // scalaLb2
+            // 
+            scalaLb2.AutoSize = true;
+            scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb2.Location = new System.Drawing.Point(87, 0);
+            scalaLb2.Name = "scalaLb2";
+            scalaLb2.Size = new System.Drawing.Size(29, 20);
+            scalaLb2.TabIndex = 17;
+            scalaLb2.Text = "1.0f";
+            // 
             // minusLb2
             // 
             minusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -468,6 +487,16 @@ namespace PlotagemOpenGL
             panel3.Name = "panel3";
             panel3.Size = new System.Drawing.Size(172, 25);
             panel3.TabIndex = 80;
+            // 
+            // scalaLb3
+            // 
+            scalaLb3.AutoSize = true;
+            scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb3.Location = new System.Drawing.Point(87, 0);
+            scalaLb3.Name = "scalaLb3";
+            scalaLb3.Size = new System.Drawing.Size(29, 20);
+            scalaLb3.TabIndex = 18;
+            scalaLb3.Text = "1.0f";
             // 
             // minusLb3
             // 
@@ -503,6 +532,16 @@ namespace PlotagemOpenGL
             panel4.Size = new System.Drawing.Size(172, 25);
             panel4.TabIndex = 80;
             // 
+            // scalaLb4
+            // 
+            scalaLb4.AutoSize = true;
+            scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb4.Location = new System.Drawing.Point(87, 0);
+            scalaLb4.Name = "scalaLb4";
+            scalaLb4.Size = new System.Drawing.Size(29, 20);
+            scalaLb4.TabIndex = 20;
+            scalaLb4.Text = "1.0f";
+            // 
             // minusLb4
             // 
             minusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -537,6 +576,16 @@ namespace PlotagemOpenGL
             panel5.Size = new System.Drawing.Size(172, 25);
             panel5.TabIndex = 80;
             // 
+            // scalaLb5
+            // 
+            scalaLb5.AutoSize = true;
+            scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb5.Location = new System.Drawing.Point(87, 0);
+            scalaLb5.Name = "scalaLb5";
+            scalaLb5.Size = new System.Drawing.Size(29, 20);
+            scalaLb5.TabIndex = 22;
+            scalaLb5.Text = "1.0f";
+            // 
             // minusLb5
             // 
             minusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -570,6 +619,16 @@ namespace PlotagemOpenGL
             panel6.Name = "panel6";
             panel6.Size = new System.Drawing.Size(172, 25);
             panel6.TabIndex = 80;
+            // 
+            // scalaLb6
+            // 
+            scalaLb6.AutoSize = true;
+            scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb6.Location = new System.Drawing.Point(87, 0);
+            scalaLb6.Name = "scalaLb6";
+            scalaLb6.Size = new System.Drawing.Size(29, 20);
+            scalaLb6.TabIndex = 24;
+            scalaLb6.Text = "1.0f";
             // 
             // minusLb6
             // 
@@ -617,6 +676,16 @@ namespace PlotagemOpenGL
             panel7.Size = new System.Drawing.Size(172, 25);
             panel7.TabIndex = 80;
             // 
+            // scalaLb7
+            // 
+            scalaLb7.AutoSize = true;
+            scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb7.Location = new System.Drawing.Point(87, 0);
+            scalaLb7.Name = "scalaLb7";
+            scalaLb7.Size = new System.Drawing.Size(29, 20);
+            scalaLb7.TabIndex = 31;
+            scalaLb7.Text = "1.0f";
+            // 
             // plusLb7
             // 
             plusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -660,6 +729,16 @@ namespace PlotagemOpenGL
             panel8.Name = "panel8";
             panel8.Size = new System.Drawing.Size(172, 25);
             panel8.TabIndex = 80;
+            // 
+            // scalaLb8
+            // 
+            scalaLb8.AutoSize = true;
+            scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb8.Location = new System.Drawing.Point(87, 0);
+            scalaLb8.Name = "scalaLb8";
+            scalaLb8.Size = new System.Drawing.Size(29, 20);
+            scalaLb8.TabIndex = 33;
+            scalaLb8.Text = "1.0f";
             // 
             // minusLb8
             // 
@@ -705,6 +784,16 @@ namespace PlotagemOpenGL
             panel9.Size = new System.Drawing.Size(172, 25);
             panel9.TabIndex = 80;
             // 
+            // scalaLb9
+            // 
+            scalaLb9.AutoSize = true;
+            scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb9.Location = new System.Drawing.Point(87, 0);
+            scalaLb9.Name = "scalaLb9";
+            scalaLb9.Size = new System.Drawing.Size(29, 20);
+            scalaLb9.TabIndex = 35;
+            scalaLb9.Text = "1.0f";
+            // 
             // minusLb9
             // 
             minusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -749,6 +838,16 @@ namespace PlotagemOpenGL
             panel10.Size = new System.Drawing.Size(172, 25);
             panel10.TabIndex = 80;
             // 
+            // scalaLb10
+            // 
+            scalaLb10.AutoSize = true;
+            scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb10.Location = new System.Drawing.Point(87, 0);
+            scalaLb10.Name = "scalaLb10";
+            scalaLb10.Size = new System.Drawing.Size(29, 20);
+            scalaLb10.TabIndex = 37;
+            scalaLb10.Text = "1.0f";
+            // 
             // minusLb10
             // 
             minusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -792,6 +891,16 @@ namespace PlotagemOpenGL
             panel11.Name = "panel11";
             panel11.Size = new System.Drawing.Size(172, 25);
             panel11.TabIndex = 80;
+            // 
+            // scalaLb11
+            // 
+            scalaLb11.AutoSize = true;
+            scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb11.Location = new System.Drawing.Point(87, 0);
+            scalaLb11.Name = "scalaLb11";
+            scalaLb11.Size = new System.Drawing.Size(29, 20);
+            scalaLb11.TabIndex = 39;
+            scalaLb11.Text = "1.0f";
             // 
             // minusLb11
             // 
@@ -839,6 +948,16 @@ namespace PlotagemOpenGL
             panel12.Size = new System.Drawing.Size(172, 25);
             panel12.TabIndex = 80;
             // 
+            // scalaLb12
+            // 
+            scalaLb12.AutoSize = true;
+            scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb12.Location = new System.Drawing.Point(87, 0);
+            scalaLb12.Name = "scalaLb12";
+            scalaLb12.Size = new System.Drawing.Size(29, 20);
+            scalaLb12.TabIndex = 46;
+            scalaLb12.Text = "1.0f";
+            // 
             // plusLb12
             // 
             plusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -882,6 +1001,16 @@ namespace PlotagemOpenGL
             panel13.Name = "panel13";
             panel13.Size = new System.Drawing.Size(172, 25);
             panel13.TabIndex = 80;
+            // 
+            // scalaLb13
+            // 
+            scalaLb13.AutoSize = true;
+            scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb13.Location = new System.Drawing.Point(87, 0);
+            scalaLb13.Name = "scalaLb13";
+            scalaLb13.Size = new System.Drawing.Size(29, 20);
+            scalaLb13.TabIndex = 48;
+            scalaLb13.Text = "1.0f";
             // 
             // minusLb13
             // 
@@ -927,6 +1056,16 @@ namespace PlotagemOpenGL
             panel14.Size = new System.Drawing.Size(172, 25);
             panel14.TabIndex = 80;
             // 
+            // scalaLb14
+            // 
+            scalaLb14.AutoSize = true;
+            scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb14.Location = new System.Drawing.Point(87, 0);
+            scalaLb14.Name = "scalaLb14";
+            scalaLb14.Size = new System.Drawing.Size(29, 20);
+            scalaLb14.TabIndex = 50;
+            scalaLb14.Text = "1.0f";
+            // 
             // minusLb14
             // 
             minusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -971,6 +1110,16 @@ namespace PlotagemOpenGL
             panel15.Size = new System.Drawing.Size(172, 25);
             panel15.TabIndex = 80;
             // 
+            // scalaLb15
+            // 
+            scalaLb15.AutoSize = true;
+            scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb15.Location = new System.Drawing.Point(87, 0);
+            scalaLb15.Name = "scalaLb15";
+            scalaLb15.Size = new System.Drawing.Size(29, 20);
+            scalaLb15.TabIndex = 52;
+            scalaLb15.Text = "1.0f";
+            // 
             // minusLb15
             // 
             minusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1014,6 +1163,16 @@ namespace PlotagemOpenGL
             panel16.Name = "panel16";
             panel16.Size = new System.Drawing.Size(172, 25);
             panel16.TabIndex = 80;
+            // 
+            // scalaLb16
+            // 
+            scalaLb16.AutoSize = true;
+            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb16.Location = new System.Drawing.Point(87, 0);
+            scalaLb16.Name = "scalaLb16";
+            scalaLb16.Size = new System.Drawing.Size(29, 20);
+            scalaLb16.TabIndex = 54;
+            scalaLb16.Text = "1.0f";
             // 
             // minusLb16
             // 
@@ -1061,6 +1220,16 @@ namespace PlotagemOpenGL
             panel17.Size = new System.Drawing.Size(172, 25);
             panel17.TabIndex = 80;
             // 
+            // scalaLb17
+            // 
+            scalaLb17.AutoSize = true;
+            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb17.Location = new System.Drawing.Point(87, 0);
+            scalaLb17.Name = "scalaLb17";
+            scalaLb17.Size = new System.Drawing.Size(29, 20);
+            scalaLb17.TabIndex = 61;
+            scalaLb17.Text = "1.0f";
+            // 
             // plusLb17
             // 
             plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1104,6 +1273,16 @@ namespace PlotagemOpenGL
             panel18.Name = "panel18";
             panel18.Size = new System.Drawing.Size(172, 25);
             panel18.TabIndex = 81;
+            // 
+            // scalaLb18
+            // 
+            scalaLb18.AutoSize = true;
+            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb18.Location = new System.Drawing.Point(87, 0);
+            scalaLb18.Name = "scalaLb18";
+            scalaLb18.Size = new System.Drawing.Size(29, 20);
+            scalaLb18.TabIndex = 63;
+            scalaLb18.Text = "1.0f";
             // 
             // minusLb18
             // 
@@ -1149,6 +1328,16 @@ namespace PlotagemOpenGL
             panel19.Size = new System.Drawing.Size(172, 25);
             panel19.TabIndex = 82;
             // 
+            // scalaLb19
+            // 
+            scalaLb19.AutoSize = true;
+            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb19.Location = new System.Drawing.Point(87, 0);
+            scalaLb19.Name = "scalaLb19";
+            scalaLb19.Size = new System.Drawing.Size(29, 20);
+            scalaLb19.TabIndex = 65;
+            scalaLb19.Text = "1.0f";
+            // 
             // minusLb19
             // 
             minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1192,6 +1381,16 @@ namespace PlotagemOpenGL
             panel20.Name = "panel20";
             panel20.Size = new System.Drawing.Size(172, 25);
             panel20.TabIndex = 82;
+            // 
+            // scalaLb20
+            // 
+            scalaLb20.AutoSize = true;
+            scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb20.Location = new System.Drawing.Point(87, 0);
+            scalaLb20.Name = "scalaLb20";
+            scalaLb20.Size = new System.Drawing.Size(29, 20);
+            scalaLb20.TabIndex = 67;
+            scalaLb20.Text = "1.0f";
             // 
             // minusLb20
             // 
@@ -1237,6 +1436,16 @@ namespace PlotagemOpenGL
             panel21.Size = new System.Drawing.Size(172, 25);
             panel21.TabIndex = 82;
             // 
+            // scalaLb21
+            // 
+            scalaLb21.AutoSize = true;
+            scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb21.Location = new System.Drawing.Point(87, 0);
+            scalaLb21.Name = "scalaLb21";
+            scalaLb21.Size = new System.Drawing.Size(29, 20);
+            scalaLb21.TabIndex = 69;
+            scalaLb21.Text = "1.0f";
+            // 
             // minusLb21
             // 
             minusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1281,6 +1490,16 @@ namespace PlotagemOpenGL
             panel22.Size = new System.Drawing.Size(172, 25);
             panel22.TabIndex = 82;
             // 
+            // scalaLb22
+            // 
+            scalaLb22.AutoSize = true;
+            scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb22.Location = new System.Drawing.Point(87, 0);
+            scalaLb22.Name = "scalaLb22";
+            scalaLb22.Size = new System.Drawing.Size(29, 20);
+            scalaLb22.TabIndex = 74;
+            scalaLb22.Text = "1.0f";
+            // 
             // minusLb22
             // 
             minusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1324,6 +1543,16 @@ namespace PlotagemOpenGL
             panel23.Name = "panel23";
             panel23.Size = new System.Drawing.Size(172, 25);
             panel23.TabIndex = 82;
+            // 
+            // scalaLb23
+            // 
+            scalaLb23.AutoSize = true;
+            scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb23.Location = new System.Drawing.Point(87, 0);
+            scalaLb23.Name = "scalaLb23";
+            scalaLb23.Size = new System.Drawing.Size(29, 20);
+            scalaLb23.TabIndex = 76;
+            scalaLb23.Text = "1.0f";
             // 
             // minusLb23
             // 
@@ -1371,6 +1600,8 @@ namespace PlotagemOpenGL
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(playSelect);
+            painelComando.Controls.Add(checkedListBox1);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
             painelComando.Controls.Add(playFilter);
@@ -1388,6 +1619,15 @@ namespace PlotagemOpenGL
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(997, 69);
             painelComando.TabIndex = 53;
+            // 
+            // checkedListBox1
+            // 
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Location = new System.Drawing.Point(418, 36);
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new System.Drawing.Size(140, 26);
+            checkedListBox1.TabIndex = 56;
+            checkedListBox1.SelectedIndexChanged += checkedListBox1_SelectedIndexChanged;
             // 
             // minusAll
             // 
@@ -1454,235 +1694,15 @@ namespace PlotagemOpenGL
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
             // 
-            // scalaLb1
+            // playSelect
             // 
-            scalaLb1.AutoSize = true;
-            scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb1.Location = new System.Drawing.Point(87, 0);
-            scalaLb1.Name = "scalaLb1";
-            scalaLb1.Size = new System.Drawing.Size(29, 20);
-            scalaLb1.TabIndex = 16;
-            scalaLb1.Text = "1.0f";
-            // 
-            // scalaLb2
-            // 
-            scalaLb2.AutoSize = true;
-            scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb2.Location = new System.Drawing.Point(87, 0);
-            scalaLb2.Name = "scalaLb2";
-            scalaLb2.Size = new System.Drawing.Size(29, 20);
-            scalaLb2.TabIndex = 17;
-            scalaLb2.Text = "1.0f";
-            // 
-            // scalaLb3
-            // 
-            scalaLb3.AutoSize = true;
-            scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb3.Location = new System.Drawing.Point(87, 0);
-            scalaLb3.Name = "scalaLb3";
-            scalaLb3.Size = new System.Drawing.Size(29, 20);
-            scalaLb3.TabIndex = 18;
-            scalaLb3.Text = "1.0f";
-            // 
-            // scalaLb4
-            // 
-            scalaLb4.AutoSize = true;
-            scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb4.Location = new System.Drawing.Point(87, 0);
-            scalaLb4.Name = "scalaLb4";
-            scalaLb4.Size = new System.Drawing.Size(29, 20);
-            scalaLb4.TabIndex = 20;
-            scalaLb4.Text = "1.0f";
-            // 
-            // scalaLb5
-            // 
-            scalaLb5.AutoSize = true;
-            scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb5.Location = new System.Drawing.Point(87, 0);
-            scalaLb5.Name = "scalaLb5";
-            scalaLb5.Size = new System.Drawing.Size(29, 20);
-            scalaLb5.TabIndex = 22;
-            scalaLb5.Text = "1.0f";
-            // 
-            // scalaLb6
-            // 
-            scalaLb6.AutoSize = true;
-            scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb6.Location = new System.Drawing.Point(87, 0);
-            scalaLb6.Name = "scalaLb6";
-            scalaLb6.Size = new System.Drawing.Size(29, 20);
-            scalaLb6.TabIndex = 24;
-            scalaLb6.Text = "1.0f";
-            // 
-            // scalaLb7
-            // 
-            scalaLb7.AutoSize = true;
-            scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb7.Location = new System.Drawing.Point(87, 0);
-            scalaLb7.Name = "scalaLb7";
-            scalaLb7.Size = new System.Drawing.Size(29, 20);
-            scalaLb7.TabIndex = 31;
-            scalaLb7.Text = "1.0f";
-            // 
-            // scalaLb8
-            // 
-            scalaLb8.AutoSize = true;
-            scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb8.Location = new System.Drawing.Point(87, 0);
-            scalaLb8.Name = "scalaLb8";
-            scalaLb8.Size = new System.Drawing.Size(29, 20);
-            scalaLb8.TabIndex = 33;
-            scalaLb8.Text = "1.0f";
-            // 
-            // scalaLb9
-            // 
-            scalaLb9.AutoSize = true;
-            scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb9.Location = new System.Drawing.Point(87, 0);
-            scalaLb9.Name = "scalaLb9";
-            scalaLb9.Size = new System.Drawing.Size(29, 20);
-            scalaLb9.TabIndex = 35;
-            scalaLb9.Text = "1.0f";
-            // 
-            // scalaLb10
-            // 
-            scalaLb10.AutoSize = true;
-            scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb10.Location = new System.Drawing.Point(87, 0);
-            scalaLb10.Name = "scalaLb10";
-            scalaLb10.Size = new System.Drawing.Size(29, 20);
-            scalaLb10.TabIndex = 37;
-            scalaLb10.Text = "1.0f";
-            // 
-            // scalaLb11
-            // 
-            scalaLb11.AutoSize = true;
-            scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb11.Location = new System.Drawing.Point(87, 0);
-            scalaLb11.Name = "scalaLb11";
-            scalaLb11.Size = new System.Drawing.Size(29, 20);
-            scalaLb11.TabIndex = 39;
-            scalaLb11.Text = "1.0f";
-            // 
-            // scalaLb12
-            // 
-            scalaLb12.AutoSize = true;
-            scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb12.Location = new System.Drawing.Point(87, 0);
-            scalaLb12.Name = "scalaLb12";
-            scalaLb12.Size = new System.Drawing.Size(29, 20);
-            scalaLb12.TabIndex = 46;
-            scalaLb12.Text = "1.0f";
-            // 
-            // scalaLb13
-            // 
-            scalaLb13.AutoSize = true;
-            scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb13.Location = new System.Drawing.Point(87, 0);
-            scalaLb13.Name = "scalaLb13";
-            scalaLb13.Size = new System.Drawing.Size(29, 20);
-            scalaLb13.TabIndex = 48;
-            scalaLb13.Text = "1.0f";
-            // 
-            // scalaLb14
-            // 
-            scalaLb14.AutoSize = true;
-            scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb14.Location = new System.Drawing.Point(87, 0);
-            scalaLb14.Name = "scalaLb14";
-            scalaLb14.Size = new System.Drawing.Size(29, 20);
-            scalaLb14.TabIndex = 50;
-            scalaLb14.Text = "1.0f";
-            // 
-            // scalaLb15
-            // 
-            scalaLb15.AutoSize = true;
-            scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb15.Location = new System.Drawing.Point(87, 0);
-            scalaLb15.Name = "scalaLb15";
-            scalaLb15.Size = new System.Drawing.Size(29, 20);
-            scalaLb15.TabIndex = 52;
-            scalaLb15.Text = "1.0f";
-            // 
-            // scalaLb16
-            // 
-            scalaLb16.AutoSize = true;
-            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb16.Location = new System.Drawing.Point(87, 0);
-            scalaLb16.Name = "scalaLb16";
-            scalaLb16.Size = new System.Drawing.Size(29, 20);
-            scalaLb16.TabIndex = 54;
-            scalaLb16.Text = "1.0f";
-            // 
-            // scalaLb17
-            // 
-            scalaLb17.AutoSize = true;
-            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb17.Location = new System.Drawing.Point(87, 0);
-            scalaLb17.Name = "scalaLb17";
-            scalaLb17.Size = new System.Drawing.Size(29, 20);
-            scalaLb17.TabIndex = 61;
-            scalaLb17.Text = "1.0f";
-            // 
-            // scalaLb18
-            // 
-            scalaLb18.AutoSize = true;
-            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb18.Location = new System.Drawing.Point(87, 0);
-            scalaLb18.Name = "scalaLb18";
-            scalaLb18.Size = new System.Drawing.Size(29, 20);
-            scalaLb18.TabIndex = 63;
-            scalaLb18.Text = "1.0f";
-            // 
-            // scalaLb19
-            // 
-            scalaLb19.AutoSize = true;
-            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb19.Location = new System.Drawing.Point(87, 0);
-            scalaLb19.Name = "scalaLb19";
-            scalaLb19.Size = new System.Drawing.Size(29, 20);
-            scalaLb19.TabIndex = 65;
-            scalaLb19.Text = "1.0f";
-            // 
-            // scalaLb20
-            // 
-            scalaLb20.AutoSize = true;
-            scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb20.Location = new System.Drawing.Point(87, 0);
-            scalaLb20.Name = "scalaLb20";
-            scalaLb20.Size = new System.Drawing.Size(29, 20);
-            scalaLb20.TabIndex = 67;
-            scalaLb20.Text = "1.0f";
-            // 
-            // scalaLb21
-            // 
-            scalaLb21.AutoSize = true;
-            scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb21.Location = new System.Drawing.Point(87, 0);
-            scalaLb21.Name = "scalaLb21";
-            scalaLb21.Size = new System.Drawing.Size(29, 20);
-            scalaLb21.TabIndex = 69;
-            scalaLb21.Text = "1.0f";
-            // 
-            // scalaLb22
-            // 
-            scalaLb22.AutoSize = true;
-            scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb22.Location = new System.Drawing.Point(87, 0);
-            scalaLb22.Name = "scalaLb22";
-            scalaLb22.Size = new System.Drawing.Size(29, 20);
-            scalaLb22.TabIndex = 74;
-            scalaLb22.Text = "1.0f";
-            // 
-            // scalaLb23
-            // 
-            scalaLb23.AutoSize = true;
-            scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            scalaLb23.Location = new System.Drawing.Point(87, 0);
-            scalaLb23.Name = "scalaLb23";
-            scalaLb23.Size = new System.Drawing.Size(29, 20);
-            scalaLb23.TabIndex = 76;
-            scalaLb23.Text = "1.0f";
+            playSelect.Location = new System.Drawing.Point(564, 33);
+            playSelect.Name = "playSelect";
+            playSelect.Size = new System.Drawing.Size(41, 29);
+            playSelect.TabIndex = 57;
+            playSelect.Text = ">";
+            playSelect.UseVisualStyleBackColor = true;
+            playSelect.Click += playSelect_Click;
             // 
             // Tela_Plotagem
             // 
@@ -1755,6 +1775,8 @@ namespace PlotagemOpenGL
 
         #endregion
 
+        public static System.Windows.Forms.Button playSelect;
+        public static System.Windows.Forms.CheckedListBox checkedListBox1;
         public static System.Windows.Forms.Label scalaLb1;
         public static System.Windows.Forms.Panel panel23;
         public static System.Windows.Forms.Panel panel22;
@@ -1888,6 +1910,5 @@ namespace PlotagemOpenGL
         public static System.Windows.Forms.Label scalaLb21;
         public static System.Windows.Forms.Label scalaLb22;
         public static System.Windows.Forms.Label scalaLb23;
-
     }
 }

@@ -129,7 +129,7 @@ namespace PlotagemOpenGL.auxi
                     {
                         panel.Location = new System.Drawing.Point(0, (int)yCanais[j]);
                         panel.Size = new System.Drawing.Size(pnSizeX, pnSize);
-                        label.Text = GlobVar.nomeCanais[j];
+                        label.Text = GlobVar.nomeCanais[GlobVar.grafSelected[j]];
                         j++;
                     }                    
                 }                

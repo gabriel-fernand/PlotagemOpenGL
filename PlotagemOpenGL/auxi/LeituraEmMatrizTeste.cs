@@ -23,6 +23,8 @@ namespace PlotagemOpenGL.auxi
             GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
             GlobVar.ponteiro = new int[GlobVar.qtdCanais.Length];
             GlobVar.scale = new double[GlobVar.qtdCanais.Length];
+            GlobVar.codCanal = new int[GlobVar.qtdCanais.Length];
+
             int[] pontI = new int[GlobVar.qtdCanais.Length];
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -57,6 +59,7 @@ namespace PlotagemOpenGL.auxi
                     string cod = dadoscanal[ich].Substring(0, 2);
                     GlobVar.qtdCanais[ich] = cod;
                     string phrase = dadoscanal[ich];
+                    GlobVar.codCanal[ich] = Convert.ToInt16(phrase.Substring(0, 3).Trim()); //Faz a leitura do codigo do canal
                     GlobVar.nomeCanais[ich] = phrase.Substring(11, 10).Trim(); //Faz a leitura dos nomes de cada canal e armazena em um array
                     GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
                     string sizesample3 = phrase.Substring(8, 4);
@@ -188,7 +191,13 @@ namespace PlotagemOpenGL.auxi
 
             return novoArray;
         }
-
+        public static void reorganize()
+        {
+            for(int i = 0;i < GlobVar.grafSelected.Length; i++)
+            {
+                GlobVar.grafSelected[i] = i;
+            }
+        }
     }
 }
 

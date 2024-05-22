@@ -89,16 +89,15 @@ namespace PlotagemOpenGL.auxi
         public static Vector2 locBut;
         public static Vector2 locScale;
 
-
-
+        public static int[] grafSelected;
         public static int[,] matrizCompleta;
         public static double[,] matrizCanal;
         public static int[] ponteiro;
-        public static double[] scale;
 
         public static string[] nomeCanais;
         public static int[] txPorCanal;
-
+        public static int[] codCanal;
+        public static double[] scale;
 
         public static int maximaVect = 130000;
         public static int indice = 0;
