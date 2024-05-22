@@ -158,6 +158,7 @@ namespace PlotagemOpenGL
             plusLb23 = new System.Windows.Forms.Button();
             painelTelaGl = new System.Windows.Forms.Panel();
             painelComando = new System.Windows.Forms.Panel();
+            hertz = new System.Windows.Forms.ComboBox();
             playSelect = new System.Windows.Forms.Button();
             minusAll = new System.Windows.Forms.Button();
             plusAll = new System.Windows.Forms.Button();
@@ -1599,6 +1600,7 @@ namespace PlotagemOpenGL
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(hertz);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
@@ -1617,6 +1619,17 @@ namespace PlotagemOpenGL
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(997, 71);
             painelComando.TabIndex = 53;
+            // 
+            // hertz
+            // 
+            hertz.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            hertz.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            hertz.FormattingEnabled = true;
+            hertz.IntegralHeight = false;
+            hertz.Location = new System.Drawing.Point(881, 34);
+            hertz.Name = "hertz";
+            hertz.Size = new System.Drawing.Size(68, 28);
+            hertz.TabIndex = 58;
             // 
             // playSelect
             // 
@@ -1650,9 +1663,9 @@ namespace PlotagemOpenGL
             // 
             // playFilter
             // 
-            playFilter.Location = new System.Drawing.Point(950, 34);
+            playFilter.Location = new System.Drawing.Point(955, 34);
             playFilter.Name = "playFilter";
-            playFilter.Size = new System.Drawing.Size(41, 29);
+            playFilter.Size = new System.Drawing.Size(36, 29);
             playFilter.TabIndex = 53;
             playFilter.Text = ">";
             playFilter.UseVisualStyleBackColor = true;
@@ -1667,10 +1680,11 @@ namespace PlotagemOpenGL
             Filters.FormattingEnabled = true;
             Filters.IntegralHeight = false;
             Filters.Items.AddRange(new object[] { "Low Pass", "High Pass", "Band Pass", "Band Reject", "FWT" });
-            Filters.Location = new System.Drawing.Point(705, 34);
+            Filters.Location = new System.Drawing.Point(675, 34);
             Filters.Name = "Filters";
-            Filters.Size = new System.Drawing.Size(239, 28);
+            Filters.Size = new System.Drawing.Size(200, 28);
             Filters.TabIndex = 52;
+            Filters.SelectedIndexChanged += Filters_SelectedIndexChanged;
             // 
             // selectLabel
             // 
@@ -1680,9 +1694,9 @@ namespace PlotagemOpenGL
             selectLabel.FormatString = "N1";
             selectLabel.FormattingEnabled = true;
             selectLabel.IntegralHeight = false;
-            selectLabel.Location = new System.Drawing.Point(634, 34);
+            selectLabel.Location = new System.Drawing.Point(536, 34);
             selectLabel.Name = "selectLabel";
-            selectLabel.Size = new System.Drawing.Size(65, 28);
+            selectLabel.Size = new System.Drawing.Size(133, 28);
             selectLabel.TabIndex = 51;
             // 
             // qtdGraficos
@@ -1764,6 +1778,7 @@ namespace PlotagemOpenGL
 
         #endregion
 
+        public static System.Windows.Forms.ComboBox hertz;
         public static System.Windows.Forms.Button playSelect;
         public static System.Windows.Forms.Label scalaLb1;
         public static System.Windows.Forms.Panel panel23;

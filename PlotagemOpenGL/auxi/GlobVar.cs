@@ -99,6 +99,9 @@ namespace PlotagemOpenGL.auxi
         public static int[] codCanal;
         public static double[] scale;
 
+        public static double[] lowHertz = new double[6] { 0, 0.005f, 0.010f, 0.015f, 0.020f, 0.025f };
+        public static double[] highHertz = new double[4] { 0, 0.007f, 0.01f, 0.04f };
+
         public static int maximaVect = 130000;
         public static int indice = 0;
 
