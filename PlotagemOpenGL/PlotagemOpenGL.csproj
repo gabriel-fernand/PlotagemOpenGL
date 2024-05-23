@@ -14,6 +14,7 @@
     <PackageReference Include="DSP" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
     <PackageReference Include="NVAPI" Version="1.0.440" />
     <PackageReference Include="ObjectTK" Version="2.0.0-pre.9" />
     <PackageReference Include="OpenTK" Version="4.8.2" />
@@ -22,6 +23,8 @@
     <PackageReference Include="SharpGL.WPF" Version="3.1.1" />
     <PackageReference Include="SharpGLforWinForms" Version="2.4.0" />
     <PackageReference Include="SharpGLforWPF" Version="2.4.0" />
+    <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
+    <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0-preview.1.21102.12" />
   </ItemGroup>
 

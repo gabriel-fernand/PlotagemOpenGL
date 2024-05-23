@@ -178,6 +178,7 @@ namespace PlotagemOpenGL
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
+            LeituraBanco.BancoRead();
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
