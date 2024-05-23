@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Numerics;
 using System.Text;
 
@@ -21,6 +22,7 @@ namespace PlotagemOpenGL.auxi
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
 
+        public static DataTable eventos = new DataTable();
 
         public static int lastcall;
         public static double metadeavg;

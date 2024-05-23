@@ -65,7 +65,7 @@
 
         #endregion
 
-        public static System.Windows.Forms.CheckedListBox checkedListBox1;
-        public static System.Windows.Forms.Button Play;
+        public System.Windows.Forms.CheckedListBox checkedListBox1;
+        public System.Windows.Forms.Button Play;
     }
 }

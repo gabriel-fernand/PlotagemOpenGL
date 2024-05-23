@@ -174,11 +174,13 @@ namespace PlotagemOpenGL
         {
             InitializeComponent();
             InitializeDedicatedGraphics();
+            LeituraBanco.BancoRead();
+            
             //Canais.LerCanais();
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
-            LeituraBanco.BancoRead();
+            
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
@@ -340,6 +342,9 @@ namespace PlotagemOpenGL
             camera.Z = 1.0f;
             tempoEmTela.SelectedIndex = 2;
             velocidadeScroll.SelectedIndex = 0;
+
+            var backlog = new backLog();
+            backlog.Show();
         }
         private void resize_Control(Control c, Rectangle r)
         {
