@@ -1,4 +1,5 @@
-﻿using SharpGL;
+﻿using PlotagemOpenGL.auxi.auxPlotagem;
+using SharpGL;
 using SharpGL.SceneGraph.Assets;
 using System;
 using System.Windows.Forms;
@@ -11,7 +12,7 @@ namespace PlotagemOpenGL.auxi
         private OpenGL gl;
         private string[] Canula;
         private float[] margem;
-        private float[] traco;
+        public static float[] traco;
         public float startX, startY, endX, endY;
         public float writeX = -500;
         public float writeY = -500;
@@ -57,7 +58,7 @@ namespace PlotagemOpenGL.auxi
                 if (qtdGraf == 0)
                 {
                     float[] nada = new float[qtdGraf];
-                    this.traco = nada;
+                    traco = nada;
                 }
             }
             else
@@ -130,6 +131,8 @@ namespace PlotagemOpenGL.auxi
                 gl.Vertex(GlobVar.canalA.Length, margem[i]);
                 gl.End();
             }*/
+
+            //Faz o desenho da regua com base no tamanho da tela
             int ind = 0;
             for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
             {
@@ -161,45 +164,15 @@ namespace PlotagemOpenGL.auxi
                 i += GlobVar.namos;
                 ind++;
             }
-
-            int des = qtdGraf - 1;
-            for (int i = 0 ; i < qtdGraf; i++)
-            {                
-                gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
-                {
-                    if (j <= 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
-                    else gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]);                                                                                  //aqui tem plotar 3 graficos diferentes
-                }
-                des--;
-
-                gl.End();
-            }
+            //classe para fazer o desenho do grafico
+            plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
             gl.Flush();
-            for (int i = 0; i < qtdGraf; i++)
-            {
-                gl.LineStipple(1, 0xAAAA);
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-                gl.Begin(OpenGL.GL_LINES);
-                gl.Color(0.752941f, 0.752941f, 0.752941f);
-                gl.Vertex(1, traco[i]);
-                gl.Vertex(GlobVar.matrizCanal.GetLength(1), traco[i]);
-                gl.End();
-            }
+            //Metodo para fazer o desenho da linha x0 de cada grafico
+            plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
-            gl.Disable(OpenGL.GL_LINE_STIPPLE);
 
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
-            (double, double, double) pale_turquoise = (175 / 255.0f, 238 / 255.0f, 238 / 255.0f);
-            // Draw the rectangle
-            float red = 176 / 255.0f;
-            float green = 196 / 255.0f;
-            float blue = 222 / 255.0f;
-            //byte red = 75;
-            //byte green = 0;
-            //byte blue = 130;
-            byte alpha = 10;
 
             gl.Begin(OpenGL.GL_QUADS);
             gl.PointSize(3.0f); // Define o tamanho dos pontos

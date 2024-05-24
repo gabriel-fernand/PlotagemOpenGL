@@ -6,23 +6,32 @@ using System.Windows;
 
 public class LeituraBanco
 {
-    private static string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-
+    private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+    private static string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
     public static void BancoRead()
     {
         try
         {
-            using var connection = new OdbcConnection(connectionString);
-            connection.Open();
+            using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
+            using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+            connectionConfigBd.Open();
+            connectionDatBd.Open();
             //MessageBox.Show("Conexão bem-sucedida!");
 
+            string queryConfig = "SELECT * FROM tbl_CadEvento";
             string query = "SELECT * FROM tbl_Eventos";
-            using var command = new OdbcCommand(query, connection);
+
+            using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
+            using var command = new OdbcCommand(query, connectionDatBd);
+            using var adapterConfig = new OdbcDataAdapter(commandConfig);
             using var adapter = new OdbcDataAdapter(command);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterConfig.Fill(GlobVar.codEventos);
             adapter.Fill(GlobVar.eventos);
-            connection.Close();
+
+            connectionConfigBd.Close();
+            connectionDatBd.Close();
         }
         catch (OdbcException ex)
         {
