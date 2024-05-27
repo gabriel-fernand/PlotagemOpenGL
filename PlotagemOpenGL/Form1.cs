@@ -175,7 +175,7 @@ namespace PlotagemOpenGL
             InitializeComponent();
             InitializeDedicatedGraphics();
             LeituraBanco.BancoRead();
-            
+            LeituraBanco.AlteraTable();
             //Canais.LerCanais();
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
@@ -336,6 +336,7 @@ namespace PlotagemOpenGL
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
             GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
+            GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
 
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -538,27 +539,43 @@ namespace PlotagemOpenGL
         {
             string filtro;
             filtro = Filters.Text;
+            double hertzSelect = 0;
             int selecao = Convert.ToInt16(selectLabel.Text);
-            double hertzSelect = Convert.ToDouble(hertz.Text.Substring(0, 5));
+            if (!hertz.Text.Equals(""))
+            {
+                hertzSelect = Convert.ToDouble(hertz.Text.Substring(0, 5));
+            }
             if (filtro.Equals("")) System.Windows.MessageBox.Show("Por favor, selecione algum filtro.");
 
             if (filtro.Equals("Low Pass"))
             {
+                if (LowPassFilter.auxLow != 0)
+                {
+                    LowPassFilter.auxLow = 0;
+                    filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
+                }
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
                 aux = LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                LowPassFilter.auxLow += 1;
             }
             else if (filtro.Equals("High Pass"))
             {
+                if (HighPassFilter.auxHigh != 0)
+                {
+                    HighPassFilter.auxHigh = 0;
+                    filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
+                }
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
                 aux = HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                HighPassFilter.auxHigh += 1;
             }
             else if (filtro.Equals("Band Pass"))
             {
@@ -585,7 +602,6 @@ namespace PlotagemOpenGL
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-
             }
         }
         private void Play_Click(object sender, EventArgs e)

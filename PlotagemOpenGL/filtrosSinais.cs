@@ -40,10 +40,51 @@ namespace PlotagemOpenGL
             }
             alterado = temp;
         }
+        public static void VoltaMatriz(Int16 select)
+        {
+            int colunaCanalIndex = 0;
+
+            for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
+            {
+                // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
+                for (int colunaComp = GlobVar.ponteiroI[select]; colunaComp < GlobVar.ponteiroF[select]; colunaComp++)
+                {
+                    // Certifique-se de não exceder os limites da matrizCanais
+                    if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
+                    {
+                        // Copia o valor de matrizCompleta para matrizCanal
+                        GlobVar.matrizCanal[select, colunaCanalIndex] = GlobVar.matrizCompleta[linhaComp, colunaComp];
+                        colunaCanalIndex++;
+                    }
+                    else
+                    {
+                        // Se exceder os limites da matrizCanal, saia do loop
+                        break;
+                    }
+                }
+            }            
+            if (GlobVar.txPorCanal[select] < 512)
+            {
+                int aux = 512 / GlobVar.txPorCanal[select];
+                short[] auxx = new short[GlobVar.matrizCanal.GetLength(1)];
+                for (int j = 0; j < auxx.Length; j++)
+                {
+                    auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[select, j]);
+                }
+                auxx = LeituraEmMatrizTeste.RemoverMetadeParaFrente(auxx, aux);
+                auxx = LeituraEmMatrizTeste.DuplicarArray(auxx, aux);
+                for (int j = 0; j < GlobVar.matrizCanal.GetLength(1); j++)
+                {
+                    GlobVar.matrizCanal[select, j] = auxx[j];
+                }
+            }
+            
+        }
 
     }
     public class LowPassFilter
     {
+        public static int auxLow;
         private double _alpha;
         private double _prevOutput;
         public static Accord.Audio.Filters.LowPassFilter lowFilt;
@@ -80,6 +121,7 @@ namespace PlotagemOpenGL
     }
     public class HighPassFilter
     {
+        public static int auxHigh;
         private double alpha;
         private double prevInput = 0;
         private double prevOutput = 0;
@@ -137,35 +179,6 @@ namespace PlotagemOpenGL
             return output;
         }
 
-    }/*
-    public class BandRejectFilter
-    {
-        private LowPassFilter _lowPassFilter;
-        private HighPassFilter _highPassFilter;
-        private double _alpha;
+    }
 
-        public BandRejectFilter(double alpha)
-        {
-            _alpha = alpha;
-            _lowPassFilter = new LowPassFilter(alpha);
-            _highPassFilter = new HighPassFilter(alpha);
-        }
-
-        public double Apply(double input, double alpha)
-        {
-            double notchOutput = _lowPassFilter.Apply(input) + _highPassFilter.Apply(input);
-            return input - (alpha * notchOutput);
-        }
-        public static double[] ApplyBandRejectFilter(double[] input,double alpha)
-        {
-            BandRejectFilter bandRejectFilter = new BandRejectFilter(alpha);
-            double[] output = new double[input.Length];
-            for (int i = 0; i < input.Length; i++)
-            {
-                output[i] = bandRejectFilter.Apply(input[i], alpha);
-            }
-            return output;
-        }
-    }*/
-    
 }

@@ -34,6 +34,7 @@
             button1 = new System.Windows.Forms.Button();
             button2 = new System.Windows.Forms.Button();
             button3 = new System.Windows.Forms.Button();
+            button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)leituraBancoBindingSource).BeginInit();
             SuspendLayout();
@@ -63,7 +64,7 @@
             // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(471, 593);
+            button2.Location = new System.Drawing.Point(322, 593);
             button2.Name = "button2";
             button2.Size = new System.Drawing.Size(94, 29);
             button2.TabIndex = 2;
@@ -73,7 +74,7 @@
             // 
             // button3
             // 
-            button3.Location = new System.Drawing.Point(841, 593);
+            button3.Location = new System.Drawing.Point(624, 593);
             button3.Name = "button3";
             button3.Size = new System.Drawing.Size(94, 29);
             button3.TabIndex = 3;
@@ -81,11 +82,22 @@
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
+            // button4
+            // 
+            button4.Location = new System.Drawing.Point(841, 593);
+            button4.Name = "button4";
+            button4.Size = new System.Drawing.Size(94, 29);
+            button4.TabIndex = 4;
+            button4.Text = "button4";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // backLog
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1010, 664);
+            Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
@@ -104,5 +116,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }

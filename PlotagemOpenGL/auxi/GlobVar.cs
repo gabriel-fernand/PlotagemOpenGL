@@ -23,6 +23,7 @@ namespace PlotagemOpenGL.auxi
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
 
+        public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();
         public static DataTable codEventos = new DataTable();
 
@@ -95,9 +96,11 @@ namespace PlotagemOpenGL.auxi
         public static Vector2 locScale;
 
         public static int[] grafSelected;
-        public static int[,] matrizCompleta;
+        public static int[] codSelected;
+        public static short[,] matrizCompleta;
         public static double[,] matrizCanal;
-        public static int[] ponteiro;
+        public static int[] ponteiroI;
+        public static int[] ponteiroF;
 
         public static string[] nomeCanais;
         public static int[] txPorCanal;

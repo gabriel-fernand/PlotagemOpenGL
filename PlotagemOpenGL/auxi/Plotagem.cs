@@ -2,6 +2,8 @@
 using SharpGL;
 using SharpGL.SceneGraph.Assets;
 using System;
+using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 
 
@@ -16,6 +18,9 @@ namespace PlotagemOpenGL.auxi
         public float startX, startY, endX, endY;
         public float writeX = -500;
         public float writeY = -500;
+        public static float[] StartY;
+        public static float[] EndY;
+
 
 
         public Plotagem(OpenGL gl)
@@ -86,8 +91,8 @@ namespace PlotagemOpenGL.auxi
             float[] desenhoLoc = new float[qtdGraf];
             float locY = (float)altura / (float)qtdGraf;
             float auxY = 0;
-            float[] StartY = new float[qtdGraf];
-            float[] EndY = new float[qtdGraf];
+            StartY = new float[qtdGraf];
+            EndY = new float[qtdGraf];
             for (int i = 0; i < qtdGraf; i++)
             {
                 desenhoLoc[i] = aux;
@@ -171,6 +176,7 @@ namespace PlotagemOpenGL.auxi
             //Metodo para fazer o desenho da linha x0 de cada grafico
             plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
+            plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
 
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 

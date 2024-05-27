@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace PlotagemOpenGL
 {
@@ -39,9 +40,9 @@ namespace PlotagemOpenGL
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
         {
             resize_Control(dataGridView1, gridView);
-            resize_Control(button1, bt1 );
-            resize_Control(button2, bt2 );
-            resize_Control(button3, bt3 );
+            resize_Control(button1, bt1);
+            resize_Control(button2, bt2);
+            resize_Control(button3, bt3);
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -89,7 +90,8 @@ namespace PlotagemOpenGL
             // Limpar o DataGridView
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
-
+            // Crie um novo DataTable para armazenar os resultados filtrados e agrupados
+            DataTable resultTable = GlobVar.eventos.Clone();
             // Adicionar colunas ao DataGridView
             foreach (DataColumn col in GlobVar.eventos.Columns)
             {
@@ -98,11 +100,9 @@ namespace PlotagemOpenGL
             }
 
             // Ordena do menor para o maior
-            var filteredRows1 = GlobVar.eventos.AsEnumerable()
-                                              .OrderBy(row => row.Field<int>("NumPag"));
+            var filteredRows = GlobVar.eventos.AsEnumerable()
+                                              .OrderBy(row => row.Field<int>("NumPag")).ThenBy(row => row.Field<int>("Seq"));
 
-            var filteredRows = filteredRows1.AsEnumerable()
-                                              .OrderBy(row => row.Field<int>("Seq"));
 
             var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"))
                                            .SelectMany(group => new[]
@@ -112,11 +112,81 @@ namespace PlotagemOpenGL
                                            })
                                            .Distinct();
 
+            foreach (var row in groupedRows)
+            {
+                resultTable.ImportRow(row);
+            }
             // Adicionar as linhas filtradas ao DataGridView
             foreach (var row in groupedRows)
             {
                 dataGridView1.Rows.Add(row.ItemArray);
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // Supondo que GlobVar.eventos seja o DataTable original
+            DataTable eventos = GlobVar.eventos;
+
+            // Crie um novo DataTable para armazenar os resultados
+            GlobVar.eventosUpdate.Columns.Add("Seq", typeof(int));
+            GlobVar.eventosUpdate.Columns.Add("NumPag", typeof(string));
+            GlobVar.eventosUpdate.Columns.Add("CodEvento", typeof(int));
+            GlobVar.eventosUpdate.Columns.Add("CodCanal1", typeof(int));
+            GlobVar.eventosUpdate.Columns.Add("Inicio", typeof(int));
+            GlobVar.eventosUpdate.Columns.Add("Duracao", typeof(int));
+
+            // Ordenar por NumPag e Seq
+            var filteredRows = eventos.AsEnumerable()
+                                      .OrderBy(row => row.Field<int>("NumPag"))
+                                      .ThenBy(row => row.Field<int>("Seq"));
+
+            // Agrupar por Seq e processar cada grupo
+            var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
+
+            foreach (var group in groupedRows)
+            {
+                var firstRow = group.First();
+                var lastRow = group.Last();
+
+                int seq = firstRow.Field<int>("Seq");
+                string numPag = $"{firstRow.Field<int>("NumPag")} -- {lastRow.Field<int>("NumPag")}";
+                int codEvento = firstRow.Field<int>("CodEvento");
+                int codCanal1 = firstRow.Field<int>("CodCanal1");
+
+                int inicio = firstRow.Field<int>("Inicio");
+                inicio += (firstRow.Field<int>("NumPag") * 512);
+
+                int duracao = lastRow.Field<int>("Duracao");
+                duracao += (lastRow.Field<int>("NumPag") *512);
+
+                DataRow newRow = GlobVar.eventosUpdate.NewRow();
+                newRow["Seq"] = seq;
+                newRow["NumPag"] = numPag;
+                newRow["CodEvento"] = codEvento;
+                newRow["CodCanal1"] = codCanal1;
+                newRow["Inicio"] = inicio;
+                newRow["Duracao"] = duracao;
+
+                GlobVar.eventosUpdate.Rows.Add(newRow);
+            }
+
+            dataGridView1.Columns.Clear();
+            dataGridView1.Rows.Clear();
+
+            //to get columns
+            foreach (DataColumn col in GlobVar.eventosUpdate.Columns)
+            {
+                var c = new DataGridViewTextBoxColumn() { HeaderText = col.ColumnName }; //Let say that the default column template of DataGridView is DataGridViewTextBoxColumn
+                dataGridView1.Columns.Add(c);
+            }
+
+            //to get rows
+            foreach (DataRow row in GlobVar.eventosUpdate.Rows)
+            {
+                dataGridView1.Rows.Add(row[0], row[1], row[2], row[3], row[4], row[5]);
+            }
+
         }
     }
 }

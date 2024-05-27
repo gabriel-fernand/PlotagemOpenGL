@@ -21,11 +21,11 @@ namespace PlotagemOpenGL.auxi
             byte[] buffer3 = new byte[47];
             GlobVar.nomeCanais = new string[GlobVar.qtdCanais.Length];
             GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
-            GlobVar.ponteiro = new int[GlobVar.qtdCanais.Length];
+            GlobVar.ponteiroI = new int[GlobVar.qtdCanais.Length];
+            GlobVar.ponteiroF = new int[GlobVar.qtdCanais.Length];
             GlobVar.scale = new double[GlobVar.qtdCanais.Length];
             GlobVar.codCanal = new int[GlobVar.qtdCanais.Length];
 
-            int[] pontI = new int[GlobVar.qtdCanais.Length];
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
             {
@@ -75,13 +75,13 @@ namespace PlotagemOpenGL.auxi
                     ntotal = ntotal + (GlobVar.amos * 2);
 
                     int ponteirostr = Convert.ToInt16(fs.Position);
-                    pontI[ich] = txPorSeg;
+                    GlobVar.ponteiroI[ich] = txPorSeg;
                     txPorSeg += auxx;
-                    GlobVar.ponteiro[ich] = txPorSeg;
+                    GlobVar.ponteiroF[ich] = txPorSeg;
 
                 }
 
-                GlobVar.matrizCompleta = new int[GlobVar.npagin, txPorSeg];
+                GlobVar.matrizCompleta = new short[GlobVar.npagin, txPorSeg];
 
                 GlobVar.size = Convert.ToInt32(GlobVar.npag);
 
@@ -89,25 +89,25 @@ namespace PlotagemOpenGL.auxi
 
                 fs.Position = fs.Position - 1;
 
-                for (int ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat, trazendo a Matriz completa de todos canais juntos
+                for (Int16 ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat, trazendo a Matriz completa de todos canais juntos
                 {
 
                     byte[] buffer4 = new byte[ntotal];
 
                     fs.Read(buffer4, 0, buffer4.Length);
 
-                    Int16[] bitstring = new Int16[GlobVar.sizesample / 2];
+                    short[] bitstring = new short[GlobVar.sizesample / 2];
 
                     var limite = GlobVar.startpos + GlobVar.sizesample;
 
-                    for (int i = 0, j = 0; i < ntotal; i += 2, j++)
+                    for (Int16 i = 0, j = 0; i < ntotal; i += 2, j++)
                     {
                         GlobVar.matrizCompleta[ich1, j] = BitConverter.ToInt16(buffer4, i);
 
                     }
                 }
                 GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
-                int[] pontF = GlobVar.ponteiro;
+                //int[] pontF = GlobVar.ponteiroF;
                 GlobVar.matrizCanal = new double[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
 
                 //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
@@ -119,7 +119,7 @@ namespace PlotagemOpenGL.auxi
                     for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
                     {
                         // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                        for (int colunaComp = pontI[linhaCanais]; colunaComp < pontF[linhaCanais]; colunaComp++)
+                        for (int colunaComp = GlobVar.ponteiroI[linhaCanais]; colunaComp < GlobVar.ponteiroF[linhaCanais]; colunaComp++)
                         {
                             // Certifique-se de não exceder os limites da matrizCanais
                             if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
@@ -142,7 +142,7 @@ namespace PlotagemOpenGL.auxi
                     if (GlobVar.txPorCanal[i] < 512)
                     {
                         int aux = 512 / GlobVar.txPorCanal[i];
-                        int[] auxx = new int[GlobVar.matrizCanal.GetLength(1)];
+                        short[] auxx = new short[GlobVar.matrizCanal.GetLength(1)];
                         for(int j = 0; j < auxx.Length; j++)
                         {
                             auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[i, j]);
@@ -162,10 +162,10 @@ namespace PlotagemOpenGL.auxi
             }
 
         }
-        public static int[] RemoverMetadeParaFrente(int[] array, int vezes)
+        public static short[] RemoverMetadeParaFrente(short[] array, int vezes)
         {
             int novaTamanho = array.Length / vezes;
-            int[] novoArray = new int[novaTamanho];
+            short[] novoArray = new short[novaTamanho];
 
             for (int i = 0; i < novaTamanho; i++)
             {
@@ -174,10 +174,10 @@ namespace PlotagemOpenGL.auxi
 
             return novoArray;
         }
-        public static int[] DuplicarArray(int[] array, int multiplicacao)
+        public static short[] DuplicarArray(short[] array, int multiplicacao)
         {
             // Cria um novo array com o tamanho necessário
-            int[] novoArray = new int[array.Length * multiplicacao];
+            short[] novoArray = new short[array.Length * multiplicacao];
 
             // Itera sobre os elementos do array original
             for (int i = 0; i < array.Length; i++)

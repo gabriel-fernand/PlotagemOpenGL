@@ -39,11 +39,13 @@ namespace PlotagemOpenGL
             for (int index = 0; index < GlobVar.grafSelected.Length; index++)
             {
                 GlobVar.grafSelected[index] = 0;
+                GlobVar.codSelected[index] = 0;
             }
             // Inicializa grafSelected com o tamanho de nomeCanais
             for (int i = 0; i < selectedIndicesList.Count; i++)
             {
                 GlobVar.grafSelected[i] = selectedIndicesList[i];
+                GlobVar.codSelected[i] = GlobVar.codCanal[selectedIndicesList[i]];
             }
 
         }

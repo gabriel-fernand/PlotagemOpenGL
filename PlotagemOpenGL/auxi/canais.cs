@@ -134,13 +134,6 @@ namespace PlotagemOpenGL.auxi
                     }                    
                 }                
             }
-            try
-            {
-            }
-            catch
-            {
-                
-            }
         }
     }
 }
