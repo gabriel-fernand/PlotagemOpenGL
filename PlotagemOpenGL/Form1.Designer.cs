@@ -1,4 +1,5 @@
 ﻿using Accord.IO;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL
 {
@@ -30,142 +31,172 @@ namespace PlotagemOpenGL
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
-            hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            ptsEmTela = new System.Windows.Forms.TextBox();
-            inicioTela = new System.Windows.Forms.TextBox();
-            fimTela = new System.Windows.Forms.TextBox();
-            tempoEmTela = new System.Windows.Forms.ComboBox();
-            velocidadeScroll = new System.Windows.Forms.ComboBox();
-            comboBox3 = new System.Windows.Forms.ComboBox();
-            label1 = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
-            label4 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
-            Play = new System.Windows.Forms.Button();
+            hScrollBar1 = new HScrollBar();
+            ptsEmTela = new TextBox();
+            inicioTela = new TextBox();
+            fimTela = new TextBox();
+            tempoEmTela = new ComboBox();
+            velocidadeScroll = new ComboBox();
+            comboBox3 = new ComboBox();
+            label1 = new Label();
+            label2 = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            label5 = new Label();
+            Play = new Button();
             openglControl1 = new SharpGL.OpenGLControl();
-            painelExames = new System.Windows.Forms.Panel();
-            panel1 = new System.Windows.Forms.Panel();
-            scalaLb1 = new System.Windows.Forms.Label();
-            minusLb1 = new System.Windows.Forms.Button();
-            plusLb1 = new System.Windows.Forms.Button();
-            panel2 = new System.Windows.Forms.Panel();
-            scalaLb2 = new System.Windows.Forms.Label();
-            minusLb2 = new System.Windows.Forms.Button();
-            plusLb2 = new System.Windows.Forms.Button();
-            panel3 = new System.Windows.Forms.Panel();
-            scalaLb3 = new System.Windows.Forms.Label();
-            minusLb3 = new System.Windows.Forms.Button();
-            plusLb3 = new System.Windows.Forms.Button();
-            panel4 = new System.Windows.Forms.Panel();
-            scalaLb4 = new System.Windows.Forms.Label();
-            minusLb4 = new System.Windows.Forms.Button();
-            plusLb4 = new System.Windows.Forms.Button();
-            panel5 = new System.Windows.Forms.Panel();
-            scalaLb5 = new System.Windows.Forms.Label();
-            minusLb5 = new System.Windows.Forms.Button();
-            plusLb5 = new System.Windows.Forms.Button();
-            panel6 = new System.Windows.Forms.Panel();
-            scalaLb6 = new System.Windows.Forms.Label();
-            minusLb6 = new System.Windows.Forms.Button();
-            plusLb6 = new System.Windows.Forms.Button();
-            label6 = new System.Windows.Forms.Label();
-            panel7 = new System.Windows.Forms.Panel();
-            scalaLb7 = new System.Windows.Forms.Label();
-            plusLb7 = new System.Windows.Forms.Button();
-            minusLb7 = new System.Windows.Forms.Button();
-            label7 = new System.Windows.Forms.Label();
-            panel8 = new System.Windows.Forms.Panel();
-            scalaLb8 = new System.Windows.Forms.Label();
-            minusLb8 = new System.Windows.Forms.Button();
-            plusLb8 = new System.Windows.Forms.Button();
-            label8 = new System.Windows.Forms.Label();
-            panel9 = new System.Windows.Forms.Panel();
-            scalaLb9 = new System.Windows.Forms.Label();
-            minusLb9 = new System.Windows.Forms.Button();
-            plusLb9 = new System.Windows.Forms.Button();
-            label9 = new System.Windows.Forms.Label();
-            panel10 = new System.Windows.Forms.Panel();
-            scalaLb10 = new System.Windows.Forms.Label();
-            minusLb10 = new System.Windows.Forms.Button();
-            plusLb10 = new System.Windows.Forms.Button();
-            label10 = new System.Windows.Forms.Label();
-            panel11 = new System.Windows.Forms.Panel();
-            scalaLb11 = new System.Windows.Forms.Label();
-            minusLb11 = new System.Windows.Forms.Button();
-            plusLb11 = new System.Windows.Forms.Button();
-            label11 = new System.Windows.Forms.Label();
-            panel12 = new System.Windows.Forms.Panel();
-            scalaLb12 = new System.Windows.Forms.Label();
-            plusLb12 = new System.Windows.Forms.Button();
-            minusLb12 = new System.Windows.Forms.Button();
-            label12 = new System.Windows.Forms.Label();
-            panel13 = new System.Windows.Forms.Panel();
-            scalaLb13 = new System.Windows.Forms.Label();
-            minusLb13 = new System.Windows.Forms.Button();
-            plusLb13 = new System.Windows.Forms.Button();
-            label13 = new System.Windows.Forms.Label();
-            panel14 = new System.Windows.Forms.Panel();
-            scalaLb14 = new System.Windows.Forms.Label();
-            minusLb14 = new System.Windows.Forms.Button();
-            plusLb14 = new System.Windows.Forms.Button();
-            label14 = new System.Windows.Forms.Label();
-            panel15 = new System.Windows.Forms.Panel();
-            scalaLb15 = new System.Windows.Forms.Label();
-            minusLb15 = new System.Windows.Forms.Button();
-            plusLb15 = new System.Windows.Forms.Button();
-            label15 = new System.Windows.Forms.Label();
-            panel16 = new System.Windows.Forms.Panel();
-            scalaLb16 = new System.Windows.Forms.Label();
-            minusLb16 = new System.Windows.Forms.Button();
-            plusLb16 = new System.Windows.Forms.Button();
-            label16 = new System.Windows.Forms.Label();
-            panel17 = new System.Windows.Forms.Panel();
-            scalaLb17 = new System.Windows.Forms.Label();
-            plusLb17 = new System.Windows.Forms.Button();
-            minusLb17 = new System.Windows.Forms.Button();
-            label17 = new System.Windows.Forms.Label();
-            panel18 = new System.Windows.Forms.Panel();
-            scalaLb18 = new System.Windows.Forms.Label();
-            minusLb18 = new System.Windows.Forms.Button();
-            plusLb18 = new System.Windows.Forms.Button();
-            label18 = new System.Windows.Forms.Label();
-            panel19 = new System.Windows.Forms.Panel();
-            scalaLb19 = new System.Windows.Forms.Label();
-            minusLb19 = new System.Windows.Forms.Button();
-            plusLb19 = new System.Windows.Forms.Button();
-            label19 = new System.Windows.Forms.Label();
-            panel20 = new System.Windows.Forms.Panel();
-            scalaLb20 = new System.Windows.Forms.Label();
-            minusLb20 = new System.Windows.Forms.Button();
-            plusLb20 = new System.Windows.Forms.Button();
-            label20 = new System.Windows.Forms.Label();
-            panel21 = new System.Windows.Forms.Panel();
-            scalaLb21 = new System.Windows.Forms.Label();
-            minusLb21 = new System.Windows.Forms.Button();
-            plusLb21 = new System.Windows.Forms.Button();
-            label21 = new System.Windows.Forms.Label();
-            panel22 = new System.Windows.Forms.Panel();
-            scalaLb22 = new System.Windows.Forms.Label();
-            minusLb22 = new System.Windows.Forms.Button();
-            plusLb22 = new System.Windows.Forms.Button();
-            label22 = new System.Windows.Forms.Label();
-            panel23 = new System.Windows.Forms.Panel();
-            scalaLb23 = new System.Windows.Forms.Label();
-            minusLb23 = new System.Windows.Forms.Button();
-            label23 = new System.Windows.Forms.Label();
-            plusLb23 = new System.Windows.Forms.Button();
-            painelTelaGl = new System.Windows.Forms.Panel();
-            painelComando = new System.Windows.Forms.Panel();
-            hertz = new System.Windows.Forms.ComboBox();
-            playSelect = new System.Windows.Forms.Button();
-            minusAll = new System.Windows.Forms.Button();
-            plusAll = new System.Windows.Forms.Button();
-            playFilter = new System.Windows.Forms.Button();
-            Filters = new System.Windows.Forms.ComboBox();
-            selectLabel = new System.Windows.Forms.ComboBox();
-            qtdGraficos = new System.Windows.Forms.TextBox();
+            painelExames = new Panel();
+            panel1 = new Panel();
+            scalaLb1 = new Label();
+            minusLb1 = new Button();
+            plusLb1 = new Button();
+            panel2 = new Panel();
+            scalaLb2 = new Label();
+            minusLb2 = new Button();
+            plusLb2 = new Button();
+            panel3 = new Panel();
+            scalaLb3 = new Label();
+            minusLb3 = new Button();
+            plusLb3 = new Button();
+            panel4 = new Panel();
+            scalaLb4 = new Label();
+            minusLb4 = new Button();
+            plusLb4 = new Button();
+            panel5 = new Panel();
+            scalaLb5 = new Label();
+            minusLb5 = new Button();
+            plusLb5 = new Button();
+            panel6 = new Panel();
+            scalaLb6 = new Label();
+            minusLb6 = new Button();
+            plusLb6 = new Button();
+            label6 = new Label();
+            panel7 = new Panel();
+            scalaLb7 = new Label();
+            plusLb7 = new Button();
+            minusLb7 = new Button();
+            label7 = new Label();
+            panel8 = new Panel();
+            scalaLb8 = new Label();
+            minusLb8 = new Button();
+            plusLb8 = new Button();
+            label8 = new Label();
+            panel9 = new Panel();
+            scalaLb9 = new Label();
+            minusLb9 = new Button();
+            plusLb9 = new Button();
+            label9 = new Label();
+            panel10 = new Panel();
+            scalaLb10 = new Label();
+            minusLb10 = new Button();
+            plusLb10 = new Button();
+            label10 = new Label();
+            panel11 = new Panel();
+            scalaLb11 = new Label();
+            minusLb11 = new Button();
+            plusLb11 = new Button();
+            label11 = new Label();
+            panel12 = new Panel();
+            scalaLb12 = new Label();
+            plusLb12 = new Button();
+            minusLb12 = new Button();
+            label12 = new Label();
+            panel13 = new Panel();
+            scalaLb13 = new Label();
+            minusLb13 = new Button();
+            plusLb13 = new Button();
+            label13 = new Label();
+            panel14 = new Panel();
+            scalaLb14 = new Label();
+            minusLb14 = new Button();
+            plusLb14 = new Button();
+            label14 = new Label();
+            panel15 = new Panel();
+            scalaLb15 = new Label();
+            minusLb15 = new Button();
+            plusLb15 = new Button();
+            label15 = new Label();
+            panel16 = new Panel();
+            scalaLb16 = new Label();
+            minusLb16 = new Button();
+            plusLb16 = new Button();
+            label16 = new Label();
+            panel17 = new Panel();
+            scalaLb17 = new Label();
+            plusLb17 = new Button();
+            minusLb17 = new Button();
+            label17 = new Label();
+            panel18 = new Panel();
+            scalaLb18 = new Label();
+            minusLb18 = new Button();
+            plusLb18 = new Button();
+            label18 = new Label();
+            panel19 = new Panel();
+            scalaLb19 = new Label();
+            minusLb19 = new Button();
+            plusLb19 = new Button();
+            label19 = new Label();
+            panel20 = new Panel();
+            scalaLb20 = new Label();
+            minusLb20 = new Button();
+            plusLb20 = new Button();
+            label20 = new Label();
+            panel21 = new Panel();
+            scalaLb21 = new Label();
+            minusLb21 = new Button();
+            plusLb21 = new Button();
+            label21 = new Label();
+            panel22 = new Panel();
+            scalaLb22 = new Label();
+            minusLb22 = new Button();
+            plusLb22 = new Button();
+            label22 = new Label();
+            panel23 = new Panel();
+            scalaLb23 = new Label();
+            minusLb23 = new Button();
+            label23 = new Label();
+            plusLb23 = new Button();
+            painelTelaGl = new Panel();
+            painelComando = new Panel();
+            HighPass = new Label();
+            LowPass = new Label();
+            hertz = new ComboBox();
+            playSelect = new Button();
+            minusAll = new Button();
+            plusAll = new Button();
+            playFilter = new Button();
+            Filters = new ComboBox();
+            selectLabel = new ComboBox();
+            qtdGraficos = new TextBox();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            LowPassFilter = new ToolStripMenuItem();
+            OutroLow = new ToolStripMenuItem();
+            HighPassFilter = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            hertz5 = new ToolStripMenuItem();
+            hertz10 = new ToolStripMenuItem();
+            hertz15 = new ToolStripMenuItem();
+            hertz20 = new ToolStripMenuItem();
+            hertz25 = new ToolStripMenuItem();
+            hertz30 = new ToolStripMenuItem();
+            hertz35 = new ToolStripMenuItem();
+            hertz40 = new ToolStripMenuItem();
+            hertz50 = new ToolStripMenuItem();
+            hertz70 = new ToolStripMenuItem();
+            toolStripMenuItem12 = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            hertz01 = new ToolStripMenuItem();
+            hertz03 = new ToolStripMenuItem();
+            hertz05 = new ToolStripMenuItem();
+            hertz07 = new ToolStripMenuItem();
+            hertz1 = new ToolStripMenuItem();
+            hertz3 = new ToolStripMenuItem();
+            hertz5H = new ToolStripMenuItem();
+            hertz7 = new ToolStripMenuItem();
+            hertz10H = new ToolStripMenuItem();
+            outroHigh = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             painelExames.SuspendLayout();
             panel1.SuspendLayout();
@@ -193,6 +224,7 @@ namespace PlotagemOpenGL
             panel23.SuspendLayout();
             painelTelaGl.SuspendLayout();
             painelComando.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // hScrollBar1
@@ -206,44 +238,44 @@ namespace PlotagemOpenGL
             // 
             // ptsEmTela
             // 
-            ptsEmTela.Anchor = System.Windows.Forms.AnchorStyles.None;
-            ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ptsEmTela.Anchor = AnchorStyles.None;
+            ptsEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
             ptsEmTela.Location = new System.Drawing.Point(5, 4);
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.ReadOnly = true;
             ptsEmTela.Size = new System.Drawing.Size(81, 25);
             ptsEmTela.TabIndex = 2;
             ptsEmTela.Text = "ptsEmTela";
-            ptsEmTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            ptsEmTela.TextAlign = HorizontalAlignment.Center;
             // 
             // inicioTela
             // 
-            inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
             inicioTela.Location = new System.Drawing.Point(100, 4);
             inicioTela.Name = "inicioTela";
             inicioTela.ReadOnly = true;
             inicioTela.Size = new System.Drawing.Size(72, 25);
             inicioTela.TabIndex = 3;
             inicioTela.Text = "00-00-00";
-            inicioTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            inicioTela.TextAlign = HorizontalAlignment.Center;
             // 
             // fimTela
             // 
-            fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
             fimTela.Location = new System.Drawing.Point(178, 4);
             fimTela.Name = "fimTela";
             fimTela.ReadOnly = true;
             fimTela.Size = new System.Drawing.Size(72, 25);
             fimTela.TabIndex = 4;
             fimTela.Text = "99-99-99";
-            fimTela.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            fimTela.TextAlign = HorizontalAlignment.Center;
             // 
             // tempoEmTela
             // 
             tempoEmTela.DisplayMember = "8s";
-            tempoEmTela.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            tempoEmTela.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            tempoEmTela.DropDownStyle = ComboBoxStyle.DropDownList;
+            tempoEmTela.FlatStyle = FlatStyle.System;
+            tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
@@ -257,8 +289,8 @@ namespace PlotagemOpenGL
             // velocidadeScroll
             // 
             velocidadeScroll.DisplayMember = "1.0x";
-            velocidadeScroll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            velocidadeScroll.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            velocidadeScroll.DropDownStyle = ComboBoxStyle.DropDownList;
+            velocidadeScroll.FlatStyle = FlatStyle.System;
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.IntegralHeight = false;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
@@ -282,7 +314,7 @@ namespace PlotagemOpenGL
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label1.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label1.Location = new System.Drawing.Point(3, 0);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(52, 24);
@@ -292,7 +324,7 @@ namespace PlotagemOpenGL
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label2.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label2.Location = new System.Drawing.Point(3, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(52, 24);
@@ -302,7 +334,7 @@ namespace PlotagemOpenGL
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label4.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label4.Location = new System.Drawing.Point(3, 0);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(52, 24);
@@ -312,7 +344,7 @@ namespace PlotagemOpenGL
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label3.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label3.Location = new System.Drawing.Point(3, 0);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(52, 24);
@@ -322,7 +354,7 @@ namespace PlotagemOpenGL
             // label5
             // 
             label5.AutoSize = true;
-            label5.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label5.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label5.Location = new System.Drawing.Point(3, 0);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(52, 24);
@@ -343,7 +375,7 @@ namespace PlotagemOpenGL
             // 
             openglControl1.DrawFPS = false;
             openglControl1.Location = new System.Drawing.Point(181, 81);
-            openglControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            openglControl1.Margin = new Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
@@ -388,7 +420,7 @@ namespace PlotagemOpenGL
             // 
             // panel1
             // 
-            panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel1.BorderStyle = BorderStyle.Fixed3D;
             panel1.Controls.Add(scalaLb1);
             panel1.Controls.Add(minusLb1);
             panel1.Controls.Add(plusLb1);
@@ -401,7 +433,7 @@ namespace PlotagemOpenGL
             // scalaLb1
             // 
             scalaLb1.AutoSize = true;
-            scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb1.Location = new System.Drawing.Point(87, 0);
             scalaLb1.Name = "scalaLb1";
             scalaLb1.Size = new System.Drawing.Size(29, 20);
@@ -434,7 +466,7 @@ namespace PlotagemOpenGL
             // 
             // panel2
             // 
-            panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel2.BorderStyle = BorderStyle.Fixed3D;
             panel2.Controls.Add(scalaLb2);
             panel2.Controls.Add(minusLb2);
             panel2.Controls.Add(plusLb2);
@@ -447,7 +479,7 @@ namespace PlotagemOpenGL
             // scalaLb2
             // 
             scalaLb2.AutoSize = true;
-            scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb2.Location = new System.Drawing.Point(87, 0);
             scalaLb2.Name = "scalaLb2";
             scalaLb2.Size = new System.Drawing.Size(29, 20);
@@ -478,7 +510,7 @@ namespace PlotagemOpenGL
             // 
             // panel3
             // 
-            panel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel3.BorderStyle = BorderStyle.Fixed3D;
             panel3.Controls.Add(scalaLb3);
             panel3.Controls.Add(minusLb3);
             panel3.Controls.Add(plusLb3);
@@ -491,7 +523,7 @@ namespace PlotagemOpenGL
             // scalaLb3
             // 
             scalaLb3.AutoSize = true;
-            scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb3.Location = new System.Drawing.Point(87, 0);
             scalaLb3.Name = "scalaLb3";
             scalaLb3.Size = new System.Drawing.Size(29, 20);
@@ -522,7 +554,7 @@ namespace PlotagemOpenGL
             // 
             // panel4
             // 
-            panel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel4.BorderStyle = BorderStyle.Fixed3D;
             panel4.Controls.Add(scalaLb4);
             panel4.Controls.Add(minusLb4);
             panel4.Controls.Add(plusLb4);
@@ -535,7 +567,7 @@ namespace PlotagemOpenGL
             // scalaLb4
             // 
             scalaLb4.AutoSize = true;
-            scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb4.Location = new System.Drawing.Point(87, 0);
             scalaLb4.Name = "scalaLb4";
             scalaLb4.Size = new System.Drawing.Size(29, 20);
@@ -566,7 +598,7 @@ namespace PlotagemOpenGL
             // 
             // panel5
             // 
-            panel5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel5.BorderStyle = BorderStyle.Fixed3D;
             panel5.Controls.Add(scalaLb5);
             panel5.Controls.Add(minusLb5);
             panel5.Controls.Add(plusLb5);
@@ -579,7 +611,7 @@ namespace PlotagemOpenGL
             // scalaLb5
             // 
             scalaLb5.AutoSize = true;
-            scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb5.Location = new System.Drawing.Point(87, 0);
             scalaLb5.Name = "scalaLb5";
             scalaLb5.Size = new System.Drawing.Size(29, 20);
@@ -610,7 +642,7 @@ namespace PlotagemOpenGL
             // 
             // panel6
             // 
-            panel6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel6.BorderStyle = BorderStyle.Fixed3D;
             panel6.Controls.Add(scalaLb6);
             panel6.Controls.Add(minusLb6);
             panel6.Controls.Add(plusLb6);
@@ -623,7 +655,7 @@ namespace PlotagemOpenGL
             // scalaLb6
             // 
             scalaLb6.AutoSize = true;
-            scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb6.Location = new System.Drawing.Point(87, 0);
             scalaLb6.Name = "scalaLb6";
             scalaLb6.Size = new System.Drawing.Size(29, 20);
@@ -657,7 +689,7 @@ namespace PlotagemOpenGL
             // label6
             // 
             label6.AutoSize = true;
-            label6.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label6.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label6.Location = new System.Drawing.Point(3, 0);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(52, 24);
@@ -666,7 +698,7 @@ namespace PlotagemOpenGL
             // 
             // panel7
             // 
-            panel7.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel7.BorderStyle = BorderStyle.Fixed3D;
             panel7.Controls.Add(scalaLb7);
             panel7.Controls.Add(plusLb7);
             panel7.Controls.Add(minusLb7);
@@ -679,7 +711,7 @@ namespace PlotagemOpenGL
             // scalaLb7
             // 
             scalaLb7.AutoSize = true;
-            scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb7.Location = new System.Drawing.Point(87, 0);
             scalaLb7.Name = "scalaLb7";
             scalaLb7.Size = new System.Drawing.Size(29, 20);
@@ -711,7 +743,7 @@ namespace PlotagemOpenGL
             // label7
             // 
             label7.AutoSize = true;
-            label7.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label7.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label7.Location = new System.Drawing.Point(3, 0);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(52, 24);
@@ -720,7 +752,7 @@ namespace PlotagemOpenGL
             // 
             // panel8
             // 
-            panel8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel8.BorderStyle = BorderStyle.Fixed3D;
             panel8.Controls.Add(scalaLb8);
             panel8.Controls.Add(minusLb8);
             panel8.Controls.Add(plusLb8);
@@ -733,7 +765,7 @@ namespace PlotagemOpenGL
             // scalaLb8
             // 
             scalaLb8.AutoSize = true;
-            scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb8.Location = new System.Drawing.Point(87, 0);
             scalaLb8.Name = "scalaLb8";
             scalaLb8.Size = new System.Drawing.Size(29, 20);
@@ -765,7 +797,7 @@ namespace PlotagemOpenGL
             // label8
             // 
             label8.AutoSize = true;
-            label8.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label8.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label8.Location = new System.Drawing.Point(3, 0);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(52, 24);
@@ -774,7 +806,7 @@ namespace PlotagemOpenGL
             // 
             // panel9
             // 
-            panel9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel9.BorderStyle = BorderStyle.Fixed3D;
             panel9.Controls.Add(scalaLb9);
             panel9.Controls.Add(minusLb9);
             panel9.Controls.Add(plusLb9);
@@ -787,7 +819,7 @@ namespace PlotagemOpenGL
             // scalaLb9
             // 
             scalaLb9.AutoSize = true;
-            scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb9.Location = new System.Drawing.Point(87, 0);
             scalaLb9.Name = "scalaLb9";
             scalaLb9.Size = new System.Drawing.Size(29, 20);
@@ -819,7 +851,7 @@ namespace PlotagemOpenGL
             // label9
             // 
             label9.AutoSize = true;
-            label9.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label9.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label9.Location = new System.Drawing.Point(3, 0);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(52, 24);
@@ -828,7 +860,7 @@ namespace PlotagemOpenGL
             // 
             // panel10
             // 
-            panel10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel10.BorderStyle = BorderStyle.Fixed3D;
             panel10.Controls.Add(scalaLb10);
             panel10.Controls.Add(minusLb10);
             panel10.Controls.Add(plusLb10);
@@ -841,7 +873,7 @@ namespace PlotagemOpenGL
             // scalaLb10
             // 
             scalaLb10.AutoSize = true;
-            scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb10.Location = new System.Drawing.Point(87, 0);
             scalaLb10.Name = "scalaLb10";
             scalaLb10.Size = new System.Drawing.Size(29, 20);
@@ -873,7 +905,7 @@ namespace PlotagemOpenGL
             // label10
             // 
             label10.AutoSize = true;
-            label10.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label10.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label10.Location = new System.Drawing.Point(3, 0);
             label10.Name = "label10";
             label10.Size = new System.Drawing.Size(61, 24);
@@ -882,7 +914,7 @@ namespace PlotagemOpenGL
             // 
             // panel11
             // 
-            panel11.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel11.BorderStyle = BorderStyle.Fixed3D;
             panel11.Controls.Add(scalaLb11);
             panel11.Controls.Add(minusLb11);
             panel11.Controls.Add(plusLb11);
@@ -895,7 +927,7 @@ namespace PlotagemOpenGL
             // scalaLb11
             // 
             scalaLb11.AutoSize = true;
-            scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb11.Location = new System.Drawing.Point(87, 0);
             scalaLb11.Name = "scalaLb11";
             scalaLb11.Size = new System.Drawing.Size(29, 20);
@@ -929,7 +961,7 @@ namespace PlotagemOpenGL
             // label11
             // 
             label11.AutoSize = true;
-            label11.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label11.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label11.Location = new System.Drawing.Point(3, 0);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(61, 24);
@@ -938,7 +970,7 @@ namespace PlotagemOpenGL
             // 
             // panel12
             // 
-            panel12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel12.BorderStyle = BorderStyle.Fixed3D;
             panel12.Controls.Add(scalaLb12);
             panel12.Controls.Add(plusLb12);
             panel12.Controls.Add(minusLb12);
@@ -951,7 +983,7 @@ namespace PlotagemOpenGL
             // scalaLb12
             // 
             scalaLb12.AutoSize = true;
-            scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb12.Location = new System.Drawing.Point(87, 0);
             scalaLb12.Name = "scalaLb12";
             scalaLb12.Size = new System.Drawing.Size(29, 20);
@@ -983,7 +1015,7 @@ namespace PlotagemOpenGL
             // label12
             // 
             label12.AutoSize = true;
-            label12.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label12.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label12.Location = new System.Drawing.Point(3, 0);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(61, 24);
@@ -992,7 +1024,7 @@ namespace PlotagemOpenGL
             // 
             // panel13
             // 
-            panel13.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel13.BorderStyle = BorderStyle.Fixed3D;
             panel13.Controls.Add(scalaLb13);
             panel13.Controls.Add(minusLb13);
             panel13.Controls.Add(plusLb13);
@@ -1005,7 +1037,7 @@ namespace PlotagemOpenGL
             // scalaLb13
             // 
             scalaLb13.AutoSize = true;
-            scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb13.Location = new System.Drawing.Point(87, 0);
             scalaLb13.Name = "scalaLb13";
             scalaLb13.Size = new System.Drawing.Size(29, 20);
@@ -1037,7 +1069,7 @@ namespace PlotagemOpenGL
             // label13
             // 
             label13.AutoSize = true;
-            label13.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label13.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label13.Location = new System.Drawing.Point(3, 0);
             label13.Name = "label13";
             label13.Size = new System.Drawing.Size(61, 24);
@@ -1046,7 +1078,7 @@ namespace PlotagemOpenGL
             // 
             // panel14
             // 
-            panel14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel14.BorderStyle = BorderStyle.Fixed3D;
             panel14.Controls.Add(scalaLb14);
             panel14.Controls.Add(minusLb14);
             panel14.Controls.Add(plusLb14);
@@ -1059,7 +1091,7 @@ namespace PlotagemOpenGL
             // scalaLb14
             // 
             scalaLb14.AutoSize = true;
-            scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb14.Location = new System.Drawing.Point(87, 0);
             scalaLb14.Name = "scalaLb14";
             scalaLb14.Size = new System.Drawing.Size(29, 20);
@@ -1091,7 +1123,7 @@ namespace PlotagemOpenGL
             // label14
             // 
             label14.AutoSize = true;
-            label14.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label14.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label14.Location = new System.Drawing.Point(3, 0);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(61, 24);
@@ -1100,7 +1132,7 @@ namespace PlotagemOpenGL
             // 
             // panel15
             // 
-            panel15.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel15.BorderStyle = BorderStyle.Fixed3D;
             panel15.Controls.Add(scalaLb15);
             panel15.Controls.Add(minusLb15);
             panel15.Controls.Add(plusLb15);
@@ -1113,7 +1145,7 @@ namespace PlotagemOpenGL
             // scalaLb15
             // 
             scalaLb15.AutoSize = true;
-            scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb15.Location = new System.Drawing.Point(87, 0);
             scalaLb15.Name = "scalaLb15";
             scalaLb15.Size = new System.Drawing.Size(29, 20);
@@ -1145,7 +1177,7 @@ namespace PlotagemOpenGL
             // label15
             // 
             label15.AutoSize = true;
-            label15.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label15.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label15.Location = new System.Drawing.Point(3, 0);
             label15.Name = "label15";
             label15.Size = new System.Drawing.Size(61, 24);
@@ -1154,7 +1186,7 @@ namespace PlotagemOpenGL
             // 
             // panel16
             // 
-            panel16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel16.BorderStyle = BorderStyle.Fixed3D;
             panel16.Controls.Add(scalaLb16);
             panel16.Controls.Add(minusLb16);
             panel16.Controls.Add(plusLb16);
@@ -1167,7 +1199,7 @@ namespace PlotagemOpenGL
             // scalaLb16
             // 
             scalaLb16.AutoSize = true;
-            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb16.Location = new System.Drawing.Point(87, 0);
             scalaLb16.Name = "scalaLb16";
             scalaLb16.Size = new System.Drawing.Size(29, 20);
@@ -1201,7 +1233,7 @@ namespace PlotagemOpenGL
             // label16
             // 
             label16.AutoSize = true;
-            label16.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label16.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label16.Location = new System.Drawing.Point(3, 0);
             label16.Name = "label16";
             label16.Size = new System.Drawing.Size(61, 24);
@@ -1210,7 +1242,7 @@ namespace PlotagemOpenGL
             // 
             // panel17
             // 
-            panel17.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel17.BorderStyle = BorderStyle.Fixed3D;
             panel17.Controls.Add(scalaLb17);
             panel17.Controls.Add(plusLb17);
             panel17.Controls.Add(minusLb17);
@@ -1223,7 +1255,7 @@ namespace PlotagemOpenGL
             // scalaLb17
             // 
             scalaLb17.AutoSize = true;
-            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb17.Location = new System.Drawing.Point(87, 0);
             scalaLb17.Name = "scalaLb17";
             scalaLb17.Size = new System.Drawing.Size(29, 20);
@@ -1255,7 +1287,7 @@ namespace PlotagemOpenGL
             // label17
             // 
             label17.AutoSize = true;
-            label17.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label17.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label17.Location = new System.Drawing.Point(3, 0);
             label17.Name = "label17";
             label17.Size = new System.Drawing.Size(61, 24);
@@ -1264,7 +1296,7 @@ namespace PlotagemOpenGL
             // 
             // panel18
             // 
-            panel18.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel18.BorderStyle = BorderStyle.Fixed3D;
             panel18.Controls.Add(scalaLb18);
             panel18.Controls.Add(minusLb18);
             panel18.Controls.Add(plusLb18);
@@ -1277,7 +1309,7 @@ namespace PlotagemOpenGL
             // scalaLb18
             // 
             scalaLb18.AutoSize = true;
-            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb18.Location = new System.Drawing.Point(87, 0);
             scalaLb18.Name = "scalaLb18";
             scalaLb18.Size = new System.Drawing.Size(29, 20);
@@ -1309,7 +1341,7 @@ namespace PlotagemOpenGL
             // label18
             // 
             label18.AutoSize = true;
-            label18.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label18.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label18.Location = new System.Drawing.Point(3, 0);
             label18.Name = "label18";
             label18.Size = new System.Drawing.Size(61, 24);
@@ -1318,7 +1350,7 @@ namespace PlotagemOpenGL
             // 
             // panel19
             // 
-            panel19.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel19.BorderStyle = BorderStyle.Fixed3D;
             panel19.Controls.Add(scalaLb19);
             panel19.Controls.Add(minusLb19);
             panel19.Controls.Add(plusLb19);
@@ -1331,7 +1363,7 @@ namespace PlotagemOpenGL
             // scalaLb19
             // 
             scalaLb19.AutoSize = true;
-            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb19.Location = new System.Drawing.Point(87, 0);
             scalaLb19.Name = "scalaLb19";
             scalaLb19.Size = new System.Drawing.Size(29, 20);
@@ -1363,7 +1395,7 @@ namespace PlotagemOpenGL
             // label19
             // 
             label19.AutoSize = true;
-            label19.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label19.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label19.Location = new System.Drawing.Point(3, 0);
             label19.Name = "label19";
             label19.Size = new System.Drawing.Size(61, 24);
@@ -1372,7 +1404,7 @@ namespace PlotagemOpenGL
             // 
             // panel20
             // 
-            panel20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel20.BorderStyle = BorderStyle.Fixed3D;
             panel20.Controls.Add(scalaLb20);
             panel20.Controls.Add(minusLb20);
             panel20.Controls.Add(plusLb20);
@@ -1385,7 +1417,7 @@ namespace PlotagemOpenGL
             // scalaLb20
             // 
             scalaLb20.AutoSize = true;
-            scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb20.Location = new System.Drawing.Point(87, 0);
             scalaLb20.Name = "scalaLb20";
             scalaLb20.Size = new System.Drawing.Size(29, 20);
@@ -1417,7 +1449,7 @@ namespace PlotagemOpenGL
             // label20
             // 
             label20.AutoSize = true;
-            label20.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label20.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label20.Location = new System.Drawing.Point(3, 0);
             label20.Name = "label20";
             label20.Size = new System.Drawing.Size(61, 24);
@@ -1426,7 +1458,7 @@ namespace PlotagemOpenGL
             // 
             // panel21
             // 
-            panel21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel21.BorderStyle = BorderStyle.Fixed3D;
             panel21.Controls.Add(scalaLb21);
             panel21.Controls.Add(minusLb21);
             panel21.Controls.Add(plusLb21);
@@ -1439,7 +1471,7 @@ namespace PlotagemOpenGL
             // scalaLb21
             // 
             scalaLb21.AutoSize = true;
-            scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb21.Location = new System.Drawing.Point(87, 0);
             scalaLb21.Name = "scalaLb21";
             scalaLb21.Size = new System.Drawing.Size(29, 20);
@@ -1471,7 +1503,7 @@ namespace PlotagemOpenGL
             // label21
             // 
             label21.AutoSize = true;
-            label21.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label21.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label21.Location = new System.Drawing.Point(3, 0);
             label21.Name = "label21";
             label21.Size = new System.Drawing.Size(61, 24);
@@ -1480,7 +1512,7 @@ namespace PlotagemOpenGL
             // 
             // panel22
             // 
-            panel22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel22.BorderStyle = BorderStyle.Fixed3D;
             panel22.Controls.Add(scalaLb22);
             panel22.Controls.Add(minusLb22);
             panel22.Controls.Add(plusLb22);
@@ -1493,7 +1525,7 @@ namespace PlotagemOpenGL
             // scalaLb22
             // 
             scalaLb22.AutoSize = true;
-            scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb22.Location = new System.Drawing.Point(87, 0);
             scalaLb22.Name = "scalaLb22";
             scalaLb22.Size = new System.Drawing.Size(29, 20);
@@ -1525,7 +1557,7 @@ namespace PlotagemOpenGL
             // label22
             // 
             label22.AutoSize = true;
-            label22.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label22.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label22.Location = new System.Drawing.Point(3, 0);
             label22.Name = "label22";
             label22.Size = new System.Drawing.Size(61, 24);
@@ -1534,7 +1566,7 @@ namespace PlotagemOpenGL
             // 
             // panel23
             // 
-            panel23.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            panel23.BorderStyle = BorderStyle.Fixed3D;
             panel23.Controls.Add(scalaLb23);
             panel23.Controls.Add(minusLb23);
             panel23.Controls.Add(label23);
@@ -1547,7 +1579,7 @@ namespace PlotagemOpenGL
             // scalaLb23
             // 
             scalaLb23.AutoSize = true;
-            scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F);
             scalaLb23.Location = new System.Drawing.Point(87, 0);
             scalaLb23.Name = "scalaLb23";
             scalaLb23.Size = new System.Drawing.Size(29, 20);
@@ -1568,7 +1600,7 @@ namespace PlotagemOpenGL
             // label23
             // 
             label23.AutoSize = true;
-            label23.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            label23.Font = new System.Drawing.Font("Arial Narrow", 12F);
             label23.Location = new System.Drawing.Point(3, 0);
             label23.Name = "label23";
             label23.Size = new System.Drawing.Size(61, 24);
@@ -1589,17 +1621,19 @@ namespace PlotagemOpenGL
             // painelTelaGl
             // 
             painelTelaGl.AutoSize = true;
-            painelTelaGl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            painelTelaGl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             painelTelaGl.Controls.Add(hScrollBar1);
-            painelTelaGl.Dock = System.Windows.Forms.DockStyle.Bottom;
+            painelTelaGl.Dock = DockStyle.Bottom;
             painelTelaGl.Location = new System.Drawing.Point(0, 689);
-            painelTelaGl.Margin = new System.Windows.Forms.Padding(0);
+            painelTelaGl.Margin = new Padding(0);
             painelTelaGl.Name = "painelTelaGl";
             painelTelaGl.Size = new System.Drawing.Size(1005, 32);
             painelTelaGl.TabIndex = 52;
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(HighPass);
+            painelComando.Controls.Add(LowPass);
             painelComando.Controls.Add(hertz);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
@@ -1617,19 +1651,43 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(velocidadeScroll);
             painelComando.Location = new System.Drawing.Point(0, 2);
             painelComando.Name = "painelComando";
-            painelComando.Size = new System.Drawing.Size(997, 71);
+            painelComando.Size = new System.Drawing.Size(997, 65);
             painelComando.TabIndex = 53;
+            // 
+            // HighPass
+            // 
+            HighPass.AutoSize = true;
+            HighPass.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            HighPass.Location = new System.Drawing.Point(710, 35);
+            HighPass.Name = "HighPass";
+            HighPass.Size = new System.Drawing.Size(84, 24);
+            HighPass.TabIndex = 59;
+            HighPass.Text = "High Pass";
+            // 
+            // LowPass
+            // 
+            LowPass.AutoSize = true;
+            LowPass.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            LowPass.Location = new System.Drawing.Point(535, 35);
+            LowPass.Name = "LowPass";
+            LowPass.Size = new System.Drawing.Size(82, 24);
+            LowPass.TabIndex = 17;
+            LowPass.Text = "Low Pass";
             // 
             // hertz
             // 
-            hertz.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            hertz.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            hertz.DropDownStyle = ComboBoxStyle.DropDownList;
+            hertz.FlatStyle = FlatStyle.System;
+            hertz.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            hertz.FormatString = "N1";
             hertz.FormattingEnabled = true;
             hertz.IntegralHeight = false;
-            hertz.Location = new System.Drawing.Point(881, 34);
+            hertz.Items.AddRange(new object[] { "Nenhuma", "10 hz", "7 hz", "5 hz", "3 hz", "1 hz", "0,7 hz", "0,5 hz", "0,3 hz", "0,1 hz", "outra" });
+            hertz.Location = new System.Drawing.Point(807, 35);
             hertz.Name = "hertz";
             hertz.Size = new System.Drawing.Size(68, 28);
             hertz.TabIndex = 58;
+            hertz.SelectedIndexChanged += HighHertz_SelectedIndexChanged;
             // 
             // playSelect
             // 
@@ -1663,7 +1721,7 @@ namespace PlotagemOpenGL
             // 
             // playFilter
             // 
-            playFilter.Location = new System.Drawing.Point(955, 34);
+            playFilter.Location = new System.Drawing.Point(881, 34);
             playFilter.Name = "playFilter";
             playFilter.Size = new System.Drawing.Size(36, 29);
             playFilter.TabIndex = 53;
@@ -1673,28 +1731,28 @@ namespace PlotagemOpenGL
             // 
             // Filters
             // 
-            Filters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            Filters.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            Filters.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Filters.DropDownStyle = ComboBoxStyle.DropDownList;
+            Filters.FlatStyle = FlatStyle.System;
+            Filters.Font = new System.Drawing.Font("Arial Narrow", 9F);
             Filters.FormatString = "N1";
             Filters.FormattingEnabled = true;
             Filters.IntegralHeight = false;
-            Filters.Items.AddRange(new object[] { "Low Pass", "High Pass", "Band Pass", "Band Reject", "FWT" });
-            Filters.Location = new System.Drawing.Point(675, 34);
+            Filters.Items.AddRange(new object[] { "Nenhuma", "70 hz", "50 hz", "40 hz", "35 hz", "30 hz", "25 hz", "20 hz", "15 hz", "10 hz", "5 hz", "outra" });
+            Filters.Location = new System.Drawing.Point(636, 34);
             Filters.Name = "Filters";
-            Filters.Size = new System.Drawing.Size(200, 28);
+            Filters.Size = new System.Drawing.Size(68, 28);
             Filters.TabIndex = 52;
             Filters.SelectedIndexChanged += Filters_SelectedIndexChanged;
             // 
             // selectLabel
             // 
-            selectLabel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            selectLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            selectLabel.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            selectLabel.DropDownStyle = ComboBoxStyle.DropDownList;
+            selectLabel.FlatStyle = FlatStyle.System;
+            selectLabel.Font = new System.Drawing.Font("Arial Narrow", 9F);
             selectLabel.FormatString = "N1";
             selectLabel.FormattingEnabled = true;
             selectLabel.IntegralHeight = false;
-            selectLabel.Location = new System.Drawing.Point(536, 34);
+            selectLabel.Location = new System.Drawing.Point(396, 35);
             selectLabel.Name = "selectLabel";
             selectLabel.Size = new System.Drawing.Size(133, 28);
             selectLabel.TabIndex = 51;
@@ -1707,10 +1765,224 @@ namespace PlotagemOpenGL
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
             // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { LowPassFilter, HighPassFilter, toolStripMenuItem3 });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(212, 104);
+            contextMenuStrip1.Opening += contextMenuStrip1_Opening;
+            //contextMenuStrip1.MouseUp += Form1_MouseUp;
+            // 
+            // LowPassFilter
+            // 
+            LowPassFilter.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem12, hertz70, hertz50, hertz40, hertz35, hertz30, hertz25, hertz20, hertz15, hertz10, hertz5, OutroLow });
+            LowPassFilter.Name = "LowPassFilter";
+            LowPassFilter.Size = new System.Drawing.Size(211, 24);
+            LowPassFilter.Text = "Low Pass Filter";
+            // 
+            // OutroLow
+            // 
+            OutroLow.CheckOnClick = true;
+            OutroLow.Name = "OutroLow";
+            OutroLow.Size = new System.Drawing.Size(224, 26);
+            OutroLow.Text = "Outro";
+            OutroLow.Click += outraLow_Click;
+            // 
+            // HighPassFilter
+            // 
+            HighPassFilter.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, hertz10H, hertz7, hertz5H, hertz3, hertz1, hertz07, hertz05, hertz03, hertz01, outroHigh });
+            HighPassFilter.Name = "HighPassFilter";
+            HighPassFilter.Size = new System.Drawing.Size(211, 24);
+            HighPassFilter.Text = "High Pass Filter";
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new System.Drawing.Size(211, 24);
+            toolStripMenuItem3.Text = "toolStripMenuItem3";
+            // 
+            // hertz5
+            // 
+            hertz5.CheckOnClick = true;
+            hertz5.Name = "hertz5";
+            hertz5.Size = new System.Drawing.Size(224, 26);
+            hertz5.Text = "5 hz";
+            hertz5.Click += hertz5_Click;
+            // 
+            // hertz10
+            // 
+            hertz10.CheckOnClick = true;
+            hertz10.Name = "hertz10";
+            hertz10.Size = new System.Drawing.Size(224, 26);
+            hertz10.Text = "10 hz";
+            hertz10.Click += hertz10_Click;
+            // 
+            // hertz15
+            // 
+            hertz15.CheckOnClick = true;
+            hertz15.Name = "hertz15";
+            hertz15.Size = new System.Drawing.Size(224, 26);
+            hertz15.Text = "15 hz";
+            hertz15.Click += hertz15_Click;
+            // 
+            // hertz20
+            // 
+            hertz20.CheckOnClick = true;
+            hertz20.Name = "hertz20";
+            hertz20.Size = new System.Drawing.Size(224, 26);
+            hertz20.Text = "20 hz";
+            hertz20.Click += hertz20_Click;
+            // 
+            // hertz25
+            // 
+            hertz25.CheckOnClick = true;
+            hertz25.Name = "hertz25";
+            hertz25.Size = new System.Drawing.Size(224, 26);
+            hertz25.Text = "25 hz";
+            hertz25.Click += hertz25_Click;
+            // 
+            // hertz30
+            // 
+            hertz30.CheckOnClick = true;
+            hertz30.Name = "hertz30";
+            hertz30.Size = new System.Drawing.Size(224, 26);
+            hertz30.Text = "30 hz";
+            hertz30.Click += hertz30_Click;
+            // 
+            // hertz35
+            // 
+            hertz35.CheckOnClick = true;
+            hertz35.Name = "hertz35";
+            hertz35.Size = new System.Drawing.Size(224, 26);
+            hertz35.Text = "35 hz";
+            hertz35.Click += hertz35_Click;
+            // 
+            // hertz40
+            // 
+            hertz40.CheckOnClick = true;
+            hertz40.Name = "hertz40";
+            hertz40.Size = new System.Drawing.Size(224, 26);
+            hertz40.Text = "40 hz";
+            hertz40.Click += hertz40_Click;
+            // 
+            // hertz50
+            // 
+            hertz50.CheckOnClick = true;
+            hertz50.Name = "hertz50";
+            hertz50.Size = new System.Drawing.Size(224, 26);
+            hertz50.Text = "50 hz";
+            hertz50.Click += hertz50_Click;
+            // 
+            // hertz70
+            // 
+            hertz70.CheckOnClick = true;
+            hertz70.Name = "hertz70";
+            hertz70.Size = new System.Drawing.Size(224, 26);
+            hertz70.Text = "70 hz";
+            hertz70.Click += hertz70_Click;
+            // 
+            // toolStripMenuItem12
+            // 
+            toolStripMenuItem12.CheckOnClick = true;
+            toolStripMenuItem12.Name = "toolStripMenuItem12";
+            toolStripMenuItem12.Size = new System.Drawing.Size(224, 26);
+            toolStripMenuItem12.Text = "Nenhum";
+            toolStripMenuItem12.Click += NenhumLow_Click;
+            
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.CheckOnClick = true;
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            toolStripMenuItem1.Text = "Nenhum";
+            toolStripMenuItem1.Click += NenhumHigh_Click;
+            // 
+            // hertz01
+            // 
+            hertz01.CheckOnClick = true;
+            hertz01.Name = "hertz01";
+            hertz01.Size = new System.Drawing.Size(224, 26);
+            hertz01.Text = "0,1 hz";
+            hertz01.Click += hertz01_Click;
+            // 
+            // hertz03
+            // 
+            hertz03.CheckOnClick = true;
+            hertz03.Name = "hertz03";
+            hertz03.Size = new System.Drawing.Size(224, 26);
+            hertz03.Text = "0,3 hz";
+            hertz03.Click += hertz03_Click;
+            // 
+            // hertz05
+            // 
+            hertz05.CheckOnClick = true;
+            hertz05.Name = "hertz05";
+            hertz05.Size = new System.Drawing.Size(224, 26);
+            hertz05.Text = "0,5 hz";
+            hertz05.Click += hertz05_Click;
+            // 
+            // hertz07
+            // 
+            hertz07.CheckOnClick = true;
+            hertz07.Name = "hertz07";
+            hertz07.Size = new System.Drawing.Size(224, 26);
+            hertz07.Text = "0,7 hz";
+            hertz07.Click += hertz07_Click;
+            // 
+            // hertz1
+            // 
+            hertz1.CheckOnClick = true;
+            hertz1.Name = "hertz1";
+            hertz1.Size = new System.Drawing.Size(224, 26);
+            hertz1.Text = "1 hz";
+            hertz1.Click += hertz1_Click;
+            // 
+            // hertz3
+            // 
+            hertz3.CheckOnClick = true;
+            hertz3.Name = "hertz3";
+            hertz3.Size = new System.Drawing.Size(224, 26);
+            hertz3.Text = "3 hz";
+            hertz3.Click += hertz3_Click;
+            // 
+            // hertz5H
+            // 
+            hertz5H.CheckOnClick = true;
+            hertz5H.Name = "hertz5H";
+            hertz5H.Size = new System.Drawing.Size(224, 26);
+            hertz5H.Text = "5 hz";
+            hertz5H.Click += hertz5H_Click;
+            // 
+            // hertz7
+            // 
+            hertz7.CheckOnClick = true;
+            hertz7.Name = "hertz7";
+            hertz7.Size = new System.Drawing.Size(224, 26);
+            hertz7.Text = "7 hz";
+            hertz7.Click += Hertz7_Click;
+            // 
+            // hertz10H
+            // 
+            hertz10H.CheckOnClick = true;
+            hertz10H.Name = "hertz10H";
+            hertz10H.Size = new System.Drawing.Size(224, 26);
+            hertz10H.Text = "10 hz";
+            hertz10H.Click += hertz10H_Click;
+            // 
+            // outroHigh
+            // 
+            outroHigh.CheckOnClick = true;
+            outroHigh.Name = "outroHigh";
+            outroHigh.Size = new System.Drawing.Size(224, 26);
+            outroHigh.Text = "Outro";
+            outroHigh.Click += outroHigh_Click;
+            // 
             // Tela_Plotagem
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1005, 721);
             Controls.Add(painelExames);
             Controls.Add(painelTelaGl);
@@ -1772,146 +2044,181 @@ namespace PlotagemOpenGL
             painelTelaGl.ResumeLayout(false);
             painelComando.ResumeLayout(false);
             painelComando.PerformLayout();
+            contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
-        #endregion
 
-        public static System.Windows.Forms.ComboBox hertz;
-        public static System.Windows.Forms.Button playSelect;
-        public static System.Windows.Forms.Label scalaLb1;
-        public static System.Windows.Forms.Panel panel23;
-        public static System.Windows.Forms.Panel panel22;
-        public static System.Windows.Forms.Panel panel21;
-        public static System.Windows.Forms.Panel panel20;
-        public static System.Windows.Forms.Panel panel19;
-        public static System.Windows.Forms.Panel panel18;
-        public static System.Windows.Forms.Panel panel17;
-        public static System.Windows.Forms.Panel panel16;
-        public static System.Windows.Forms.Panel panel15;
-        public static System.Windows.Forms.Panel panel14;
-        public static System.Windows.Forms.Panel panel13;
-        public static System.Windows.Forms.Panel panel12;
-        public static System.Windows.Forms.Panel panel11;
-        public static System.Windows.Forms.Panel panel10;
-        public static System.Windows.Forms.Panel panel9;
-        public static System.Windows.Forms.Panel panel8;
-        public static System.Windows.Forms.Panel panel7;
-        public static System.Windows.Forms.Panel panel6;
-        public static System.Windows.Forms.Panel panel5;
-        public static System.Windows.Forms.Panel panel4;
-        public static System.Windows.Forms.Panel panel2;
-        public static System.Windows.Forms.Panel panel3;
-        public static System.Windows.Forms.Panel panel1;
-        public static System.Windows.Forms.Button plusAll;
-        public static System.Windows.Forms.Button minusAll;
-        public static System.Windows.Forms.Button playFilter;
-        public static System.Windows.Forms.ComboBox Filters;
-        public static System.Windows.Forms.ComboBox selectLabel;
-        public static System.Windows.Forms.HScrollBar hScrollBar1;
-        public static System.Windows.Forms.TextBox ptsEmTela;
-        public static System.Windows.Forms.TextBox inicioTela;
-        public static System.Windows.Forms.TextBox fimTela;
-        public static System.Windows.Forms.ComboBox tempoEmTela;
-        public static System.Windows.Forms.ComboBox velocidadeScroll;
-        public static System.Windows.Forms.ComboBox comboBox3;
-        public static System.Windows.Forms.Label label1;
-        public static System.Windows.Forms.Label label2;
-        public static System.Windows.Forms.Label label4;
-        public static System.Windows.Forms.Label label3;
-        public static System.Windows.Forms.Label label5;
-        public static System.Windows.Forms.Button Play;
-        public static System.Windows.Forms.Panel painelExames;
-        public static System.Windows.Forms.Panel painelTelaGl;
-        public static System.Windows.Forms.Panel painelComando;
-        public static System.Windows.Forms.TextBox qtdGraficos;
+        #endregion
+        private static ToolStripItem item1ToolStripMenuItem;
+        private static ToolStripItem item2ToolStripMenuItem;
+        private static ToolStripItem item3ToolStripMenuItem;
+        private static ToolStripTextBox toolStripTextBox1;
+        private static ToolStripMenuItem OutroLow;
+        private static ToolStripMenuItem LowPassFilter;
+        private static ToolStripMenuItem HighPassFilter;
+        private static ContextMenuStrip contextMenuStrip1;
+        public static Label HighPass;
+        public static Label LowPass;
+        public static ComboBox hertz;
+        public static Button playSelect;
+        public static Label scalaLb1;
+        public static Panel panel23;
+        public static Panel panel22;
+        public static Panel panel21;
+        public static Panel panel20;
+        public static Panel panel19;
+        public static Panel panel18;
+        public static Panel panel17;
+        public static Panel panel16;
+        public static Panel panel15;
+        public static Panel panel14;
+        public static Panel panel13;
+        public static Panel panel12;
+        public static Panel panel11;
+        public static Panel panel10;
+        public static Panel panel9;
+        public static Panel panel8;
+        public static Panel panel7;
+        public static Panel panel6;
+        public static Panel panel5;
+        public static Panel panel4;
+        public static Panel panel2;
+        public static Panel panel3;
+        public static Panel panel1;
+        public static Button plusAll;
+        public static Button minusAll;
+        public static Button playFilter;
+        public static ComboBox Filters;
+        public static ComboBox selectLabel;
+        public static HScrollBar hScrollBar1;
+        public static TextBox ptsEmTela;
+        public static TextBox inicioTela;
+        public static TextBox fimTela;
+        public static ComboBox tempoEmTela;
+        public static ComboBox velocidadeScroll;
+        public static ComboBox comboBox3;
+        public static Label label1;
+        public static Label label2;
+        public static Label label4;
+        public static Label label3;
+        public static Label label5;
+        public static Button Play;
+        public static Panel painelExames;
+        public static Panel painelTelaGl;
+        public static Panel painelComando;
+        public static TextBox qtdGraficos;
         public static SharpGL.OpenGLControl openglControl1;
-        public static System.Windows.Forms.Button minusLb5;
-        public static System.Windows.Forms.Button plusLb5;
-        public static System.Windows.Forms.Button minusLb4;
-        public static System.Windows.Forms.Button plusLb4;
-        public static System.Windows.Forms.Button minusLb3;
-        public static System.Windows.Forms.Button plusLb3;
-        public static System.Windows.Forms.Button minusLb2;
-        public static System.Windows.Forms.Button plusLb2;
-        public static System.Windows.Forms.Button minusLb1;
-        public static System.Windows.Forms.Button plusLb1;
-        public static System.Windows.Forms.Button minusLb10;
-        public static System.Windows.Forms.Button plusLb10;
-        public static System.Windows.Forms.Button minusLb9;
-        public static System.Windows.Forms.Button plusLb9;
-        public static System.Windows.Forms.Button minusLb8;
-        public static System.Windows.Forms.Button plusLb8;
-        public static System.Windows.Forms.Button plusLb7;
-        public static System.Windows.Forms.Button minusLb7;
-        public static System.Windows.Forms.Button minusLb6;
-        public static System.Windows.Forms.Button plusLb6;
-        public static System.Windows.Forms.Label label6;
-        public static System.Windows.Forms.Label label7;
-        public static System.Windows.Forms.Label label8;
-        public static System.Windows.Forms.Label label9;
-        public static System.Windows.Forms.Label label10;
-        public static System.Windows.Forms.Button minusLb23;
-        public static System.Windows.Forms.Button plusLb23;
-        public static System.Windows.Forms.Button minusLb22;
-        public static System.Windows.Forms.Button plusLb22;
-        public static System.Windows.Forms.Button minusLb21;
-        public static System.Windows.Forms.Button plusLb21;
-        public static System.Windows.Forms.Label label21;
-        public static System.Windows.Forms.Label label22;
-        public static System.Windows.Forms.Label label23;
-        public static System.Windows.Forms.Button minusLb20;
-        public static System.Windows.Forms.Button plusLb20;
-        public static System.Windows.Forms.Button minusLb19;
-        public static System.Windows.Forms.Button plusLb19;
-        public static System.Windows.Forms.Button minusLb18;
-        public static System.Windows.Forms.Button plusLb18;
-        public static System.Windows.Forms.Button plusLb17;
-        public static System.Windows.Forms.Button minusLb17;
-        public static System.Windows.Forms.Button minusLb16;
-        public static System.Windows.Forms.Button plusLb16;
-        public static System.Windows.Forms.Label label16;
-        public static System.Windows.Forms.Label label17;
-        public static System.Windows.Forms.Label label18;
-        public static System.Windows.Forms.Label label19;
-        public static System.Windows.Forms.Label label20;
-        public static System.Windows.Forms.Button minusLb15;
-        public static System.Windows.Forms.Button plusLb15;
-        public static System.Windows.Forms.Button minusLb14;
-        public static System.Windows.Forms.Button plusLb14;
-        public static System.Windows.Forms.Button minusLb13;
-        public static System.Windows.Forms.Button plusLb13;
-        public static System.Windows.Forms.Button plusLb12;
-        public static System.Windows.Forms.Button minusLb12;
-        public static System.Windows.Forms.Button minusLb11;
-        public static System.Windows.Forms.Button plusLb11;
-        public static System.Windows.Forms.Label label11;
-        public static System.Windows.Forms.Label label12;
-        public static System.Windows.Forms.Label label13;
-        public static System.Windows.Forms.Label label14;
-        public static System.Windows.Forms.Label label15;
-        public static System.Windows.Forms.Label scalaLb2;
-        public static System.Windows.Forms.Label scalaLb3;
-        public static System.Windows.Forms.Label scalaLb4;
-        public static System.Windows.Forms.Label scalaLb5;
-        public static System.Windows.Forms.Label scalaLb6;
-        public static System.Windows.Forms.Label scalaLb7;
-        public static System.Windows.Forms.Label scalaLb8;
-        public static System.Windows.Forms.Label scalaLb9;
-        public static System.Windows.Forms.Label scalaLb10;
-        public static System.Windows.Forms.Label scalaLb11;
-        public static System.Windows.Forms.Label scalaLb12;
-        public static System.Windows.Forms.Label scalaLb13;
-        public static System.Windows.Forms.Label scalaLb14;
-        public static System.Windows.Forms.Label scalaLb15;
-        public static System.Windows.Forms.Label scalaLb16;
-        public static System.Windows.Forms.Label scalaLb17;
-        public static System.Windows.Forms.Label scalaLb18;
-        public static System.Windows.Forms.Label scalaLb19;
-        public static System.Windows.Forms.Label scalaLb20;
-        public static System.Windows.Forms.Label scalaLb21;
-        public static System.Windows.Forms.Label scalaLb22;
-        public static System.Windows.Forms.Label scalaLb23;
+        public static Button minusLb5;
+        public static Button plusLb5;
+        public static Button minusLb4;
+        public static Button plusLb4;
+        public static Button minusLb3;
+        public static Button plusLb3;
+        public static Button minusLb2;
+        public static Button plusLb2;
+        public static Button minusLb1;
+        public static Button plusLb1;
+        public static Button minusLb10;
+        public static Button plusLb10;
+        public static Button minusLb9;
+        public static Button plusLb9;
+        public static Button minusLb8;
+        public static Button plusLb8;
+        public static Button plusLb7;
+        public static Button minusLb7;
+        public static Button minusLb6;
+        public static Button plusLb6;
+        public static Label label6;
+        public static Label label7;
+        public static Label label8;
+        public static Label label9;
+        public static Label label10;
+        public static Button minusLb23;
+        public static Button plusLb23;
+        public static Button minusLb22;
+        public static Button plusLb22;
+        public static Button minusLb21;
+        public static Button plusLb21;
+        public static Label label21;
+        public static Label label22;
+        public static Label label23;
+        public static Button minusLb20;
+        public static Button plusLb20;
+        public static Button minusLb19;
+        public static Button plusLb19;
+        public static Button minusLb18;
+        public static Button plusLb18;
+        public static Button plusLb17;
+        public static Button minusLb17;
+        public static Button minusLb16;
+        public static Button plusLb16;
+        public static Label label16;
+        public static Label label17;
+        public static Label label18;
+        public static Label label19;
+        public static Label label20;
+        public static Button minusLb15;
+        public static Button plusLb15;
+        public static Button minusLb14;
+        public static Button plusLb14;
+        public static Button minusLb13;
+        public static Button plusLb13;
+        public static Button plusLb12;
+        public static Button minusLb12;
+        public static Button minusLb11;
+        public static Button plusLb11;
+        public static Label label11;
+        public static Label label12;
+        public static Label label13;
+        public static Label label14;
+        public static Label label15;
+        public static Label scalaLb2;
+        public static Label scalaLb3;
+        public static Label scalaLb4;
+        public static Label scalaLb5;
+        public static Label scalaLb6;
+        public static Label scalaLb7;
+        public static Label scalaLb8;
+        public static Label scalaLb9;
+        public static Label scalaLb10;
+        public static Label scalaLb11;
+        public static Label scalaLb12;
+        public static Label scalaLb13;
+        public static Label scalaLb14;
+        public static Label scalaLb15;
+        public static Label scalaLb16;
+        public static Label scalaLb17;
+        public static Label scalaLb18;
+        public static Label scalaLb19;
+        public static Label scalaLb20;
+        public static Label scalaLb21;
+        public static Label scalaLb22;
+        public static Label scalaLb23;
+        private static ToolStripMenuItem toolStripMenuItem3;
+        private static ToolStripMenuItem toolStripMenuItem12;
+        private static ToolStripMenuItem hertz70;
+        private static ToolStripMenuItem hertz50;
+        private static ToolStripMenuItem hertz40;
+        private static ToolStripMenuItem hertz35;
+        private static ToolStripMenuItem hertz30;
+        private static ToolStripMenuItem hertz25;
+        private static ToolStripMenuItem hertz20;
+        private static ToolStripMenuItem hertz15;
+        private static ToolStripMenuItem hertz10;
+        private static ToolStripMenuItem hertz5;
+        private static ToolStripMenuItem toolStripMenuItem1;
+        private static ToolStripMenuItem hertz10H;
+        private static ToolStripMenuItem hertz7;
+        private static ToolStripMenuItem hertz5H;
+        private static ToolStripMenuItem hertz3;
+        private static ToolStripMenuItem hertz1;
+        private static ToolStripMenuItem hertz07;
+        private static ToolStripMenuItem hertz05;
+        private static ToolStripMenuItem hertz03;
+        private static ToolStripMenuItem hertz01;
+        private static ToolStripMenuItem outroHigh;
+        private static ToolStripMenuItem NenhumLow1;
     }
 }

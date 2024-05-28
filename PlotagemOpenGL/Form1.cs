@@ -16,6 +16,9 @@ using System.Windows.Media;
 using SharpGL.WPF;
 using System.Collections.Generic;
 using DSP;
+using System.Reflection;
+using MessageBox = System.Windows.MessageBox;
+using System.ComponentModel;
 
 
 namespace PlotagemOpenGL
@@ -180,7 +183,7 @@ namespace PlotagemOpenGL
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
-            
+
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
             this.Resize += Tela_Plotagem_Resiz;
@@ -343,9 +346,23 @@ namespace PlotagemOpenGL
             camera.Z = 1.0f;
             tempoEmTela.SelectedIndex = 2;
             velocidadeScroll.SelectedIndex = 0;
-
-            var backlog = new backLog();
-            backlog.Show();
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            for (int i = 1; i <= 23; i++)
+            {
+                FieldInfo panel = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
+                if (panel != null)
+                {
+                    Panel pn = (Panel)panel.GetValue(this);
+                    if (pn != null)
+                    {
+                        pn.ContextMenuStrip = contextMenuStrip1;
+                        //pn.ContextMenuStrip.MouseClick += Form1_MouseUp;
+                    }
+                }
+            }
+            //this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            //var backlog = new backLog();
+            //backlog.Show();
         }
         private void resize_Control(Control c, Rectangle r)
         {
@@ -549,33 +566,33 @@ namespace PlotagemOpenGL
 
             if (filtro.Equals("Low Pass"))
             {
-                if (LowPassFilter.auxLow != 0)
+                if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
                 {
-                    LowPassFilter.auxLow = 0;
+                    PlotagemOpenGL.LowPassFilter.auxLow = 0;
                     filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
                 }
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
-                aux = LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
+                aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                LowPassFilter.auxLow += 1;
+                PlotagemOpenGL.LowPassFilter.auxLow += 1;
             }
             else if (filtro.Equals("High Pass"))
             {
-                if (HighPassFilter.auxHigh != 0)
+                if (PlotagemOpenGL.HighPassFilter.auxHigh != 0)
                 {
-                    HighPassFilter.auxHigh = 0;
+                    PlotagemOpenGL.HighPassFilter.auxHigh = 0;
                     filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
                 }
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
-                aux = HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
+                aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
                 for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                HighPassFilter.auxHigh += 1;
+                PlotagemOpenGL.HighPassFilter.auxHigh += 1;
             }
             else if (filtro.Equals("Band Pass"))
             {
@@ -641,25 +658,15 @@ namespace PlotagemOpenGL
 
             }
             selectLabel.Items.Clear();
-            for (int i = 1; i <= qtdGrafics; i++)
+            for (int i = 0; i < qtdGrafics; i++)
             {
-                string qt = Convert.ToString(i);
+                string qt = Convert.ToString(GlobVar.nomeCanais[GlobVar.grafSelected[i]]);
                 selectLabel.Items.Add(qt);
             }
         }
 
         private void Tela_Plotagem_Load(object sender, EventArgs e)
-        {/*
-            Thread.Sleep(1000);
-            this.gl = openglControl1.OpenGL;
-            plotagem = new Plotagem(gl);
-            openglControl1.DoRender();
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
-            plotagem.DesenhaGrafico();
-            */
-            //openglControl1.KeyDown += TelaPlotagem_KeyDown;
-            //hScrollBar1.Focus();
+        {
             openglControl1.Focus();
 
 
@@ -2019,9 +2026,9 @@ namespace PlotagemOpenGL
 
             }
             selectLabel.Items.Clear();
-            for (int i = 1; i <= qtdGrafics; i++)
+            for (int i = 0; i < qtdGrafics; i++)
             {
-                string qt = Convert.ToString(i);
+                string qt = Convert.ToString(GlobVar.nomeCanais[GlobVar.grafSelected[i]]);
                 selectLabel.Items.Add(qt);
             }
 
@@ -2041,22 +2048,250 @@ namespace PlotagemOpenGL
         private void Filters_SelectedIndexChanged(object sender, EventArgs e)
         {
             string filtro = Filters.Text;
-            if (filtro.Equals("Low Pass"))
+            if (filtro.Equals("outra"))
             {
-                hertz.Items.Clear();
-                for (int i = 0; i < GlobVar.lowHertz.Length; i++)
-                {
-                    hertz.Items.Add($"{GlobVar.lowHertz[i]:F3} H");
-                }
+
             }
             else if (filtro.Equals("High Pass"))
             {
-                hertz.Items.Clear();
                 for (int i = 0; i < GlobVar.highHertz.Length; i++)
                 {
                     hertz.Items.Add($"{GlobVar.highHertz[i]:F3}H");
                 }
             }
         }
+        private void HighHertz_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string highHertz = hertz.Text;
+            if (highHertz.Equals("outra"))
+            {
+
+            }
+
+        }
+        private Panel clickedPanel;
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Verifica se o clique do mouse ocorreu dentro de algum controle
+                Control clickedControl = this.GetChildAtPoint(e.Location);
+
+                // Se o controle clicado for um Panel, realiza ações
+                if (clickedControl is Panel panel)
+                {
+                    // Armazena o Panel clicado
+                    clickedPanel = panel;
+
+                    // Procura pelo Label dentro do Panel
+                    foreach (Control innerControl in panel.Controls)
+                    {
+                        if (innerControl is Label label)
+                        {
+                            string labelText = label.Text;
+                            MessageBox.Show($"Label text: {labelText}");
+                            break; // Encontrou o primeiro Label e parou de procurar
+                        }
+                    }
+
+                    // Abre o ContextMenuStrip na posição do mouse
+                    if (panel.ContextMenuStrip != null)
+                    {
+                        panel.ContextMenuStrip.Show(panel, panel.PointToClient(e.Location));
+                    }
+                }
+            }
+        }
+
+
+
+        private string selectedLabelValue;
+        private string GetLabelValue(Panel panel)
+        {
+            foreach (Control control in panel.Controls)
+            {
+                if (control is Label label && label.Name.StartsWith("label"))
+                {
+                    return label.Text;
+                }
+            }
+            return null; // Se o Label não for encontrado
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            ContextMenuStrip menu = sender as ContextMenuStrip;
+            if (menu != null)
+            {
+                // Obtém o controle que está abrindo o ContextMenuStrip
+                Control sourceControl = menu.SourceControl;
+
+                // Verifica se o controle é um Panel
+                if (sourceControl is Panel panel)
+                {
+                    // Armazena o valor do texto do Label específico associado ao Panel
+                    selectedLabelValue = GetLabelValue(panel);
+                }
+            }
+        }
+        private void contextMenuStrip1_Closed(object sender, CancelEventArgs e)
+        {
+            if(toolStripMenuItem12.Checked == true)
+            {
+                foreach (Control control in clickedPanel.Controls)
+                {
+                    if (control is Label)
+                    {
+                        Label label = (Label)control;
+                        string labelText = label.Text;
+                        MessageBox.Show($"NenhumLow clicked. Panel contains label with text: {selectedLabelValue}");
+                        break;
+                    }
+                }
+            }
+        }
+        //Metodo para deselecionar os itens que tem dentro de cada filtro
+        private void UncheckAllItemsExceptSelectedLowFilter(ToolStripMenuItem selectedItem)
+        {
+            foreach (ToolStripMenuItem item in LowPassFilter.DropDownItems)
+            {
+                if (item != selectedItem)
+                {
+                    item.Checked = false;
+                }
+            }
+        }
+        private void UncheckAllItemsExceptSelectedHighFilter(ToolStripMenuItem selectedItem)
+        {
+            foreach (ToolStripMenuItem item in HighPassFilter.DropDownItems)
+            {
+                if (item != selectedItem)
+                {
+                    item.Checked = false;
+                }
+            }
+        }
+        //Opcoes dentro do LowPassFilter
+        private void NenhumLow_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+            if (toolStripMenuItem12.Checked == true)
+            {
+                MessageBox.Show($"NenhumLow clicked. Panel contains label with text: {selectedLabelValue}");
+                UncheckAllItemsExceptSelectedLowFilter(clickedItem);
+            }
+            
+        }
+
+        private void hertz70_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz50_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz40_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz35_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz30_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz25_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz20_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz15_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz5_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void outraLow_Click(object sender, EventArgs e)
+        {
+            
+        }
+        //Opcoes dentro do HighPassFilter
+        private void NenhumHigh_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void outroHigh_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void hertz10H_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Hertz7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz5H_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz07_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz05_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz03_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void hertz01_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }
