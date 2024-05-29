@@ -2222,7 +2222,8 @@ namespace PlotagemOpenGL
             if (clickedPanel is Panel panel)
             {
                 Dictionary<string, bool> filterStates;
-                if (panelLowFilterStates.ContainsKey(panel))
+                
+                if (panelLowFilterStates.ContainsKey(panel) && LowPassFilter.Visible)
                 {
                     filterStates = panelLowFilterStates[panel];
                     if(clickedItem.CheckOnClick == true)
@@ -2258,7 +2259,7 @@ namespace PlotagemOpenGL
                         }
                     }
                 }
-                else if (panelHighFilterStates.ContainsKey(panel))
+                else if (panelHighFilterStates.ContainsKey(panel) && HighPassFilter.Visible)
                 {
                     filterStates = panelHighFilterStates[panel];
                     if (clickedItem.CheckOnClick == true)
