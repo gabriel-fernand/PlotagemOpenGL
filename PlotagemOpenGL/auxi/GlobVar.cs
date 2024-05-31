@@ -98,7 +98,7 @@ namespace PlotagemOpenGL.auxi
         public static int[] grafSelected;
         public static int[] codSelected;
         public static short[,] matrizCompleta;
-        public static double[,] matrizCanal;
+        public static short[,] matrizCanal;
         public static int[] ponteiroI;
         public static int[] ponteiroF;
 

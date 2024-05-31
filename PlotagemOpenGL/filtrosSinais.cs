@@ -53,7 +53,7 @@ namespace PlotagemOpenGL
                     if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
                     {
                         // Copia o valor de matrizCompleta para matrizCanal
-                        GlobVar.matrizCanal[select, colunaCanalIndex] = GlobVar.matrizCompleta[linhaComp, colunaComp];
+                        GlobVar.matrizCanal[select, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                         colunaCanalIndex++;
                     }
                     else

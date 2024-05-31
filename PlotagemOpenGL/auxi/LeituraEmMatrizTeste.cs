@@ -108,7 +108,7 @@ namespace PlotagemOpenGL.auxi
                 }
                 GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
                 //int[] pontF = GlobVar.ponteiroF;
-                GlobVar.matrizCanal = new double[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
+                GlobVar.matrizCanal = new short[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
 
                 //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
                 for (int linhaCanais = 0; linhaCanais < GlobVar.matrizCanal.GetLength(0); linhaCanais++)
@@ -125,7 +125,7 @@ namespace PlotagemOpenGL.auxi
                             if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
                             {
                                 // Copia o valor de matrizCompleta para matrizCanal
-                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = GlobVar.matrizCompleta[linhaComp, colunaComp];
+                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                                 colunaCanalIndex++;
                             }
                             else
@@ -147,7 +147,7 @@ namespace PlotagemOpenGL.auxi
                         {
                             auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[i, j]);
                         }
-                        auxx = RemoverMetadeParaFrente(auxx, aux);
+                        auxx = RemoverMetadeParaFrente(auxx,aux);
                         auxx = DuplicarArray(auxx, aux);
                         for (int j = 0; j < GlobVar.matrizCanal.GetLength(1); j++)
                         {

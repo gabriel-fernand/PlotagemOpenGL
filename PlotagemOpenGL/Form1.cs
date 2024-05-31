@@ -321,6 +321,25 @@ namespace PlotagemOpenGL
                 new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
                 new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
                 new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
                 new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f)
             };
             GlobVar.sizeOpenGl.X = openglControl1.Width;
@@ -612,7 +631,7 @@ namespace PlotagemOpenGL
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
                 aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                 PlotagemOpenGL.LowPassFilter.auxLow += 1;
@@ -627,7 +646,7 @@ namespace PlotagemOpenGL
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
                 aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                 PlotagemOpenGL.HighPassFilter.auxHigh += 1;
@@ -637,7 +656,7 @@ namespace PlotagemOpenGL
                 double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                 for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
                 aux = BandPassFilter.ApplyBandPassFilter(aux, 0.015, 0.04);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = aux[i]; }
+                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
                 // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
                 int alturaTela = (int)openglControl1.Height;
                 openglControl1.DoRender();
@@ -2063,12 +2082,6 @@ namespace PlotagemOpenGL
                 UpdateInicioTela();
 
             }
-            selectLabel.Items.Clear();
-            for (int i = 0; i < qtdGrafics; i++)
-            {
-                string qt = Convert.ToString(GlobVar.nomeCanais[GlobVar.grafSelected[i]]);
-                selectLabel.Items.Add(qt);
-            }
 
         }
 
@@ -2266,7 +2279,7 @@ namespace PlotagemOpenGL
                                         double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                                         for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
                                         aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
@@ -2289,7 +2302,7 @@ namespace PlotagemOpenGL
                             double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                             for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
                             aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                             PlotagemOpenGL.LowPassFilter.auxLow += 1;
@@ -2326,7 +2339,7 @@ namespace PlotagemOpenGL
                                         double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                                         for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
                                         aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                         PlotagemOpenGL.HighPassFilter.auxHigh += 1;
@@ -2351,7 +2364,7 @@ namespace PlotagemOpenGL
                             double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
                             for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
                             aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                             PlotagemOpenGL.HighPassFilter.auxHigh += 1;

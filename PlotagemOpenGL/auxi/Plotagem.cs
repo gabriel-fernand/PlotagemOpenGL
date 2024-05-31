@@ -85,7 +85,7 @@ namespace PlotagemOpenGL.auxi
         public void DesenhaGrafico(int altura, int qtdGraf)
         {
 
-            Canula = new string[6] { "Apneia", "Apneia central", "Hipopneia", "Dessaturacao", "Hera", "Ronco" };
+            Canula = new string[] { "Apneia", "Apneia central", "Hipopneia", "Dessaturacao", "Hera", "Ronco" };
             float loc = ((float)altura / (float)qtdGraf) / 2;
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
@@ -172,7 +172,6 @@ namespace PlotagemOpenGL.auxi
             //classe para fazer o desenho do grafico
             plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
-            gl.Flush();
             //Metodo para fazer o desenho da linha x0 de cada grafico
             plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
