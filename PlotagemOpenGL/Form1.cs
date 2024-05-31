@@ -2214,6 +2214,17 @@ namespace PlotagemOpenGL
 
 
         private string selectedLabelValue;
+        private bool ContainsFilter(Dictionary<Panel, Dictionary<string, bool>> panelFilterStates, string filterName)
+        {
+            foreach (var innerDict in panelFilterStates.Values)
+            {
+                if (innerDict.ContainsKey(filterName))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private void MenuItem_Click(object sender, EventArgs e)
         {
@@ -2222,13 +2233,14 @@ namespace PlotagemOpenGL
             if (clickedPanel is Panel panel)
             {
                 Dictionary<string, bool> filterStates;
-                
-                if (panelLowFilterStates.ContainsKey(panel) && LowPassFilter.Visible)
-                {
+
+                //Faz a verificacao de qual filtro esta sendo aplicado
+                if (panelLowFilterStates.ContainsKey(panel) && ContainsFilter(panelLowFilterStates, clickedItem.Name))
+                { 
                     filterStates = panelLowFilterStates[panel];
                     if(clickedItem.CheckOnClick == true)
                     {
-                        if (clickedItem.Text.Equals("Nenhum")) 
+                        if (clickedItem.Text.Equals("Nenhum"))
                         {
                             filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
                             openglControl1.DoRender();
@@ -2237,13 +2249,38 @@ namespace PlotagemOpenGL
                         }
                         else if (clickedItem.Text.Equals("Outro"))
                         {
-
+                            using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                            {
+                                if (inputForm.ShowDialog() == DialogResult.OK)
+                                {
+                                    string inputValue = inputForm.InputValue;
+                                    if (double.TryParse(inputValue, out double hertzSelect))
+                                    {
+                                        // Use o valor inserido pelo usuário
+                                        hertzSelect = hertzSelect / 1000;
+                                        if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
+                                        {
+                                            PlotagemOpenGL.LowPassFilter.auxLow = 0;
+                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                        }
+                                        double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
+                                        for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                                        aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
+                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Por favor, insira um valor válido.");
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             double hertzSelect = Convert.ToDouble(clickedItem.Text.Substring(0, 3));
                             hertzSelect = hertzSelect / 1000;
-
                             if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
                             {
                                 PlotagemOpenGL.LowPassFilter.auxLow = 0;
@@ -2259,7 +2296,7 @@ namespace PlotagemOpenGL
                         }
                     }
                 }
-                else if (panelHighFilterStates.ContainsKey(panel) && HighPassFilter.Visible)
+                else if (panelHighFilterStates.ContainsKey(panel) && ContainsFilter(panelHighFilterStates, clickedItem.Name))
                 {
                     filterStates = panelHighFilterStates[panel];
                     if (clickedItem.CheckOnClick == true)
@@ -2272,7 +2309,34 @@ namespace PlotagemOpenGL
                         }
                         else if (clickedItem.Text.Equals("Outro"))
                         {
-
+                            using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                            {
+                                if (inputForm.ShowDialog() == DialogResult.OK)
+                                {
+                                    string inputValue = inputForm.InputValue;
+                                    if (double.TryParse(inputValue, out double hertzSelect))
+                                    {
+                                        // Use o valor inserido pelo usuário
+                                        hertzSelect = hertzSelect / 1000;
+                                        if (PlotagemOpenGL.HighPassFilter.auxHigh != 0)
+                                        {
+                                            PlotagemOpenGL.HighPassFilter.auxHigh = 0;
+                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                        }
+                                        double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
+                                        for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                                        aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
+                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = aux[i]; }
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                        PlotagemOpenGL.HighPassFilter.auxHigh += 1;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Por favor, insira um valor válido.");
+                                    }
+                                }
+                            }
                         }
                         else
                         {

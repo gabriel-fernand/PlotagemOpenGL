@@ -1782,6 +1782,7 @@ namespace PlotagemOpenGL
             LowPassFilter.Size = new System.Drawing.Size(211, 24);
             LowPassFilter.Text = "Low Pass Filter";
             LowPassFilter.DropDownOpening += toolTripItemDropDown_OpeningLow;
+            
             // 
             // OutroLow
             // 
