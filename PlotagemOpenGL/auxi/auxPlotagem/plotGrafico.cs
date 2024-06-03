@@ -20,6 +20,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static void DesenhaGrafico(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
+            gl.Color(0.0f, 0.0f, 0.0f);
             int des = qtdGraf - 1;
             for (int i = 0; i < qtdGraf; i++)
             {

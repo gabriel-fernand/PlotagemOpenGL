@@ -15,6 +15,7 @@ using System.Reflection;
 using MessageBox = System.Windows.MessageBox;
 using System.ComponentModel;
 using Accord.Math;
+using Accord;
 
 
 namespace PlotagemOpenGL
@@ -209,11 +210,7 @@ namespace PlotagemOpenGL
             qtGraf = new Rectangle(qtdGraficos.Location, qtdGraficos.Size);
             play = new Rectangle(Play.Location, Play.Size);
             box3 = new Rectangle(comboBox3.Location, comboBox3.Size);
-            slLabel = new Rectangle(selectLabel.Location, selectLabel.Size);
-            fil = new Rectangle(Filters.Location, Filters.Size);
-            playFil = new Rectangle(playFilter.Location, playFilter.Size);
             mtg = new Rectangle(playSelect.Location, playSelect.Size);
-            htz = new Rectangle(hertz.Location, hertz.Size);
 
             btPlusLb1 = new Rectangle(plusLb1.Location, plusLb1.Size);
             btMinusLb1 = new Rectangle(minusLb1.Location, minusLb1.Size);
@@ -375,7 +372,7 @@ namespace PlotagemOpenGL
 
         private void load()
         {
-            for (int i = 1; i <= 23; i++)
+            for (int i = 1; i <= 25; i++)
             {
                 FieldInfo panel = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
                 if (panel != null)
@@ -462,11 +459,7 @@ namespace PlotagemOpenGL
             painelComando_Resize_Control(qtdGraficos, qtGraf);
             painelComando_Resize_Control(Play, play);
             painelComando_Resize_Control(comboBox3, box3);
-            painelComando_Resize_Control(selectLabel, slLabel);
-            painelComando_Resize_Control(Filters, fil);
-            painelComando_Resize_Control(playFilter, playFil);
             painelComando_Resize_Control(playSelect, mtg);
-            painelComando_Resize_Control(hertz, htz);
         }
 
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
@@ -597,7 +590,7 @@ namespace PlotagemOpenGL
             if (int.TryParse(texto, out numero))
             {
                 qtdGrafics = Convert.ToInt32(texto);
-                if (qtdGrafics <= 0 || qtdGrafics > 23)
+                if (qtdGrafics <= 0 || qtdGrafics > 25)
                 {
                     System.Windows.MessageBox.Show("Por favor, digite um número válido entre 1 e 20.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
                 }
@@ -607,76 +600,6 @@ namespace PlotagemOpenGL
                 System.Windows.MessageBox.Show("Por favor, digite um número inteiro válido.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
             }
 
-        }
-
-        private void playFilter_Click(object sender, EventArgs e)
-        {
-            string filtro;
-            filtro = Filters.Text;
-            double hertzSelect = 0;
-            int selecao = Convert.ToInt16(selectLabel.Text);
-            if (!hertz.Text.Equals(""))
-            {
-                hertzSelect = Convert.ToDouble(hertz.Text.Substring(0, 5));
-            }
-            if (filtro.Equals("")) System.Windows.MessageBox.Show("Por favor, selecione algum filtro.");
-
-            if (filtro.Equals("Low Pass"))
-            {
-                if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
-                {
-                    PlotagemOpenGL.LowPassFilter.auxLow = 0;
-                    filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
-                }
-                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
-                aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                PlotagemOpenGL.LowPassFilter.auxLow += 1;
-            }
-            else if (filtro.Equals("High Pass"))
-            {
-                if (PlotagemOpenGL.HighPassFilter.auxHigh != 0)
-                {
-                    PlotagemOpenGL.HighPassFilter.auxHigh = 0;
-                    filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selecao - 1]);
-                }
-                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
-                aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                PlotagemOpenGL.HighPassFilter.auxHigh += 1;
-            }
-            else if (filtro.Equals("Band Pass"))
-            {
-                double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.grafSelected[selecao - 1]), i]; }
-                aux = BandPassFilter.ApplyBandPassFilter(aux, 0.015, 0.04);
-                for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.grafSelected[selecao - 1], i] = (short)aux[i]; }
-                // GlobVar.canalE = BandPassFilter.ApplyBandPassFilter(GlobVar.canalE, 0.1, 0.5);
-                int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            }
-            else if (filtro.Equals("Band Reject"))
-            {
-                //GlobVar.canalF = BandRejectFilter.ApplyBandRejectFilter(GlobVar.canalF, 0.1);
-                int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            }
-            else if (filtro.Equals("FWT"))
-            {
-                filtrosSinais.FWT(GlobVar.canalA);
-                GlobVar.canalA = filtrosSinais.alterado;
-                int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            }
         }
         private void Play_Click(object sender, EventArgs e)
         {
@@ -698,7 +621,6 @@ namespace PlotagemOpenGL
                 canais.reloc();
 
 
-
                 gl = openglControl1.OpenGL;
                 plotagem = new Plotagem(gl);
                 openglControl1.DoRender();
@@ -713,12 +635,6 @@ namespace PlotagemOpenGL
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
 
-            }
-            selectLabel.Items.Clear();
-            for (int i = 0; i < qtdGrafics; i++)
-            {
-                string qt = Convert.ToString(GlobVar.nomeCanais[GlobVar.grafSelected[i]]);
-                selectLabel.Items.Add(qt);
             }
         }
 
@@ -759,15 +675,23 @@ namespace PlotagemOpenGL
                 isDrawing = true;
 
                 // Convert window coordinates to OpenGL coordinates
-                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.startX, out plotagem.startY);
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
 
                 // Set the initial end coordinates to the starting coordinates
-                plotagem.endX = plotagem.startX;
-                plotagem.endY = plotagem.startY;
+                Plotagem.endX = Plotagem.startX;
+                Plotagem.endY = Plotagem.startY;
 
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                isDrawing = false;
+
+                // Update end coordinates when the mouse button is released
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
             }
         }
@@ -777,7 +701,7 @@ namespace PlotagemOpenGL
             if (isDrawing)
             {
                 // Update end coordinates as mouse moves
-                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.endX, out plotagem.endY);
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
                 // Redraw the control
                 openglControl1.DoRender();
@@ -793,11 +717,19 @@ namespace PlotagemOpenGL
                 isDrawing = false;
 
                 // Update end coordinates when the mouse button is released
-                ConvertToOpenGLCoordinates(e.X, e.Y, out plotagem.endX, out plotagem.endY);
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                isDrawing = false;
+
+                // Update end coordinates when the mouse button is released
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
             }
         }
@@ -2092,34 +2024,6 @@ namespace PlotagemOpenGL
             mont.Show();
         }
 
-        private void hertz_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void Filters_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string filtro = Filters.Text;
-            if (filtro.Equals("outra"))
-            {
-
-            }
-            else if (filtro.Equals("High Pass"))
-            {
-                for (int i = 0; i < GlobVar.highHertz.Length; i++)
-                {
-                    hertz.Items.Add($"{GlobVar.highHertz[i]:F3}H");
-                }
-            }
-        }
-        private void HighHertz_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string highHertz = hertz.Text;
-            if (highHertz.Equals("outra"))
-            {
-
-            }
-
-        }
         private Panel clickedPanel;
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
@@ -2155,20 +2059,11 @@ namespace PlotagemOpenGL
             }
         }
 
-
-
-        private string GetLabelValue(Panel panel)
+        private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
         {
-            foreach (Control control in panel.Controls)
-            {
-                if (control is Label label && label.Name.StartsWith("label"))
-                {
-                    return label.Text;
-                }
-            }
-            return null; // Se o Label não for encontrado
+            int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, Plotagem.endY);
+            //GlobVar.nomeCanais[GlobVar.grafSelected[YAdjusted]];
         }
-
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             ContextMenuStrip menu = sender as ContextMenuStrip;
@@ -2177,6 +2072,7 @@ namespace PlotagemOpenGL
                 Control sourceControl = menu.SourceControl;
                 if (sourceControl is Panel panel)
                 {
+                    
                     clickedPanel = panel;
                     UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
                     UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
@@ -2195,6 +2091,17 @@ namespace PlotagemOpenGL
             }
         }
 
+        private void ContextMenuStrip1_Opened(object sender, System.EventArgs e)
+        {
+            int auxxx = GlobVar.maximaVect - GlobVar.indice;
+
+            GlobVar.auxL = new double[auxxx];
+            GlobVar.auxH = new double[auxxx];
+
+            for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.auxL[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+            for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.auxH[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+
+        }
         private void UpdateMenuItems(Panel panel, ToolStripItemCollection items, Dictionary<string, bool> filterStates)
         {
 
@@ -2255,7 +2162,9 @@ namespace PlotagemOpenGL
                     {
                         if (clickedItem.Text.Equals("Nenhum"))
                         {
-                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                            int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                            int selec = GlobVar.grafSelected.IndexOf(sele);
+                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
@@ -2274,12 +2183,14 @@ namespace PlotagemOpenGL
                                         if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
                                         {
                                             PlotagemOpenGL.LowPassFilter.auxLow = 0;
-                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                            int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                                            int selec = GlobVar.grafSelected.IndexOf(sele);
+                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                                         }
-                                        double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                                        for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
-                                        aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
+                                        //double[] aux = new double[auxxx];
+                                        //for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                                        GlobVar.auxL = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(GlobVar.auxL, hertzSelect);
+                                        for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)GlobVar.auxL[i]; }
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
@@ -2297,12 +2208,14 @@ namespace PlotagemOpenGL
                             if (PlotagemOpenGL.LowPassFilter.auxLow != 0)
                             {
                                 PlotagemOpenGL.LowPassFilter.auxLow = 0;
-                                filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                                int selec = GlobVar.grafSelected.IndexOf(sele);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                             }
-                            double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                            for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
-                            aux = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(aux, hertzSelect);
-                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
+                            //double[] aux = new double[auxxx];
+                            //for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                            GlobVar.auxL = PlotagemOpenGL.LowPassFilter.ApplyLowPassFilter(GlobVar.auxL, hertzSelect);
+                            for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)GlobVar.auxL[i]; }
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                             PlotagemOpenGL.LowPassFilter.auxLow += 1;
@@ -2314,11 +2227,15 @@ namespace PlotagemOpenGL
                     filterStates = panelHighFilterStates[panel];
                     if (clickedItem.CheckOnClick == true)
                     {
+                        //int auxxx = GlobVar.maximaVect - GlobVar.indice;
                         if (clickedItem.Text.Equals("Nenhum"))
                         {
-                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                            int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                            int selec = GlobVar.grafSelected.IndexOf(sele);
+                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
                         }
                         else if (clickedItem.Text.Equals("Outro"))
                         {
@@ -2334,12 +2251,14 @@ namespace PlotagemOpenGL
                                         if (PlotagemOpenGL.HighPassFilter.auxHigh != 0)
                                         {
                                             PlotagemOpenGL.HighPassFilter.auxHigh = 0;
-                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                            int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                                            int selec = GlobVar.grafSelected.IndexOf(sele);
+                                            filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                                         }
-                                        double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                                        for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
-                                        aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                                        for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
+                                        //double[] aux = new double[auxxx];
+                                        //for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                                        GlobVar.auxL = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(GlobVar.auxL, hertzSelect);
+                                        for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)GlobVar.auxL[i]; }
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                         PlotagemOpenGL.HighPassFilter.auxHigh += 1;
@@ -2359,12 +2278,14 @@ namespace PlotagemOpenGL
                             if (PlotagemOpenGL.HighPassFilter.auxHigh != 0)
                             {
                                 PlotagemOpenGL.HighPassFilter.auxHigh = 0;
-                                filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[GlobVar.nomeCanais.IndexOf(selectedLabelValue)]);
+                                int sele = GlobVar.nomeCanais.IndexOf(selectedLabelValue);
+                                int selec = GlobVar.grafSelected.IndexOf(sele);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.grafSelected[selec]);
                             }
-                            double[] aux = new double[GlobVar.matrizCanal.GetLength(1)];
-                            for (int i = 0; i < aux.Length; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
-                            aux = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(aux, hertzSelect);
-                            for (int i = 0; i < aux.Length; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)aux[i]; }
+                            //double[] aux = new double[auxxx];
+                            //for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { aux[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+                            GlobVar.auxL = PlotagemOpenGL.HighPassFilter.ApplyHighPassFilter(GlobVar.auxL, hertzSelect);
+                            for (int i = GlobVar.indice; i < GlobVar.maximaVect; i++) { GlobVar.matrizCanal[GlobVar.nomeCanais.IndexOf(selectedLabelValue), i] = (short)GlobVar.auxL[i]; }
                             openglControl1.DoRender();
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                             PlotagemOpenGL.HighPassFilter.auxHigh += 1;

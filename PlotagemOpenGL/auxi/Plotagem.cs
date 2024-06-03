@@ -15,7 +15,7 @@ namespace PlotagemOpenGL.auxi
         private string[] Canula;
         private float[] margem;
         public static float[] traco;
-        public float startX, startY, endX, endY;
+        public static float startX, startY, endX, endY;
         public float writeX = -500;
         public float writeY = -500;
         public static float[] StartY;
@@ -89,6 +89,8 @@ namespace PlotagemOpenGL.auxi
             float loc = ((float)altura / (float)qtdGraf) / 2;
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
+            GlobVar.desenhoLoc = new float[desenhoLoc.Length];
+            GlobVar.desenhoLoc = desenhoLoc;
             float locY = (float)altura / (float)qtdGraf;
             float auxY = 0;
             StartY = new float[qtdGraf];
@@ -169,13 +171,15 @@ namespace PlotagemOpenGL.auxi
                 i += GlobVar.namos;
                 ind++;
             }
+
+            plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
+
             //classe para fazer o desenho do grafico
             plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
             //Metodo para fazer o desenho da linha x0 de cada grafico
             plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
-            plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
 
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 
