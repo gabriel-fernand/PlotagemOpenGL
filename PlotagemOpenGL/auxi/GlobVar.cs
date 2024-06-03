@@ -107,8 +107,8 @@ namespace PlotagemOpenGL.auxi
         public static int[] codCanal;
         public static double[] scale;
 
-        public static double[] auxL;
-        public static double[] auxH;
+        public static float[] auxL;
+        public static float[] auxH;
 
         public static int maximaVect = 130000;
         public static int indice = 0;

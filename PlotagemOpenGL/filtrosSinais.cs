@@ -7,6 +7,8 @@ using System.Text;
 using DSP;
 using PlotagemOpenGL.auxi;
 using Accord.Audio;
+using static OpenTK.Graphics.OpenGL.GL;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlotagemOpenGL
 {
@@ -80,37 +82,41 @@ namespace PlotagemOpenGL
             }
             
         }
+        public static void FiltraTodoSinal(float[] input, float alpha, int escolha)
+        {
+
+        }
 
     }
     public class LowPassFilter
     {
         public static int auxLow;
-        private double _alpha;
-        private double _prevOutput;
+        private float _alpha;
+        private float _prevOutput;
         public static Accord.Audio.Filters.LowPassFilter lowFilt;
 
-        public LowPassFilter(double alpha)
+        public LowPassFilter(float alpha)
         {
             _alpha = alpha;
             _prevOutput = 0;
         }
 
-        public double Apply(double input)
+        public float Apply(float input)
         {
-            double output = _alpha * input + (1 - _alpha) * _prevOutput;
+            float output = _alpha * input + (1 - _alpha) * _prevOutput;
             _prevOutput = output;
             return output;
         }
-        public static double[] ApplyLowPassFilter(double[] input, double alpha)
+        public static float[] ApplyLowPassFilter(float[] input, float alpha, int rate)
         {
-            double[] output = new double[input.Length];
-            lowFilt = new Accord.Audio.Filters.LowPassFilter(15, 512);
-            Signal sig = Signal.FromArray(input, 512);
+            float[] output = new float[input.Length];
+            lowFilt = new Accord.Audio.Filters.LowPassFilter(alpha * 1000, rate);
+            Signal sig = Signal.FromArray(input, rate);
             lowFilt.Apply(sig);
-            
+
             LowPassFilter lowPassFilter = new LowPassFilter(alpha);
             
-            output = sig.ToDouble();
+            output = sig.ToFloat();
 
             for (int i = 0; i < input.Length; i++)
             {
@@ -122,28 +128,35 @@ namespace PlotagemOpenGL
     public class HighPassFilter
     {
         public static int auxHigh;
-        private double alpha;
+        private float alpha;
         private double prevInput = 0;
-        private double prevOutput = 0;
+        private float prevOutput = 0;
+        public static Accord.Audio.Filters.HighPassFilter highFilt;
 
-        public HighPassFilter(double alpha)
+
+        public HighPassFilter(float alpha)
         {
             this.alpha = alpha;
             prevOutput = 0;
         }
 
-        public double Apply(double input)
+        public float Apply(float input)
         {
             // Calcula a saída do filtro usando a equação de diferença
-            double output = input - (alpha * input + (1 - alpha) * prevOutput);
+            float output = input - (alpha * input + (1 - alpha) * prevOutput);
             prevOutput = output;
             return output;
         }
-        public static double[] ApplyHighPassFilter(double[] input, double alpha)
+        public static float[] ApplyHighPassFilter(float[] input, float alpha, int rate)
         {
             HighPassFilter highPassFilter = new HighPassFilter(alpha);
 
-            double[] output = new double[input.Length];
+            float[] output = new float[input.Length];
+            highFilt = new Accord.Audio.Filters.HighPassFilter(alpha * 1000, rate);
+            Signal sig = Signal.FromArray(input, rate);
+            highFilt.Apply(sig);
+            output = sig.ToFloat();
+
             for (int i = 0; i < input.Length; i++)
             {
 
@@ -157,21 +170,21 @@ namespace PlotagemOpenGL
         private LowPassFilter _lowPassFilter;
         private HighPassFilter _highPassFilter;
 
-        public BandPassFilter(double lowAlpha, double highAlpha)
+        public BandPassFilter(float lowAlpha, float highAlpha)
         {
             _lowPassFilter = new LowPassFilter(lowAlpha);
             _highPassFilter = new HighPassFilter(highAlpha);
         }
 
-        public double Apply(double input)
+        public float Apply(float input)
         {
-            double lowPassOutput = _lowPassFilter.Apply(input);
+            float lowPassOutput = _lowPassFilter.Apply(input);
             return _highPassFilter.Apply(lowPassOutput);
         }
-        public static double[] ApplyBandPassFilter(double[] input, double lowAlpha, double highAlpha)
+        public static float[] ApplyBandPassFilter(float[] input, float lowAlpha, float highAlpha)
         {
             BandPassFilter bandPassFilter = new BandPassFilter(lowAlpha, highAlpha);
-            double[] output = new double[input.Length];
+            float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
                 output[i] = bandPassFilter.Apply(input[i]);

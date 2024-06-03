@@ -47,6 +47,35 @@ namespace PlotagemOpenGL
             label5 = new Label();
             Play = new Button();
             openglControl1 = new SharpGL.OpenGLControl();
+            contextMenuStripOpenGl = new ContextMenuStrip(components);
+            BomDia = new ToolStripTextBox();
+            BoaNoite = new ToolStripTextBox();
+            toolStripSeparator1 = new ToolStripSeparator();
+            LowPassFilterGl = new ToolStripMenuItem();
+            NenhumLowGl = new ToolStripMenuItem();
+            hertz70Gl = new ToolStripMenuItem();
+            hertz50Gl = new ToolStripMenuItem();
+            hertz40Gl = new ToolStripMenuItem();
+            hertz35Gl = new ToolStripMenuItem();
+            hertz30Gl = new ToolStripMenuItem();
+            hertz25Gl = new ToolStripMenuItem();
+            hertz20Gl = new ToolStripMenuItem();
+            hertz15Gl = new ToolStripMenuItem();
+            hertz10Gl = new ToolStripMenuItem();
+            hertz5Gl = new ToolStripMenuItem();
+            OutroLowGl = new ToolStripMenuItem();
+            HighPassFilterGl = new ToolStripMenuItem();
+            NenhumHighGl = new ToolStripMenuItem();
+            hertz10HGl = new ToolStripMenuItem();
+            hertz7Gl = new ToolStripMenuItem();
+            hertz5HGl = new ToolStripMenuItem();
+            hertz3Gl = new ToolStripMenuItem();
+            hertz1Gl = new ToolStripMenuItem();
+            hertz07Gl = new ToolStripMenuItem();
+            hertz05Gl = new ToolStripMenuItem();
+            hertz03Gl = new ToolStripMenuItem();
+            hertz01Gl = new ToolStripMenuItem();
+            OutroHighGl = new ToolStripMenuItem();
             contextMenuStrip1 = new ContextMenuStrip(components);
             LowPassFilter = new ToolStripMenuItem();
             NenhumLow = new ToolStripMenuItem();
@@ -191,36 +220,10 @@ namespace PlotagemOpenGL
             minusAll = new Button();
             plusAll = new Button();
             qtdGraficos = new TextBox();
-            contextMenuStripOpenGl = new ContextMenuStrip(components);
-            BomDia = new ToolStripTextBox();
-            BoaNoite = new ToolStripTextBox();
-            toolStripSeparator1 = new ToolStripSeparator();
-            LowPassFilterGl = new ToolStripMenuItem();
-            NenhumLowGl = new ToolStripMenuItem();
-            hertz70Gl = new ToolStripMenuItem();
-            hertz50Gl = new ToolStripMenuItem();
-            hertz40Gl = new ToolStripMenuItem();
-            hertz35Gl = new ToolStripMenuItem();
-            hertz30Gl = new ToolStripMenuItem();
-            hertz25Gl = new ToolStripMenuItem();
-            hertz20Gl = new ToolStripMenuItem();
-            hertz15Gl = new ToolStripMenuItem();
-            hertz10Gl = new ToolStripMenuItem();
-            hertz5Gl = new ToolStripMenuItem();
-            OutroLowGl = new ToolStripMenuItem();
-            HighPassFilterGl = new ToolStripMenuItem();
-            NenhumHighGl = new ToolStripMenuItem();
-            hertz10HGl = new ToolStripMenuItem();
-            hertz7Gl = new ToolStripMenuItem();
-            hertz5HGl = new ToolStripMenuItem();
-            hertz3Gl = new ToolStripMenuItem();
-            hertz1Gl = new ToolStripMenuItem();
-            hertz07Gl = new ToolStripMenuItem();
-            hertz05Gl = new ToolStripMenuItem();
-            hertz03Gl = new ToolStripMenuItem();
-            hertz01Gl = new ToolStripMenuItem();
-            OutroHighGl = new ToolStripMenuItem();
+            toolTip1 = new ToolTip(components);
+            timer1 = new Timer(components);
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
+            contextMenuStripOpenGl.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             painelExames.SuspendLayout();
             panel1.SuspendLayout();
@@ -248,7 +251,6 @@ namespace PlotagemOpenGL
             panel23.SuspendLayout();
             painelTelaGl.SuspendLayout();
             painelComando.SuspendLayout();
-            contextMenuStripOpenGl.SuspendLayout();
             SuspendLayout();
             // 
             // hScrollBar1
@@ -418,11 +420,11 @@ namespace PlotagemOpenGL
             contextMenuStripOpenGl.ImageScalingSize = new System.Drawing.Size(20, 20);
             contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
             contextMenuStripOpenGl.Name = "contextMenuStripOpenGl";
-            contextMenuStripOpenGl.Size = new System.Drawing.Size(211, 144);
+            contextMenuStripOpenGl.Size = new System.Drawing.Size(179, 116);
             contextMenuStripOpenGl.Opening += ContextMenuStripOpenGl_Opening;
             // 
             // BomDia
-            //             
+            // 
             BomDia.Name = "BomDia";
             BomDia.Size = new System.Drawing.Size(100, 27);
             BomDia.Text = "Bom Dia";
@@ -436,181 +438,181 @@ namespace PlotagemOpenGL
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
             // 
             // LowPassFilterGl
             // 
             LowPassFilterGl.DropDownItems.AddRange(new ToolStripItem[] { NenhumLowGl, hertz70Gl, hertz50Gl, hertz40Gl, hertz35Gl, hertz30Gl, hertz25Gl, hertz20Gl, hertz15Gl, hertz10Gl, hertz5Gl, OutroLowGl });
             LowPassFilterGl.Name = "LowPassFilterGl";
-            LowPassFilterGl.Size = new System.Drawing.Size(210, 24);
+            LowPassFilterGl.Size = new System.Drawing.Size(178, 24);
             LowPassFilterGl.Text = "Low Pass Filter";
             // 
             // NenhumLowGl
             // 
             NenhumLowGl.CheckOnClick = true;
-            NenhumLowGl.Name = "NenhumLow";
-            NenhumLowGl.Size = new System.Drawing.Size(224, 26);
+            NenhumLowGl.Name = "NenhumLowGl";
+            NenhumLowGl.Size = new System.Drawing.Size(148, 26);
             NenhumLowGl.Text = "Nenhum";
             // 
             // hertz70Gl
             // 
             hertz70Gl.CheckOnClick = true;
-            hertz70Gl.Name = "hertz70";
-            hertz70Gl.Size = new System.Drawing.Size(224, 26);
+            hertz70Gl.Name = "hertz70Gl";
+            hertz70Gl.Size = new System.Drawing.Size(148, 26);
             hertz70Gl.Text = "70 hz";
             // 
             // hertz50Gl
             // 
             hertz50Gl.CheckOnClick = true;
-            hertz50Gl.Name = "hertz50";
-            hertz50Gl.Size = new System.Drawing.Size(224, 26);
+            hertz50Gl.Name = "hertz50Gl";
+            hertz50Gl.Size = new System.Drawing.Size(148, 26);
             hertz50Gl.Text = "50 hz";
             // 
             // hertz40Gl
             // 
             hertz40Gl.CheckOnClick = true;
-            hertz40Gl.Name = "hertz40";
-            hertz40Gl.Size = new System.Drawing.Size(224, 26);
+            hertz40Gl.Name = "hertz40Gl";
+            hertz40Gl.Size = new System.Drawing.Size(148, 26);
             hertz40Gl.Text = "40 hz";
             // 
             // hertz35Gl
             // 
             hertz35Gl.CheckOnClick = true;
-            hertz35Gl.Name = "hertz35";
-            hertz35Gl.Size = new System.Drawing.Size(224, 26);
+            hertz35Gl.Name = "hertz35Gl";
+            hertz35Gl.Size = new System.Drawing.Size(148, 26);
             hertz35Gl.Text = "35 hz";
             // 
             // hertz30Gl
             // 
             hertz30Gl.CheckOnClick = true;
-            hertz30Gl.Name = "hertz30";
-            hertz30Gl.Size = new System.Drawing.Size(224, 26);
+            hertz30Gl.Name = "hertz30Gl";
+            hertz30Gl.Size = new System.Drawing.Size(148, 26);
             hertz30Gl.Text = "30 hz";
             // 
             // hertz25Gl
             // 
             hertz25Gl.CheckOnClick = true;
-            hertz25Gl.Name = "hertz25";
-            hertz25Gl.Size = new System.Drawing.Size(224, 26);
+            hertz25Gl.Name = "hertz25Gl";
+            hertz25Gl.Size = new System.Drawing.Size(148, 26);
             hertz25Gl.Text = "25 hz";
             // 
             // hertz20Gl
             // 
             hertz20Gl.CheckOnClick = true;
-            hertz20Gl.Name = "hertz20";
-            hertz20Gl.Size = new System.Drawing.Size(224, 26);
+            hertz20Gl.Name = "hertz20Gl";
+            hertz20Gl.Size = new System.Drawing.Size(148, 26);
             hertz20Gl.Text = "20 hz";
             // 
             // hertz15Gl
             // 
             hertz15Gl.CheckOnClick = true;
-            hertz15Gl.Name = "hertz15";
-            hertz15Gl.Size = new System.Drawing.Size(224, 26);
+            hertz15Gl.Name = "hertz15Gl";
+            hertz15Gl.Size = new System.Drawing.Size(148, 26);
             hertz15Gl.Text = "15 hz";
             // 
             // hertz10Gl
             // 
             hertz10Gl.CheckOnClick = true;
-            hertz10Gl.Name = "hertz10";
-            hertz10Gl.Size = new System.Drawing.Size(224, 26);
+            hertz10Gl.Name = "hertz10Gl";
+            hertz10Gl.Size = new System.Drawing.Size(148, 26);
             hertz10Gl.Text = "10 hz";
             // 
             // hertz5Gl
             // 
             hertz5Gl.CheckOnClick = true;
-            hertz5Gl.Name = "hertz5";
-            hertz5Gl.Size = new System.Drawing.Size(224, 26);
+            hertz5Gl.Name = "hertz5Gl";
+            hertz5Gl.Size = new System.Drawing.Size(148, 26);
             hertz5Gl.Text = "5  hz";
             // 
             // OutroLowGl
             // 
             OutroLowGl.CheckOnClick = true;
-            OutroLowGl.Name = "OutroLow";
-            OutroLowGl.Size = new System.Drawing.Size(224, 26);
+            OutroLowGl.Name = "OutroLowGl";
+            OutroLowGl.Size = new System.Drawing.Size(148, 26);
             OutroLowGl.Text = "Outro";
             // 
             // HighPassFilterGl
             // 
             HighPassFilterGl.DropDownItems.AddRange(new ToolStripItem[] { NenhumHighGl, hertz10HGl, hertz7Gl, hertz5HGl, hertz3Gl, hertz1Gl, hertz07Gl, hertz05Gl, hertz03Gl, hertz01Gl, OutroHighGl });
             HighPassFilterGl.Name = "HighPassFilterGl";
-            HighPassFilterGl.Size = new System.Drawing.Size(210, 24);
+            HighPassFilterGl.Size = new System.Drawing.Size(178, 24);
             HighPassFilterGl.Text = "High Pass Filter";
             // 
             // NenhumHighGl
             // 
             NenhumHighGl.CheckOnClick = true;
-            NenhumHighGl.Name = "NenhumHigh";
-            NenhumHighGl.Size = new System.Drawing.Size(224, 26);
+            NenhumHighGl.Name = "NenhumHighGl";
+            NenhumHighGl.Size = new System.Drawing.Size(148, 26);
             NenhumHighGl.Text = "Nenhum";
             // 
             // hertz10HGl
             // 
             hertz10HGl.CheckOnClick = true;
-            hertz10HGl.Name = "hertz10H";
-            hertz10HGl.Size = new System.Drawing.Size(224, 26);
+            hertz10HGl.Name = "hertz10HGl";
+            hertz10HGl.Size = new System.Drawing.Size(148, 26);
             hertz10HGl.Text = "10 hz";
             // 
             // hertz7Gl
             // 
             hertz7Gl.CheckOnClick = true;
-            hertz7Gl.Name = "hertz7";
-            hertz7Gl.Size = new System.Drawing.Size(224, 26);
+            hertz7Gl.Name = "hertz7Gl";
+            hertz7Gl.Size = new System.Drawing.Size(148, 26);
             hertz7Gl.Text = "7  hz";
             // 
             // hertz5HGl
             // 
             hertz5HGl.CheckOnClick = true;
-            hertz5HGl.Name = "hertz5H";
-            hertz5HGl.Size = new System.Drawing.Size(224, 26);
+            hertz5HGl.Name = "hertz5HGl";
+            hertz5HGl.Size = new System.Drawing.Size(148, 26);
             hertz5HGl.Text = "5  hz";
             // 
             // hertz3Gl
             // 
             hertz3Gl.CheckOnClick = true;
-            hertz3Gl.Name = "hertz3";
-            hertz3Gl.Size = new System.Drawing.Size(224, 26);
+            hertz3Gl.Name = "hertz3Gl";
+            hertz3Gl.Size = new System.Drawing.Size(148, 26);
             hertz3Gl.Text = "3  hz";
             // 
             // hertz1Gl
             // 
             hertz1Gl.CheckOnClick = true;
-            hertz1Gl.Name = "hertz1";
-            hertz1Gl.Size = new System.Drawing.Size(224, 26);
+            hertz1Gl.Name = "hertz1Gl";
+            hertz1Gl.Size = new System.Drawing.Size(148, 26);
             hertz1Gl.Text = "1  hz";
             // 
             // hertz07Gl
             // 
             hertz07Gl.CheckOnClick = true;
-            hertz07Gl.Name = "hertz07";
-            hertz07Gl.Size = new System.Drawing.Size(224, 26);
+            hertz07Gl.Name = "hertz07Gl";
+            hertz07Gl.Size = new System.Drawing.Size(148, 26);
             hertz07Gl.Text = "0,7 hz";
             // 
             // hertz05Gl
             // 
             hertz05Gl.CheckOnClick = true;
-            hertz05Gl.Name = "hertz05";
-            hertz05Gl.Size = new System.Drawing.Size(224, 26);
+            hertz05Gl.Name = "hertz05Gl";
+            hertz05Gl.Size = new System.Drawing.Size(148, 26);
             hertz05Gl.Text = "0,5 hz";
             // 
             // hertz03Gl
             // 
             hertz03Gl.CheckOnClick = true;
-            hertz03Gl.Name = "hertz03";
-            hertz03Gl.Size = new System.Drawing.Size(224, 26);
+            hertz03Gl.Name = "hertz03Gl";
+            hertz03Gl.Size = new System.Drawing.Size(148, 26);
             hertz03Gl.Text = "0,3 hz";
             // 
             // hertz01Gl
             // 
             hertz01Gl.CheckOnClick = true;
-            hertz01Gl.Name = "hertz01";
-            hertz01Gl.Size = new System.Drawing.Size(224, 26);
+            hertz01Gl.Name = "hertz01Gl";
+            hertz01Gl.Size = new System.Drawing.Size(148, 26);
             hertz01Gl.Text = "0,1 hz";
             // 
             // OutroHighGl
             // 
             OutroHighGl.CheckOnClick = true;
-            OutroHighGl.Name = "OutroHigh";
-            OutroHighGl.Size = new System.Drawing.Size(224, 26);
+            OutroHighGl.Name = "OutroHighGl";
+            OutroHighGl.Size = new System.Drawing.Size(148, 26);
             OutroHighGl.Text = "Outro";
             // 
             // contextMenuStrip1
@@ -733,6 +735,7 @@ namespace PlotagemOpenGL
             HighPassFilter.Size = new System.Drawing.Size(211, 24);
             HighPassFilter.Text = "High Pass Filter";
             HighPassFilter.DropDownOpening += toolTripItemDropDown_OpeningHigh;
+            HighPassFilter.DropDownOpened += HighPassFilter_DropDownOpened;
             // 
             // NenhumHigh
             // 
@@ -2125,7 +2128,11 @@ namespace PlotagemOpenGL
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
-            
+            // 
+            // timer1
+            // 
+            timer1.Interval = 20;
+            timer1.Tick += timer1_Tick;
             // 
             // Tela_Plotagem
             // 
@@ -2142,6 +2149,8 @@ namespace PlotagemOpenGL
             Load += Tela_Plotagem_Load;
             ResizeBegin += Tela_Plotagem_ResizeBegin;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
+            contextMenuStripOpenGl.ResumeLayout(false);
+            contextMenuStripOpenGl.PerformLayout();
             contextMenuStrip1.ResumeLayout(false);
             painelExames.ResumeLayout(false);
             panel1.ResumeLayout(false);
@@ -2193,11 +2202,10 @@ namespace PlotagemOpenGL
             painelTelaGl.ResumeLayout(false);
             painelComando.ResumeLayout(false);
             painelComando.PerformLayout();
-            contextMenuStripOpenGl.ResumeLayout(false);
-            contextMenuStripOpenGl.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
+
 
 
 
@@ -2207,6 +2215,9 @@ namespace PlotagemOpenGL
         public static ToolStripItem item2ToolStripMenuItem;
         public static ToolStripItem item3ToolStripMenuItem;
         private static ToolStripMenuItem NenhumLow1;
+        private static ToolStripMenuItem toolStripMenuItem6;
+        private static ToolTip toolTip1;
+        private static Timer timer1;
         private static ContextMenuStrip contextMenuStripOpenGl;
         public static ToolStripMenuItem OutroLow;
         public static ToolStripMenuItem LowPassFilter;
@@ -2394,7 +2405,6 @@ namespace PlotagemOpenGL
         private static ToolStripMenuItem hertz03Gl;
         private static ToolStripMenuItem hertz01Gl;
         private static ToolStripMenuItem OutroHighGl;
-        private static ToolStripMenuItem toolStripMenuItem6;
 
     }
 }
