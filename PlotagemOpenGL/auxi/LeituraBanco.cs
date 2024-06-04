@@ -16,6 +16,7 @@ public class LeituraBanco
         {
             using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
             using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+
             connectionConfigBd.Open();
             connectionDatBd.Open();
             //MessageBox.Show("Conexão bem-sucedida!");
@@ -25,6 +26,7 @@ public class LeituraBanco
 
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
             using var command = new OdbcCommand(query, connectionDatBd);
+
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
             using var adapter = new OdbcDataAdapter(command);
 

@@ -27,6 +27,11 @@ namespace PlotagemOpenGL.auxi
         public static DataTable eventos = new DataTable();
         public static DataTable codEventos = new DataTable();
 
+        public static DataTable tbl_Montagem = new DataTable();
+        public static DataTable tbl_MontCanal = new DataTable();
+        public static DataTable tbl_MontGrav = new DataTable();
+
+
         public static int lastcall;
         public static double metadeavg;
         public static double lisup;
@@ -94,6 +99,7 @@ namespace PlotagemOpenGL.auxi
 
         public static Vector2 locBut;
         public static Vector2 locScale;
+
 
         public static int[] grafSelected;
         public static int[] codSelected;

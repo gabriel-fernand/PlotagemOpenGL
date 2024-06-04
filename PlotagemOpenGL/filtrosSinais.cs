@@ -107,20 +107,20 @@ namespace PlotagemOpenGL
             _prevOutput = output;
             return output;
         }
+
         public static float[] ApplyLowPassFilter(float[] input, float alpha, int rate)
         {
             float[] output = new float[input.Length];
             lowFilt = new Accord.Audio.Filters.LowPassFilter(alpha * 1000, rate);
             Signal sig = Signal.FromArray(input, rate);
             lowFilt.Apply(sig);
+            float[] filteredSignal = sig.ToFloat();
 
             LowPassFilter lowPassFilter = new LowPassFilter(alpha);
-            
-            output = sig.ToFloat();
 
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = lowPassFilter.Apply(input[i]);
+                output[i] = lowPassFilter.Apply(filteredSignal[i]);
             }
             return output;
         }
@@ -128,25 +128,26 @@ namespace PlotagemOpenGL
     public class HighPassFilter
     {
         public static int auxHigh;
-        private float alpha;
-        private double prevInput = 0;
-        private float prevOutput = 0;
+        private float _alpha;
+        private float _prevInput;
+        private float _prevOutput;
         public static Accord.Audio.Filters.HighPassFilter highFilt;
-
 
         public HighPassFilter(float alpha)
         {
-            this.alpha = alpha;
-            prevOutput = 0;
+            _alpha = alpha;
+            _prevInput = 0;
+            _prevOutput = 0;
         }
 
         public float Apply(float input)
         {
-            // Calcula a saída do filtro usando a equação de diferença
-            float output = input - (alpha * input + (1 - alpha) * prevOutput);
-            prevOutput = output;
+            float output = _alpha * (_prevOutput + input - _prevInput);
+            _prevInput = input;
+            _prevOutput = output;
             return output;
         }
+
         public static float[] ApplyHighPassFilter(float[] input, float alpha, int rate)
         {
             HighPassFilter highPassFilter = new HighPassFilter(alpha);
@@ -155,12 +156,11 @@ namespace PlotagemOpenGL
             highFilt = new Accord.Audio.Filters.HighPassFilter(alpha * 1000, rate);
             Signal sig = Signal.FromArray(input, rate);
             highFilt.Apply(sig);
-            output = sig.ToFloat();
+            float[] filteredSignal = sig.ToFloat();
 
             for (int i = 0; i < input.Length; i++)
             {
-
-                output[i] = highPassFilter.Apply(input[i]);
+                output[i] = highPassFilter.Apply(filteredSignal[i]);
             }
             return output;
         }

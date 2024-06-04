@@ -222,6 +222,7 @@ namespace PlotagemOpenGL
             qtdGraficos = new TextBox();
             toolTip1 = new ToolTip(components);
             timer1 = new Timer(components);
+            MouseLoc = new TextBox();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -2075,6 +2076,7 @@ namespace PlotagemOpenGL
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(MouseLoc);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
@@ -2133,6 +2135,19 @@ namespace PlotagemOpenGL
             // 
             timer1.Interval = 20;
             timer1.Tick += timer1_Tick;
+            // 
+            // MouseLoc
+            // 
+            MouseLoc.Anchor = AnchorStyles.None;
+            MouseLoc.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            MouseLoc.Location = new System.Drawing.Point(881, 35);
+            MouseLoc.Name = "MouseLoc";
+            MouseLoc.ReadOnly = true;
+            MouseLoc.Size = new System.Drawing.Size(110, 25);
+            MouseLoc.TabIndex = 58;
+            MouseLoc.Text = "Loc";
+            MouseLoc.TextAlign = HorizontalAlignment.Center;
+            MouseLoc.TextChanged += textBox1_TextChanged;
             // 
             // Tela_Plotagem
             // 
@@ -2216,6 +2231,7 @@ namespace PlotagemOpenGL
         public static ToolStripItem item3ToolStripMenuItem;
         private static ToolStripMenuItem NenhumLow1;
         private static ToolStripMenuItem toolStripMenuItem6;
+        public static TextBox MouseLoc;
         private static ToolTip toolTip1;
         private static Timer timer1;
         private static ContextMenuStrip contextMenuStripOpenGl;

@@ -178,7 +178,7 @@ namespace PlotagemOpenGL.auxi
             plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
             //Metodo para fazer o desenho da linha x0 de cada grafico
-            plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
+            //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
 
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);

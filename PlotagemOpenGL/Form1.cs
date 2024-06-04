@@ -435,6 +435,7 @@ namespace PlotagemOpenGL
             int newHeight = (int)(r.Height * yRatio);
             c.Location = new Point(newX, newY);
             c.Size = new Size(newWidth, newHeight);
+            click = false;
         }
         private void painel_Resize_Control(Control c, Rectangle r)
         {
@@ -608,6 +609,7 @@ namespace PlotagemOpenGL
             }
 
         }
+        static bool click = false;
         private void Play_Click(object sender, EventArgs e)
         {
             LeituraEmMatrizTeste.reorganize();
@@ -641,7 +643,7 @@ namespace PlotagemOpenGL
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
-
+                click = true;
             }
         }
 
@@ -705,6 +707,8 @@ namespace PlotagemOpenGL
 
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
+            Vector2 a;
+
             if (isDrawing)
             {
                 // Update end coordinates as mouse moves
@@ -713,7 +717,11 @@ namespace PlotagemOpenGL
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
+            }
+            if (click)
+            {
+                ConvertToOpenGLCoordinates(e.X, e.Y, out a.X, out a.Y);
+                UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
             }
         }
 
@@ -739,6 +747,10 @@ namespace PlotagemOpenGL
                 ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
             }
+        }
+        private void UpdateLoc(string canal)
+        {
+            MouseLoc.Text = canal;
         }
 
         private void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
@@ -1974,7 +1986,10 @@ namespace PlotagemOpenGL
             scalaLb23.Text = GlobVar.scale[22].ToString("0.00");
 
         }
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
 
+        }
         private void Tela_Plotagem_ResizeBegin(object sender, EventArgs e)
         {
 
@@ -2019,7 +2034,7 @@ namespace PlotagemOpenGL
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
-
+                click = true;
             }
 
         }
@@ -2073,6 +2088,8 @@ namespace PlotagemOpenGL
         }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
+            timer1.Start();
+
             ContextMenuStrip menu = sender as ContextMenuStrip;
             if (menu != null)
             {
@@ -2104,12 +2121,10 @@ namespace PlotagemOpenGL
 
         private void LowPassFilter_DropDownOpened(object sender, System.EventArgs e)
         {
-            for (int i = 0 /*GlobVar.indice*/; i < GlobVar.auxL.Length /*GlobVar.maximaVect*/; i++) { GlobVar.auxL[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
 
         }
         private void HighPassFilter_DropDownOpened(object sender, System.EventArgs e)
         {
-            for (int i = 0 /*GlobVar.indice*/; i < GlobVar.auxL.Length /*GlobVar.maximaVect*/; i++) { GlobVar.auxH[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
         }
         private void UpdateMenuItems(Panel panel, ToolStripItemCollection items, Dictionary<string, bool> filterStates)
         {
@@ -2128,7 +2143,6 @@ namespace PlotagemOpenGL
             if (clickedPanel is Panel panel)
             {
                 UpdateMenuItems(panel, clickedItem.DropDownItems, panelLowFilterStates[panel]);
-                timer1.Start();
             }
         }
         private void toolTripItemDropDown_OpeningHigh(object sender, EventArgs e)
@@ -2364,9 +2378,12 @@ namespace PlotagemOpenGL
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            for (int i = 0 /*GlobVar.indice*/; i < GlobVar.auxL.Length /*GlobVar.maximaVect*/; i++) { GlobVar.auxL[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
+            for (int i = 0 /*GlobVar.indice*/; i < GlobVar.auxL.Length /*GlobVar.maximaVect*/; i++) { GlobVar.auxH[i] = GlobVar.matrizCanal[(GlobVar.nomeCanais.IndexOf(selectedLabelValue)), i]; }
 
-            LowPassFilter.DropDownOpened += LowPassFilter_DropDownOpened;
             timer1.Stop();
         }
+
+        
     }
 }

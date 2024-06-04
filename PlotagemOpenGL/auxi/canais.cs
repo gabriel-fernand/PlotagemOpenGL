@@ -7,6 +7,9 @@ using System.Text;
 using System.Windows.Documents;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+using Accord.Math;
+using System.Linq;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -134,6 +137,17 @@ namespace PlotagemOpenGL.auxi
                     }                    
                 }                
             }
+        }
+        public static string UpMouseLoc(float startY, float[] desenhoLoc)
+        {
+            string Canal;
+            float[] desenhoLocRev = new float[desenhoLoc.Length];
+            desenhoLocRev = desenhoLoc.Reverse().ToArray();
+            int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLocRev, startY);
+            
+            Canal = GlobVar.nomeCanais[GlobVar.grafSelected[YAdjusted]];
+
+            return Canal;
         }
     }
 }
