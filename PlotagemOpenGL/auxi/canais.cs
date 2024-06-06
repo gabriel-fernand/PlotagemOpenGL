@@ -132,7 +132,7 @@ namespace PlotagemOpenGL.auxi
                     {
                         panel.Location = new System.Drawing.Point(0, (int)yCanais[j]);
                         panel.Size = new System.Drawing.Size(pnSizeX, pnSize);
-                        label.Text = GlobVar.nomeCanais[GlobVar.grafSelected[j]];
+                        label.Text = GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Legenda"].ToString();
                         j++;
                     }                    
                 }                
@@ -145,7 +145,7 @@ namespace PlotagemOpenGL.auxi
             desenhoLocRev = desenhoLoc.Reverse().ToArray();
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLocRev, startY);
             
-            Canal = GlobVar.nomeCanais[GlobVar.grafSelected[YAdjusted]];
+            Canal = GlobVar.nomeCanais[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]))];
 
             return Canal;
         }

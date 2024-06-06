@@ -30,7 +30,10 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_Montagem = new DataTable();
         public static DataTable tbl_MontCanal = new DataTable();
         public static DataTable tbl_MontGrav = new DataTable();
+        public static DataTable tbl_TipoExame = new DataTable();
+        public static DataTable tbl_MontagemSelecionada = new DataTable();
 
+        public static string tipoExame;
 
         public static int lastcall;
         public static double metadeavg;
@@ -41,53 +44,6 @@ namespace PlotagemOpenGL.auxi
         public static double qtdgrafico;
 
         public static string[] qtdCanais;
-
-        public static double[] canalA;
-
-        public static double[] canalB;
-
-        public static double[] canalC;
-
-        public static double[] canalD;
-
-        public static double[] canalE;
-
-        public static double[] canalF;
-
-        public static double[] canalG;
-
-        public static double[] canalH;
-
-        public static double[] canalI;
-
-        public static double[] canalJ;
-
-        public static double[] canalK;
-
-        public static double[] canalL;
-
-        public static double[] canalM;
-
-        public static double[] canalN;
-
-        public static double[] canalO;
-
-        public static double[] canalP;
-
-        public static double[] canalQ;
-
-        public static double[] canalR;
-
-        public static double[] canalS;
-
-        public static double[] canalT;
-
-        public static double[] canalU;
-
-        public static double[] canalV;
-
-        public static double[] canalW;
-
 
         public static Vector2 sizeOpenGl;
         public static Vector2 sizePainelExams;

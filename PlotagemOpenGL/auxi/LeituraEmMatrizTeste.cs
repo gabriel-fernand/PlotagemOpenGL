@@ -106,12 +106,14 @@ namespace PlotagemOpenGL.auxi
 
                     }
                 }
+                fs.Close();
+
                 GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
                 //int[] pontF = GlobVar.ponteiroF;
                 GlobVar.matrizCanal = new short[GlobVar.qtdCanais.Length, GlobVar.indiceDat];
 
                 //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
-                for (int linhaCanais = 0; linhaCanais < GlobVar.matrizCanal.GetLength(0); linhaCanais++)
+                for (int linhaCanais = 0; linhaCanais < GlobVar.tbl_MontagemSelecionada.Rows.Count; linhaCanais++)
                 {
                     int colunaCanalIndex = 0;
 
@@ -119,7 +121,7 @@ namespace PlotagemOpenGL.auxi
                     for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
                     {
                         // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                        for (int colunaComp = GlobVar.ponteiroI[linhaCanais]; colunaComp < GlobVar.ponteiroF[linhaCanais]; colunaComp++)
+                        for (int colunaComp = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp < GlobVar.ponteiroF[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp++)
                         {
                             // Certifique-se de não exceder os limites da matrizCanais
                             if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
@@ -137,30 +139,30 @@ namespace PlotagemOpenGL.auxi
                     }
                 }
                 //faz a leitura das taixa de amostra para cada canal, para ajustar as amostras de outros valores a tela de 512 amostras por segundo
-                for (int i = 0; i < GlobVar.matrizCanal.GetLength(0); i++)
+                /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
-                    if (GlobVar.txPorCanal[i] < 512)
+                    if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))] < 512)
                     {
-                        int aux = 512 / GlobVar.txPorCanal[i];
-                        short[] auxx = new short[GlobVar.matrizCanal.GetLength(1)];
-                        for(int j = 0; j < auxx.Length; j++)
-                        {
-                            auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[i, j]);
-                        }
-                        auxx = RemoverMetadeParaFrente(auxx,aux);
-                        auxx = DuplicarArray(auxx, aux);
-                        for (int j = 0; j < GlobVar.matrizCanal.GetLength(1); j++)
-                        {
-                            GlobVar.matrizCanal[i, j] = auxx[j];
-                        }
+                        int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))];
+                        GlobVar.matrizCanal.SetRow<short>(i , RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                     }
-                }
+                }*/
                 for(int i = 0; i < GlobVar.scale.Length; i++)
                 {
                     GlobVar.scale[i] = 0.01f;
                 }
+                                
             }
 
+        }
+        public static short[] SeReferencia(int principal ,int referencia)
+        {
+            short[] novoArray = new short[GlobVar.matrizCanal.Length];
+            for(int i = 0; i < novoArray.Length; i++)
+            {
+                novoArray[i] = GlobVar.matrizCanal[principal,i];
+            }
+            return novoArray;
         }
         public static short[] RemoverMetadeParaFrente(short[] array, int vezes)
         {
@@ -171,7 +173,7 @@ namespace PlotagemOpenGL.auxi
             {
                 novoArray[i] = array[i];
             }
-
+            novoArray = DuplicarArray(novoArray, vezes);
             return novoArray;
         }
         public static short[] DuplicarArray(short[] array, int multiplicacao)

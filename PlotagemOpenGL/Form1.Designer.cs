@@ -39,7 +39,7 @@ namespace PlotagemOpenGL
             fimTela = new TextBox();
             tempoEmTela = new ComboBox();
             velocidadeScroll = new ComboBox();
-            comboBox3 = new ComboBox();
+            MontagemBox = new ComboBox();
             label1 = new Label();
             label2 = new Label();
             label4 = new Label();
@@ -327,16 +327,18 @@ namespace PlotagemOpenGL
             velocidadeScroll.TabIndex = 7;
             velocidadeScroll.SelectedIndexChanged += velocidadeScroll_SelectedIndexChanged;
             // 
-            // comboBox3
+            // MontagemBox
             // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Items.AddRange(new object[] { "Series" });
-            comboBox3.Location = new System.Drawing.Point(535, 4);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new System.Drawing.Size(340, 28);
-            comboBox3.TabIndex = 8;
-            comboBox3.Text = "Series";
-            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
+            MontagemBox.FormattingEnabled = true;
+            MontagemBox.IntegralHeight = false;
+            MontagemBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            MontagemBox.FlatStyle = FlatStyle.System;
+            MontagemBox.Items.AddRange(new object[] { "Series" });
+            MontagemBox.Location = new System.Drawing.Point(535, 4);
+            MontagemBox.Name = "MontagemBox";
+            MontagemBox.Size = new System.Drawing.Size(340, 28);
+            MontagemBox.TabIndex = 8;
+            MontagemBox.SelectedIndexChanged += MontagemBox_SelectedIndexChanged;
             // 
             // label1
             // 
@@ -2086,7 +2088,7 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(fimTela);
             painelComando.Controls.Add(Play);
             painelComando.Controls.Add(tempoEmTela);
-            painelComando.Controls.Add(comboBox3);
+            painelComando.Controls.Add(MontagemBox);
             painelComando.Controls.Add(velocidadeScroll);
             painelComando.Location = new System.Drawing.Point(0, 2);
             painelComando.Name = "painelComando";
@@ -2272,7 +2274,7 @@ namespace PlotagemOpenGL
         public static TextBox fimTela;
         public static ComboBox tempoEmTela;
         public static ComboBox velocidadeScroll;
-        public static ComboBox comboBox3;
+        public static ComboBox MontagemBox;
         public static Label label1;
         public static Label label2;
         public static Label label4;

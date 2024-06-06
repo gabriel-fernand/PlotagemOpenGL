@@ -8,6 +8,7 @@ using System.Windows;
 
 public class LeituraBanco
 {
+    static DataTable sele = new DataTable();
     private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
     private static string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
     public static void BancoRead()
@@ -23,16 +24,36 @@ public class LeituraBanco
 
             string queryConfig = "SELECT * FROM tbl_CadEvento";
             string query = "SELECT * FROM tbl_Eventos";
+            string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
+            string queryTbl_Montagem = "SELECT * FROM tbl_Montagem";
+            string quaryTbl_MontGrav = "SELECT * FROM tbl_MontGrav";
+            string quaryTbl_TipoExame = "SELECT * FROM tbl_TipoExame";
+            string quaryTipoExame = "SELECT TOP 1 CodTipoExame FROM tbl_DadosExame";
 
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
+            using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
+            using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
+            using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
             using var command = new OdbcCommand(query, connectionDatBd);
+            using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
+            using var commandTipoExame = new OdbcCommand(quaryTipoExame, connectionDatBd);
 
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
+            using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
+            using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
+            using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
             using var adapter = new OdbcDataAdapter(command);
+            using var adapterTbl_MontGrav = new OdbcDataAdapter(commandTbl_MontGrav);
+            using var adapterTipoExame = new OdbcDataAdapter(commandTipoExame);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTipoExame.Fill(sele);
             adapterConfig.Fill(GlobVar.codEventos);
             adapter.Fill(GlobVar.eventos);
+            adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
+            adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
+            adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
+            adapterTbl_TipeExam.Fill(GlobVar.tbl_TipoExame);
 
             connectionConfigBd.Close();
             connectionDatBd.Close();
@@ -49,7 +70,69 @@ public class LeituraBanco
             Console.WriteLine($"Erro inesperado: {ex.Message}");
         }
     }
+    public static void AjustaMontagem()
+    {
+        if (sele.Rows.Count > 0)
+        {
+            string p = "P";
+            // Pegando o valor da primeira linha e coluna "CodTipoExame"
+            int codTipoExame = Convert.ToInt32(sele.Rows[0]["CodTipoExame"]) ;
 
+            string tipoExame = null;
+            foreach (DataRow dr in GlobVar.tbl_TipoExame.Rows)
+            {
+                if (Convert.ToInt32(dr["CodTipoExame"]) == codTipoExame)
+                {
+                    tipoExame = dr["TipoExame"].ToString();
+
+                    var codMontagensFiltrados = GlobVar.tbl_Montagem.AsEnumerable()
+                                                .Where(row => row.Field<string>("TipoMontagem") == p)
+                                                .Select(row => row.Field<int>("CodMontagem"))
+                                                .ToList();
+
+                    // Criando um novo DataTable com as linhas filtradas de tbl_MontCanal
+                    DataTable tbl_MontCanalFiltrado = GlobVar.tbl_MontCanal.Clone(); // Clona a estrutura do DataTable original
+
+                    foreach (DataRow row in GlobVar.tbl_MontCanal.Rows)
+                    {
+                        if (codMontagensFiltrados.Contains(row.Field<int>("CodMontagem")))
+                        {
+                            tbl_MontCanalFiltrado.ImportRow(row);
+                        }
+                    }
+
+                    // Ordenando as linhas filtradas
+                    var orderedRows = tbl_MontCanalFiltrado.AsEnumerable()
+                                                            .OrderBy(row => row.Field<int>("CodMontagem"))
+                                                            .ThenBy(row => row.Field<int>("Ordem"));
+
+                    // Limpando GlobVar.tbl_MontCanal e importando as linhas ordenadas
+                    GlobVar.tbl_MontCanal.Clear();
+
+                    foreach (var row in orderedRows)
+                    {
+                        GlobVar.tbl_MontCanal.ImportRow(row);
+                    }
+
+                    // Filtrando e atualizando GlobVar.tbl_Montagem
+                    var montagemFiltrada = GlobVar.tbl_Montagem.AsEnumerable()
+                                                    .Where(row => row.Field<string>("TipoMontagem") == p)
+                                                    .CopyToDataTable();
+
+                    GlobVar.tbl_Montagem.Clear();
+                    foreach (DataRow row in montagemFiltrada.Rows)
+                    {
+                        GlobVar.tbl_Montagem.ImportRow(row);
+                    }
+                    var auxCodMont = GlobVar.tbl_Montagem.AsEnumerable().Where(row => row.Field<string>("DescrMontagem").Equals(GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString())).CopyToDataTable();
+                    int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                    GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == CodMont).CopyToDataTable();
+                    
+                    break;
+                }
+            }
+        }
+    }
     public static void AlteraTable()
     {
         // Supondo que GlobVar.eventos seja o DataTable original

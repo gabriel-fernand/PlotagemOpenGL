@@ -9,6 +9,7 @@ using PlotagemOpenGL.auxi;
 using Accord.Audio;
 using static OpenTK.Graphics.OpenGL.GL;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Accord.Math;
 
 namespace PlotagemOpenGL
 {
@@ -18,7 +19,6 @@ namespace PlotagemOpenGL
         const double w1 = -0.5;
         const double s0 = 0.5;
         const double s1 = 0.5;
-        public static double[] valorout = new double[GlobVar.canalA.Length];//tamanho do vetor de entrada
         public static double[] alterado;
 
         
@@ -64,23 +64,21 @@ namespace PlotagemOpenGL
                         break;
                     }
                 }
-            }            
-            if (GlobVar.txPorCanal[select] < 512)
+            }
+            for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
-                int aux = 512 / GlobVar.txPorCanal[select];
-                short[] auxx = new short[GlobVar.matrizCanal.GetLength(1)];
-                for (int j = 0; j < auxx.Length; j++)
+                if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)
                 {
-                    auxx[j] = Convert.ToInt16(GlobVar.matrizCanal[select, j]);
-                }
-                auxx = LeituraEmMatrizTeste.RemoverMetadeParaFrente(auxx, aux);
-                auxx = LeituraEmMatrizTeste.DuplicarArray(auxx, aux);
-                for (int j = 0; j < GlobVar.matrizCanal.GetLength(1); j++)
-                {
-                    GlobVar.matrizCanal[select, j] = auxx[j];
+                    int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))];
+                    GlobVar.matrizCanal.SetRow<short>(i, LeituraEmMatrizTeste.RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                 }
             }
-            
+            for (int i = 0; i < GlobVar.scale.Length; i++)
+            {
+                GlobVar.scale[i] = 0.01f;
+            }
+
+
         }
         public static void FiltraTodoSinal(float[] input, float alpha, int escolha)
         {

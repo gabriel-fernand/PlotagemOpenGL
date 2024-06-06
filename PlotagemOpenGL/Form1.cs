@@ -16,6 +16,7 @@ using MessageBox = System.Windows.MessageBox;
 using System.ComponentModel;
 using Accord.Math;
 using Accord;
+using System.Data;
 
 
 namespace PlotagemOpenGL
@@ -43,9 +44,6 @@ namespace PlotagemOpenGL
         private Rectangle qtGraf;
         private Rectangle play;
         private Rectangle box3;
-        private Rectangle slLabel;
-        private Rectangle fil;
-        private Rectangle playFil;
         private Rectangle mtg;
 
         private Rectangle btPlusLb1;
@@ -179,6 +177,7 @@ namespace PlotagemOpenGL
             InitializeDedicatedGraphics();
             LeituraBanco.BancoRead();
             LeituraBanco.AlteraTable();
+            LeituraBanco.AjustaMontagem();
             //Canais.LerCanais();
             //Leitura.LerArquivo();
             Leitura.QuantidadeCanais();
@@ -186,6 +185,7 @@ namespace PlotagemOpenGL
 
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
+            rectangleLoad();
             this.Resize += Tela_Plotagem_Resiz;
             this.Resize += painelComando_Resiz;
             this.Resize += Painel_resiz;
@@ -197,6 +197,71 @@ namespace PlotagemOpenGL
             UpdateStyles();
             qtdGraficos.Text = "1";
 
+
+            openglControl1.Focus();
+            GlobVar.colors = new Vector3[]
+            {
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
+                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
+                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
+                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
+                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
+                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f)
+            };
+            GlobVar.sizeOpenGl.X = openglControl1.Width;
+            GlobVar.sizeOpenGl.Y = openglControl1.Height;
+            GlobVar.sizePainelExams.X = painelExames.Width;
+            GlobVar.sizePainelExams.Y = painelExames.Height;
+
+            GlobVar.sizeButtons.X = plusLb1.Width;
+            GlobVar.sizeButtons.Y = plusLb1.Height;
+            GlobVar.sizeLabelExams.X = label1.Width;
+            GlobVar.sizeLabelExams.Y = label1.Height;
+            GlobVar.sizePanelLb.X = panel1.Width;
+            GlobVar.sizePanelLb.Y = panel1.Height;
+
+            GlobVar.locBut.X = plusLb1.Location.X;
+            GlobVar.locScale.X = scalaLb1.Location.X;
+            GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
+            GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
+
+            camera.X = 0.0f;
+            camera.Y = 0.0f;
+            camera.Z = 1.0f;
+            tempoEmTela.SelectedIndex = 2;
+            velocidadeScroll.SelectedIndex = 0;
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            load();
+            //InitializeContextMenu();
+            //this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            //var backlog = new backLog();
+            //backlog.Show();
+
+            toolTip1.SetToolTip(openglControl1, "Teste");
+            Play_OpenGl();
+        }
+        //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
+        private void rectangleLoad()
+        {
             comando = new Rectangle(painelComando.Location, painelComando.Size);
             exExam = new Rectangle(painelExames.Location, painelExames.Size);
             telaGl = new Rectangle(painelTelaGl.Location, painelTelaGl.Size);
@@ -209,7 +274,7 @@ namespace PlotagemOpenGL
             vlScroll = new Rectangle(velocidadeScroll.Location, velocidadeScroll.Size);
             qtGraf = new Rectangle(qtdGraficos.Location, qtdGraficos.Size);
             play = new Rectangle(Play.Location, Play.Size);
-            box3 = new Rectangle(comboBox3.Location, comboBox3.Size);
+            box3 = new Rectangle(MontagemBox.Location, MontagemBox.Size);
             mtg = new Rectangle(playSelect.Location, playSelect.Size);
 
             btPlusLb1 = new Rectangle(plusLb1.Location, plusLb1.Size);
@@ -310,70 +375,17 @@ namespace PlotagemOpenGL
             pn22 = new Rectangle(panel22.Location, panel22.Size);
             pn23 = new Rectangle(panel23.Location, panel23.Size);
 
-            openglControl1.Focus();
-            GlobVar.colors = new Vector3[]
-            {
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f)
-            };
-            GlobVar.sizeOpenGl.X = openglControl1.Width;
-            GlobVar.sizeOpenGl.Y = openglControl1.Height;
-            GlobVar.sizePainelExams.X = painelExames.Width;
-            GlobVar.sizePainelExams.Y = painelExames.Height;
-
-            GlobVar.sizeButtons.X = plusLb1.Width;
-            GlobVar.sizeButtons.Y = plusLb1.Height;
-            GlobVar.sizeLabelExams.X = label1.Width;
-            GlobVar.sizeLabelExams.Y = label1.Height;
-            GlobVar.sizePanelLb.X = panel1.Width;
-            GlobVar.sizePanelLb.Y = panel1.Height;
-
-            GlobVar.locBut.X = plusLb1.Location.X;
-            GlobVar.locScale.X = scalaLb1.Location.X;
-            GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
-            GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
-
-            camera.X = 0.0f;
-            camera.Y = 0.0f;
-            camera.Z = 1.0f;
-            tempoEmTela.SelectedIndex = 2;
-            velocidadeScroll.SelectedIndex = 0;
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
-            load();
-            //InitializeContextMenu();
-            //this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
-            //var backlog = new backLog();
-            //backlog.Show();
-
-            toolTip1.SetToolTip(openglControl1, "Teste");
         }
-
-
         private void load()
         {
+            MontagemBox.Items.Clear();
+            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+            {
+                MontagemBox.Items.Add(row["DescrMontagem"].ToString());
+            }
+            string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+            MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+
             for (int i = 1; i <= 25; i++)
             {
                 FieldInfo panel = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
@@ -425,6 +437,43 @@ namespace PlotagemOpenGL
             GlobVar.auxH = new float[GlobVar.matrizCanal.GetLength(1)];
 
         }
+        private void Play_OpenGl()
+        {
+            LeituraEmMatrizTeste.reorganize();
+            if (String.IsNullOrEmpty(GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()))
+            {
+                System.Windows.MessageBox.Show("Por favor, informe a quantidade de graficos a serem mostradas.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+            }
+            else
+            {
+
+                int alturaTela = (int)openglControl1.Height;
+
+                canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
+                canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.reloc();
+
+
+                gl = openglControl1.OpenGL;
+                plotagem = new Plotagem(gl);
+                openglControl1.DoRender();
+                plotagem.Margem(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
+                plotagem.Traco(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
+                plotagem.DesenhaGrafico(alturaTela, GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                gl.LoadIdentity();
+                gl.Translate(0, 0, 1);
+
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Refresh();
+                UpdateInicioTela();
+                click = true;
+            }
+
+        }
         private void resize_Control(Control c, Rectangle r)
         {
             float xRatio = (float)(this.Width) / (float)(formOriginalSize.Width);
@@ -466,7 +515,7 @@ namespace PlotagemOpenGL
             painelComando_Resize_Control(velocidadeScroll, vlScroll);
             painelComando_Resize_Control(qtdGraficos, qtGraf);
             painelComando_Resize_Control(Play, play);
-            painelComando_Resize_Control(comboBox3, box3);
+            painelComando_Resize_Control(MontagemBox, box3);
             painelComando_Resize_Control(playSelect, mtg);
         }
 
@@ -589,7 +638,10 @@ namespace PlotagemOpenGL
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
         }
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e) { }
+        private void MontagemBox_SelectedIndexChanged(object sender, EventArgs e) 
+        {
+
+        }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
         {
             string texto = qtdGraficos.Text;
@@ -679,29 +731,32 @@ namespace PlotagemOpenGL
 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (click)
             {
-                isDrawing = true;
+                if (e.Button == MouseButtons.Left)
+                {
+                    isDrawing = true;
 
-                // Convert window coordinates to OpenGL coordinates
-                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
+                    // Convert window coordinates to OpenGL coordinates
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
 
-                // Set the initial end coordinates to the starting coordinates
-                Plotagem.endX = Plotagem.startX;
-                Plotagem.endY = Plotagem.startY;
+                    // Set the initial end coordinates to the starting coordinates
+                    Plotagem.endX = Plotagem.startX;
+                    Plotagem.endY = Plotagem.startY;
 
-                // Redraw the control
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                    // Redraw the control
+                    openglControl1.DoRender();
+                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-                isDrawing = false;
+                }
+                if (e.Button == MouseButtons.Right)
+                {
+                    isDrawing = false;
 
-                // Update end coordinates when the mouse button is released
-                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                    // Update end coordinates when the mouse button is released
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
+                }
             }
         }
 
@@ -808,7 +863,6 @@ namespace PlotagemOpenGL
 
             UpdateInicioTela();
         }
-
         private void minusAll_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -834,6 +888,7 @@ namespace PlotagemOpenGL
             }
             UpdateInicioTela();
         }
+
         private void plusLb1_Click(object sender, EventArgs e)
         {
             int alturaTela = (int)openglControl1.Height;
@@ -1663,7 +1718,7 @@ namespace PlotagemOpenGL
 
             if (GlobVar.scale[19] < 0.09)
             {
-                GlobVar.escalaLb20 += 0.01f;
+                GlobVar.scale[19] += 0.01f;
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
@@ -1828,6 +1883,7 @@ namespace PlotagemOpenGL
                 UpdateInicioTela();
             }
         }
+
         private bool isScrollingRight = true;
 
         private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)

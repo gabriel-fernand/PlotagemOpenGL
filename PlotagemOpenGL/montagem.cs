@@ -1,4 +1,5 @@
-﻿using PlotagemOpenGL.auxi;
+﻿using Accord.Math;
+using PlotagemOpenGL.auxi;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -15,8 +16,10 @@ namespace PlotagemOpenGL
         private void InitializeCheckedListBox()
         {
             // Preenche o CheckedListBox com os valores de nomeCanais
-            checkedListBox1.Items.AddRange(GlobVar.nomeCanais);
-
+            for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+            {
+                checkedListBox1.Items.Add(GlobVar.tbl_MontagemSelecionada.Rows[i]["Legenda"]);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -36,11 +39,10 @@ namespace PlotagemOpenGL
                 selectedIndicesList.Add(index);
             }
             Tela_Plotagem.aux = selectedIndicesList.Count;
-            for (int index = 0; index < GlobVar.grafSelected.Length; index++)
-            {
-                GlobVar.grafSelected[index] = 0;
-                GlobVar.codSelected[index] = 0;
-            }
+
+            GlobVar.grafSelected.Clear();
+            GlobVar.codSelected.Clear();
+
             // Inicializa grafSelected com o tamanho de nomeCanais
             for (int i = 0; i < selectedIndicesList.Count; i++)
             {
