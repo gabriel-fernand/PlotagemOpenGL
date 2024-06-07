@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml.Serialization;
 using Accord.Math;
+using System.Data;
+using System.Linq;
 
 
 namespace PlotagemOpenGL.auxi
@@ -25,6 +27,8 @@ namespace PlotagemOpenGL.auxi
             GlobVar.ponteiroF = new int[GlobVar.qtdCanais.Length];
             GlobVar.scale = new double[GlobVar.qtdCanais.Length];
             GlobVar.codCanal = new int[GlobVar.qtdCanais.Length];
+            GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
+            GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
 
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -138,31 +142,137 @@ namespace PlotagemOpenGL.auxi
                         }
                     }
                 }
-                //faz a leitura das taixa de amostra para cada canal, para ajustar as amostras de outros valores a tela de 512 amostras por segundo
-                /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                reorganize();
+
+                //Verifica se o canal da montagem tem referencia a outro canal do exame
+                foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
                 {
-                    if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))] < 512)
+                    int codCanal1 = row.Field<int>("CodCanal1");
+                    int codCanal2 = row.Field<int>("CodCanal2");
+                    if (codCanal2 != -1)
                     {
-                        int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))];
-                        GlobVar.matrizCanal.SetRow<short>(i , RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
+                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), SetReferencia(codCanal1, codCanal2));
                     }
-                }*/
-                for(int i = 0; i < GlobVar.scale.Length; i++)
+                }
+
+                //Verificacao se a filtro no canal
+                foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
                 {
+                    int i = 0;
+                    double? lowHertz = null;
+                    double? highHertz = null;
+                    double? notchHertz = null;
+
+                    if (!row.IsNull("PassaBaixa"))
+                    {
+                        double passaBaixaValue = row.Field<double>("PassaBaixa");
+                        if (passaBaixaValue != 0)
+                        {
+                            lowHertz = passaBaixaValue / 1000;
+                        }
+                    }
+
+                    if (!row.IsNull("PassaAlta"))
+                    {
+                        double passaAltaValue = row.Field<double>("PassaAlta");
+                        if (passaAltaValue != 0)
+                        {
+                            highHertz = passaAltaValue / 1000;
+                        }
+                    }
+
+                    if (!row.IsNull("Notch"))
+                    {
+                        double notchValue = row.Field<double>("Notch");
+                        if (notchValue != 0)
+                        {
+                            notchHertz = notchValue / 1000;
+                        }
+                    }
+
+                    if (lowHertz != null)
+                    {
+                        if (highHertz != null)
+                        {
+                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"])),
+                                BandPassFilter.ApplyBandPassFilter(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))),
+                                (float)lowHertz,
+                                (float)highHertz));
+
+                        }
+                        else
+                        {
+                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"])),
+                                LowPassFilter.ApplyLowPassFilter(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))),
+                                (float)lowHertz,
+                                GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))]));
+                        }
+                    }
+
+
+                    i++;
+                }
+
+
+                    //faz a leitura das taixa de amostra para cada canal, para ajustar as amostras de outros valores a tela de 512 amostras por segundo
+                    /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                    {
+                        if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))] < 512)
+                        {
+                            int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))];
+                            GlobVar.matrizCanal.SetRow<short>(i , RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
+                        }
+                    }*/
+                    for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                {
+                    float scala = (float)(GlobVar.tbl_MontagemSelecionada.Rows[i]["Altura"]) / 100;
                     GlobVar.scale[i] = 0.01f;
                 }
                                 
             }
 
         }
-        public static short[] SeReferencia(int principal ,int referencia)
+        public static short[] SetReferencia(int principal ,int referencia)
         {
-            short[] novoArray = new short[GlobVar.matrizCanal.Length];
-            for(int i = 0; i < novoArray.Length; i++)
+            short[] novoArray = new short[GlobVar.matrizCanal.GetLength(1)];
+            short[] Sla = new short[novoArray.Length];
+            Sla = Referencia(referencia);
+            for (int i = 0; i < novoArray.Length; i++)
             {
-                novoArray[i] = GlobVar.matrizCanal[principal,i];
+                //Verifica se o numero de referencia e negativo para fazer o calculo
+                int aux = Sla[i];
+                if (aux < 0)
+                {
+                    aux *= 1;
+                }
+                novoArray[i] = (short)(GlobVar.matrizCanal[GlobVar.codSelected.IndexOf(principal),i] - aux);
             }
             return novoArray;
+        }
+        public static short[] Referencia(int codReferencia)
+        {
+            // Tamanho do array referencia baseado no número de linhas na matrizCompleta
+            short[] referencia = new short[GlobVar.matrizCanal.GetLength(1)];
+
+            // Encontra os índices de início e fim para a coluna com base em codReferencia
+            int startCol = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf(codReferencia)];
+            int endCol = GlobVar.ponteiroF[GlobVar.codCanal.IndexOf(codReferencia)];
+
+            // Percorre as linhas da matrizCompleta
+            for (int pontRef = 0; pontRef < referencia.Length;)
+            {
+                // Percorre as colunas da matrizCompleta no intervalo especificado por startCol e endCol
+                for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
+                {
+                    for (int colunaComp = startCol; colunaComp < endCol; colunaComp++)
+                    {
+                        // Copia o valor de matrizCompleta para o array linhaValores
+                        referencia[pontRef] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
+                        pontRef++;
+                    }
+                }
+            }
+            return referencia;
         }
         public static short[] RemoverMetadeParaFrente(short[] array, int vezes)
         {
@@ -195,9 +305,10 @@ namespace PlotagemOpenGL.auxi
         }
         public static void reorganize()
         {
-            for(int i = 0;i < GlobVar.grafSelected.Length; i++)
+            for(int i = 0;i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 GlobVar.grafSelected[i] = i;
+                GlobVar.codSelected[i] = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]);
             }
         }
     }

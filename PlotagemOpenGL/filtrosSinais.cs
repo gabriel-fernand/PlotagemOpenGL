@@ -65,14 +65,14 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+            /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)
                 {
                     int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))];
                     GlobVar.matrizCanal.SetRow<short>(i, LeituraEmMatrizTeste.RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                 }
-            }
+            }*/
             for (int i = 0; i < GlobVar.scale.Length; i++)
             {
                 GlobVar.scale[i] = 0.01f;
@@ -106,9 +106,9 @@ namespace PlotagemOpenGL
             return output;
         }
 
-        public static float[] ApplyLowPassFilter(float[] input, float alpha, int rate)
+        public static short[] ApplyLowPassFilter(short[] input, float alpha, int rate)
         {
-            float[] output = new float[input.Length];
+            short[] output = new short[input.Length];
             lowFilt = new Accord.Audio.Filters.LowPassFilter(alpha * 1000, rate);
             Signal sig = Signal.FromArray(input, rate);
             lowFilt.Apply(sig);
@@ -118,7 +118,7 @@ namespace PlotagemOpenGL
 
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = lowPassFilter.Apply(filteredSignal[i]);
+                output[i] = (short)lowPassFilter.Apply(filteredSignal[i]);
             }
             return output;
         }
@@ -179,13 +179,13 @@ namespace PlotagemOpenGL
             float lowPassOutput = _lowPassFilter.Apply(input);
             return _highPassFilter.Apply(lowPassOutput);
         }
-        public static float[] ApplyBandPassFilter(float[] input, float lowAlpha, float highAlpha)
+        public static short[] ApplyBandPassFilter(short[] input, float lowAlpha, float highAlpha)
         {
             BandPassFilter bandPassFilter = new BandPassFilter(lowAlpha, highAlpha);
-            float[] output = new float[input.Length];
+            short[] output = new short[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = bandPassFilter.Apply(input[i]);
+                output[i] = (short)bandPassFilter.Apply(input[i]);
             }
             return output;
         }
