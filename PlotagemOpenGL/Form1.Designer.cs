@@ -900,6 +900,7 @@ namespace PlotagemOpenGL
             // 
             // plusLb1
             // 
+            plusLb1.FlatStyle = FlatStyle.Flat;            
             plusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb1.Location = new System.Drawing.Point(120, 0);
             plusLb1.Name = "plusLb1";

@@ -21,13 +21,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static void DesenhaGrafico(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
-            gl.Color(0.0f, 0.0f, 0.0f);
+            bool text = false;
+            //gl.Color(0.0f, 0.0f, 0.0f);
             int des = qtdGraf - 1;
             for (int i = 0; i < qtdGraf; i++)
             {
                 bool verTx = false;
                 int ponteiroDesenho = 0;
                 int h = GlobVar.indice;
+                float[] color = new float[3];
+
+                color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
+                gl.Color(color[0], color[1], color[2]);
                 if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))] != 512)
                 {
                     verTx = true;
@@ -37,23 +42,40 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                 for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                 {
-
+                    text = false;
+                    if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67) text = true;
                     if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                     else
                     {
-                        if (verTx)
+                        if (text)
                         {
-                            if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
-                            else
-                            {
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] * GlobVar.scale[i]) + desenhoLoc[des]);
-                                h++; //aqui tem plotar 3 graficos diferentes
-                                j += ponteiroDesenho - 1;
-                            }
+                            /*
+                            int y;
+                            short media = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                            if (i == 66) y = 325;
+                            else y = 87;
+                            writeX = ((startX / GlobVar.tmpEmTela) * GlobVar.sizeOpenGl.X) + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
+                            gl.DrawText(h, y, color[0], color[1], color[2], "Arial", 50, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                            gl.DrawText(h, y, color[0], color[1], color[2], "Arial", 50, $"{media}");
+                            h++; //aqui tem plotar 3 graficos diferentes
+                            j += ponteiroDesenho - 1;*/
                         }
                         else
                         {
-                            gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
+                            if (verTx)
+                            {
+                                if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                                else
+                                {
+                                    gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] * GlobVar.scale[i]) + desenhoLoc[des]);
+                                    h++; //aqui tem plotar 3 graficos diferentes
+                                    j += ponteiroDesenho - 1;
+                                }
+                            }
+                            else
+                            {
+                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
+                            }
                         }
                     }
                 }
@@ -79,6 +101,22 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.Disable(OpenGL.GL_LINE_STIPPLE);
 
         }
+        public static float[] ObterComponentesRGB(int formatoRGB)
+        {
+            float[] colorRGB = new float[3];
+            int red = (formatoRGB >> 16) & 0xFF;
+            int green = (formatoRGB >> 8) & 0xFF;
+            int blue = formatoRGB & 0xFF;
 
+            // Normalizar os componentes RGB para o intervalo [0, 1]
+            colorRGB[0] = red / 256f;
+            colorRGB[1] = green / 256f;
+            colorRGB[2] = blue / 256f;
+
+            // Converter os valores para floats
+            string color = $"RGB({colorRGB[0]}, {colorRGB[1]}, {colorRGB[2]})";
+            // Retornar os componentes RGB como um array de floats
+            return colorRGB;
+        }
     }
 }

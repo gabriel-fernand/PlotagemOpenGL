@@ -73,11 +73,6 @@ namespace PlotagemOpenGL
                     GlobVar.matrizCanal.SetRow<short>(i, LeituraEmMatrizTeste.RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                 }
             }*/
-            for (int i = 0; i < GlobVar.scale.Length; i++)
-            {
-                GlobVar.scale[i] = 0.01f;
-            }
-
 
         }
         public static void FiltraTodoSinal(float[] input, float alpha, int escolha)
@@ -91,12 +86,17 @@ namespace PlotagemOpenGL
         public static int auxLow;
         private float _alpha;
         private float _prevOutput;
-        public static Accord.Audio.Filters.LowPassFilter lowFilt;
 
-        public LowPassFilter(float alpha)
+        public LowPassFilter(float cutoffFrequency, float samplingRate)
         {
-            _alpha = alpha;
+            _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
             _prevOutput = 0;
+        }
+
+        private float CalculateAlpha(float cutoffFrequency, float samplingRate)
+        {
+            float omega = 2 * (float)Math.PI * cutoffFrequency;
+            return omega / (omega + samplingRate);
         }
 
         public float Apply(float input)
@@ -106,19 +106,14 @@ namespace PlotagemOpenGL
             return output;
         }
 
-        public static short[] ApplyLowPassFilter(short[] input, float alpha, int rate)
+        public static float[] ApplyLowPassFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            short[] output = new short[input.Length];
-            lowFilt = new Accord.Audio.Filters.LowPassFilter(alpha * 1000, rate);
-            Signal sig = Signal.FromArray(input, rate);
-            lowFilt.Apply(sig);
-            float[] filteredSignal = sig.ToFloat();
+            LowPassFilter lowPassFilter = new LowPassFilter(cutoffFrequency, samplingRate);
 
-            LowPassFilter lowPassFilter = new LowPassFilter(alpha);
-
+            float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = (short)lowPassFilter.Apply(filteredSignal[i]);
+                output[i] = lowPassFilter.Apply(input[i]);
             }
             return output;
         }
@@ -129,13 +124,18 @@ namespace PlotagemOpenGL
         private float _alpha;
         private float _prevInput;
         private float _prevOutput;
-        public static Accord.Audio.Filters.HighPassFilter highFilt;
 
-        public HighPassFilter(float alpha)
+        public HighPassFilter(float cutoffFrequency, float samplingRate)
         {
-            _alpha = alpha;
+            _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
             _prevInput = 0;
             _prevOutput = 0;
+        }
+
+        private float CalculateAlpha(float cutoffFrequency, float samplingRate)
+        {
+            float omega = 2 * (float)Math.PI * cutoffFrequency;
+            return omega / (omega + samplingRate);
         }
 
         public float Apply(float input)
@@ -146,19 +146,14 @@ namespace PlotagemOpenGL
             return output;
         }
 
-        public static float[] ApplyHighPassFilter(float[] input, float alpha, int rate)
+        public static float[] ApplyHighPassFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            HighPassFilter highPassFilter = new HighPassFilter(alpha);
+            HighPassFilter highPassFilter = new HighPassFilter(cutoffFrequency, samplingRate);
 
             float[] output = new float[input.Length];
-            highFilt = new Accord.Audio.Filters.HighPassFilter(alpha * 1000, rate);
-            Signal sig = Signal.FromArray(input, rate);
-            highFilt.Apply(sig);
-            float[] filteredSignal = sig.ToFloat();
-
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = highPassFilter.Apply(filteredSignal[i]);
+                output[i] = highPassFilter.Apply(input[i]);
             }
             return output;
         }
@@ -168,10 +163,10 @@ namespace PlotagemOpenGL
         private LowPassFilter _lowPassFilter;
         private HighPassFilter _highPassFilter;
 
-        public BandPassFilter(float lowAlpha, float highAlpha)
+        public BandPassFilter(float lowCutoffFrequency, float highCutoffFrequency, float samplingRate = 512f)
         {
-            _lowPassFilter = new LowPassFilter(lowAlpha);
-            _highPassFilter = new HighPassFilter(highAlpha);
+            _lowPassFilter = new LowPassFilter(lowCutoffFrequency, samplingRate);
+            _highPassFilter = new HighPassFilter(highCutoffFrequency, samplingRate);
         }
 
         public float Apply(float input)
@@ -179,17 +174,68 @@ namespace PlotagemOpenGL
             float lowPassOutput = _lowPassFilter.Apply(input);
             return _highPassFilter.Apply(lowPassOutput);
         }
-        public static short[] ApplyBandPassFilter(short[] input, float lowAlpha, float highAlpha)
+
+        public static float[] ApplyBandPassFilter(float[] input, float lowCutoffFrequency, float highCutoffFrequency, float samplingRate)
         {
-            BandPassFilter bandPassFilter = new BandPassFilter(lowAlpha, highAlpha);
-            short[] output = new short[input.Length];
+            BandPassFilter bandPassFilter = new BandPassFilter(lowCutoffFrequency, highCutoffFrequency, samplingRate);
+            float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = (short)bandPassFilter.Apply(input[i]);
+                output[i] = bandPassFilter.Apply(input[i]);
             }
             return output;
         }
 
     }
+    public class NotchFilter
+    {
+        private LowPassFilter _lowPassFilter;
+        private HighPassFilter _highPassFilter;
+        private bool _hasLowCutoff;
+        private bool _hasHighCutoff;
 
+        public NotchFilter(float lowCutoffFrequency, float highCutoffFrequency, float samplingRate = 512f)
+        {
+            _hasLowCutoff = lowCutoffFrequency > 0f;
+            _hasHighCutoff = highCutoffFrequency > 0f;
+
+            if (_hasLowCutoff)
+                _lowPassFilter = new LowPassFilter(lowCutoffFrequency, samplingRate);
+
+            if (_hasHighCutoff)
+                _highPassFilter = new HighPassFilter(highCutoffFrequency, samplingRate);
+        }
+
+        public float Apply(float input)
+        {
+            if (_hasLowCutoff && _hasHighCutoff)
+            {
+                float lowPassOutput = _lowPassFilter.Apply(input);
+                return _highPassFilter.Apply(lowPassOutput);
+            }
+            else if (_hasLowCutoff)
+            {
+                return _lowPassFilter.Apply(input);
+            }
+            else if (_hasHighCutoff)
+            {
+                return _highPassFilter.Apply(input);
+            }
+            else
+            {
+                return input; // Sem filtro aplicado
+            }
+        }
+
+        public static float[] ApplyNotchFilter(float[] input, float lowCutoffFrequency, float highCutoffFrequency, float samplingRate)
+        {
+            NotchFilter notchFilter = new NotchFilter(lowCutoffFrequency, highCutoffFrequency, samplingRate);
+            float[] output = new float[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = notchFilter.Apply(input[i]);
+            }
+            return output;
+        }
+    }
 }

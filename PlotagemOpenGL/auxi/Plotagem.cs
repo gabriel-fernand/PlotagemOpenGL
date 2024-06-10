@@ -180,7 +180,7 @@ namespace PlotagemOpenGL.auxi
             //Metodo para fazer o desenho da linha x0 de cada grafico
             //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
-
+            gl.Color(0.0f, 0.0f, 0.0f);
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 
             gl.Begin(OpenGL.GL_QUADS);
@@ -193,6 +193,7 @@ namespace PlotagemOpenGL.auxi
             gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
             gl.End();
 
+            
             double time = (endX - startX) / GlobVar.namos; //Faz o calculo para mostrar quantos segundos o quadrado de evento ta captando
             gl.DrawText(0, 0, 0.0f, 0.0f, 0.0f, "Arial", 50, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
             writeX = ((startX / GlobVar.tmpEmTela) * GlobVar.sizeOpenGl.X) + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela

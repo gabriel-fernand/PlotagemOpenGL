@@ -62,8 +62,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
             }
             int index = Array.IndexOf(valores, valorMaisProximo);
-            return index;
+
+            // Invertendo o índice
+            int indexInvertido = valores.Length - 1 - index;
+
+            return indexInvertido;
         }
+
 
     }
 }
