@@ -42,26 +42,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                 for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
                 {
-                    text = false;
-                    if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67) text = true;
                     if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                     else
                     {
-                        if (text)
-                        {
-                            /*
-                            int y;
-                            short media = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
-                            if (i == 66) y = 325;
-                            else y = 87;
-                            writeX = ((startX / GlobVar.tmpEmTela) * GlobVar.sizeOpenGl.X) + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
-                            gl.DrawText(h, y, color[0], color[1], color[2], "Arial", 50, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
-                            gl.DrawText(h, y, color[0], color[1], color[2], "Arial", 50, $"{media}");
-                            h++; //aqui tem plotar 3 graficos diferentes
-                            j += ponteiroDesenho - 1;*/
-                        }
-                        else
-                        {
                             if (verTx)
                             {
                                 if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
@@ -76,7 +59,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             {
                                 gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
                             }
-                        }
                     }
                 }
                 des--;

@@ -177,6 +177,7 @@ namespace PlotagemOpenGL.auxi
             //classe para fazer o desenho do grafico
             plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
+
             //Metodo para fazer o desenho da linha x0 de cada grafico
             //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
 
@@ -193,12 +194,16 @@ namespace PlotagemOpenGL.auxi
             gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
             gl.End();
 
-            
+            //Classe para testes para fazer os numeros dos canais de respiracao e SP02
+            plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
+
             double time = (endX - startX) / GlobVar.namos; //Faz o calculo para mostrar quantos segundos o quadrado de evento ta captando
-            gl.DrawText(0, 0, 0.0f, 0.0f, 0.0f, "Arial", 50, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
             writeX = ((startX / GlobVar.tmpEmTela) * GlobVar.sizeOpenGl.X) + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
             writeY = (int)EndY[YAdjusted] - 25;
-            gl.DrawText((int)writeX, (int)writeY, 0.0f, 0.0f, 0.0f, "Arial", 18, Canula[YAdjusted] + $" {time:F2} seg");
+            //gl.DrawText((int)writeX, (int)writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 18, Canula[YAdjusted] + $" {time:F2} seg");
+
+
+
             gl.Flush();
             //System.Windows.MessageBox.Show("Tamanho da janela openGl " + Tela_Plotagem.openglControl1.Height + " x " + Tela_Plotagem.openglControl1.Width);
 

@@ -201,7 +201,7 @@ namespace PlotagemOpenGL
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
             UpdateStyles();
-            qtdGraficos.Text = "1";
+            qtdGraficos.Text = "23";
 
 
             openglControl1.Focus();
