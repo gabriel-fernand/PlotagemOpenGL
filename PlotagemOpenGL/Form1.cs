@@ -186,7 +186,6 @@ namespace PlotagemOpenGL
             //Canais.LerCanais();
             //Leitura.LerArquivo();           
             Leitura.QuantidadeCanais();
-            load();
             //Leitura.LeituraDat();
 
             LeituraEmMatrizTeste.LeituraDat();
@@ -247,7 +246,9 @@ namespace PlotagemOpenGL
 
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
+            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
 
+            load();
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
@@ -1905,8 +1906,12 @@ namespace PlotagemOpenGL
                     camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
                     if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
+                    GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
                     GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
                     GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                     GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                     //UpdateInicioTela();
@@ -1914,6 +1919,9 @@ namespace PlotagemOpenGL
                 case Keys.A:
                     camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
                     if (camera.X > 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                    GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
 
                     GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -1939,6 +1947,8 @@ namespace PlotagemOpenGL
             if (!isRight) // Se estiver indo para a esquerda
             {
                 camera.X -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
 
                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -1949,6 +1959,8 @@ namespace PlotagemOpenGL
             else // Se estiver indo para a direita
             {
                 camera.X += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -1973,7 +1985,8 @@ namespace PlotagemOpenGL
             {
                 GlobVar.segundos = int.Parse(match.Value);
             }
-
+            GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
+            GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
             GlobVar.inicioTela = 0;

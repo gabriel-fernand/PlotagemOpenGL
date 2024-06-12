@@ -47,7 +47,7 @@ namespace PlotagemOpenGL
             for (int i = 0; i < selectedIndicesList.Count; i++)
             {
                 GlobVar.grafSelected[i] = selectedIndicesList[i];
-                GlobVar.codSelected[i] = GlobVar.codCanal[selectedIndicesList[i]];
+                GlobVar.codSelected[i] = GlobVar.codCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))];
             }
 
         }

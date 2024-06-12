@@ -33,18 +33,24 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                 gl.Color(color[0], color[1], color[2]);
-                if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))] != 512)
+                if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)
                 {
-                    verTx = true;
-                    ponteiroDesenho = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))];
-
+                    
                 }
-                gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
+                else
                 {
-                    if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
-                    else
+                    if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))] != 512)
                     {
+                        verTx = true;
+                        ponteiroDesenho = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))];
+
+                    }
+                    gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
+                    for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
+                    {
+                        if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                        else
+                        {
                             if (verTx)
                             {
                                 if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
@@ -59,6 +65,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             {
                                 gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
                             }
+                        }
                     }
                 }
                 des--;

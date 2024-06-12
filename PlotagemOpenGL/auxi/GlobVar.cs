@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpGL;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
@@ -68,12 +69,17 @@ namespace PlotagemOpenGL.auxi
         public static int[] txPorCanal;
         public static int[] codCanal;
         public static double[] scale;
+        public static bool[] SomenteNums;
 
         public static float[] auxL;
         public static float[] auxH;
 
+
+
         public static int maximaVect = 130000;
         public static int indice = 0;
+        public static int indiceNumero = 0;
+        public static int maximaNumero; // = (int)GlobVar.sizeOpenGl.X;
         public static float[] desenhoLoc;
 
         public static float saltoTelas;
@@ -82,6 +88,10 @@ namespace PlotagemOpenGL.auxi
         public static int namos = 512;
         public static int segundos = 30;
         public static int tmpEmTela = 240;
+        public static int finalTelaNumerico;
+
+        public static int namosNumerico = 8;
+        public static int tmpEmTelaNumerico = 240;
 
         public static int inicioTela;
         public static int finalTela;

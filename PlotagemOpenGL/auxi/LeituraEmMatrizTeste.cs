@@ -29,6 +29,7 @@ namespace PlotagemOpenGL.auxi
             GlobVar.codCanal = new int[GlobVar.qtdCanais.Length];
             GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
             GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
+            GlobVar.SomenteNums = new bool[2];
 
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -244,6 +245,11 @@ namespace PlotagemOpenGL.auxi
                         GlobVar.matrizCanal.SetRow<short>(i , RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                     }
                 }*/
+
+                //Verifica se o canal esta para aparecer em Numero ou Grafico
+                GlobVar.SomenteNums[0] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[13]["InverteSinal"];
+                GlobVar.SomenteNums[1] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[20]["InverteSinal"];
+
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
                     float scala = (float)(GlobVar.tbl_MontagemSelecionada.Rows[i]["Altura"]) / 100;
