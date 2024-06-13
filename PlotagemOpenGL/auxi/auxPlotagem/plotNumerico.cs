@@ -76,14 +76,30 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                                 int y;
 
-                                int aux = 0;
-                                float me = 0;
-                                for (int g = j; g < j + 8; g++)
+                                int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+
+                                if(posi <= (21502 - 2110) && posi >= (21502 + 2110)) // CIMA
                                 {
-                                    //if(GlobVar.matrizCanal[GlobVar.grafSelected[i], g] < 0) { GlobVar.matrizCanal[GlobVar.grafSelected[i], g] *= -1;  }
-                                    aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
+                                    txtEmTela = "ã";
                                 }
-                                me = aux / 8;
+                                else if (posi <= (-4070 - 2110) && posi >= (-4070 + 2110)) // DIREITA
+                                {
+                                    txtEmTela = "á";
+                                }
+                                else if (posi <= (-16887 - 2110) && posi >= (-16887 + 2110)) //BAIXO
+                                {
+                                    txtEmTela = "ä";
+                                }
+                                else if (posi <= (-14031 - 2110) && posi >= (-14031 + 2110)) // ESQUERDA
+                                {
+                                    txtEmTela = "â";
+                                }
+                                else
+                                {
+                                    txtEmTela = "ã";
+
+                                }
+
 
                                 txtEmTela = "ã";
                                 float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
