@@ -10,6 +10,7 @@ using Accord.Audio;
 using static OpenTK.Graphics.OpenGL.GL;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Accord.Math;
+using System.Data;
 
 namespace PlotagemOpenGL
 {
@@ -65,6 +66,16 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
+            {
+                int codCanal1 = select;
+                int codCanal2 = row.Field<int>("CodCanal2");
+                if (codCanal2 != -1)
+                {
+                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
+                }
+            }
+
             /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)

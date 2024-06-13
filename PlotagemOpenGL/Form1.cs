@@ -20,6 +20,7 @@ using System.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Animation;
 using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 
 
 namespace PlotagemOpenGL
@@ -446,9 +447,101 @@ namespace PlotagemOpenGL
                 }
             }
             int auxxx = GlobVar.maximaVect - GlobVar.indice;
-
-
+            UpdateFilterStates();
         }
+
+        private void UpdateFilterStates()
+        {
+            int panelIndex = 1;
+            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
+            {
+                double? lowHertz = row.Field<double?>("PassaBaixa");
+                double? highHertz = row.Field<double?>("PassaAlta");
+                double? notchHertz = row.Field<double?>("Notch");
+
+                FieldInfo panelField = typeof(Tela_Plotagem).GetField($"panel{panelIndex}", BindingFlags.Static | BindingFlags.Public);
+                if (panelField != null)
+                {
+                    Panel pn = (Panel)panelField.GetValue(this);
+                    if (pn != null)
+                    {
+                        UpdateLowFilterState(pn, lowHertz);
+                        UpdateHighFilterState(pn, highHertz);
+                        UpdateNotchFilterState(pn, notchHertz);
+                    }
+                }
+                panelIndex++;
+            }
+        }
+
+        private void UpdateLowFilterState(Panel panel, double? lowHertz)
+        {
+            if (lowHertz.HasValue)
+            {
+                foreach (var key in panelLowFilterStates[panel].Keys.ToList())
+                {
+                    panelLowFilterStates[panel][key] = false;
+                }
+                if (lowHertz.Value == 70) panelLowFilterStates[panel]["hertz70"] = true;
+                else if (lowHertz.Value == 50) panelLowFilterStates[panel]["hertz50"] = true;
+                else if (lowHertz.Value == 40) panelLowFilterStates[panel]["hertz40"] = true;
+                else if (lowHertz.Value == 35) panelLowFilterStates[panel]["hertz35"] = true;
+                else if (lowHertz.Value == 30) panelLowFilterStates[panel]["hertz30"] = true;
+                else if (lowHertz.Value == 25) panelLowFilterStates[panel]["hertz25"] = true;
+                else if (lowHertz.Value == 20) panelLowFilterStates[panel]["hertz20"] = true;
+                else if (lowHertz.Value == 15) panelLowFilterStates[panel]["hertz15"] = true;
+                else if (lowHertz.Value == 10) panelLowFilterStates[panel]["hertz10"] = true;
+                else if (lowHertz.Value == 5) panelLowFilterStates[panel]["hertz5"] = true;
+                else panelLowFilterStates[panel]["OutroLow"] = true;
+            }
+            else
+            {
+                panelLowFilterStates[panel]["NenhumLow"] = true;
+            }
+        }
+
+        private void UpdateHighFilterState(Panel panel, double? highHertz)
+        {
+            if (highHertz.HasValue)
+            {
+                foreach (var key in panelHighFilterStates[panel].Keys.ToList())
+                {
+                    panelHighFilterStates[panel][key] = false;
+                }
+                if (highHertz.Value == 10) panelHighFilterStates[panel]["hertz10H"] = true;
+                else if (highHertz.Value == 7) panelHighFilterStates[panel]["Hertz7"] = true;
+                else if (highHertz.Value == 5) panelHighFilterStates[panel]["hertz5H"] = true;
+                else if (highHertz.Value == 3) panelHighFilterStates[panel]["hertz3"] = true;
+                else if (highHertz.Value == 1) panelHighFilterStates[panel]["hertz1"] = true;
+                else if (highHertz.Value == 0.7) panelHighFilterStates[panel]["hertz07"] = true;
+                else if (highHertz.Value == 0.5) panelHighFilterStates[panel]["hertz05"] = true;
+                else if (highHertz.Value == 0.3) panelHighFilterStates[panel]["hertz03"] = true;
+                else panelHighFilterStates[panel]["outroHigh"] = true;
+            }
+            else
+            {
+                panelHighFilterStates[panel]["NenhumHigh"] = true;
+            }
+        }
+
+        private void UpdateNotchFilterState(Panel panel, double? notchHertz)
+        {
+            if (notchHertz.HasValue)
+            {
+                foreach (var key in panelNotchFilterStates[panel].Keys.ToList())
+                {
+                    panelNotchFilterStates[panel][key] = false;
+                }
+                if (notchHertz.Value == 60) panelNotchFilterStates[panel]["hertz60N"] = true;
+                else if (notchHertz.Value == 50) panelNotchFilterStates[panel]["hertz50N"] = true;
+                else panelNotchFilterStates[panel]["OutroNotch"] = true;
+            }
+            else
+            {
+                panelNotchFilterStates[panel]["NenhumNotch"] = true;
+            }
+        }
+
         private void Play_OpenGl()
         {
             LeituraEmMatrizTeste.reorganize();
@@ -1987,6 +2080,8 @@ namespace PlotagemOpenGL
             }
             GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
             GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
+            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
             GlobVar.inicioTela = 0;
