@@ -47,7 +47,6 @@ namespace PlotagemOpenGL
         {
             int colunaCanalIndex = 0;
             int ponteiro = GlobVar.codCanal.IndexOf(select);
-
             for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
             {
                 // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
@@ -67,18 +66,13 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            /*
-            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
+
+            int codCanal1 = select;
+            int codCanal2 = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[(GlobVar.codSelected.IndexOf(select))]["CodCanal2"]);
+            if (codCanal2 != -1)
             {
-                int codCanal1 = select;
-                int codCanal2 = row.Field<int>("CodCanal2");
-                if (codCanal2 != -1)
-                {
-                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
-                }
+                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
             }
-            
-            */
             /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)

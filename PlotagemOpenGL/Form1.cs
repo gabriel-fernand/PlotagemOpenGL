@@ -2645,7 +2645,6 @@ namespace PlotagemOpenGL
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                             PlotagemOpenGL.HighPassFilter.auxHigh += 1;
                         }
-                        GlobVar.auxH.Clear();
                     }
                 }
                 else
