@@ -46,17 +46,18 @@ namespace PlotagemOpenGL
         public static void VoltaMatriz(Int16 select)
         {
             int colunaCanalIndex = 0;
+            int ponteiro = GlobVar.codCanal.IndexOf(select);
 
             for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
             {
                 // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                for (int colunaComp = GlobVar.ponteiroI[select]; colunaComp < GlobVar.ponteiroF[select]; colunaComp++)
+                for (int colunaComp = GlobVar.ponteiroI[ponteiro]; colunaComp < GlobVar.ponteiroF[ponteiro]; colunaComp++)
                 {
                     // Certifique-se de não exceder os limites da matrizCanais
                     if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
                     {
                         // Copia o valor de matrizCompleta para matrizCanal
-                        GlobVar.matrizCanal[select, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
+                        GlobVar.matrizCanal[GlobVar.codSelected.IndexOf(select), colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                         colunaCanalIndex++;
                     }
                     else
@@ -66,6 +67,7 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+            /*
             foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
             {
                 int codCanal1 = select;
@@ -75,7 +77,8 @@ namespace PlotagemOpenGL
                     GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
                 }
             }
-
+            
+            */
             /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)
@@ -84,10 +87,6 @@ namespace PlotagemOpenGL
                     GlobVar.matrizCanal.SetRow<short>(i, LeituraEmMatrizTeste.RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                 }
             }*/
-
-        }
-        public static void FiltraTodoSinal(float[] input, float alpha, int escolha)
-        {
 
         }
 

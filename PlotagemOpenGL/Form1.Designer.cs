@@ -404,12 +404,12 @@ namespace PlotagemOpenGL
             // 
             openglControl1.ContextMenuStrip = contextMenuStripOpenGl;
             openglControl1.DrawFPS = false;
-            openglControl1.Location = new System.Drawing.Point(181, 81);
+            openglControl1.Location = new System.Drawing.Point(122, 81);
             openglControl1.Margin = new Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.Size = new System.Drawing.Size(816, 597);
+            openglControl1.Size = new System.Drawing.Size(879, 597);
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
@@ -861,26 +861,29 @@ namespace PlotagemOpenGL
             painelExames.Controls.Add(panel23);
             painelExames.Location = new System.Drawing.Point(2, 79);
             painelExames.Name = "painelExames";
-            painelExames.Size = new System.Drawing.Size(172, 599);
+            painelExames.Size = new System.Drawing.Size(117, 599);
             painelExames.TabIndex = 51;
             // 
             // panel1
             // 
             panel1.BorderStyle = BorderStyle.Fixed3D;
-            panel1.Controls.Add(scalaLb1);
             panel1.Controls.Add(minusLb1);
             panel1.Controls.Add(plusLb1);
             panel1.Controls.Add(label1);
+            panel1.Controls.Add(scalaLb1);
             panel1.Location = new System.Drawing.Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(172, 25);
+            panel1.Size = new System.Drawing.Size(117, 25);
             panel1.TabIndex = 78;
+            //panel1.MouseMove += Panel1_MouseMove;
+            //panel1.MouseUp += Panel1_MouseMove;
+            //panel1.MouseLeave += Panel_MouseLeave;
             // 
             // scalaLb1
             // 
             scalaLb1.AutoSize = true;
             scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb1.Location = new System.Drawing.Point(87, 0);
+            scalaLb1.Location = new System.Drawing.Point(60, 0);
             scalaLb1.Name = "scalaLb1";
             scalaLb1.Size = new System.Drawing.Size(29, 20);
             scalaLb1.TabIndex = 16;
@@ -889,7 +892,7 @@ namespace PlotagemOpenGL
             // minusLb1
             // 
             minusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb1.Location = new System.Drawing.Point(120, 13);
+            minusLb1.Location = new System.Drawing.Point(62, 13);
             minusLb1.Name = "minusLb1";
             minusLb1.Size = new System.Drawing.Size(45, 13);
             minusLb1.TabIndex = 15;
@@ -897,12 +900,14 @@ namespace PlotagemOpenGL
             minusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb1.UseVisualStyleBackColor = true;
             minusLb1.Click += minusLb1_Click;
+            minusLb1.MouseUp += MinusLb1_MouseUp;
+            //minusLb1.Hide();
             // 
             // plusLb1
             // 
             plusLb1.FlatStyle = FlatStyle.Flat;            
             plusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb1.Location = new System.Drawing.Point(120, 0);
+            plusLb1.Location = new System.Drawing.Point(62, 0);
             plusLb1.Name = "plusLb1";
             plusLb1.Size = new System.Drawing.Size(45, 13);
             plusLb1.TabIndex = 14;
@@ -910,24 +915,25 @@ namespace PlotagemOpenGL
             plusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb1.UseVisualStyleBackColor = true;
             plusLb1.Click += plusLb1_Click;
+            //plusLb1.Hide();
             // 
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
-            panel2.Controls.Add(scalaLb2);
             panel2.Controls.Add(minusLb2);
             panel2.Controls.Add(plusLb2);
             panel2.Controls.Add(label2);
+            panel2.Controls.Add(scalaLb2);
             panel2.Location = new System.Drawing.Point(0, 26);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(172, 25);
+            panel2.Size = new System.Drawing.Size(117, 25);
             panel2.TabIndex = 79;
             // 
             // scalaLb2
             // 
             scalaLb2.AutoSize = true;
             scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb2.Location = new System.Drawing.Point(87, 0);
+            scalaLb2.Location = new System.Drawing.Point(60, 0);
             scalaLb2.Name = "scalaLb2";
             scalaLb2.Size = new System.Drawing.Size(29, 20);
             scalaLb2.TabIndex = 17;
@@ -936,7 +942,7 @@ namespace PlotagemOpenGL
             // minusLb2
             // 
             minusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb2.Location = new System.Drawing.Point(120, 13);
+            minusLb2.Location = new System.Drawing.Point(62, 13);
             minusLb2.Name = "minusLb2";
             minusLb2.Size = new System.Drawing.Size(45, 13);
             minusLb2.TabIndex = 17;
@@ -947,7 +953,7 @@ namespace PlotagemOpenGL
             // plusLb2
             // 
             plusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb2.Location = new System.Drawing.Point(120, 0);
+            plusLb2.Location = new System.Drawing.Point(62, 0);
             plusLb2.Name = "plusLb2";
             plusLb2.Size = new System.Drawing.Size(45, 13);
             plusLb2.TabIndex = 16;
@@ -958,20 +964,20 @@ namespace PlotagemOpenGL
             // panel3
             // 
             panel3.BorderStyle = BorderStyle.Fixed3D;
-            panel3.Controls.Add(scalaLb3);
             panel3.Controls.Add(minusLb3);
             panel3.Controls.Add(plusLb3);
+            panel3.Controls.Add(scalaLb3);
             panel3.Controls.Add(label3);
             panel3.Location = new System.Drawing.Point(0, 52);
             panel3.Name = "panel3";
-            panel3.Size = new System.Drawing.Size(172, 25);
+            panel3.Size = new System.Drawing.Size(117, 25);
             panel3.TabIndex = 80;
             // 
             // scalaLb3
             // 
             scalaLb3.AutoSize = true;
             scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb3.Location = new System.Drawing.Point(87, 0);
+            scalaLb3.Location = new System.Drawing.Point(60, 0);
             scalaLb3.Name = "scalaLb3";
             scalaLb3.Size = new System.Drawing.Size(29, 20);
             scalaLb3.TabIndex = 18;
@@ -980,7 +986,7 @@ namespace PlotagemOpenGL
             // minusLb3
             // 
             minusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb3.Location = new System.Drawing.Point(120, 13);
+            minusLb3.Location = new System.Drawing.Point(62, 13);
             minusLb3.Name = "minusLb3";
             minusLb3.Size = new System.Drawing.Size(45, 13);
             minusLb3.TabIndex = 19;
@@ -991,7 +997,7 @@ namespace PlotagemOpenGL
             // plusLb3
             // 
             plusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb3.Location = new System.Drawing.Point(120, 0);
+            plusLb3.Location = new System.Drawing.Point(62, 0);
             plusLb3.Name = "plusLb3";
             plusLb3.Size = new System.Drawing.Size(45, 13);
             plusLb3.TabIndex = 18;
@@ -1002,20 +1008,20 @@ namespace PlotagemOpenGL
             // panel4
             // 
             panel4.BorderStyle = BorderStyle.Fixed3D;
-            panel4.Controls.Add(scalaLb4);
             panel4.Controls.Add(minusLb4);
             panel4.Controls.Add(plusLb4);
+            panel4.Controls.Add(scalaLb4);
             panel4.Controls.Add(label4);
             panel4.Location = new System.Drawing.Point(0, 78);
             panel4.Name = "panel4";
-            panel4.Size = new System.Drawing.Size(172, 25);
+            panel4.Size = new System.Drawing.Size(117, 25);
             panel4.TabIndex = 80;
             // 
             // scalaLb4
             // 
             scalaLb4.AutoSize = true;
             scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb4.Location = new System.Drawing.Point(87, 0);
+            scalaLb4.Location = new System.Drawing.Point(60, 0);
             scalaLb4.Name = "scalaLb4";
             scalaLb4.Size = new System.Drawing.Size(29, 20);
             scalaLb4.TabIndex = 20;
@@ -1024,7 +1030,7 @@ namespace PlotagemOpenGL
             // minusLb4
             // 
             minusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb4.Location = new System.Drawing.Point(120, 13);
+            minusLb4.Location = new System.Drawing.Point(62, 13);
             minusLb4.Name = "minusLb4";
             minusLb4.Size = new System.Drawing.Size(45, 13);
             minusLb4.TabIndex = 21;
@@ -1035,7 +1041,7 @@ namespace PlotagemOpenGL
             // plusLb4
             // 
             plusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb4.Location = new System.Drawing.Point(120, 0);
+            plusLb4.Location = new System.Drawing.Point(62, 0);
             plusLb4.Name = "plusLb4";
             plusLb4.Size = new System.Drawing.Size(45, 13);
             plusLb4.TabIndex = 20;
@@ -1046,20 +1052,20 @@ namespace PlotagemOpenGL
             // panel5
             // 
             panel5.BorderStyle = BorderStyle.Fixed3D;
-            panel5.Controls.Add(scalaLb5);
             panel5.Controls.Add(minusLb5);
             panel5.Controls.Add(plusLb5);
             panel5.Controls.Add(label5);
+            panel5.Controls.Add(scalaLb5);
             panel5.Location = new System.Drawing.Point(0, 104);
             panel5.Name = "panel5";
-            panel5.Size = new System.Drawing.Size(172, 25);
+            panel5.Size = new System.Drawing.Size(117, 25);
             panel5.TabIndex = 80;
             // 
             // scalaLb5
             // 
             scalaLb5.AutoSize = true;
             scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb5.Location = new System.Drawing.Point(87, 0);
+            scalaLb5.Location = new System.Drawing.Point(60, 0);
             scalaLb5.Name = "scalaLb5";
             scalaLb5.Size = new System.Drawing.Size(29, 20);
             scalaLb5.TabIndex = 22;
@@ -1068,7 +1074,7 @@ namespace PlotagemOpenGL
             // minusLb5
             // 
             minusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb5.Location = new System.Drawing.Point(120, 13);
+            minusLb5.Location = new System.Drawing.Point(62, 13);
             minusLb5.Name = "minusLb5";
             minusLb5.Size = new System.Drawing.Size(45, 13);
             minusLb5.TabIndex = 23;
@@ -1079,7 +1085,7 @@ namespace PlotagemOpenGL
             // plusLb5
             // 
             plusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb5.Location = new System.Drawing.Point(120, 0);
+            plusLb5.Location = new System.Drawing.Point(62, 0);
             plusLb5.Name = "plusLb5";
             plusLb5.Size = new System.Drawing.Size(45, 13);
             plusLb5.TabIndex = 22;
@@ -1090,20 +1096,20 @@ namespace PlotagemOpenGL
             // panel6
             // 
             panel6.BorderStyle = BorderStyle.Fixed3D;
-            panel6.Controls.Add(scalaLb6);
             panel6.Controls.Add(minusLb6);
             panel6.Controls.Add(plusLb6);
             panel6.Controls.Add(label6);
+            panel6.Controls.Add(scalaLb6);
             panel6.Location = new System.Drawing.Point(0, 130);
             panel6.Name = "panel6";
-            panel6.Size = new System.Drawing.Size(172, 25);
+            panel6.Size = new System.Drawing.Size(117, 25);
             panel6.TabIndex = 80;
             // 
             // scalaLb6
             // 
             scalaLb6.AutoSize = true;
             scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb6.Location = new System.Drawing.Point(87, 0);
+            scalaLb6.Location = new System.Drawing.Point(60, 0);
             scalaLb6.Name = "scalaLb6";
             scalaLb6.Size = new System.Drawing.Size(29, 20);
             scalaLb6.TabIndex = 24;
@@ -1112,7 +1118,7 @@ namespace PlotagemOpenGL
             // minusLb6
             // 
             minusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb6.Location = new System.Drawing.Point(120, 13);
+            minusLb6.Location = new System.Drawing.Point(62, 13);
             minusLb6.Name = "minusLb6";
             minusLb6.Size = new System.Drawing.Size(45, 13);
             minusLb6.TabIndex = 30;
@@ -1124,7 +1130,7 @@ namespace PlotagemOpenGL
             // plusLb6
             // 
             plusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb6.Location = new System.Drawing.Point(120, 0);
+            plusLb6.Location = new System.Drawing.Point(62, 0);
             plusLb6.Name = "plusLb6";
             plusLb6.Size = new System.Drawing.Size(45, 13);
             plusLb6.TabIndex = 29;
@@ -1146,20 +1152,20 @@ namespace PlotagemOpenGL
             // panel7
             // 
             panel7.BorderStyle = BorderStyle.Fixed3D;
-            panel7.Controls.Add(scalaLb7);
             panel7.Controls.Add(plusLb7);
             panel7.Controls.Add(minusLb7);
             panel7.Controls.Add(label7);
+            panel7.Controls.Add(scalaLb7);
             panel7.Location = new System.Drawing.Point(0, 156);
             panel7.Name = "panel7";
-            panel7.Size = new System.Drawing.Size(172, 25);
+            panel7.Size = new System.Drawing.Size(117, 25);
             panel7.TabIndex = 80;
             // 
             // scalaLb7
             // 
             scalaLb7.AutoSize = true;
             scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb7.Location = new System.Drawing.Point(87, 0);
+            scalaLb7.Location = new System.Drawing.Point(60, 0);
             scalaLb7.Name = "scalaLb7";
             scalaLb7.Size = new System.Drawing.Size(29, 20);
             scalaLb7.TabIndex = 31;
@@ -1168,7 +1174,7 @@ namespace PlotagemOpenGL
             // plusLb7
             // 
             plusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb7.Location = new System.Drawing.Point(120, 0);
+            plusLb7.Location = new System.Drawing.Point(62, 0);
             plusLb7.Name = "plusLb7";
             plusLb7.Size = new System.Drawing.Size(45, 13);
             plusLb7.TabIndex = 32;
@@ -1179,7 +1185,7 @@ namespace PlotagemOpenGL
             // minusLb7
             // 
             minusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb7.Location = new System.Drawing.Point(120, 13);
+            minusLb7.Location = new System.Drawing.Point(62, 13);
             minusLb7.Name = "minusLb7";
             minusLb7.Size = new System.Drawing.Size(45, 13);
             minusLb7.TabIndex = 31;
@@ -1200,20 +1206,20 @@ namespace PlotagemOpenGL
             // panel8
             // 
             panel8.BorderStyle = BorderStyle.Fixed3D;
-            panel8.Controls.Add(scalaLb8);
             panel8.Controls.Add(minusLb8);
             panel8.Controls.Add(plusLb8);
             panel8.Controls.Add(label8);
+            panel8.Controls.Add(scalaLb8);
             panel8.Location = new System.Drawing.Point(0, 182);
             panel8.Name = "panel8";
-            panel8.Size = new System.Drawing.Size(172, 25);
+            panel8.Size = new System.Drawing.Size(117, 25);
             panel8.TabIndex = 80;
             // 
             // scalaLb8
             // 
             scalaLb8.AutoSize = true;
             scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb8.Location = new System.Drawing.Point(87, 0);
+            scalaLb8.Location = new System.Drawing.Point(60, 0);
             scalaLb8.Name = "scalaLb8";
             scalaLb8.Size = new System.Drawing.Size(29, 20);
             scalaLb8.TabIndex = 33;
@@ -1222,7 +1228,7 @@ namespace PlotagemOpenGL
             // minusLb8
             // 
             minusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb8.Location = new System.Drawing.Point(120, 13);
+            minusLb8.Location = new System.Drawing.Point(62, 13);
             minusLb8.Name = "minusLb8";
             minusLb8.Size = new System.Drawing.Size(45, 13);
             minusLb8.TabIndex = 34;
@@ -1233,7 +1239,7 @@ namespace PlotagemOpenGL
             // plusLb8
             // 
             plusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb8.Location = new System.Drawing.Point(120, 0);
+            plusLb8.Location = new System.Drawing.Point(62, 0);
             plusLb8.Name = "plusLb8";
             plusLb8.Size = new System.Drawing.Size(45, 13);
             plusLb8.TabIndex = 33;
@@ -1254,20 +1260,20 @@ namespace PlotagemOpenGL
             // panel9
             // 
             panel9.BorderStyle = BorderStyle.Fixed3D;
-            panel9.Controls.Add(scalaLb9);
             panel9.Controls.Add(minusLb9);
             panel9.Controls.Add(plusLb9);
             panel9.Controls.Add(label9);
+            panel9.Controls.Add(scalaLb9);
             panel9.Location = new System.Drawing.Point(0, 208);
             panel9.Name = "panel9";
-            panel9.Size = new System.Drawing.Size(172, 25);
+            panel9.Size = new System.Drawing.Size(117, 25);
             panel9.TabIndex = 80;
             // 
             // scalaLb9
             // 
             scalaLb9.AutoSize = true;
             scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb9.Location = new System.Drawing.Point(87, 0);
+            scalaLb9.Location = new System.Drawing.Point(60, 0);
             scalaLb9.Name = "scalaLb9";
             scalaLb9.Size = new System.Drawing.Size(29, 20);
             scalaLb9.TabIndex = 35;
@@ -1276,7 +1282,7 @@ namespace PlotagemOpenGL
             // minusLb9
             // 
             minusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb9.Location = new System.Drawing.Point(120, 13);
+            minusLb9.Location = new System.Drawing.Point(62, 13);
             minusLb9.Name = "minusLb9";
             minusLb9.Size = new System.Drawing.Size(45, 13);
             minusLb9.TabIndex = 36;
@@ -1287,7 +1293,7 @@ namespace PlotagemOpenGL
             // plusLb9
             // 
             plusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb9.Location = new System.Drawing.Point(120, 0);
+            plusLb9.Location = new System.Drawing.Point(62, 0);
             plusLb9.Name = "plusLb9";
             plusLb9.Size = new System.Drawing.Size(45, 13);
             plusLb9.TabIndex = 35;
@@ -1308,20 +1314,20 @@ namespace PlotagemOpenGL
             // panel10
             // 
             panel10.BorderStyle = BorderStyle.Fixed3D;
-            panel10.Controls.Add(scalaLb10);
             panel10.Controls.Add(minusLb10);
             panel10.Controls.Add(plusLb10);
             panel10.Controls.Add(label10);
+            panel10.Controls.Add(scalaLb10);
             panel10.Location = new System.Drawing.Point(0, 234);
             panel10.Name = "panel10";
-            panel10.Size = new System.Drawing.Size(172, 25);
+            panel10.Size = new System.Drawing.Size(117, 25);
             panel10.TabIndex = 80;
             // 
             // scalaLb10
             // 
             scalaLb10.AutoSize = true;
             scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb10.Location = new System.Drawing.Point(87, 0);
+            scalaLb10.Location = new System.Drawing.Point(60, 0);
             scalaLb10.Name = "scalaLb10";
             scalaLb10.Size = new System.Drawing.Size(29, 20);
             scalaLb10.TabIndex = 37;
@@ -1330,7 +1336,7 @@ namespace PlotagemOpenGL
             // minusLb10
             // 
             minusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb10.Location = new System.Drawing.Point(120, 13);
+            minusLb10.Location = new System.Drawing.Point(62, 13);
             minusLb10.Name = "minusLb10";
             minusLb10.Size = new System.Drawing.Size(45, 13);
             minusLb10.TabIndex = 38;
@@ -1341,7 +1347,7 @@ namespace PlotagemOpenGL
             // plusLb10
             // 
             plusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb10.Location = new System.Drawing.Point(120, 0);
+            plusLb10.Location = new System.Drawing.Point(62, 0);
             plusLb10.Name = "plusLb10";
             plusLb10.Size = new System.Drawing.Size(45, 13);
             plusLb10.TabIndex = 37;
@@ -1362,20 +1368,20 @@ namespace PlotagemOpenGL
             // panel11
             // 
             panel11.BorderStyle = BorderStyle.Fixed3D;
-            panel11.Controls.Add(scalaLb11);
             panel11.Controls.Add(minusLb11);
             panel11.Controls.Add(plusLb11);
             panel11.Controls.Add(label11);
+            panel11.Controls.Add(scalaLb11);
             panel11.Location = new System.Drawing.Point(0, 260);
             panel11.Name = "panel11";
-            panel11.Size = new System.Drawing.Size(172, 25);
+            panel11.Size = new System.Drawing.Size(117, 25);
             panel11.TabIndex = 80;
             // 
             // scalaLb11
             // 
             scalaLb11.AutoSize = true;
             scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb11.Location = new System.Drawing.Point(87, 0);
+            scalaLb11.Location = new System.Drawing.Point(60, 0);
             scalaLb11.Name = "scalaLb11";
             scalaLb11.Size = new System.Drawing.Size(29, 20);
             scalaLb11.TabIndex = 39;
@@ -1384,7 +1390,7 @@ namespace PlotagemOpenGL
             // minusLb11
             // 
             minusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb11.Location = new System.Drawing.Point(120, 13);
+            minusLb11.Location = new System.Drawing.Point(62, 13);
             minusLb11.Name = "minusLb11";
             minusLb11.Size = new System.Drawing.Size(45, 13);
             minusLb11.TabIndex = 45;
@@ -1396,7 +1402,7 @@ namespace PlotagemOpenGL
             // plusLb11
             // 
             plusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb11.Location = new System.Drawing.Point(120, 0);
+            plusLb11.Location = new System.Drawing.Point(62, 0);
             plusLb11.Name = "plusLb11";
             plusLb11.Size = new System.Drawing.Size(45, 13);
             plusLb11.TabIndex = 44;
@@ -1418,20 +1424,20 @@ namespace PlotagemOpenGL
             // panel12
             // 
             panel12.BorderStyle = BorderStyle.Fixed3D;
-            panel12.Controls.Add(scalaLb12);
             panel12.Controls.Add(plusLb12);
             panel12.Controls.Add(minusLb12);
             panel12.Controls.Add(label12);
+            panel12.Controls.Add(scalaLb12);
             panel12.Location = new System.Drawing.Point(0, 286);
             panel12.Name = "panel12";
-            panel12.Size = new System.Drawing.Size(172, 25);
+            panel12.Size = new System.Drawing.Size(117, 25);
             panel12.TabIndex = 80;
             // 
             // scalaLb12
             // 
             scalaLb12.AutoSize = true;
             scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb12.Location = new System.Drawing.Point(87, 0);
+            scalaLb12.Location = new System.Drawing.Point(60, 0);
             scalaLb12.Name = "scalaLb12";
             scalaLb12.Size = new System.Drawing.Size(29, 20);
             scalaLb12.TabIndex = 46;
@@ -1440,7 +1446,7 @@ namespace PlotagemOpenGL
             // plusLb12
             // 
             plusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb12.Location = new System.Drawing.Point(120, 0);
+            plusLb12.Location = new System.Drawing.Point(62, 0);
             plusLb12.Name = "plusLb12";
             plusLb12.Size = new System.Drawing.Size(45, 13);
             plusLb12.TabIndex = 47;
@@ -1451,7 +1457,7 @@ namespace PlotagemOpenGL
             // minusLb12
             // 
             minusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb12.Location = new System.Drawing.Point(120, 13);
+            minusLb12.Location = new System.Drawing.Point(62, 13);
             minusLb12.Name = "minusLb12";
             minusLb12.Size = new System.Drawing.Size(45, 13);
             minusLb12.TabIndex = 46;
@@ -1472,20 +1478,20 @@ namespace PlotagemOpenGL
             // panel13
             // 
             panel13.BorderStyle = BorderStyle.Fixed3D;
-            panel13.Controls.Add(scalaLb13);
             panel13.Controls.Add(minusLb13);
             panel13.Controls.Add(plusLb13);
             panel13.Controls.Add(label13);
+            panel13.Controls.Add(scalaLb13);
             panel13.Location = new System.Drawing.Point(0, 312);
             panel13.Name = "panel13";
-            panel13.Size = new System.Drawing.Size(172, 25);
+            panel13.Size = new System.Drawing.Size(117, 25);
             panel13.TabIndex = 80;
             // 
             // scalaLb13
             // 
             scalaLb13.AutoSize = true;
             scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb13.Location = new System.Drawing.Point(87, 0);
+            scalaLb13.Location = new System.Drawing.Point(60, 0);
             scalaLb13.Name = "scalaLb13";
             scalaLb13.Size = new System.Drawing.Size(29, 20);
             scalaLb13.TabIndex = 48;
@@ -1494,7 +1500,7 @@ namespace PlotagemOpenGL
             // minusLb13
             // 
             minusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb13.Location = new System.Drawing.Point(120, 13);
+            minusLb13.Location = new System.Drawing.Point(62, 13);
             minusLb13.Name = "minusLb13";
             minusLb13.Size = new System.Drawing.Size(45, 13);
             minusLb13.TabIndex = 49;
@@ -1505,7 +1511,7 @@ namespace PlotagemOpenGL
             // plusLb13
             // 
             plusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb13.Location = new System.Drawing.Point(120, 0);
+            plusLb13.Location = new System.Drawing.Point(62, 0);
             plusLb13.Name = "plusLb13";
             plusLb13.Size = new System.Drawing.Size(45, 13);
             plusLb13.TabIndex = 48;
@@ -1526,20 +1532,20 @@ namespace PlotagemOpenGL
             // panel14
             // 
             panel14.BorderStyle = BorderStyle.Fixed3D;
-            panel14.Controls.Add(scalaLb14);
             panel14.Controls.Add(minusLb14);
             panel14.Controls.Add(plusLb14);
             panel14.Controls.Add(label14);
+            panel14.Controls.Add(scalaLb14);
             panel14.Location = new System.Drawing.Point(0, 338);
             panel14.Name = "panel14";
-            panel14.Size = new System.Drawing.Size(172, 25);
+            panel14.Size = new System.Drawing.Size(117, 25);
             panel14.TabIndex = 80;
             // 
             // scalaLb14
             // 
             scalaLb14.AutoSize = true;
             scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb14.Location = new System.Drawing.Point(87, 0);
+            scalaLb14.Location = new System.Drawing.Point(60, 0);
             scalaLb14.Name = "scalaLb14";
             scalaLb14.Size = new System.Drawing.Size(29, 20);
             scalaLb14.TabIndex = 50;
@@ -1548,7 +1554,7 @@ namespace PlotagemOpenGL
             // minusLb14
             // 
             minusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb14.Location = new System.Drawing.Point(120, 13);
+            minusLb14.Location = new System.Drawing.Point(62, 13);
             minusLb14.Name = "minusLb14";
             minusLb14.Size = new System.Drawing.Size(45, 13);
             minusLb14.TabIndex = 51;
@@ -1559,7 +1565,7 @@ namespace PlotagemOpenGL
             // plusLb14
             // 
             plusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb14.Location = new System.Drawing.Point(120, 0);
+            plusLb14.Location = new System.Drawing.Point(62, 0);
             plusLb14.Name = "plusLb14";
             plusLb14.Size = new System.Drawing.Size(45, 13);
             plusLb14.TabIndex = 50;
@@ -1580,20 +1586,20 @@ namespace PlotagemOpenGL
             // panel15
             // 
             panel15.BorderStyle = BorderStyle.Fixed3D;
-            panel15.Controls.Add(scalaLb15);
             panel15.Controls.Add(minusLb15);
             panel15.Controls.Add(plusLb15);
             panel15.Controls.Add(label15);
+            panel15.Controls.Add(scalaLb15);
             panel15.Location = new System.Drawing.Point(0, 363);
             panel15.Name = "panel15";
-            panel15.Size = new System.Drawing.Size(172, 25);
+            panel15.Size = new System.Drawing.Size(117, 25);
             panel15.TabIndex = 80;
             // 
             // scalaLb15
             // 
             scalaLb15.AutoSize = true;
             scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb15.Location = new System.Drawing.Point(87, 0);
+            scalaLb15.Location = new System.Drawing.Point(60, 0);
             scalaLb15.Name = "scalaLb15";
             scalaLb15.Size = new System.Drawing.Size(29, 20);
             scalaLb15.TabIndex = 52;
@@ -1602,7 +1608,7 @@ namespace PlotagemOpenGL
             // minusLb15
             // 
             minusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb15.Location = new System.Drawing.Point(120, 13);
+            minusLb15.Location = new System.Drawing.Point(62, 13);
             minusLb15.Name = "minusLb15";
             minusLb15.Size = new System.Drawing.Size(45, 13);
             minusLb15.TabIndex = 53;
@@ -1613,7 +1619,7 @@ namespace PlotagemOpenGL
             // plusLb15
             // 
             plusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb15.Location = new System.Drawing.Point(120, 0);
+            plusLb15.Location = new System.Drawing.Point(62, 0);
             plusLb15.Name = "plusLb15";
             plusLb15.Size = new System.Drawing.Size(45, 13);
             plusLb15.TabIndex = 52;
@@ -1634,20 +1640,20 @@ namespace PlotagemOpenGL
             // panel16
             // 
             panel16.BorderStyle = BorderStyle.Fixed3D;
-            panel16.Controls.Add(scalaLb16);
             panel16.Controls.Add(minusLb16);
             panel16.Controls.Add(plusLb16);
             panel16.Controls.Add(label16);
+            panel16.Controls.Add(scalaLb16);
             panel16.Location = new System.Drawing.Point(0, 390);
             panel16.Name = "panel16";
-            panel16.Size = new System.Drawing.Size(172, 25);
+            panel16.Size = new System.Drawing.Size(117, 25);
             panel16.TabIndex = 80;
             // 
             // scalaLb16
             // 
             scalaLb16.AutoSize = true;
             scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb16.Location = new System.Drawing.Point(87, 0);
+            scalaLb16.Location = new System.Drawing.Point(60, 0);
             scalaLb16.Name = "scalaLb16";
             scalaLb16.Size = new System.Drawing.Size(29, 20);
             scalaLb16.TabIndex = 54;
@@ -1656,7 +1662,7 @@ namespace PlotagemOpenGL
             // minusLb16
             // 
             minusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb16.Location = new System.Drawing.Point(120, 13);
+            minusLb16.Location = new System.Drawing.Point(62, 13);
             minusLb16.Name = "minusLb16";
             minusLb16.Size = new System.Drawing.Size(45, 13);
             minusLb16.TabIndex = 60;
@@ -1668,7 +1674,7 @@ namespace PlotagemOpenGL
             // plusLb16
             // 
             plusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb16.Location = new System.Drawing.Point(120, 0);
+            plusLb16.Location = new System.Drawing.Point(62, 0);
             plusLb16.Name = "plusLb16";
             plusLb16.Size = new System.Drawing.Size(45, 13);
             plusLb16.TabIndex = 59;
@@ -1690,20 +1696,20 @@ namespace PlotagemOpenGL
             // panel17
             // 
             panel17.BorderStyle = BorderStyle.Fixed3D;
-            panel17.Controls.Add(scalaLb17);
             panel17.Controls.Add(plusLb17);
             panel17.Controls.Add(minusLb17);
             panel17.Controls.Add(label17);
+            panel17.Controls.Add(scalaLb17);
             panel17.Location = new System.Drawing.Point(0, 416);
             panel17.Name = "panel17";
-            panel17.Size = new System.Drawing.Size(172, 25);
+            panel17.Size = new System.Drawing.Size(117, 25);
             panel17.TabIndex = 80;
             // 
             // scalaLb17
             // 
             scalaLb17.AutoSize = true;
             scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb17.Location = new System.Drawing.Point(87, 0);
+            scalaLb17.Location = new System.Drawing.Point(60, 0);
             scalaLb17.Name = "scalaLb17";
             scalaLb17.Size = new System.Drawing.Size(29, 20);
             scalaLb17.TabIndex = 61;
@@ -1712,7 +1718,7 @@ namespace PlotagemOpenGL
             // plusLb17
             // 
             plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb17.Location = new System.Drawing.Point(120, 0);
+            plusLb17.Location = new System.Drawing.Point(62, 0);
             plusLb17.Name = "plusLb17";
             plusLb17.Size = new System.Drawing.Size(45, 13);
             plusLb17.TabIndex = 62;
@@ -1723,7 +1729,7 @@ namespace PlotagemOpenGL
             // minusLb17
             // 
             minusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb17.Location = new System.Drawing.Point(120, 13);
+            minusLb17.Location = new System.Drawing.Point(62, 13);
             minusLb17.Name = "minusLb17";
             minusLb17.Size = new System.Drawing.Size(45, 13);
             minusLb17.TabIndex = 61;
@@ -1744,20 +1750,20 @@ namespace PlotagemOpenGL
             // panel18
             // 
             panel18.BorderStyle = BorderStyle.Fixed3D;
-            panel18.Controls.Add(scalaLb18);
             panel18.Controls.Add(minusLb18);
             panel18.Controls.Add(plusLb18);
             panel18.Controls.Add(label18);
+            panel18.Controls.Add(scalaLb18);
             panel18.Location = new System.Drawing.Point(0, 442);
             panel18.Name = "panel18";
-            panel18.Size = new System.Drawing.Size(172, 25);
+            panel18.Size = new System.Drawing.Size(117, 25);
             panel18.TabIndex = 81;
             // 
             // scalaLb18
             // 
             scalaLb18.AutoSize = true;
             scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb18.Location = new System.Drawing.Point(87, 0);
+            scalaLb18.Location = new System.Drawing.Point(60, 0);
             scalaLb18.Name = "scalaLb18";
             scalaLb18.Size = new System.Drawing.Size(29, 20);
             scalaLb18.TabIndex = 63;
@@ -1766,7 +1772,7 @@ namespace PlotagemOpenGL
             // minusLb18
             // 
             minusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb18.Location = new System.Drawing.Point(120, 13);
+            minusLb18.Location = new System.Drawing.Point(62, 13);
             minusLb18.Name = "minusLb18";
             minusLb18.Size = new System.Drawing.Size(45, 13);
             minusLb18.TabIndex = 64;
@@ -1777,7 +1783,7 @@ namespace PlotagemOpenGL
             // plusLb18
             // 
             plusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb18.Location = new System.Drawing.Point(120, 0);
+            plusLb18.Location = new System.Drawing.Point(62, 0);
             plusLb18.Name = "plusLb18";
             plusLb18.Size = new System.Drawing.Size(45, 13);
             plusLb18.TabIndex = 63;
@@ -1798,20 +1804,20 @@ namespace PlotagemOpenGL
             // panel19
             // 
             panel19.BorderStyle = BorderStyle.Fixed3D;
-            panel19.Controls.Add(scalaLb19);
             panel19.Controls.Add(minusLb19);
             panel19.Controls.Add(plusLb19);
             panel19.Controls.Add(label19);
+            panel19.Controls.Add(scalaLb19);
             panel19.Location = new System.Drawing.Point(0, 468);
             panel19.Name = "panel19";
-            panel19.Size = new System.Drawing.Size(172, 25);
+            panel19.Size = new System.Drawing.Size(117, 25);
             panel19.TabIndex = 82;
             // 
             // scalaLb19
             // 
             scalaLb19.AutoSize = true;
             scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb19.Location = new System.Drawing.Point(87, 0);
+            scalaLb19.Location = new System.Drawing.Point(60, 0);
             scalaLb19.Name = "scalaLb19";
             scalaLb19.Size = new System.Drawing.Size(29, 20);
             scalaLb19.TabIndex = 65;
@@ -1820,7 +1826,7 @@ namespace PlotagemOpenGL
             // minusLb19
             // 
             minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb19.Location = new System.Drawing.Point(120, 13);
+            minusLb19.Location = new System.Drawing.Point(62, 13);
             minusLb19.Name = "minusLb19";
             minusLb19.Size = new System.Drawing.Size(45, 13);
             minusLb19.TabIndex = 66;
@@ -1831,7 +1837,7 @@ namespace PlotagemOpenGL
             // plusLb19
             // 
             plusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb19.Location = new System.Drawing.Point(120, 0);
+            plusLb19.Location = new System.Drawing.Point(62, 0);
             plusLb19.Name = "plusLb19";
             plusLb19.Size = new System.Drawing.Size(45, 13);
             plusLb19.TabIndex = 65;
@@ -1852,20 +1858,20 @@ namespace PlotagemOpenGL
             // panel20
             // 
             panel20.BorderStyle = BorderStyle.Fixed3D;
-            panel20.Controls.Add(scalaLb20);
             panel20.Controls.Add(minusLb20);
             panel20.Controls.Add(plusLb20);
             panel20.Controls.Add(label20);
+            panel20.Controls.Add(scalaLb20);
             panel20.Location = new System.Drawing.Point(0, 494);
             panel20.Name = "panel20";
-            panel20.Size = new System.Drawing.Size(172, 25);
+            panel20.Size = new System.Drawing.Size(117, 25);
             panel20.TabIndex = 82;
             // 
             // scalaLb20
             // 
             scalaLb20.AutoSize = true;
             scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb20.Location = new System.Drawing.Point(87, 0);
+            scalaLb20.Location = new System.Drawing.Point(60, 0);
             scalaLb20.Name = "scalaLb20";
             scalaLb20.Size = new System.Drawing.Size(29, 20);
             scalaLb20.TabIndex = 67;
@@ -1874,7 +1880,7 @@ namespace PlotagemOpenGL
             // minusLb20
             // 
             minusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb20.Location = new System.Drawing.Point(120, 13);
+            minusLb20.Location = new System.Drawing.Point(62, 13);
             minusLb20.Name = "minusLb20";
             minusLb20.Size = new System.Drawing.Size(45, 13);
             minusLb20.TabIndex = 68;
@@ -1885,7 +1891,7 @@ namespace PlotagemOpenGL
             // plusLb20
             // 
             plusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb20.Location = new System.Drawing.Point(120, 0);
+            plusLb20.Location = new System.Drawing.Point(62, 0);
             plusLb20.Name = "plusLb20";
             plusLb20.Size = new System.Drawing.Size(45, 13);
             plusLb20.TabIndex = 67;
@@ -1906,20 +1912,20 @@ namespace PlotagemOpenGL
             // panel21
             // 
             panel21.BorderStyle = BorderStyle.Fixed3D;
-            panel21.Controls.Add(scalaLb21);
             panel21.Controls.Add(minusLb21);
             panel21.Controls.Add(plusLb21);
             panel21.Controls.Add(label21);
+            panel21.Controls.Add(scalaLb21);
             panel21.Location = new System.Drawing.Point(0, 520);
             panel21.Name = "panel21";
-            panel21.Size = new System.Drawing.Size(172, 25);
+            panel21.Size = new System.Drawing.Size(117, 25);
             panel21.TabIndex = 82;
             // 
             // scalaLb21
             // 
             scalaLb21.AutoSize = true;
             scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb21.Location = new System.Drawing.Point(87, 0);
+            scalaLb21.Location = new System.Drawing.Point(60, 0);
             scalaLb21.Name = "scalaLb21";
             scalaLb21.Size = new System.Drawing.Size(29, 20);
             scalaLb21.TabIndex = 69;
@@ -1928,7 +1934,7 @@ namespace PlotagemOpenGL
             // minusLb21
             // 
             minusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb21.Location = new System.Drawing.Point(120, 13);
+            minusLb21.Location = new System.Drawing.Point(62, 13);
             minusLb21.Name = "minusLb21";
             minusLb21.Size = new System.Drawing.Size(45, 13);
             minusLb21.TabIndex = 73;
@@ -1939,7 +1945,7 @@ namespace PlotagemOpenGL
             // plusLb21
             // 
             plusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb21.Location = new System.Drawing.Point(120, 0);
+            plusLb21.Location = new System.Drawing.Point(62, 0);
             plusLb21.Name = "plusLb21";
             plusLb21.Size = new System.Drawing.Size(45, 13);
             plusLb21.TabIndex = 72;
@@ -1960,20 +1966,20 @@ namespace PlotagemOpenGL
             // panel22
             // 
             panel22.BorderStyle = BorderStyle.Fixed3D;
-            panel22.Controls.Add(scalaLb22);
             panel22.Controls.Add(minusLb22);
             panel22.Controls.Add(plusLb22);
             panel22.Controls.Add(label22);
+            panel22.Controls.Add(scalaLb22);
             panel22.Location = new System.Drawing.Point(0, 546);
             panel22.Name = "panel22";
-            panel22.Size = new System.Drawing.Size(172, 25);
+            panel22.Size = new System.Drawing.Size(117, 25);
             panel22.TabIndex = 82;
             // 
             // scalaLb22
             // 
             scalaLb22.AutoSize = true;
             scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb22.Location = new System.Drawing.Point(87, 0);
+            scalaLb22.Location = new System.Drawing.Point(60, 0);
             scalaLb22.Name = "scalaLb22";
             scalaLb22.Size = new System.Drawing.Size(29, 20);
             scalaLb22.TabIndex = 74;
@@ -1982,7 +1988,7 @@ namespace PlotagemOpenGL
             // minusLb22
             // 
             minusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb22.Location = new System.Drawing.Point(120, 13);
+            minusLb22.Location = new System.Drawing.Point(62, 13);
             minusLb22.Name = "minusLb22";
             minusLb22.Size = new System.Drawing.Size(45, 13);
             minusLb22.TabIndex = 75;
@@ -1993,7 +1999,7 @@ namespace PlotagemOpenGL
             // plusLb22
             // 
             plusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb22.Location = new System.Drawing.Point(120, 0);
+            plusLb22.Location = new System.Drawing.Point(62, 0);
             plusLb22.Name = "plusLb22";
             plusLb22.Size = new System.Drawing.Size(45, 13);
             plusLb22.TabIndex = 74;
@@ -2014,20 +2020,20 @@ namespace PlotagemOpenGL
             // panel23
             // 
             panel23.BorderStyle = BorderStyle.Fixed3D;
-            panel23.Controls.Add(scalaLb23);
             panel23.Controls.Add(minusLb23);
             panel23.Controls.Add(label23);
             panel23.Controls.Add(plusLb23);
+            panel23.Controls.Add(scalaLb23);
             panel23.Location = new System.Drawing.Point(0, 572);
             panel23.Name = "panel23";
-            panel23.Size = new System.Drawing.Size(172, 25);
+            panel23.Size = new System.Drawing.Size(117, 25);
             panel23.TabIndex = 82;
             // 
             // scalaLb23
             // 
             scalaLb23.AutoSize = true;
             scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb23.Location = new System.Drawing.Point(87, 0);
+            scalaLb23.Location = new System.Drawing.Point(60, 0);
             scalaLb23.Name = "scalaLb23";
             scalaLb23.Size = new System.Drawing.Size(29, 20);
             scalaLb23.TabIndex = 76;
@@ -2036,7 +2042,7 @@ namespace PlotagemOpenGL
             // minusLb23
             // 
             minusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb23.Location = new System.Drawing.Point(120, 13);
+            minusLb23.Location = new System.Drawing.Point(62, 13);
             minusLb23.Name = "minusLb23";
             minusLb23.Size = new System.Drawing.Size(45, 13);
             minusLb23.TabIndex = 77;
@@ -2057,7 +2063,7 @@ namespace PlotagemOpenGL
             // plusLb23
             // 
             plusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb23.Location = new System.Drawing.Point(120, 0);
+            plusLb23.Location = new System.Drawing.Point(62, 0);
             plusLb23.Name = "plusLb23";
             plusLb23.Size = new System.Drawing.Size(45, 13);
             plusLb23.TabIndex = 76;
@@ -2223,8 +2229,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
-
 
 
 

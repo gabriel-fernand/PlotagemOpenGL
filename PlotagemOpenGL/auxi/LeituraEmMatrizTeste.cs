@@ -213,7 +213,7 @@ namespace PlotagemOpenGL.auxi
                     {
                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
                                     ShortToFloat(HighPassFilter.ApplyHighPassFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)highHertz, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
-
+                        
                     }
 
                     if (notchHertz != null)
@@ -223,7 +223,7 @@ namespace PlotagemOpenGL.auxi
 
                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
                                 ShortToFloat(NotchFilter.ApplyNotchFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)lowHertz, (float)highHertz, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
-
+                         
                     }
                     if (notchHertz != null || highHertz != null || lowHertz != null)
                     {
@@ -255,9 +255,8 @@ namespace PlotagemOpenGL.auxi
                     float scala = (float)(GlobVar.tbl_MontagemSelecionada.Rows[i]["Altura"]) / 100;
                     GlobVar.scale[i] = scala;
                 }
-
+                
             }
-
         }
         public static short[] SetReferencia(int principal, int referencia)
         {
@@ -359,6 +358,7 @@ namespace PlotagemOpenGL.auxi
             }
 
             return output;
+            
         }
     }
 }
