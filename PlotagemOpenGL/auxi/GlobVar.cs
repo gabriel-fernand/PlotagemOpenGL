@@ -71,10 +71,6 @@ namespace PlotagemOpenGL.auxi
         public static double[] scale;
         public static bool[] SomenteNums;
 
-        public static float[] auxL;
-        public static float[] auxH;
-
-
 
         public static int maximaVect = 130000;
         public static int indice = 0;
