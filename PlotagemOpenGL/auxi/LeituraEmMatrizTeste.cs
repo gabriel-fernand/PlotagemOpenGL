@@ -223,7 +223,7 @@ namespace PlotagemOpenGL.auxi
                         if(highHertz == null) {  highHertz = 0; }
 
                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
-                                ShortToFloat(Notch.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)lowHertz, (float)highHertz, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
+                                ShortToFloat(Notch.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)notchHertz, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
                          
                     }
                     if (notchHertz != null || highHertz != null || lowHertz != null)

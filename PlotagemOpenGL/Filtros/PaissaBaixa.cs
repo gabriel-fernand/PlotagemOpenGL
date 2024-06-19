@@ -33,7 +33,7 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            LowPassFilter lowPassFilter = new LowPassFilter(cutoffFrequency, samplingRate);
+            PaissaBaixa lowPassFilter = new PaissaBaixa(cutoffFrequency, samplingRate);
 
             float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)

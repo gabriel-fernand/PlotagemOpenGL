@@ -36,7 +36,7 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            HighPassFilter highPassFilter = new HighPassFilter(cutoffFrequency, samplingRate);
+            PaissaAlta highPassFilter = new PaissaAlta(cutoffFrequency, samplingRate);
 
             float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)

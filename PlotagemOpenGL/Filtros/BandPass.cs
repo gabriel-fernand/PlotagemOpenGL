@@ -25,7 +25,7 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] input, float lowCutoffFrequency, float highCutoffFrequency, float samplingRate)
         {
-            BandPassFilter bandPassFilter = new BandPassFilter(lowCutoffFrequency, highCutoffFrequency, samplingRate);
+            BandPass bandPassFilter = new BandPass(lowCutoffFrequency, highCutoffFrequency, samplingRate);
             float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
