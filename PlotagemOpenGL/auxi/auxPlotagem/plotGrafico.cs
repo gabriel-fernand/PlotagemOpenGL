@@ -39,11 +39,21 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
                 else
                 {
-                    if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))] != 512)
+
+
+                    int codCanal1 = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]);
+                    if (!GlobVar.codCanal.Contains(codCanal1))
+                    {
+                        // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
+                        continue;
+                    }
+
+                    int index = GlobVar.codCanal.IndexOf(codCanal1);
+
+                    if (GlobVar.txPorCanal[index] != 512)
                     {
                         verTx = true;
-                        ponteiroDesenho = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]))];
-
+                        ponteiroDesenho = 512 / GlobVar.txPorCanal[index];
                     }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)

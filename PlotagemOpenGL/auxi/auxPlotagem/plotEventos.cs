@@ -1,50 +1,50 @@
 ﻿using Accord.Math;
 using SharpGL;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.AxHost;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
     public static class plotEventos
     {
-        public static void DesenhaEventos(int qtdGraf, OpenGL gl, float[] desenhoLoc)
+        public static void DesenhaEventos(int qtdGraf, OpenGL gl, float[] desenhoLoc) 
         {
-            
-            DataTable eventos = GlobVar.eventosUpdate;
-
-            var filteredRows = eventos.AsEnumerable()
-                          .OrderBy(row => row.Field<int>("Seq"));
-
-            // Agrupar por Seq e processar cada grupo
-            var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
-            int des = qtdGraf - 1;
-            foreach (var group in groupedRows)
+            try
             {
-                var firstRow = group.First();
-                int codCanal1First = firstRow.Field<int>("CodCanal1");
-                int inicio = firstRow.Field<int>("Inicio");
-                int termino = firstRow.Field<int>("Duracao");
-                if (GlobVar.codSelected.Contains(codCanal1First)) {
-                    int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+                DataTable eventos = GlobVar.eventosUpdate;
 
-                    gl.Begin(OpenGL.GL_QUADS);
-                    gl.PointSize(3.0f); // Define o tamanho dos pontos
-                    gl.Color(GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].X, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Y, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Z, 0.001);
-                    //gl.ColorMask(3, 6, 7, alpha);
-                    gl.Vertex(inicio, Plotagem.StartY[YAdjusted] + 5, -1.9f);
-                    gl.Vertex(termino, Plotagem.StartY[YAdjusted] + 5, -1.9f);
-                    gl.Vertex(termino, Plotagem.EndY[YAdjusted] - 5, -1.9f);
-                    gl.Vertex(inicio, Plotagem.EndY[YAdjusted] - 5, -1.9f);                    
-                    gl.End();
-                    des--;
+                var filteredRows = eventos.AsEnumerable()
+                              .OrderBy(row => row.Field<int>("Seq"));
+
+                // Agrupar por Seq e processar cada grupo
+                var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
+                int des = qtdGraf - 1;
+                foreach (var group in groupedRows)
+                {
+                    var firstRow = group.First();
+                    int codCanal1First = firstRow.Field<int>("CodCanal1");
+                    int inicio = firstRow.Field<int>("Inicio");
+                    int termino = firstRow.Field<int>("Duracao");
+                    if (GlobVar.codSelected.Contains(codCanal1First))
+                    {
+                        int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+
+                        gl.Begin(OpenGL.GL_QUADS);
+                        gl.PointSize(3.0f); // Define o tamanho dos pontos
+                        gl.Color(GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].X, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Y, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Z, 0.001);
+                        //gl.ColorMask(3, 6, 7, alpha);
+                        gl.Vertex(inicio, Plotagem.StartY[YAdjusted] + 5, -1.9f);
+                        gl.Vertex(termino, Plotagem.StartY[YAdjusted] + 5, -1.9f);
+                        gl.Vertex(termino, Plotagem.EndY[YAdjusted] - 5, -1.9f);
+                        gl.Vertex(inicio, Plotagem.EndY[YAdjusted] - 5, -1.9f);
+                        gl.End();
+                        des--;
+                    }
                 }
             }
+            catch { }
         }
         public static int EncontrarValorMaisProximo(float[] valores, float y)
         {
@@ -68,7 +68,102 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             return indexInvertido;
         }
+        public static void AdicionarEventoAoDataTable(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY)
+        {
+            DataTable eventos = GlobVar.eventosUpdate;
 
+            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+
+            // Adicionar colunas ao DataTable se não existirem
+            if (eventos.Columns.Count == 0)
+            {
+                eventos.Columns.Add("Seq", typeof(int));
+                eventos.Columns.Add("NumPag", typeof(string));
+                eventos.Columns.Add("CodEvento", typeof(int));
+                eventos.Columns.Add("CodCanal1", typeof(int));
+                eventos.Columns.Add("Inicio", typeof(int));
+                eventos.Columns.Add("Duracao", typeof(int));
+            }
+
+            // Calcular NumPag para início e término
+            int numPagInicio = inicio / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+            int numPagTermino = termino / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+            string numPag = $"{numPagInicio} -- {numPagTermino}";
+            // Obter o próximo valor de Seq
+            int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
+
+            // Adicionar dados ao DataTable
+            GlobVar.eventosUpdate.Rows.Add(seq, numPag, 0, GlobVar.codSelected[loc], inicio, termino);
+
+            // Exportar DataTable para Excel
+            string excelFilePath = "C:\\Teste\\Arquivo.xlsx";
+            ExportToExcel(eventos, excelFilePath);
+        }
+
+
+        // Export DataTable into an excel file with field names in the header line
+        // - Save excel file without ever making it visible if filepath is given
+        // - Don't save excel file, just make it visible if no filepath is given
+        public static void ExportToExcel(DataTable tbl, string excelFilePath)
+        {
+            try
+            {
+                if (tbl == null || tbl.Columns.Count == 0)
+                    throw new Exception("ExportToExcel: Null or empty input table!");
+
+                // Load Excel and create a new workbook
+                var excelApp = new Excel.Application();
+                var workbook = excelApp.Workbooks.Add();
+                Excel._Worksheet workSheet = (Excel._Worksheet)workbook.Sheets[1];
+
+                // Column headings
+                for (int i = 0; i < tbl.Columns.Count; i++)
+                {
+                    workSheet.Cells[1, i + 1] = tbl.Columns[i].ColumnName;
+                }
+
+                // Rows
+                for (int i = 0; i < tbl.Rows.Count; i++)
+                {
+                    for (int j = 0; j < tbl.Columns.Count; j++)
+                    {
+                        workSheet.Cells[i + 2, j + 1] = tbl.Rows[i][j];
+                    }
+                }
+
+                // Save the excel file
+                if (!string.IsNullOrEmpty(excelFilePath))
+                {
+                    try
+                    {
+                        workSheet.SaveAs(excelFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("ExportToExcel: Excel file could not be saved! Check filepath.\n" + ex.Message);
+                    }
+                }
+                else
+                {
+                    // No file path is given
+                    excelApp.Visible = true;
+                }
+
+                // Cleanup
+                workbook.Close(false);
+                excelApp.Quit();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ExportToExcel: \n" + ex.Message);
+            }
+            finally
+            {
+                // Cleanup resources
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
 
     }
 }

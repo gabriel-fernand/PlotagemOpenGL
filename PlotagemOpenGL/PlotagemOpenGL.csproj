@@ -21,6 +21,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="NVAPI" Version="1.0.440" />
     <PackageReference Include="ObjectTK" Version="2.0.0-pre.9" />
     <PackageReference Include="OpenTK" Version="4.8.2" />

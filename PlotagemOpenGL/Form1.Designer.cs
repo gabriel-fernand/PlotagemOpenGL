@@ -883,9 +883,9 @@ namespace PlotagemOpenGL
             // minusLb1
             // 
             minusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb1.Location = new System.Drawing.Point(62, 13);
+            minusLb1.Location = new System.Drawing.Point(85, 10);
             minusLb1.Name = "minusLb1";
-            minusLb1.Size = new System.Drawing.Size(45, 13);
+            minusLb1.Size = new System.Drawing.Size(22, 18);
             minusLb1.TabIndex = 15;
             minusLb1.Text = "-";
             minusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -895,11 +895,10 @@ namespace PlotagemOpenGL
             // 
             // plusLb1
             // 
-            plusLb1.FlatStyle = FlatStyle.Flat;
             plusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb1.Location = new System.Drawing.Point(62, 0);
+            plusLb1.Location = new System.Drawing.Point(85, -3);
             plusLb1.Name = "plusLb1";
-            plusLb1.Size = new System.Drawing.Size(45, 13);
+            plusLb1.Size = new System.Drawing.Size(22, 18);
             plusLb1.TabIndex = 14;
             plusLb1.Text = "+";
             plusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -931,9 +930,9 @@ namespace PlotagemOpenGL
             // minusLb2
             // 
             minusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb2.Location = new System.Drawing.Point(62, 13);
+            minusLb2.Location = new System.Drawing.Point(85, 10);
             minusLb2.Name = "minusLb2";
-            minusLb2.Size = new System.Drawing.Size(45, 13);
+            minusLb2.Size = new System.Drawing.Size(22, 18);
             minusLb2.TabIndex = 17;
             minusLb2.Text = "-";
             minusLb2.UseVisualStyleBackColor = true;
@@ -942,9 +941,9 @@ namespace PlotagemOpenGL
             // plusLb2
             // 
             plusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb2.Location = new System.Drawing.Point(62, 0);
+            plusLb2.Location = new System.Drawing.Point(85, -3);
             plusLb2.Name = "plusLb2";
-            plusLb2.Size = new System.Drawing.Size(45, 13);
+            plusLb2.Size = new System.Drawing.Size(22, 18);
             plusLb2.TabIndex = 16;
             plusLb2.Text = "+";
             plusLb2.UseVisualStyleBackColor = true;
@@ -975,9 +974,9 @@ namespace PlotagemOpenGL
             // minusLb3
             // 
             minusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb3.Location = new System.Drawing.Point(62, 13);
+            minusLb3.Location = new System.Drawing.Point(85, 10);
             minusLb3.Name = "minusLb3";
-            minusLb3.Size = new System.Drawing.Size(45, 13);
+            minusLb3.Size = new System.Drawing.Size(22, 18);
             minusLb3.TabIndex = 19;
             minusLb3.Text = "-";
             minusLb3.UseVisualStyleBackColor = true;
@@ -986,9 +985,9 @@ namespace PlotagemOpenGL
             // plusLb3
             // 
             plusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb3.Location = new System.Drawing.Point(62, 0);
+            plusLb3.Location = new System.Drawing.Point(85, -3);
             plusLb3.Name = "plusLb3";
-            plusLb3.Size = new System.Drawing.Size(45, 13);
+            plusLb3.Size = new System.Drawing.Size(22, 18);
             plusLb3.TabIndex = 18;
             plusLb3.Text = "+";
             plusLb3.UseVisualStyleBackColor = true;
@@ -1019,9 +1018,9 @@ namespace PlotagemOpenGL
             // minusLb4
             // 
             minusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb4.Location = new System.Drawing.Point(62, 13);
+            minusLb4.Location = new System.Drawing.Point(85, 10);
             minusLb4.Name = "minusLb4";
-            minusLb4.Size = new System.Drawing.Size(45, 13);
+            minusLb4.Size = new System.Drawing.Size(22, 18);
             minusLb4.TabIndex = 21;
             minusLb4.Text = "-";
             minusLb4.UseVisualStyleBackColor = true;
@@ -1030,9 +1029,9 @@ namespace PlotagemOpenGL
             // plusLb4
             // 
             plusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb4.Location = new System.Drawing.Point(62, 0);
+            plusLb4.Location = new System.Drawing.Point(85, -3);
             plusLb4.Name = "plusLb4";
-            plusLb4.Size = new System.Drawing.Size(45, 13);
+            plusLb4.Size = new System.Drawing.Size(22, 18);
             plusLb4.TabIndex = 20;
             plusLb4.Text = "+";
             plusLb4.UseVisualStyleBackColor = true;
@@ -1063,9 +1062,9 @@ namespace PlotagemOpenGL
             // minusLb5
             // 
             minusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb5.Location = new System.Drawing.Point(62, 13);
+            minusLb5.Location = new System.Drawing.Point(85, 10);
             minusLb5.Name = "minusLb5";
-            minusLb5.Size = new System.Drawing.Size(45, 13);
+            minusLb5.Size = new System.Drawing.Size(22, 18);
             minusLb5.TabIndex = 23;
             minusLb5.Text = "-";
             minusLb5.UseVisualStyleBackColor = true;
@@ -1074,9 +1073,9 @@ namespace PlotagemOpenGL
             // plusLb5
             // 
             plusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb5.Location = new System.Drawing.Point(62, 0);
+            plusLb5.Location = new System.Drawing.Point(85, -3);
             plusLb5.Name = "plusLb5";
-            plusLb5.Size = new System.Drawing.Size(45, 13);
+            plusLb5.Size = new System.Drawing.Size(22, 18);
             plusLb5.TabIndex = 22;
             plusLb5.Text = "+";
             plusLb5.UseVisualStyleBackColor = true;
@@ -1107,9 +1106,9 @@ namespace PlotagemOpenGL
             // minusLb6
             // 
             minusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb6.Location = new System.Drawing.Point(62, 13);
+            minusLb6.Location = new System.Drawing.Point(85, 10);
             minusLb6.Name = "minusLb6";
-            minusLb6.Size = new System.Drawing.Size(45, 13);
+            minusLb6.Size = new System.Drawing.Size(22, 18);
             minusLb6.TabIndex = 30;
             minusLb6.Text = "-";
             minusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1119,9 +1118,9 @@ namespace PlotagemOpenGL
             // plusLb6
             // 
             plusLb6.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb6.Location = new System.Drawing.Point(62, 0);
+            plusLb6.Location = new System.Drawing.Point(85, -3);
             plusLb6.Name = "plusLb6";
-            plusLb6.Size = new System.Drawing.Size(45, 13);
+            plusLb6.Size = new System.Drawing.Size(22, 18);
             plusLb6.TabIndex = 29;
             plusLb6.Text = "+";
             plusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1163,9 +1162,9 @@ namespace PlotagemOpenGL
             // plusLb7
             // 
             plusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb7.Location = new System.Drawing.Point(62, 0);
+            plusLb7.Location = new System.Drawing.Point(85, -3);
             plusLb7.Name = "plusLb7";
-            plusLb7.Size = new System.Drawing.Size(45, 13);
+            plusLb7.Size = new System.Drawing.Size(22, 18);
             plusLb7.TabIndex = 32;
             plusLb7.Text = "-";
             plusLb7.UseVisualStyleBackColor = true;
@@ -1174,9 +1173,9 @@ namespace PlotagemOpenGL
             // minusLb7
             // 
             minusLb7.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb7.Location = new System.Drawing.Point(62, 13);
+            minusLb7.Location = new System.Drawing.Point(85, 10);
             minusLb7.Name = "minusLb7";
-            minusLb7.Size = new System.Drawing.Size(45, 13);
+            minusLb7.Size = new System.Drawing.Size(22, 18);
             minusLb7.TabIndex = 31;
             minusLb7.Text = "+";
             minusLb7.UseVisualStyleBackColor = true;
@@ -1217,9 +1216,9 @@ namespace PlotagemOpenGL
             // minusLb8
             // 
             minusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb8.Location = new System.Drawing.Point(62, 13);
+            minusLb8.Location = new System.Drawing.Point(85, 10);
             minusLb8.Name = "minusLb8";
-            minusLb8.Size = new System.Drawing.Size(45, 13);
+            minusLb8.Size = new System.Drawing.Size(22, 18);
             minusLb8.TabIndex = 34;
             minusLb8.Text = "-";
             minusLb8.UseVisualStyleBackColor = true;
@@ -1228,9 +1227,9 @@ namespace PlotagemOpenGL
             // plusLb8
             // 
             plusLb8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb8.Location = new System.Drawing.Point(62, 0);
+            plusLb8.Location = new System.Drawing.Point(85, -3);
             plusLb8.Name = "plusLb8";
-            plusLb8.Size = new System.Drawing.Size(45, 13);
+            plusLb8.Size = new System.Drawing.Size(22, 18);
             plusLb8.TabIndex = 33;
             plusLb8.Text = "+";
             plusLb8.UseVisualStyleBackColor = true;
@@ -1271,9 +1270,9 @@ namespace PlotagemOpenGL
             // minusLb9
             // 
             minusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb9.Location = new System.Drawing.Point(62, 13);
+            minusLb9.Location = new System.Drawing.Point(85, 10);
             minusLb9.Name = "minusLb9";
-            minusLb9.Size = new System.Drawing.Size(45, 13);
+            minusLb9.Size = new System.Drawing.Size(22, 18);
             minusLb9.TabIndex = 36;
             minusLb9.Text = "-";
             minusLb9.UseVisualStyleBackColor = true;
@@ -1282,9 +1281,9 @@ namespace PlotagemOpenGL
             // plusLb9
             // 
             plusLb9.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb9.Location = new System.Drawing.Point(62, 0);
+            plusLb9.Location = new System.Drawing.Point(85, -3);
             plusLb9.Name = "plusLb9";
-            plusLb9.Size = new System.Drawing.Size(45, 13);
+            plusLb9.Size = new System.Drawing.Size(22, 18);
             plusLb9.TabIndex = 35;
             plusLb9.Text = "+";
             plusLb9.UseVisualStyleBackColor = true;
@@ -1325,9 +1324,9 @@ namespace PlotagemOpenGL
             // minusLb10
             // 
             minusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb10.Location = new System.Drawing.Point(62, 13);
+            minusLb10.Location = new System.Drawing.Point(85, 10);
             minusLb10.Name = "minusLb10";
-            minusLb10.Size = new System.Drawing.Size(45, 13);
+            minusLb10.Size = new System.Drawing.Size(22, 18);
             minusLb10.TabIndex = 38;
             minusLb10.Text = "-";
             minusLb10.UseVisualStyleBackColor = true;
@@ -1336,9 +1335,9 @@ namespace PlotagemOpenGL
             // plusLb10
             // 
             plusLb10.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb10.Location = new System.Drawing.Point(62, 0);
+            plusLb10.Location = new System.Drawing.Point(85, -3);
             plusLb10.Name = "plusLb10";
-            plusLb10.Size = new System.Drawing.Size(45, 13);
+            plusLb10.Size = new System.Drawing.Size(22, 18);
             plusLb10.TabIndex = 37;
             plusLb10.Text = "+";
             plusLb10.UseVisualStyleBackColor = true;
@@ -1379,9 +1378,9 @@ namespace PlotagemOpenGL
             // minusLb11
             // 
             minusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb11.Location = new System.Drawing.Point(62, 13);
+            minusLb11.Location = new System.Drawing.Point(85, 10);
             minusLb11.Name = "minusLb11";
-            minusLb11.Size = new System.Drawing.Size(45, 13);
+            minusLb11.Size = new System.Drawing.Size(22, 18);
             minusLb11.TabIndex = 45;
             minusLb11.Text = "-";
             minusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1391,9 +1390,9 @@ namespace PlotagemOpenGL
             // plusLb11
             // 
             plusLb11.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb11.Location = new System.Drawing.Point(62, 0);
+            plusLb11.Location = new System.Drawing.Point(85, -3);
             plusLb11.Name = "plusLb11";
-            plusLb11.Size = new System.Drawing.Size(45, 13);
+            plusLb11.Size = new System.Drawing.Size(22, 18);
             plusLb11.TabIndex = 44;
             plusLb11.Text = "+";
             plusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1435,9 +1434,9 @@ namespace PlotagemOpenGL
             // plusLb12
             // 
             plusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb12.Location = new System.Drawing.Point(62, 0);
+            plusLb12.Location = new System.Drawing.Point(85, -3);
             plusLb12.Name = "plusLb12";
-            plusLb12.Size = new System.Drawing.Size(45, 13);
+            plusLb12.Size = new System.Drawing.Size(22, 18);
             plusLb12.TabIndex = 47;
             plusLb12.Text = "-";
             plusLb12.UseVisualStyleBackColor = true;
@@ -1446,9 +1445,9 @@ namespace PlotagemOpenGL
             // minusLb12
             // 
             minusLb12.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb12.Location = new System.Drawing.Point(62, 13);
+            minusLb12.Location = new System.Drawing.Point(85, 10);
             minusLb12.Name = "minusLb12";
-            minusLb12.Size = new System.Drawing.Size(45, 13);
+            minusLb12.Size = new System.Drawing.Size(22, 18);
             minusLb12.TabIndex = 46;
             minusLb12.Text = "+";
             minusLb12.UseVisualStyleBackColor = true;
@@ -1489,9 +1488,9 @@ namespace PlotagemOpenGL
             // minusLb13
             // 
             minusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb13.Location = new System.Drawing.Point(62, 13);
+            minusLb13.Location = new System.Drawing.Point(85, 10);
             minusLb13.Name = "minusLb13";
-            minusLb13.Size = new System.Drawing.Size(45, 13);
+            minusLb13.Size = new System.Drawing.Size(22, 18);
             minusLb13.TabIndex = 49;
             minusLb13.Text = "-";
             minusLb13.UseVisualStyleBackColor = true;
@@ -1500,9 +1499,9 @@ namespace PlotagemOpenGL
             // plusLb13
             // 
             plusLb13.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb13.Location = new System.Drawing.Point(62, 0);
+            plusLb13.Location = new System.Drawing.Point(85, -3);
             plusLb13.Name = "plusLb13";
-            plusLb13.Size = new System.Drawing.Size(45, 13);
+            plusLb13.Size = new System.Drawing.Size(22, 18);
             plusLb13.TabIndex = 48;
             plusLb13.Text = "+";
             plusLb13.UseVisualStyleBackColor = true;
@@ -1543,9 +1542,9 @@ namespace PlotagemOpenGL
             // minusLb14
             // 
             minusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb14.Location = new System.Drawing.Point(62, 13);
+            minusLb14.Location = new System.Drawing.Point(85, 10);
             minusLb14.Name = "minusLb14";
-            minusLb14.Size = new System.Drawing.Size(45, 13);
+            minusLb14.Size = new System.Drawing.Size(22, 18);
             minusLb14.TabIndex = 51;
             minusLb14.Text = "-";
             minusLb14.UseVisualStyleBackColor = true;
@@ -1554,9 +1553,9 @@ namespace PlotagemOpenGL
             // plusLb14
             // 
             plusLb14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb14.Location = new System.Drawing.Point(62, 0);
+            plusLb14.Location = new System.Drawing.Point(85, -3);
             plusLb14.Name = "plusLb14";
-            plusLb14.Size = new System.Drawing.Size(45, 13);
+            plusLb14.Size = new System.Drawing.Size(22, 18);
             plusLb14.TabIndex = 50;
             plusLb14.Text = "+";
             plusLb14.UseVisualStyleBackColor = true;
@@ -1597,9 +1596,9 @@ namespace PlotagemOpenGL
             // minusLb15
             // 
             minusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb15.Location = new System.Drawing.Point(62, 13);
+            minusLb15.Location = new System.Drawing.Point(85, 10);
             minusLb15.Name = "minusLb15";
-            minusLb15.Size = new System.Drawing.Size(45, 13);
+            minusLb15.Size = new System.Drawing.Size(22, 18);
             minusLb15.TabIndex = 53;
             minusLb15.Text = "-";
             minusLb15.UseVisualStyleBackColor = true;
@@ -1608,9 +1607,9 @@ namespace PlotagemOpenGL
             // plusLb15
             // 
             plusLb15.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb15.Location = new System.Drawing.Point(62, 0);
+            plusLb15.Location = new System.Drawing.Point(85, -3);
             plusLb15.Name = "plusLb15";
-            plusLb15.Size = new System.Drawing.Size(45, 13);
+            plusLb15.Size = new System.Drawing.Size(22, 18);
             plusLb15.TabIndex = 52;
             plusLb15.Text = "+";
             plusLb15.UseVisualStyleBackColor = true;
@@ -1651,9 +1650,9 @@ namespace PlotagemOpenGL
             // minusLb16
             // 
             minusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb16.Location = new System.Drawing.Point(62, 13);
+            minusLb16.Location = new System.Drawing.Point(85, 10);
             minusLb16.Name = "minusLb16";
-            minusLb16.Size = new System.Drawing.Size(45, 13);
+            minusLb16.Size = new System.Drawing.Size(22, 18);
             minusLb16.TabIndex = 60;
             minusLb16.Text = "-";
             minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1663,9 +1662,9 @@ namespace PlotagemOpenGL
             // plusLb16
             // 
             plusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb16.Location = new System.Drawing.Point(62, 0);
+            plusLb16.Location = new System.Drawing.Point(85, -3);
             plusLb16.Name = "plusLb16";
-            plusLb16.Size = new System.Drawing.Size(45, 13);
+            plusLb16.Size = new System.Drawing.Size(22, 18);
             plusLb16.TabIndex = 59;
             plusLb16.Text = "+";
             plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1707,9 +1706,9 @@ namespace PlotagemOpenGL
             // plusLb17
             // 
             plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb17.Location = new System.Drawing.Point(62, 0);
+            plusLb17.Location = new System.Drawing.Point(85, -3);
             plusLb17.Name = "plusLb17";
-            plusLb17.Size = new System.Drawing.Size(45, 13);
+            plusLb17.Size = new System.Drawing.Size(22, 18);
             plusLb17.TabIndex = 62;
             plusLb17.Text = "-";
             plusLb17.UseVisualStyleBackColor = true;
@@ -1718,9 +1717,9 @@ namespace PlotagemOpenGL
             // minusLb17
             // 
             minusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb17.Location = new System.Drawing.Point(62, 13);
+            minusLb17.Location = new System.Drawing.Point(85, 10);
             minusLb17.Name = "minusLb17";
-            minusLb17.Size = new System.Drawing.Size(45, 13);
+            minusLb17.Size = new System.Drawing.Size(22, 18);
             minusLb17.TabIndex = 61;
             minusLb17.Text = "+";
             minusLb17.UseVisualStyleBackColor = true;
@@ -1761,9 +1760,9 @@ namespace PlotagemOpenGL
             // minusLb18
             // 
             minusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb18.Location = new System.Drawing.Point(62, 13);
+            minusLb18.Location = new System.Drawing.Point(85, 10);
             minusLb18.Name = "minusLb18";
-            minusLb18.Size = new System.Drawing.Size(45, 13);
+            minusLb18.Size = new System.Drawing.Size(22, 18);
             minusLb18.TabIndex = 64;
             minusLb18.Text = "-";
             minusLb18.UseVisualStyleBackColor = true;
@@ -1772,9 +1771,9 @@ namespace PlotagemOpenGL
             // plusLb18
             // 
             plusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb18.Location = new System.Drawing.Point(62, 0);
+            plusLb18.Location = new System.Drawing.Point(85, -3);
             plusLb18.Name = "plusLb18";
-            plusLb18.Size = new System.Drawing.Size(45, 13);
+            plusLb18.Size = new System.Drawing.Size(22, 18);
             plusLb18.TabIndex = 63;
             plusLb18.Text = "+";
             plusLb18.UseVisualStyleBackColor = true;
@@ -1815,9 +1814,9 @@ namespace PlotagemOpenGL
             // minusLb19
             // 
             minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb19.Location = new System.Drawing.Point(62, 13);
+            minusLb19.Location = new System.Drawing.Point(85, 10);
             minusLb19.Name = "minusLb19";
-            minusLb19.Size = new System.Drawing.Size(45, 13);
+            minusLb19.Size = new System.Drawing.Size(22, 18);
             minusLb19.TabIndex = 66;
             minusLb19.Text = "-";
             minusLb19.UseVisualStyleBackColor = true;
@@ -1826,9 +1825,9 @@ namespace PlotagemOpenGL
             // plusLb19
             // 
             plusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb19.Location = new System.Drawing.Point(62, 0);
+            plusLb19.Location = new System.Drawing.Point(85, -3);
             plusLb19.Name = "plusLb19";
-            plusLb19.Size = new System.Drawing.Size(45, 13);
+            plusLb19.Size = new System.Drawing.Size(22, 18);
             plusLb19.TabIndex = 65;
             plusLb19.Text = "+";
             plusLb19.UseVisualStyleBackColor = true;
@@ -1869,9 +1868,9 @@ namespace PlotagemOpenGL
             // minusLb20
             // 
             minusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb20.Location = new System.Drawing.Point(62, 13);
+            minusLb20.Location = new System.Drawing.Point(85, 10);
             minusLb20.Name = "minusLb20";
-            minusLb20.Size = new System.Drawing.Size(45, 13);
+            minusLb20.Size = new System.Drawing.Size(22, 18);
             minusLb20.TabIndex = 68;
             minusLb20.Text = "-";
             minusLb20.UseVisualStyleBackColor = true;
@@ -1880,9 +1879,9 @@ namespace PlotagemOpenGL
             // plusLb20
             // 
             plusLb20.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb20.Location = new System.Drawing.Point(62, 0);
+            plusLb20.Location = new System.Drawing.Point(85, -3);
             plusLb20.Name = "plusLb20";
-            plusLb20.Size = new System.Drawing.Size(45, 13);
+            plusLb20.Size = new System.Drawing.Size(22, 18);
             plusLb20.TabIndex = 67;
             plusLb20.Text = "+";
             plusLb20.UseVisualStyleBackColor = true;
@@ -1923,9 +1922,9 @@ namespace PlotagemOpenGL
             // minusLb21
             // 
             minusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb21.Location = new System.Drawing.Point(62, 13);
+            minusLb21.Location = new System.Drawing.Point(85, 10);
             minusLb21.Name = "minusLb21";
-            minusLb21.Size = new System.Drawing.Size(45, 13);
+            minusLb21.Size = new System.Drawing.Size(22, 18);
             minusLb21.TabIndex = 73;
             minusLb21.Text = "-";
             minusLb21.UseVisualStyleBackColor = true;
@@ -1934,9 +1933,9 @@ namespace PlotagemOpenGL
             // plusLb21
             // 
             plusLb21.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb21.Location = new System.Drawing.Point(62, 0);
+            plusLb21.Location = new System.Drawing.Point(85, -3);
             plusLb21.Name = "plusLb21";
-            plusLb21.Size = new System.Drawing.Size(45, 13);
+            plusLb21.Size = new System.Drawing.Size(22, 18);
             plusLb21.TabIndex = 72;
             plusLb21.Text = "+";
             plusLb21.UseVisualStyleBackColor = true;
@@ -1977,9 +1976,9 @@ namespace PlotagemOpenGL
             // minusLb22
             // 
             minusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb22.Location = new System.Drawing.Point(62, 13);
+            minusLb22.Location = new System.Drawing.Point(85, 10);
             minusLb22.Name = "minusLb22";
-            minusLb22.Size = new System.Drawing.Size(45, 13);
+            minusLb22.Size = new System.Drawing.Size(22, 18);
             minusLb22.TabIndex = 75;
             minusLb22.Text = "-";
             minusLb22.UseVisualStyleBackColor = true;
@@ -1988,9 +1987,9 @@ namespace PlotagemOpenGL
             // plusLb22
             // 
             plusLb22.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb22.Location = new System.Drawing.Point(62, 0);
+            plusLb22.Location = new System.Drawing.Point(85, -3);
             plusLb22.Name = "plusLb22";
-            plusLb22.Size = new System.Drawing.Size(45, 13);
+            plusLb22.Size = new System.Drawing.Size(22, 18);
             plusLb22.TabIndex = 74;
             plusLb22.Text = "+";
             plusLb22.UseVisualStyleBackColor = true;
@@ -2031,9 +2030,9 @@ namespace PlotagemOpenGL
             // minusLb23
             // 
             minusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb23.Location = new System.Drawing.Point(62, 13);
+            minusLb23.Location = new System.Drawing.Point(85, 10);
             minusLb23.Name = "minusLb23";
-            minusLb23.Size = new System.Drawing.Size(45, 13);
+            minusLb23.Size = new System.Drawing.Size(22, 18);
             minusLb23.TabIndex = 77;
             minusLb23.Text = "-";
             minusLb23.UseVisualStyleBackColor = true;
@@ -2052,9 +2051,9 @@ namespace PlotagemOpenGL
             // plusLb23
             // 
             plusLb23.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb23.Location = new System.Drawing.Point(62, 0);
+            plusLb23.Location = new System.Drawing.Point(85, -3);
             plusLb23.Name = "plusLb23";
-            plusLb23.Size = new System.Drawing.Size(45, 13);
+            plusLb23.Size = new System.Drawing.Size(22, 18);
             plusLb23.TabIndex = 76;
             plusLb23.Text = "+";
             plusLb23.UseVisualStyleBackColor = true;

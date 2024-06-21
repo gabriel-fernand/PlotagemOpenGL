@@ -23,6 +23,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using PlotagemOpenGL.Filtros;
 using SharpGL.SceneGraph;
+using System.Linq.Expressions;
 
 
 namespace PlotagemOpenGL
@@ -747,6 +748,9 @@ namespace PlotagemOpenGL
         }
         private void MontagemBox_SelectedIndexChanged(object sender, EventArgs e) 
         {
+            //Ideia para alterar a montagem que esta selecionada, ao testar precisa ser feito muita alteracao ou somente a releitura de algumas coisas
+            //int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
+            //LeituraBanco.AlteraMontagem(CodMont);
 
         }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
@@ -2111,7 +2115,7 @@ namespace PlotagemOpenGL
                     break;
                 case Keys.A:
                     camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                    if (camera.X > 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                     GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                     GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -2521,681 +2525,685 @@ namespace PlotagemOpenGL
 
         private void MenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+            //try { 
+                ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
 
-            if (clickedPanel is Panel panel)
-            {
-                Dictionary<string, bool> filterStates;
-
-                //Faz a verificacao de qual filtro esta sendo aplicado
-                if (panelLowFilterStates.ContainsKey(panel) && ContainsFilter(panelLowFilterStates, clickedItem.Name))
+                if (clickedPanel is Panel panel)
                 {
-                    Dictionary<string, bool> filterStatesHigh;
+                    Dictionary<string, bool> filterStates;
 
-                    filterStates = panelLowFilterStates[panel];
-                    filterStatesHigh = panelHighFilterStates[panel];
-                    bool isAnyFilterSelected = IsAnyFilterSelected(filterStatesHigh);
-                    //faz uma verificacao para saber se o outro dictionary tem alguma selecao, e caso tenha faca o filtro com essa informacao
-                    if (isAnyFilterSelected)
+                    //Faz a verificacao de qual filtro esta sendo aplicado
+                    if (panelLowFilterStates.ContainsKey(panel) && ContainsFilter(panelLowFilterStates, clickedItem.Name))
                     {
-                        string value = GetSelectedFilterItem(panel, filterStatesHigh);
+                        Dictionary<string, bool> filterStatesHigh;
 
-                        if (value.Equals("NenhumHigh"))
+                        filterStates = panelLowFilterStates[panel];
+                        filterStatesHigh = panelHighFilterStates[panel];
+                        bool isAnyFilterSelected = IsAnyFilterSelected(filterStatesHigh);
+                        //faz uma verificacao para saber se o outro dictionary tem alguma selecao, e caso tenha faca o filtro com essa informacao
+                        if (isAnyFilterSelected)
                         {
-                            if (clickedItem.CheckOnClick == true)
+                            string value = GetSelectedFilterItem(panel, filterStatesHigh);
+
+                            if (value.Equals("NenhumHigh"))
                             {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-
-                                if (clickedItem.Text.Equals("Nenhum"))
+                                if (clickedItem.CheckOnClick == true)
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
 
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
                                         {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
                                             {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
                                             }
                                         }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                            }
-                    }
-                        //para pegar a informacao de um valor que esteja sendo aplicado no filtro que seja em Outro, pega do banco de dados, para aplicar o filtro corretamente
-                        else if (value.Equals("outroHigh"))
-                    {
-                            Int16 hertzSelectH = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
-                            if (clickedItem.CheckOnClick == true)
-                            {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-
-                                if (clickedItem.Text.Equals("Nenhum"))
-                                {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
-
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                    {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
-                                        {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
-                                            {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                            }
-                        }
-                        else
-                    {
-                        float hertzSelectH;
-                        if (value.Substring(6, 1).IsEqual("H"))
-                        {
-                            hertzSelectH = Convert.ToInt16(value.Substring(5, 1));
-                        }
-                        else if (value.Substring(5,1).IsEqual("0"))
-                        {
-                            hertzSelectH = Convert.ToInt16(value.Substring(5, 2));
-                            hertzSelectH = hertzSelectH / 10;
-                        }
-                        else
-                        {
-                            hertzSelectH = Convert.ToInt16(value.Substring(5, 2));
-                        }
-                            if (clickedItem.CheckOnClick == true)
-                            {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-
-                                if (clickedItem.Text.Equals("Nenhum"))
-                                {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
-
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                    {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
-                                        {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
-                                            {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                            }
-                                     
-                        }
-                    }                                
-                    if(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != null)
-                    {
-                        float NotchHertz = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
-                            NotchHertz, 
-                            10, 
-                            GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-                    }
-                }
-                else if (panelHighFilterStates.ContainsKey(panel) && ContainsFilter(panelHighFilterStates, clickedItem.Name))
-                {
-                    Dictionary<string, bool> filterStatesLow;
-
-                    filterStates = panelHighFilterStates[panel];
-                    filterStatesLow = panelLowFilterStates[panel];
-
-
-                    bool isAnyFilterSelected = IsAnyFilterSelected(filterStatesLow);
-
-                    if (isAnyFilterSelected)
-                    {
-                        string value = GetSelectedFilterItem(panel, filterStatesLow);
-
-                        if (value.Equals("NenhumLow"))
-                        {
-                            if (clickedItem.CheckOnClick == true)
-                            {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                if (clickedItem.Text.Equals("Nenhum"))
-                                {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                    {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
-                                        {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
-                                            {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect;
-                                    if (clickedItem.Text.Substring(1, 1).Equals(","))
-                                    {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
-                                        hertzSelect /= 10;
                                     }
                                     else
                                     {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    }
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
 
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
                                 }
                             }
-                        }
-                        else if (value.Equals("OutroLow"))
-                        {
-                            Int16 hertzSelectL = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
-                            if (clickedItem.CheckOnClick == true)
+                            //para pegar a informacao de um valor que esteja sendo aplicado no filtro que seja em Outro, pega do banco de dados, para aplicar o filtro corretamente
+                            else if (value.Equals("outroHigh"))
                             {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                if (clickedItem.Text.Equals("Nenhum"))
+                                Int16 hertzSelectH = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
+                                if (clickedItem.CheckOnClick == true)
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
 
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
-                                        {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
-                                            {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
 
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                        {
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
                                             {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
                                             }
                                         }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect;
-                                    if (clickedItem.Text.Substring(1, 1).Equals(","))
-                                    {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
-                                        hertzSelect /= 10;
                                     }
                                     else
                                     {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    }
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
 
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            float hertzSelectL = Convert.ToInt16(value.Substring(5, 2));
-                            if (clickedItem.CheckOnClick == true)
-                            {
-                                int selec = GlobVar.grafSelected.IndexOf(index);
-                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                if (clickedItem.Text.Equals("Nenhum"))
-                                {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                                else if (clickedItem.Text.Equals("Outro"))
-                                {
-                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                    {
-                                        if (inputForm.ShowDialog() == DialogResult.OK)
-                                        {
-                                            string inputValue = inputForm.InputValue;
-                                            if (float.TryParse(inputValue, out float hertzSelect))
-                                            {
-                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                                openglControl1.DoRender();
-                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("Por favor, insira um valor válido.");
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    float hertzSelect;
-                                    if (clickedItem.Text.Substring(1, 1).Equals(","))
-                                    {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
-                                        hertzSelect /= 10;
-                                    }
-                                    else
-                                    {
-                                        hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                    }
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                                    openglControl1.DoRender();
-                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                }
-                            }
-                        }
-                    }
-                    if (GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != null)
-                    {
-                        float NotchHertz = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
-                            NotchHertz,
-                            10,
-                            GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                        openglControl1.DoRender();
-                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-                    }
-
-                }
-                else if (panelNotchFilterStates.ContainsKey(panel) && ContainsFilter(panelNotchFilterStates, clickedItem.Name))
-                {
-                    Dictionary<string, bool> filterStatesHigh;
-                    Dictionary<string, bool> filterStatesLow;
-
-                    filterStates = panelNotchFilterStates[panel];
-                    filterStatesLow = panelLowFilterStates[panel];
-                    float hertzSelectLow = 0;
-                    bool isAnyFilterSelectedLow = IsAnyFilterSelected(filterStatesLow);
-
-                    filterStatesHigh = panelHighFilterStates[panel];
-                    float hertzSelectHigh = 0;
-                    bool isAnyFilterSelectedHigh = IsAnyFilterSelected(filterStatesHigh);
-
-                    if (isAnyFilterSelectedLow)
-                    {
-                        string value = GetSelectedFilterItem(panel, filterStatesLow);
-                        if (value.Equals("NenhumLow"))
-                        {
-                            hertzSelectLow = 0; 
-
-                        }
-                        else if (value.Equals("OutroLow"))
-                        {
-                            hertzSelectLow = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
-
-                        }
-                        else
-                        {
-                            hertzSelectLow = Convert.ToInt16(value.Substring(5, 2));
-
-                        }
-
-                    } //Verifica se tem algum filtro aplicado de LowPass
-                    if(isAnyFilterSelectedHigh)
-                    {
-                        string value = GetSelectedFilterItem(panel, filterStatesHigh);
-                        if (value.Equals("NenhumHigh"))
-                        {
-                            hertzSelectHigh = 0;
-
-                        }
-                        else if (value.Equals("outroHigh"))
-                        {
-                            hertzSelectHigh = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
-                        }
-                        else
-                        {
-                            if (value.Substring(6, 1).IsEqual("H"))
-                            {
-                                hertzSelectHigh = Convert.ToInt16(value.Substring(5, 1));
-                            }
-                            else if (value.Substring(5, 1).IsEqual("0"))
-                            {
-                                hertzSelectHigh = Convert.ToInt16(value.Substring(5, 2));
-                                hertzSelectHigh = hertzSelectHigh / 10;
-                            }
-                            else
-                            {
-                                hertzSelectHigh = Convert.ToInt16(value.Substring(5, 2));
-                            }
-
-                        }
-                    } //Verifica se tem algum filtro aplicado de HighPass
-
-                    if(hertzSelectLow == 0 && hertzSelectHigh == 0)
-                    {
-                        if (clickedItem.CheckOnClick == true)
-                        {
-                            int selec = GlobVar.grafSelected.IndexOf(index);
-                            filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-
-                            if (clickedItem.Text.Equals("Nenhum"))
-                            {
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
-                            else if (clickedItem.Text.Equals("Outro"))
-                            {
-                                using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                {
-                                    if (inputForm.ShowDialog() == DialogResult.OK)
-                                    {
-                                        string inputValue = inputForm.InputValue;
-                                        if (float.TryParse(inputValue, out float hertzSelect))
-                                        {
-                                            GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                            openglControl1.DoRender();
-                                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Por favor, insira um valor válido.");
-                                        }
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
                                 }
                             }
                             else
                             {
-                                float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect,10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                float hertzSelectH;
+                                if (value.Substring(6, 1).IsEqual("H"))
+                                {
+                                    hertzSelectH = Convert.ToInt16(value.Substring(5, 1));
+                                }
+                                else if (value.Substring(5, 1).IsEqual("0"))
+                                {
+                                    hertzSelectH = Convert.ToInt16(value.Substring(5, 2));
+                                    hertzSelectH = hertzSelectH / 10;
+                                }
+                                else
+                                {
+                                    hertzSelectH = Convert.ToInt16(value.Substring(5, 2));
+                                }
+                                if (clickedItem.CheckOnClick == true)
+                                {
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+
+                                    if (clickedItem.Text.Equals("Nenhum"))
+                                    {
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                        {
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
+                                            {
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                }
+
                             }
                         }
-                    }
-                    else if(hertzSelectLow != 0 && hertzSelectHigh == 0)
-                    {
-                        if (clickedItem.CheckOnClick == true)
+                        if (GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != DBNull.Value)
                         {
-                            int selec = GlobVar.grafSelected.IndexOf(index);
-                            filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                            float NotchHertz = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
                             GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
+                                NotchHertz,
+                                10,
+                                GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                            openglControl1.DoRender();
+                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-
-                            if (clickedItem.Text.Equals("Nenhum"))
-                            {
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
-                            else if (clickedItem.Text.Equals("Outro"))
-                            {
-                                using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                {
-                                    if (inputForm.ShowDialog() == DialogResult.OK)
-                                    {
-                                        string inputValue = inputForm.InputValue;
-                                        if (float.TryParse(inputValue, out float hertzSelect))
-                                        {
-                                            GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                            openglControl1.DoRender();
-                                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Por favor, insira um valor válido.");
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
                         }
-
                     }
-                    else if(hertzSelectLow == 0 && hertzSelectHigh != 0)
+                    else if (panelHighFilterStates.ContainsKey(panel) && ContainsFilter(panelHighFilterStates, clickedItem.Name))
                     {
-                        if (clickedItem.CheckOnClick == true)
+                        Dictionary<string, bool> filterStatesLow;
+
+                        filterStates = panelHighFilterStates[panel];
+                        filterStatesLow = panelLowFilterStates[panel];
+
+
+                        bool isAnyFilterSelected = IsAnyFilterSelected(filterStatesLow);
+
+                        if (isAnyFilterSelected)
                         {
-                            int selec = GlobVar.grafSelected.IndexOf(index);
-                            filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                            string value = GetSelectedFilterItem(panel, filterStatesLow);
 
-
-                            if (clickedItem.Text.Equals("Nenhum"))
+                            if (value.Equals("NenhumLow"))
                             {
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
-                            else if (clickedItem.Text.Equals("Outro"))
-                            {
-                                using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                if (clickedItem.CheckOnClick == true)
                                 {
-                                    if (inputForm.ShowDialog() == DialogResult.OK)
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                    if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        string inputValue = inputForm.InputValue;
-                                        if (float.TryParse(inputValue, out float hertzSelect))
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
                                         {
-                                            GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                            openglControl1.DoRender();
-                                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
+                                            {
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        float hertzSelect;
+                                        if (clickedItem.Text.Substring(1, 1).Equals(","))
+                                        {
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
+                                            hertzSelect /= 10;
                                         }
                                         else
                                         {
-                                            MessageBox.Show("Por favor, insira um valor válido.");
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
                                         }
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
                                 }
                             }
+                            else if (value.Equals("OutroLow"))
+                            {
+                                Int16 hertzSelectL = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
+                                if (clickedItem.CheckOnClick == true)
+                                {
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                    if (clickedItem.Text.Equals("Nenhum"))
+                                    {
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                        {
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
+                                            {
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        float hertzSelect;
+                                        if (clickedItem.Text.Substring(1, 1).Equals(","))
+                                        {
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
+                                            hertzSelect /= 10;
+                                        }
+                                        else
+                                        {
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                        }
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                }
+
+                            }
                             else
                             {
-                                float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                float hertzSelectL = Convert.ToInt16(value.Substring(5, 2));
+                                if (clickedItem.CheckOnClick == true)
+                                {
+                                    int selec = GlobVar.grafSelected.IndexOf(index);
+                                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                    if (clickedItem.Text.Equals("Nenhum"))
+                                    {
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                    else if (clickedItem.Text.Equals("Outro"))
+                                    {
+                                        using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                        {
+                                            if (inputForm.ShowDialog() == DialogResult.OK)
+                                            {
+                                                string inputValue = inputForm.InputValue;
+                                                if (float.TryParse(inputValue, out float hertzSelect))
+                                                {
+                                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                                    openglControl1.DoRender();
+                                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Por favor, insira um valor válido.");
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        float hertzSelect;
+                                        if (clickedItem.Text.Substring(1, 1).Equals(","))
+                                        {
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(2, 1));
+                                            hertzSelect /= 10;
+                                        }
+                                        else
+                                        {
+                                            hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                        }
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
+                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                        openglControl1.DoRender();
+                                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                    }
+                                }
                             }
+                        }
+                        if (GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != DBNull.Value)
+                        {
+                        float NotchHertz = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
+                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
+                                NotchHertz,
+                                10,
+                                GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                            openglControl1.DoRender();
+                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
                         }
 
                     }
+                    else if (panelNotchFilterStates.ContainsKey(panel) && ContainsFilter(panelNotchFilterStates, clickedItem.Name))
+                    {
+                        Dictionary<string, bool> filterStatesHigh;
+                        Dictionary<string, bool> filterStatesLow;
+
+                        filterStates = panelNotchFilterStates[panel];
+                        filterStatesLow = panelLowFilterStates[panel];
+                        float hertzSelectLow = 0;
+                        bool isAnyFilterSelectedLow = IsAnyFilterSelected(filterStatesLow);
+
+                        filterStatesHigh = panelHighFilterStates[panel];
+                        float hertzSelectHigh = 0;
+                        bool isAnyFilterSelectedHigh = IsAnyFilterSelected(filterStatesHigh);
+
+                        if (isAnyFilterSelectedLow)
+                        {
+                            string value = GetSelectedFilterItem(panel, filterStatesLow);
+                            if (value.Equals("NenhumLow"))
+                            {
+                                hertzSelectLow = 0;
+
+                            }
+                            else if (value.Equals("OutroLow"))
+                            {
+                                hertzSelectLow = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
+
+                            }
+                            else
+                            {
+                                hertzSelectLow = Convert.ToInt16(value.Substring(5, 2));
+
+                            }
+
+                        } //Verifica se tem algum filtro aplicado de LowPass
+                        if (isAnyFilterSelectedHigh)
+                        {
+                            string value = GetSelectedFilterItem(panel, filterStatesHigh);
+                            if (value.Equals("NenhumHigh"))
+                            {
+                                hertzSelectHigh = 0;
+
+                            }
+                            else if (value.Equals("outroHigh"))
+                            {
+                                hertzSelectHigh = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
+                            }
+                            else
+                            {
+                                if (value.Substring(6, 1).IsEqual("H"))
+                                {
+                                    hertzSelectHigh = Convert.ToInt16(value.Substring(5, 1));
+                                }
+                                else if (value.Substring(5, 1).IsEqual("0"))
+                                {
+                                    hertzSelectHigh = Convert.ToInt16(value.Substring(5, 2));
+                                    hertzSelectHigh = hertzSelectHigh / 10;
+                                }
+                                else
+                                {
+                                    hertzSelectHigh = Convert.ToInt16(value.Substring(5, 2));
+                                }
+
+                            }
+                        } //Verifica se tem algum filtro aplicado de HighPass
+
+                        if (hertzSelectLow == 0 && hertzSelectHigh == 0)
+                        {
+                            if (clickedItem.CheckOnClick == true)
+                            {
+                                int selec = GlobVar.grafSelected.IndexOf(index);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+
+                                if (clickedItem.Text.Equals("Nenhum"))
+                                {
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                                else if (clickedItem.Text.Equals("Outro"))
+                                {
+                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    {
+                                        if (inputForm.ShowDialog() == DialogResult.OK)
+                                        {
+                                            string inputValue = inputForm.InputValue;
+                                            if (float.TryParse(inputValue, out float hertzSelect))
+                                            {
+                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                openglControl1.DoRender();
+                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                            }
+                        }
+                        else if (hertzSelectLow != 0 && hertzSelectHigh == 0)
+                        {
+                            if (clickedItem.CheckOnClick == true)
+                            {
+                                int selec = GlobVar.grafSelected.IndexOf(index);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+
+                                if (clickedItem.Text.Equals("Nenhum"))
+                                {
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                                else if (clickedItem.Text.Equals("Outro"))
+                                {
+                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    {
+                                        if (inputForm.ShowDialog() == DialogResult.OK)
+                                        {
+                                            string inputValue = inputForm.InputValue;
+                                            if (float.TryParse(inputValue, out float hertzSelect))
+                                            {
+                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                openglControl1.DoRender();
+                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                            }
+
+                        }
+                        else if (hertzSelectLow == 0 && hertzSelectHigh != 0)
+                        {
+                            if (clickedItem.CheckOnClick == true)
+                            {
+                                int selec = GlobVar.grafSelected.IndexOf(index);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+
+                                if (clickedItem.Text.Equals("Nenhum"))
+                                {
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                                else if (clickedItem.Text.Equals("Outro"))
+                                {
+                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    {
+                                        if (inputForm.ShowDialog() == DialogResult.OK)
+                                        {
+                                            string inputValue = inputForm.InputValue;
+                                            if (float.TryParse(inputValue, out float hertzSelect))
+                                            {
+                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                openglControl1.DoRender();
+                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            if (clickedItem.CheckOnClick == true)
+                            {
+                                int selec = GlobVar.grafSelected.IndexOf(index);
+                                filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+
+                                if (clickedItem.Text.Equals("Nenhum"))
+                                {
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                                else if (clickedItem.Text.Equals("Outro"))
+                                {
+                                    using (var inputForm = new InputForm("Insira o valor para o filtro"))
+                                    {
+                                        if (inputForm.ShowDialog() == DialogResult.OK)
+                                        {
+                                            string inputValue = inputForm.InputValue;
+                                            if (float.TryParse(inputValue, out float hertzSelect))
+                                            {
+                                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                openglControl1.DoRender();
+                                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Por favor, insira um valor válido.");
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
+                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    openglControl1.DoRender();
+                                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                                }
+                            }
+
+                        }
+                    }
+
                     else
                     {
-                        if (clickedItem.CheckOnClick == true)
-                        {
-                            int selec = GlobVar.grafSelected.IndexOf(index);
-                            filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-
-                            if (clickedItem.Text.Equals("Nenhum"))
-                            {
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
-                            else if (clickedItem.Text.Equals("Outro"))
-                            {
-                                using (var inputForm = new InputForm("Insira o valor para o filtro"))
-                                {
-                                    if (inputForm.ShowDialog() == DialogResult.OK)
-                                    {
-                                        string inputValue = inputForm.InputValue;
-                                        if (float.TryParse(inputValue, out float hertzSelect))
-                                        {
-                                            GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                            openglControl1.DoRender();
-                                            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Por favor, insira um valor válido.");
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                float hertzSelect = Convert.ToInt16(clickedItem.Text.Substring(0, 3));
-                                GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
-                                openglControl1.DoRender();
-                                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                            }
-                        }
-
+                        return;
                     }
-                }
 
-                else
-                {
-                    return;
-                }
+                    UncheckAllItemsExceptSelected(clickedItem, filterStates);
+                }               
 
-                UncheckAllItemsExceptSelected(clickedItem, filterStates);
-            }
+
+            //}catch { }
         }
 
         private void UncheckAllItemsExceptSelected(ToolStripMenuItem selectedItem, Dictionary<string, bool> filterStates)

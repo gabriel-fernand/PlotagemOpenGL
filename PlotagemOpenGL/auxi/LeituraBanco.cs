@@ -133,6 +133,11 @@ public class LeituraBanco
             }
         }
     }
+    public static void AlteraMontagem(int CodMont)
+    {
+        GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == CodMont).CopyToDataTable();
+
+    }
     public static void AlteraTable()
     {
         // Supondo que GlobVar.eventos seja o DataTable original
