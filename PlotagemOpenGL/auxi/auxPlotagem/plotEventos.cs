@@ -2,6 +2,7 @@
 using SharpGL;
 using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -96,72 +97,55 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             GlobVar.eventosUpdate.Rows.Add(seq, numPag, 0, GlobVar.codSelected[loc], inicio, termino);
 
             // Exportar DataTable para Excel
-            string excelFilePath = "C:\\Teste\\Arquivo.xlsx";
-            ExportToExcel(eventos, excelFilePath);
+            string excelFilePath = @"C:\Teste\Teste";
+            //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
         }
-
 
         // Export DataTable into an excel file with field names in the header line
         // - Save excel file without ever making it visible if filepath is given
         // - Don't save excel file, just make it visible if no filepath is given
-        public static void ExportToExcel(DataTable tbl, string excelFilePath)
+        public static void CreateCSVFile(DataTable dt, string strFilePath)
         {
             try
             {
-                if (tbl == null || tbl.Columns.Count == 0)
-                    throw new Exception("ExportToExcel: Null or empty input table!");
-
-                // Load Excel and create a new workbook
-                var excelApp = new Excel.Application();
-                var workbook = excelApp.Workbooks.Add();
-                Excel._Worksheet workSheet = (Excel._Worksheet)workbook.Sheets[1];
-
-                // Column headings
-                for (int i = 0; i < tbl.Columns.Count; i++)
+                // Create the CSV file to which grid data will be exported.
+                StreamWriter sw = new StreamWriter(strFilePath, false);
+                // First we will write the headers.
+                //DataTable dt = m_dsProducts.Tables[0];
+                int iColCount = dt.Columns.Count;
+                for (int i = 0; i < iColCount; i++)
                 {
-                    workSheet.Cells[1, i + 1] = tbl.Columns[i].ColumnName;
-                }
-
-                // Rows
-                for (int i = 0; i < tbl.Rows.Count; i++)
-                {
-                    for (int j = 0; j < tbl.Columns.Count; j++)
+                    sw.Write(dt.Columns[i]);
+                    if (i < iColCount - 1)
                     {
-                        workSheet.Cells[i + 2, j + 1] = tbl.Rows[i][j];
+                        sw.Write(",");
                     }
                 }
+                sw.Write(sw.NewLine);
 
-                // Save the excel file
-                if (!string.IsNullOrEmpty(excelFilePath))
-                {
-                    try
-                    {
-                        workSheet.SaveAs(excelFilePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("ExportToExcel: Excel file could not be saved! Check filepath.\n" + ex.Message);
-                    }
-                }
-                else
-                {
-                    // No file path is given
-                    excelApp.Visible = true;
-                }
+                // Now write all the rows.
 
-                // Cleanup
-                workbook.Close(false);
-                excelApp.Quit();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    for (int i = 0; i < iColCount; i++)
+                    {
+                        if (!Convert.IsDBNull(dr[i]))
+                        {
+                            sw.Write(dr[i].ToString());
+                        }
+                        if (i < iColCount - 1)
+                        {
+                            sw.Write(",");
+                        }
+                    }
+
+                    sw.Write(sw.NewLine);
+                }
+                sw.Close();
             }
             catch (Exception ex)
             {
-                throw new Exception("ExportToExcel: \n" + ex.Message);
-            }
-            finally
-            {
-                // Cleanup resources
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                throw ex;
             }
         }
 

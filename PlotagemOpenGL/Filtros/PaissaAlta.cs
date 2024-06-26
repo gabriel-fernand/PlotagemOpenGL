@@ -1,49 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MathNet.Numerics;
+using MathNet.Filtering;
+using MathNet.Filtering.IIR;
+using MathNet.Numerics;
 
 namespace PlotagemOpenGL.Filtros
 {
     internal class PaissaAlta
     {
-        public static int auxHigh;
-        private float _alpha;
-        private float _prevInput;
-        private float _prevOutput;
+        public static float cutoffFrequency;
+        public static float sampleRate;
+        public static float alpha;
+        public static float previousInput;
+        public static float previousOutput;
 
-        public PaissaAlta(float cutoffFrequency, float samplingRate)
+        public PaissaAlta(float cutoffFrequency, float sampleRate)
         {
-            _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
-            _prevInput = 0;
-            _prevOutput = 0;
+            PaissaAlta.cutoffFrequency = cutoffFrequency;
+            PaissaAlta.sampleRate = sampleRate;
+            PaissaAlta.alpha = CalculateAlpha(cutoffFrequency, sampleRate);
+            PaissaAlta.previousInput = 0.0f;
+            PaissaAlta.previousOutput = 0.0f;
         }
 
-        private float CalculateAlpha(float cutoffFrequency, float samplingRate)
+        private static float CalculateAlpha(float cutoffFrequency, float sampleRate)
         {
-            float omega = 2 * (float)Math.PI * cutoffFrequency;
-            return omega / (omega + samplingRate);
+            double dt = 1.0 / sampleRate;
+            double rc = 1.0 / (2 * Math.PI * cutoffFrequency);
+            double ret = rc / (rc + dt);
+            return (float)ret;
         }
 
         public float Apply(float input)
         {
-            float output = _alpha * (_prevOutput + input - _prevInput);
-            _prevInput = input;
-            _prevOutput = output;
+            float output = alpha * (previousOutput + input - previousInput);
+            previousInput = input;
+            previousOutput = output;
             return output;
         }
 
-        public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
+        public static float[] ApplyFilter(float[] data, float cutoffFrequency, float sampleRate)
         {
-            PaissaAlta highPassFilter = new PaissaAlta(cutoffFrequency, samplingRate);
-
-            float[] output = new float[input.Length];
-            for (int i = 0; i < input.Length; i++)
+            PaissaAlta alta = new PaissaAlta(cutoffFrequency, sampleRate);
+            float[] outputData = new float[data.Length];
+            for (int i = 0; i < data.Length; i++)
             {
-                output[i] = highPassFilter.Apply(input[i]);
+                outputData[i] = alta.Apply(data[i]);
             }
-            return output;
+            return outputData;
         }
     }
 }

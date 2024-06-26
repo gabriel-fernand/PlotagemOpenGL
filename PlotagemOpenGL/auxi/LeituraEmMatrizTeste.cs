@@ -31,6 +31,7 @@ namespace PlotagemOpenGL.auxi
             GlobVar.grafSelected = new int[GlobVar.qtdCanais.Length];
             GlobVar.codSelected = new int[GlobVar.qtdCanais.Length];
             GlobVar.SomenteNums = new bool[2];
+            int jj = 0;
 
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
@@ -145,12 +146,18 @@ namespace PlotagemOpenGL.auxi
                     }
                 }
                 reorganize();
-
-                //Verifica se o canal da montagem tem referencia a outro canal do exame
                 foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
                 {
+                    if(GlobVar.tbl_MontagemSelecionada.Rows[jj]["CodCanal2"] == DBNull.Value){
+                        GlobVar.tbl_MontagemSelecionada.Rows[jj]["CodCanal2"] = -1;
+                    }
+                    jj++;
+                }
+                    //Verifica se o canal da montagem tem referencia a outro canal do exame
+                    foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
+                {
                     int codCanal1 = row.Field<int>("CodCanal1");
-                    int codCanal2 = row.Field<int>("CodCanal2");
+                    int codCanal2 = Convert.ToInt32(row.Field<int>("CodCanal2"));
                     if (codCanal2 != -1)
                     {
                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), SetReferencia(codCanal1, codCanal2));
@@ -248,8 +255,8 @@ namespace PlotagemOpenGL.auxi
                 }*/
 
                 //Verifica se o canal esta para aparecer em Numero ou Grafico
-                GlobVar.SomenteNums[0] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[13]["InverteSinal"];
-                GlobVar.SomenteNums[1] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[20]["InverteSinal"];
+                //GlobVar.SomenteNums[0] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[13]["InverteSinal"];
+                //GlobVar.SomenteNums[1] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[20]["InverteSinal"];
 
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {

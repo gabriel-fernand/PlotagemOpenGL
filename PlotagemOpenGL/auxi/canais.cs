@@ -145,8 +145,8 @@ namespace PlotagemOpenGL.auxi
             desenhoLocRev = desenhoLoc.Reverse().ToArray();
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLocRev, startY);
             
-            Canal = GlobVar.nomeCanais[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]))];
-
+            //Canal = GlobVar.nomeCanais[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]))];
+            Canal = "Teste";
             return Canal;
         }
     }

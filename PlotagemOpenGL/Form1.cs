@@ -24,6 +24,7 @@ using System.Linq;
 using PlotagemOpenGL.Filtros;
 using SharpGL.SceneGraph;
 using System.Linq.Expressions;
+using System.Diagnostics;
 
 
 namespace PlotagemOpenGL
@@ -33,6 +34,8 @@ namespace PlotagemOpenGL
         public static OpenGL gl;
         public static Plotagem plotagem;
         public static Canais canais;
+
+        private Stopwatch stopwatch;
 
         private Size formOriginalSize;
         private Size painelOriginalSize;
@@ -260,6 +263,7 @@ namespace PlotagemOpenGL
             camera.Z = 1.0f;
             tempoEmTela.SelectedIndex = 2;
             velocidadeScroll.SelectedIndex = 0;
+            stopwatch = new Stopwatch();
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             
             //InitializeContextMenu();
@@ -937,13 +941,15 @@ namespace PlotagemOpenGL
         private void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
         {
         }
-
+        
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (click)
             {
                 if (e.Button == MouseButtons.Left)
                 {
+                    timer2.Start();
+                    stopwatch.Restart();
                     isDrawing = true;
 
                     // Convert window coordinates to OpenGL coordinates
@@ -984,8 +990,10 @@ namespace PlotagemOpenGL
             }
             if (click)
             {
+                UpdateLoc(stopwatch.ToString());
+
                 ConvertToOpenGLCoordinates(e.X, e.Y, out a.X, out a.Y);
-                UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
+                //UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
             }
         }
 
@@ -993,6 +1001,9 @@ namespace PlotagemOpenGL
         {
             if (e.Button == MouseButtons.Left)
             {
+                timer2.Stop();
+                stopwatch.Stop();
+                
                 isDrawing = false;
 
                 // Update end coordinates when the mouse button is released
@@ -1014,7 +1025,10 @@ namespace PlotagemOpenGL
         }
         private void UpdateLoc(string canal)
         {
-            MouseLoc.Text = canal;
+            if (timer2.Enabled) {
+                MouseLoc.Text = $"{stopwatch.Elapsed.TotalSeconds} seconds"; 
+            }
+
         }
 
         private void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
@@ -2554,7 +2568,7 @@ namespace PlotagemOpenGL
 
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = DBNull.Value;
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -2604,7 +2618,7 @@ namespace PlotagemOpenGL
 
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = DBNull.Value;
 
                                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
                                             LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
@@ -2669,7 +2683,7 @@ namespace PlotagemOpenGL
 
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = DBNull.Value;
 
                                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
                                             LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
@@ -2747,7 +2761,7 @@ namespace PlotagemOpenGL
                                     filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = DBNull.Value;
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
@@ -2805,7 +2819,7 @@ namespace PlotagemOpenGL
                                     filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = DBNull.Value;
                                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
                                             LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
@@ -2866,7 +2880,7 @@ namespace PlotagemOpenGL
                                     filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
-                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = null;
+                                        GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = DBNull.Value;
                                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
                                             LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
@@ -3006,7 +3020,7 @@ namespace PlotagemOpenGL
 
                                 if (clickedItem.Text.Equals("Nenhum"))
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = DBNull.Value;
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -3055,7 +3069,7 @@ namespace PlotagemOpenGL
 
                                 if (clickedItem.Text.Equals("Nenhum"))
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = DBNull.Value;
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -3105,7 +3119,7 @@ namespace PlotagemOpenGL
 
                                 if (clickedItem.Text.Equals("Nenhum"))
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = DBNull.Value;
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -3154,7 +3168,7 @@ namespace PlotagemOpenGL
 
                                 if (clickedItem.Text.Equals("Nenhum"))
                                 {
-                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = null;
+                                    GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = DBNull.Value;
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -3219,6 +3233,11 @@ namespace PlotagemOpenGL
         }
 
         int index = 0;
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             int? rowIndex = null;

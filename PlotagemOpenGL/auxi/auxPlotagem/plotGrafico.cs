@@ -31,7 +31,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 int h = GlobVar.indice;
                 float[] color = new float[3];
 
-                color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
+                color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[des]["Cor"]));
                 gl.Color(color[0], color[1], color[2]);
                 if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)
                 {

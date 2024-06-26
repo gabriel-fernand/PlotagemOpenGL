@@ -19,6 +19,8 @@
     <PackageReference Include="Accord.Statistics" Version="3.8.2-alpha" />
     <PackageReference Include="DSP" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+    <PackageReference Include="MathNet.Filtering" Version="0.7.0" />
+    <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
     <PackageReference Include="MathNet.Numerics.Signed" Version="5.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />

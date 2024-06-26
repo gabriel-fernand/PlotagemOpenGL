@@ -2,9 +2,11 @@
 using System;
 using System.Data;
 using System.Data.Odbc;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Windows;
+using System.Windows.Markup;
 
 public class LeituraBanco
 {
@@ -72,11 +74,14 @@ public class LeituraBanco
     }
     public static void AjustaMontagem()
     {
+        try { 
         if (sele.Rows.Count > 0)
         {
-            string p = "P";
+            string p;
             // Pegando o valor da primeira linha e coluna "CodTipoExame"
             int codTipoExame = Convert.ToInt32(sele.Rows[0]["CodTipoExame"]) ;
+            if (codTipoExame == 1) p = "P";
+            else p = "E";
 
             string tipoExame = null;
             foreach (DataRow dr in GlobVar.tbl_TipoExame.Rows)
@@ -124,13 +129,36 @@ public class LeituraBanco
                     {
                         GlobVar.tbl_Montagem.ImportRow(row);
                     }
-                    var auxCodMont = GlobVar.tbl_Montagem.AsEnumerable().Where(row => row.Field<string>("DescrMontagem").Equals(GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString())).CopyToDataTable();
-                    int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
-                    GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == CodMont).CopyToDataTable();
-                    
-                    break;
+
+                        var matchingRows = GlobVar.tbl_Montagem.AsEnumerable()
+    .                                               Where(row => row.Field<string>("DescrMontagem") == GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString());
+
+                        if (matchingRows.Any())
+                        {
+                            // Existem linhas correspondentes
+                            var auxCodMont = matchingRows.CopyToDataTable();
+                            int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                            GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
+                                    .Where(row => row.Field<int>("CodMontagem") == CodMont)
+                                    .CopyToDataTable();
+                        }
+                        else
+                        {
+                            // Não existem linhas correspondentes
+                            GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontGrav;
+                        }
+                        break;
+                }
                 }
             }
+        }
+        catch (IOException e)
+        {
+            MessageBox.Show(e.Message);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
         }
     }
     public static void AlteraMontagem(int CodMont)

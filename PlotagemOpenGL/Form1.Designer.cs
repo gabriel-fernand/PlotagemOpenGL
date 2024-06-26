@@ -223,6 +223,7 @@ namespace PlotagemOpenGL
             qtdGraficos = new TextBox();
             toolTip1 = new ToolTip(components);
             timer1 = new Timer(components);
+            timer2 = new Timer(components);
             OutroNotch = new ToolStripMenuItem();
             hertz50N = new ToolStripMenuItem();
             hertz60N = new ToolStripMenuItem();
@@ -2154,7 +2155,12 @@ namespace PlotagemOpenGL
             // timer1
             // 
             timer1.Interval = 20;
-            timer1.Tick += timer1_Tick;
+            timer1.Tick += timer1_Tick;            
+            // 
+            // timer2
+            // 
+            timer2.Tick += timer2_Tick;
+
             // 
             // OutroNotch
             // 
@@ -2270,6 +2276,7 @@ namespace PlotagemOpenGL
         public static TextBox MouseLoc;
         public static ToolTip toolTip1;
         public static Timer timer1;
+        public static Timer timer2;
         public static ContextMenuStrip contextMenuStripOpenGl;
         public static ToolStripMenuItem OutroLow;
         public static ToolStripMenuItem LowPassFilter;
