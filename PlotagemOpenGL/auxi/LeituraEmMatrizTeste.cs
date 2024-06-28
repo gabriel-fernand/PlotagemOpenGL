@@ -260,7 +260,7 @@ namespace PlotagemOpenGL.auxi
 
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
-                    float scala = (float)(GlobVar.tbl_MontagemSelecionada.Rows[i]["Altura"]) / 100;
+                    float scala = (float)( Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i))) ;
                     GlobVar.scale[i] = scala;
                 }
                 
@@ -367,6 +367,127 @@ namespace PlotagemOpenGL.auxi
 
             return output;
             
+        }
+        public static string CodTipo(int Index)
+        {
+            string output = "";
+            int codTipo = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[Index]["CodTipoCanal"]);
+            var row = GlobVar.tbl_CadTipoCanal.AsEnumerable().Where(r => r.Field<int>("CodTipo") == codTipo).FirstOrDefault();
+            string codSigla = row.Field<string>("Sigla");
+            
+
+            if (codSigla.Equals("AIRFLOW"))
+                    output = "g_airflow";
+                else if (codSigla.Equals("CANULA")) 
+            output = "g_canula";
+                else if (codSigla.Equals("BODYPOS")) 
+            output = "g_bodypos";
+                else if (codSigla.Equals("SAO2")) 
+            output = "g_sao2";
+                else if (codSigla.Equals("CINTA_ABDOM")) 
+            output = "g_abdom";
+               else if (codSigla.Equals("CINTA_TORAX")) 
+            output = "g_torax";
+               else if (codSigla.Equals("PES")) 
+            output = "g_pes";
+               else if (codSigla.Equals("MICROFONE")) 
+            output = "g_microf";
+               else if (codSigla.Equals("FOTO_ESTIM")) 
+            output = "g_foto";
+               else if (codSigla.Equals("CPAP")) 
+            output = "g_cpap";
+               else if (codSigla.Equals("BPAP")) 
+            output = "g_epap";
+               else if (codSigla.Equals("CAP_RR")) 
+            output = "g_cap_RR";
+              else if (codSigla.Equals("CAP_CO2")) 
+            output = "g_cap_CO2";
+              else if (codSigla.Equals("CAP_ETCO2")) 
+            output = "g_cap_EtCO2";
+              else if (codSigla.Equals("SAO2_SERIAL")) 
+            output = "g_sao2_ser";
+             else if (codSigla.Equals("FC_SERIAL")) 
+            output = "g_fc_ser";
+              else if (codSigla.Equals("EMG_PERNA")) 
+            output = "g_perna";
+              else if (codSigla.Equals("PA_MAX")) 
+            output = "g_pamax";
+              else if (codSigla.Equals("PA_MIN")) 
+            output = "g_pamin";
+             else if (codSigla.Equals("PH_1")) 
+            output = "g_ph1";
+              else if (codSigla.Equals("PH_2")) 
+            output = "g_ph2";
+             else if (codSigla.Equals("PH_3")) 
+            output = "g_ph3";
+              else if (codSigla.Equals("CPAP_VAZ")) 
+            output = "g_cpap_vaz";
+              else if (codSigla.Equals("CO2_EXALADADO")) 
+            output = "g_co2_exal";
+              else if (codSigla.Equals("CO2_INSPIRADO")) 
+            output = "g_co2_insp";
+              else if (codSigla.Equals("FREQ_RESP")) 
+            output = "g_fresp";
+             else if (codSigla.Equals("PLET_OXIM")) 
+            output = "g_plet";
+             else if (codSigla.Equals("EEG")) 
+            output = "g_eeg";
+              else if (codSigla.Equals("ECG")) 
+            output = "g_ecg";
+              else if (codSigla.Equals("EMG_QUEIXO")) 
+            output = "g_queixo";
+              else if (codSigla.Equals("OCULOGRAMA")) 
+           output = "g_olhos"; 
+              else if (codSigla.Equals("CAN_RONCO")) 
+            output = "g_can_ronco";
+              else if (codSigla.Equals("PTT")) 
+            output = "g_PTT";
+
+            return output;
+        }
+        public static float Ampli(string codTipo)
+        {
+            float output = 0;
+            try
+            {
+                float g_amp_eeg = 1.4f;
+                float g_amp_emg = 5.5f;
+                float g_amp_ecg = 1f;
+                float g_amp_ronco = 7f;
+                float g_amp_fx = 20f;
+                float g_amp_af = 45f;
+                float g_amp_canulaFL = 10f;
+                float g_amp_canulaRC = 2.2f;
+
+                
+
+                if (codTipo.Equals("g_eeg") || codTipo.Equals("g_olhos"))
+                {
+                    output = g_amp_eeg;
+                }
+                else if (codTipo.Equals("g_ecg"))
+                    output = g_amp_ecg;
+                else if (codTipo.Equals("g_perna") || codTipo.Equals("g_queixo"))
+                    output = g_amp_emg;
+                else if (codTipo.Equals("g_airflow"))
+                    output = g_amp_af;
+                else if (codTipo.Equals("g_abdom") || codTipo.Equals("g_torax"))
+                    output = g_amp_fx;
+                else if (codTipo.Equals("g_canula"))
+                    output = g_amp_canulaFL;
+                else if (codTipo.Equals("g_microf"))
+                    output = g_amp_ronco;
+                else if (codTipo.Equals("g_can_ronco"))
+                    output = g_amp_canulaRC;
+                else if (codTipo.Equals("g_plet"))
+                    output = 12f;
+                else if (codTipo.Equals("g_sao2_ser"))
+                    output = output;
+
+                
+            }
+            catch { }
+            return output;
         }
     }
 }

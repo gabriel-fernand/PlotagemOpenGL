@@ -33,6 +33,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_MontGrav = new DataTable();
         public static DataTable tbl_TipoExame = new DataTable();
         public static DataTable tbl_MontagemSelecionada = new DataTable();
+        public static DataTable tbl_CadTipoCanal = new DataTable();
 
         public static string tipoExame;
 
@@ -70,8 +71,8 @@ namespace PlotagemOpenGL.auxi
         public static int[] codCanal;
         public static double[] scale;
         public static bool[] SomenteNums;
-
-
+        public static float[] Amplitude = new float[34];
+        
         public static int maximaVect = 130000;
         public static int indice = 0;
         public static int indiceNumero = 0;

@@ -31,7 +31,9 @@ public class LeituraBanco
             string quaryTbl_MontGrav = "SELECT * FROM tbl_MontGrav";
             string quaryTbl_TipoExame = "SELECT * FROM tbl_TipoExame";
             string quaryTipoExame = "SELECT TOP 1 CodTipoExame FROM tbl_DadosExame";
+            string queryCadTipoCanal = "SELECT * FROM tbl_CadTipoCanal";
 
+            using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
             using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
             using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
@@ -40,6 +42,7 @@ public class LeituraBanco
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
             using var commandTipoExame = new OdbcCommand(quaryTipoExame, connectionDatBd);
 
+            using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
             using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
             using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
@@ -56,6 +59,7 @@ public class LeituraBanco
             adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
             adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
             adapterTbl_TipeExam.Fill(GlobVar.tbl_TipoExame);
+            adapterTbl_CadTipoCanal.Fill(GlobVar.tbl_CadTipoCanal);
 
             connectionConfigBd.Close();
             connectionDatBd.Close();

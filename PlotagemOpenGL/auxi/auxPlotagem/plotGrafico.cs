@@ -66,14 +66,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                 else
                                 {
-                                    gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] * GlobVar.scale[i]) + desenhoLoc[des]);
+                                    gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] / GlobVar.scale[i]) + desenhoLoc[des]);
                                     h++; //aqui tem plotar 3 graficos diferentes
                                     j += ponteiroDesenho - 1;
                                 }
                             }
                             else
                             {
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
+                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] / GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
                             }
                         }
                     }

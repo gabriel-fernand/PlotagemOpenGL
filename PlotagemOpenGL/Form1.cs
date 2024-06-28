@@ -209,7 +209,7 @@ namespace PlotagemOpenGL
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
             UpdateStyles();
-            qtdGraficos.Text = "23";
+            qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
 
 
             openglControl1.Focus();
@@ -261,10 +261,11 @@ namespace PlotagemOpenGL
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
-            tempoEmTela.SelectedIndex = 2;
+            tempoEmTela.SelectedIndex = 5;
+            GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             velocidadeScroll.SelectedIndex = 0;
             stopwatch = new Stopwatch();
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            this.MouseUp += Form1_MouseUp;
             
             //InitializeContextMenu();
             //this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
@@ -947,7 +948,7 @@ namespace PlotagemOpenGL
             if (click)
             {
                 if (e.Button == MouseButtons.Left)
-                {
+                { 
                     timer2.Start();
                     stopwatch.Restart();
                     isDrawing = true;
@@ -990,7 +991,7 @@ namespace PlotagemOpenGL
             }
             if (click)
             {
-                UpdateLoc(stopwatch.ToString());
+                //UpdateLoc(stopwatch.ToString());
 
                 ConvertToOpenGLCoordinates(e.X, e.Y, out a.X, out a.Y);
                 //UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
@@ -1012,7 +1013,7 @@ namespace PlotagemOpenGL
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
+                UpdateLoc();
             }
             if (e.Button == MouseButtons.Right)
             {
@@ -1023,7 +1024,7 @@ namespace PlotagemOpenGL
 
             }
         }
-        private void UpdateLoc(string canal)
+        private void UpdateLoc(string canal = null)
         {
             if (timer2.Enabled) {
                 MouseLoc.Text = $"{stopwatch.Elapsed.TotalSeconds} seconds"; 
@@ -1114,43 +1115,56 @@ namespace PlotagemOpenGL
 
         private void plusLb1_Click(object sender, EventArgs e)
         {
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[0] < 0.09)
+            try
             {
-                GlobVar.scale[0] += 0.01f;
+                UpdateSelected(sender);
+                timer1.Start();
+                int alturaTela = (int)openglControl1.Height;
+
+                int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                int newAmpli = Convert.ToInt16(GlobVar.Amplitude[indexAmpli]);
+                GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
+                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+
+                GlobVar.scale[index] = scala;
+
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
                 UpdateInicioTela();
+
             }
-            else
+            catch
             {
-                GlobVar.scale[0] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
+
             }
         }
         private void minusLb1_Click(object sender, EventArgs e)
         {
+            try
+            {
+                UpdateSelected(sender);
+                timer1.Start();
+                int alturaTela = (int)openglControl1.Height;
 
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[0] <= 0.1)
-            {
-                GlobVar.scale[0] -= 0.01f;
+                int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                int newAmpli = Convert.ToInt16(GlobVar.Amplitude[indexAmpli]);
+                GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
+                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+
+                GlobVar.scale[index] = scala;
+
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
                 UpdateInicioTela();
+
             }
-            else
+            catch
             {
-                GlobVar.scale[0] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
+
             }
         }
 
@@ -2233,7 +2247,7 @@ namespace PlotagemOpenGL
             }
         }
 
-        public static void UpdateInicioTela()
+        public void UpdateInicioTela()
         {
             int inicio = GlobVar.inicioTela;
             TimeSpan tempo = TimeSpan.FromSeconds(inicio);
@@ -2254,31 +2268,22 @@ namespace PlotagemOpenGL
             string ptEmTela = Convert.ToString(GlobVar.tmpEmTela);
             ptsEmTela.Text = ptEmTela;
 
-            scalaLb1.Text = GlobVar.scale[0].ToString("0.00");
-            scalaLb2.Text = GlobVar.scale[1].ToString("0.00");
-            scalaLb3.Text = GlobVar.scale[2].ToString("0.00");
-            scalaLb4.Text = GlobVar.scale[3].ToString("0.00");
-            scalaLb5.Text = GlobVar.scale[4].ToString("0.00");
-            scalaLb6.Text = GlobVar.scale[5].ToString("0.00");
-            scalaLb7.Text = GlobVar.scale[6].ToString("0.00");
-            scalaLb8.Text = GlobVar.scale[7].ToString("0.00");
-            scalaLb9.Text = GlobVar.scale[8].ToString("0.00");
-            scalaLb10.Text = GlobVar.scale[9].ToString("0.00");
-            scalaLb11.Text = GlobVar.scale[10].ToString("0.00");
-            scalaLb12.Text = GlobVar.scale[11].ToString("0.00");
-            scalaLb13.Text = GlobVar.scale[12].ToString("0.00");
-            scalaLb14.Text = GlobVar.scale[13].ToString("0.00");
-            scalaLb15.Text = GlobVar.scale[14].ToString("0.00");
-            scalaLb16.Text = GlobVar.scale[15].ToString("0.00");
-            scalaLb17.Text = GlobVar.scale[16].ToString("0.00");
-            scalaLb18.Text = GlobVar.scale[17].ToString("0.00");
-            scalaLb19.Text = GlobVar.scale[18].ToString("0.00");
-            scalaLb20.Text = GlobVar.scale[19].ToString("0.00");
-            scalaLb21.Text = GlobVar.scale[20].ToString("0.00");
-            scalaLb22.Text = GlobVar.scale[21].ToString("0.00");
-            scalaLb23.Text = GlobVar.scale[22].ToString("0.00");
+            int indexLabel = 0;
+            for (int i = 1; i <= GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+            {
+                FieldInfo Label = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
+                if (Label != null)
+                {
+                    Label lb = (Label)Label.GetValue(this);
+                    if (lb != null)
+                    {
+                        lb.Text = GlobVar.tbl_MontagemSelecionada.Rows[indexLabel]["AmplitudeMin"].ToString();
+                        indexLabel++;
+                    }
+                }
+            }
 
-        }
+         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -2326,7 +2331,7 @@ namespace PlotagemOpenGL
 
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
-                UpdateInicioTela();
+                //UpdateInicioTela();
                 click = true;
             }
 
@@ -2343,11 +2348,13 @@ namespace PlotagemOpenGL
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
+            timer1.Start();
+            UpdateSelected(sender);
             if (e.Button == MouseButtons.Right)
             {
                 // Verifica se o clique do mouse ocorreu dentro de algum controle
                 Control clickedControl = this.GetChildAtPoint(e.Location);
-
+                UpdateLoc();
                 // Se o controle clicado for um Panel, realiza ações
                 if (clickedControl is Panel panel)
                 {
@@ -2400,6 +2407,28 @@ namespace PlotagemOpenGL
                         if (control is Label label)
                         {
                             if (label.Name.StartsWith("label"))
+                            {
+                                selectedLabelValue = label.Text;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void UpdateSelected(object sender)
+        {
+            Control menu = sender as Control;
+            if (menu != null)
+            {
+                if(menu is Panel panel)
+                {
+                    clickedPanel = panel;
+
+                    foreach(Control control in panel.Controls)
+                    {
+                        if(control is Label label)
+                        {
+                            if(label.Name.StartsWith("label"))
                             {
                                 selectedLabelValue = label.Text;
                             }

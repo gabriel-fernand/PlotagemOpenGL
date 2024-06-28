@@ -311,7 +311,7 @@ namespace PlotagemOpenGL
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
-            tempoEmTela.Items.AddRange(new object[] { "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
+            tempoEmTela.Items.AddRange(new object[] {"1 seg", "2 seg", "4 seg", "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
             tempoEmTela.Location = new System.Drawing.Point(256, 4);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
@@ -937,7 +937,7 @@ namespace PlotagemOpenGL
             minusLb2.TabIndex = 17;
             minusLb2.Text = "-";
             minusLb2.UseVisualStyleBackColor = true;
-            minusLb2.Click += minusLb2_Click;
+            minusLb2.Click += minusLb1_Click;
             // 
             // plusLb2
             // 
@@ -948,7 +948,7 @@ namespace PlotagemOpenGL
             plusLb2.TabIndex = 16;
             plusLb2.Text = "+";
             plusLb2.UseVisualStyleBackColor = true;
-            plusLb2.Click += plusLb2_Click;
+            plusLb2.Click += plusLb1_Click;
             // 
             // scalaLb2
             // 
@@ -981,7 +981,7 @@ namespace PlotagemOpenGL
             minusLb3.TabIndex = 19;
             minusLb3.Text = "-";
             minusLb3.UseVisualStyleBackColor = true;
-            minusLb3.Click += minusLb3_Click;
+            minusLb3.Click += minusLb1_Click;
             // 
             // plusLb3
             // 
@@ -992,7 +992,7 @@ namespace PlotagemOpenGL
             plusLb3.TabIndex = 18;
             plusLb3.Text = "+";
             plusLb3.UseVisualStyleBackColor = true;
-            plusLb3.Click += plusLb3_Click;
+            plusLb3.Click += plusLb1_Click;
             // 
             // scalaLb3
             // 
