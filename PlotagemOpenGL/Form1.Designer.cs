@@ -893,7 +893,6 @@ namespace PlotagemOpenGL
             minusLb1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb1.UseVisualStyleBackColor = true;
             minusLb1.Click += minusLb1_Click;
-            minusLb1.MouseUp += MinusLb1_MouseUp;
             // 
             // plusLb1
             // 

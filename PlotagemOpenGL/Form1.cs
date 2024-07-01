@@ -25,6 +25,8 @@ using PlotagemOpenGL.Filtros;
 using SharpGL.SceneGraph;
 using System.Linq.Expressions;
 using System.Diagnostics;
+using Input = UnityEngine.Input;
+//using KeyCode = UnityEngine.KeyCode;
 
 
 namespace PlotagemOpenGL
@@ -866,10 +868,6 @@ namespace PlotagemOpenGL
         }
 
 
-        private void MinusLb1_MouseUp(object sender, MouseEventArgs e)
-        {
-            
-        }
 
 
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
@@ -1002,6 +1000,7 @@ namespace PlotagemOpenGL
         {
             if (e.Button == MouseButtons.Left)
             {
+                
                 timer2.Stop();
                 stopwatch.Stop();
                 
@@ -1170,28 +1169,94 @@ namespace PlotagemOpenGL
 
         private bool isScrollingRight = true;
 
-        private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
+        public virtual void Update()
         {
-            switch (e.KeyCode)
+            if (Input.GetKeyDown("LeftArrow"))
             {
-                case Keys.D:
-                    camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                    if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                //PageIndex = Mathf.Clamp(PageIndex - 1, 0, MaxPageIndex);
+            }
+            else if (Input.GetKeyDown("LeftArrow"))
+            {
+                //PageIndex = Mathf.Clamp(PageIndex + 1, 0, MaxPageIndex);
+            }
+        }
 
-                    GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                    GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+        private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
+        //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
+        //private void TelaPlotagem_KeyDown()
+        {
+            try
+            {
+                if(e.KeyValue == 37)
+                {
+                    this.Close();
+                }
+                switch (e.KeyData)
+                {
+                    case Keys.Left:
+                        this.Close();
+                        break;
 
-                    GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                    GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    case Keys.Escape:
+                        this.Close();
+                        break;
 
-                    GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                    GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                    //UpdateInicioTela();
-                    break;
-                case Keys.A:
-                    camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                    if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
+                    case Keys.D:
+
+                        camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                        if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                        GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                        GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                        GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                        GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                        GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                        GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                        //UpdateInicioTela();
+                        break;
+                    case Keys.A:
+                        camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                        if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                        GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                        GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                        GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                        GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                        GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                        GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                        //UpdateInicioTela();
+                        break;
+                }
+                int alturaTela = (int)openglControl1.Height;
+                openglControl1.DoRender();
+                plotagem.Margem(qtdGrafics, alturaTela);
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(camera.X, 0, 1);
+                UpdateInicioTela();
+                //Update();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+
+
+        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            try
+            {
+                //hScrollBar1.Value = (int)e.NewValue;
+                bool isRight = e.NewValue > hScrollBar1.Value;
+
+                if (!isRight) // Se estiver indo para a esquerda
+                {
+                    camera.X -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                     GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                     GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
 
@@ -1200,53 +1265,28 @@ namespace PlotagemOpenGL
 
                     GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                     GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                    //UpdateInicioTela();
-                    break;
+                }
+                else // Se estiver indo para a direita
+                {
+                    camera.X += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                    GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                    GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                }
+
+                int alturaTela = (int)openglControl1.Height;
+                openglControl1.DoRender();
+                plotagem.Margem(qtdGrafics, alturaTela);
+                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                gl.Translate(camera.X, 0, 1);
+                UpdateInicioTela();
             }
-            int alturaTela = (int)openglControl1.Height;
-            openglControl1.DoRender();
-            plotagem.Margem(qtdGrafics, alturaTela);
-            plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(camera.X, 0, 1);
-            UpdateInicioTela();
-        }
-
-        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
-        {
-            //hScrollBar1.Value = (int)e.NewValue;
-            bool isRight = e.NewValue > hScrollBar1.Value;
-
-            if (!isRight) // Se estiver indo para a esquerda
-            {
-                camera.X -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-
-                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-            }
-            else // Se estiver indo para a direita
-            {
-                camera.X += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-
-                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-            }
-
-            int alturaTela = (int)openglControl1.Height;
-            openglControl1.DoRender();
-            plotagem.Margem(qtdGrafics, alturaTela);
-            plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-            gl.Translate(camera.X, 0, 1);
-            UpdateInicioTela();
+            catch { }
         }
 
         private void tempoEmTela_SelectedIndexChanged(object sender, EventArgs e)
@@ -1341,7 +1381,6 @@ namespace PlotagemOpenGL
         }
 
         public static int aux;
-        private Rectangle htz;
 
         //Metodo que faz com que plote com base na montagem
         public static void elementoX()
@@ -1546,7 +1585,6 @@ namespace PlotagemOpenGL
             }
 
         }
-
 
         private void UpdateMenuItems(Panel panel, ToolStripItemCollection items, Dictionary<string, bool> filterStates)
         {

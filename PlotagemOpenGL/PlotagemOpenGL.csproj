@@ -35,6 +35,8 @@
     <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0-preview.1.21102.12" />
+    <PackageReference Include="Unity.Container" Version="5.11.11" />
+    <PackageReference Include="UnityEngine" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
