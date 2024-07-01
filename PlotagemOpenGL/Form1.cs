@@ -1061,56 +1061,54 @@ namespace PlotagemOpenGL
 
         private void plusAll_Click(object sender, EventArgs e)
         {
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[0] < 0.09)
+            try
             {
-                for (int i = 0; i < GlobVar.scale.Length; i++)
-                {
-                    GlobVar.scale[i] += 0.01f;
-                }
+                int alturaTela = (int)openglControl1.Height;
 
+                for(int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                {
+                    int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]);
+                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                    int newAmpli = Convert.ToInt16(GlobVar.Amplitude[indexAmpli]);
+                    GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"] = newAmpli;
+                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(i));
+
+                    GlobVar.scale[i] = scala;
+                }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
+                UpdateInicioTela();
             }
-            else
+            catch
             {
-                for (int i = 0; i < GlobVar.scale.Length; i++)
-                {
-                    GlobVar.scale[i] += 0.1f;
-                }
-
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
             }
 
-            UpdateInicioTela();
         }
         private void minusAll_Click(object sender, EventArgs e)
         {
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[0] <= 0.1)
+            try
             {
-                for (int i = 0; i < GlobVar.scale.Length; i++)
+                int alturaTela = (int)openglControl1.Height;
+
+                for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
-                    GlobVar.scale[i] -= 0.01f;
+                    int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]);
+                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                    int newAmpli = Convert.ToInt16(GlobVar.Amplitude[indexAmpli]);
+                    GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"] = newAmpli;
+                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(i));
+
+                    GlobVar.scale[i] = scala;
                 }
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
                 gl.Translate(0, 0, 1);
+                UpdateInicioTela();
             }
-            else
+            catch
             {
-                for (int i = 0; i < GlobVar.scale.Length; i++)
-                {
-                    GlobVar.scale[i] -= 0.1f;
-                }
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
             }
-            UpdateInicioTela();
         }
 
         private void plusLb1_Click(object sender, EventArgs e)
@@ -1118,7 +1116,8 @@ namespace PlotagemOpenGL
             try
             {
                 UpdateSelected(sender);
-                timer1.Start();
+                
+                //timer1.Start();
                 int alturaTela = (int)openglControl1.Height;
 
                 int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
@@ -1134,6 +1133,7 @@ namespace PlotagemOpenGL
                 gl.Translate(0, 0, 1);
                 UpdateInicioTela();
 
+                
             }
             catch
             {
@@ -1145,7 +1145,7 @@ namespace PlotagemOpenGL
             try
             {
                 UpdateSelected(sender);
-                timer1.Start();
+                //timer1.Start();
                 int alturaTela = (int)openglControl1.Height;
 
                 int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
@@ -1165,959 +1165,6 @@ namespace PlotagemOpenGL
             catch
             {
 
-            }
-        }
-
-        private void plusLb2_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[1] < 0.09)
-            {
-                GlobVar.scale[1] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[1] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb2_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[1] <= 0.1)
-            {
-                GlobVar.scale[1] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[1] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb3_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-            if (GlobVar.scale[2] < 0.09)
-            {
-                GlobVar.scale[2] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[2] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb3_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[2] <= 0.1)
-            {
-                GlobVar.scale[2] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[2] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb4_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[3] < 0.09)
-            {
-                GlobVar.scale[3] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[3] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb4_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[3] <= 0.1)
-            {
-                GlobVar.scale[3] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[3] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb5_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[4] < 0.09)
-            {
-                GlobVar.scale[4] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[4] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb5_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[4] <= 0.1)
-            {
-                GlobVar.scale[4] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[4] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb6_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[5] < 0.09)
-            {
-                GlobVar.scale[5] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[5] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb6_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[5] <= 0.1)
-            {
-                GlobVar.scale[5] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[5] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb7_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[6] < 0.09)
-            {
-                GlobVar.scale[6] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[6] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb7_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[6] <= 0.1)
-            {
-                GlobVar.scale[6] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[6] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb8_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[7] < 0.09)
-            {
-                GlobVar.scale[7] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[7] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb8_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[7] <= 0.1)
-            {
-                GlobVar.scale[7] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[7] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb9_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[8] < 0.09)
-            {
-                GlobVar.scale[8] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[8] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb9_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[8] <= 0.1)
-            {
-                GlobVar.scale[8] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[8] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb10_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[9] < 0.09)
-            {
-                GlobVar.scale[9] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[9] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb10_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[9] <= 0.1)
-            {
-                GlobVar.scale[9] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[9] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb11_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[10] < 0.09)
-            {
-                GlobVar.scale[10] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[10] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb11_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[10] <= 0.1)
-            {
-                GlobVar.scale[10] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[10] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb12_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[11] < 0.09)
-            {
-                GlobVar.scale[11] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[11] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb12_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[11] <= 0.1)
-            {
-                GlobVar.scale[11] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[11] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb13_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[12] < 0.09)
-            {
-                GlobVar.scale[12] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[12] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb13_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[12] <= 0.1)
-            {
-                GlobVar.scale[12] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[12] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb14_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[13] < 0.09)
-            {
-                GlobVar.scale[13] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[13] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb14_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[13] <= 0.1)
-            {
-                GlobVar.scale[13] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[13] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb15_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[14] < 0.09)
-            {
-                GlobVar.scale[14] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[14] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb15_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[14] <= 0.1)
-            {
-                GlobVar.scale[14] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[14] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb16_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[15] < 0.09)
-            {
-                GlobVar.scale[15] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[15] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb16_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[15] <= 0.1)
-            {
-                GlobVar.scale[15] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[15] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb17_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[16] < 0.09)
-            {
-                GlobVar.scale[16] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[16] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb17_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[16] <= 0.1)
-            {
-                GlobVar.scale[16] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[16] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb18_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[17] < 0.09)
-            {
-                GlobVar.scale[17] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[17] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb18_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[17] <= 0.1)
-            {
-                GlobVar.scale[17] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[17] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb19_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[18] < 0.09)
-            {
-                GlobVar.scale[18] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[18] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb19_Click(object sender, EventArgs e)
-        {
-
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[18] <= 0.1)
-            {
-                GlobVar.scale[18] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[18] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb20_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[19] < 0.09)
-            {
-                GlobVar.scale[19] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[19] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb20_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[19] <= 0.1)
-            {
-                GlobVar.scale[19] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[19] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb21_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[20] < 0.09)
-            {
-                GlobVar.scale[20] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[20] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb21_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[20] <= 0.1)
-            {
-                GlobVar.scale[20] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[20] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb22_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[21] < 0.09)
-            {
-                GlobVar.scale[21] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[21] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb22_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[21] <= 0.1)
-            {
-                GlobVar.scale[21] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[21] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-
-        private void plusLb23_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[22] < 0.09)
-            {
-                GlobVar.scale[22] += 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[22] += 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-        }
-        private void minusLb23_Click(object sender, EventArgs e)
-        {
-            int alturaTela = (int)openglControl1.Height;
-
-            if (GlobVar.scale[22] <= 0.1)
-            {
-                GlobVar.scale[22] -= 0.01f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
-            }
-            else
-            {
-                GlobVar.scale[22] -= 0.1f;
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-                gl.Translate(0, 0, 1);
-                UpdateInicioTela();
             }
         }
 
@@ -2277,7 +1324,7 @@ namespace PlotagemOpenGL
                     Label lb = (Label)Label.GetValue(this);
                     if (lb != null)
                     {
-                        lb.Text = GlobVar.tbl_MontagemSelecionada.Rows[indexLabel]["AmplitudeMin"].ToString();
+                        lb.Text = GlobVar.tbl_MontagemSelecionada.Rows[indexLabel]["AmplitudeMin"].ToString() + "μV";
                         indexLabel++;
                     }
                 }
@@ -2420,19 +1467,33 @@ namespace PlotagemOpenGL
             Control menu = sender as Control;
             if (menu != null)
             {
-                if(menu is Panel panel)
-                {
-                    clickedPanel = panel;
+                string teste = menu.Name.Substring(6);
+                FieldInfo labelText = typeof(Tela_Plotagem).GetField($"label{teste}", BindingFlags.Static | BindingFlags.Public);
 
-                    foreach(Control control in panel.Controls)
+                if(labelText != null)
+                {
+                    Label labell = (Label)labelText.GetValue(this);
+                    if (labell is Label label)
                     {
-                        if(control is Label label)
+                        if (label.Name.StartsWith("label"))
                         {
-                            if(label.Name.StartsWith("label"))
-                            {
-                                selectedLabelValue = label.Text;
-                            }
+                            selectedLabelValue = label.Text;
                         }
+                    }
+                    int? rowIndex = null;
+
+                    for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                    {
+                        if (GlobVar.tbl_MontagemSelecionada.Rows[i].Field<string>("Legenda") == selectedLabelValue)
+                        {
+                            rowIndex = i;
+                            break;
+                        }
+                    }
+                    if (rowIndex != null)
+                    {
+                        index = (int)rowIndex;
+
                     }
                 }
             }

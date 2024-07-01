@@ -868,6 +868,7 @@ namespace PlotagemOpenGL
             painelExames.Name = "painelExames";
             painelExames.Size = new System.Drawing.Size(117, 599);
             painelExames.TabIndex = 51;
+            painelExames.MouseUp += Form1_MouseUp;
             // 
             // panel1
             // 
@@ -1025,7 +1026,7 @@ namespace PlotagemOpenGL
             minusLb4.TabIndex = 21;
             minusLb4.Text = "-";
             minusLb4.UseVisualStyleBackColor = true;
-            minusLb4.Click += minusLb4_Click;
+            minusLb4.Click += minusLb1_Click;
             // 
             // plusLb4
             // 
@@ -1036,7 +1037,7 @@ namespace PlotagemOpenGL
             plusLb4.TabIndex = 20;
             plusLb4.Text = "+";
             plusLb4.UseVisualStyleBackColor = true;
-            plusLb4.Click += plusLb4_Click;
+            plusLb4.Click += plusLb1_Click;
             // 
             // scalaLb4
             // 
@@ -1069,7 +1070,7 @@ namespace PlotagemOpenGL
             minusLb5.TabIndex = 23;
             minusLb5.Text = "-";
             minusLb5.UseVisualStyleBackColor = true;
-            minusLb5.Click += minusLb5_Click;
+            minusLb5.Click += minusLb1_Click;
             // 
             // plusLb5
             // 
@@ -1080,7 +1081,7 @@ namespace PlotagemOpenGL
             plusLb5.TabIndex = 22;
             plusLb5.Text = "+";
             plusLb5.UseVisualStyleBackColor = true;
-            plusLb5.Click += plusLb5_Click;
+            plusLb5.Click += plusLb1_Click;
             // 
             // scalaLb5
             // 
@@ -1114,7 +1115,7 @@ namespace PlotagemOpenGL
             minusLb6.Text = "-";
             minusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb6.UseVisualStyleBackColor = true;
-            minusLb6.Click += minusLb6_Click;
+            minusLb6.Click += minusLb1_Click;
             // 
             // plusLb6
             // 
@@ -1126,7 +1127,7 @@ namespace PlotagemOpenGL
             plusLb6.Text = "+";
             plusLb6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb6.UseVisualStyleBackColor = true;
-            plusLb6.Click += plusLb6_Click;
+            plusLb6.Click += plusLb1_Click;
             // 
             // label6
             // 
@@ -1169,7 +1170,7 @@ namespace PlotagemOpenGL
             plusLb7.TabIndex = 32;
             plusLb7.Text = "-";
             plusLb7.UseVisualStyleBackColor = true;
-            plusLb7.Click += plusLb7_Click;
+            plusLb7.Click += plusLb1_Click;
             // 
             // minusLb7
             // 
@@ -1180,7 +1181,7 @@ namespace PlotagemOpenGL
             minusLb7.TabIndex = 31;
             minusLb7.Text = "+";
             minusLb7.UseVisualStyleBackColor = true;
-            minusLb7.Click += minusLb7_Click;
+            minusLb7.Click += minusLb1_Click;
             // 
             // label7
             // 
@@ -1223,7 +1224,7 @@ namespace PlotagemOpenGL
             minusLb8.TabIndex = 34;
             minusLb8.Text = "-";
             minusLb8.UseVisualStyleBackColor = true;
-            minusLb8.Click += minusLb8_Click;
+            minusLb8.Click += minusLb1_Click;
             // 
             // plusLb8
             // 
@@ -1234,7 +1235,7 @@ namespace PlotagemOpenGL
             plusLb8.TabIndex = 33;
             plusLb8.Text = "+";
             plusLb8.UseVisualStyleBackColor = true;
-            plusLb8.Click += plusLb8_Click;
+            plusLb8.Click += plusLb1_Click;
             // 
             // label8
             // 
@@ -1277,7 +1278,7 @@ namespace PlotagemOpenGL
             minusLb9.TabIndex = 36;
             minusLb9.Text = "-";
             minusLb9.UseVisualStyleBackColor = true;
-            minusLb9.Click += minusLb9_Click;
+            minusLb9.Click += minusLb1_Click;
             // 
             // plusLb9
             // 
@@ -1288,7 +1289,7 @@ namespace PlotagemOpenGL
             plusLb9.TabIndex = 35;
             plusLb9.Text = "+";
             plusLb9.UseVisualStyleBackColor = true;
-            plusLb9.Click += plusLb9_Click;
+            plusLb9.Click += plusLb1_Click;
             // 
             // label9
             // 
@@ -1331,7 +1332,7 @@ namespace PlotagemOpenGL
             minusLb10.TabIndex = 38;
             minusLb10.Text = "-";
             minusLb10.UseVisualStyleBackColor = true;
-            minusLb10.Click += minusLb10_Click;
+            minusLb10.Click += minusLb1_Click;
             // 
             // plusLb10
             // 
@@ -1342,7 +1343,7 @@ namespace PlotagemOpenGL
             plusLb10.TabIndex = 37;
             plusLb10.Text = "+";
             plusLb10.UseVisualStyleBackColor = true;
-            plusLb10.Click += plusLb10_Click;
+            plusLb10.Click += plusLb1_Click;
             // 
             // label10
             // 
@@ -1386,7 +1387,7 @@ namespace PlotagemOpenGL
             minusLb11.Text = "-";
             minusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb11.UseVisualStyleBackColor = true;
-            minusLb11.Click += minusLb11_Click;
+            minusLb11.Click += minusLb1_Click;
             // 
             // plusLb11
             // 
@@ -1398,7 +1399,7 @@ namespace PlotagemOpenGL
             plusLb11.Text = "+";
             plusLb11.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb11.UseVisualStyleBackColor = true;
-            plusLb11.Click += plusLb11_Click;
+            plusLb11.Click += plusLb1_Click;
             // 
             // label11
             // 
@@ -1441,7 +1442,7 @@ namespace PlotagemOpenGL
             plusLb12.TabIndex = 47;
             plusLb12.Text = "-";
             plusLb12.UseVisualStyleBackColor = true;
-            plusLb12.Click += plusLb12_Click;
+            plusLb12.Click += plusLb1_Click;
             // 
             // minusLb12
             // 
@@ -1452,7 +1453,7 @@ namespace PlotagemOpenGL
             minusLb12.TabIndex = 46;
             minusLb12.Text = "+";
             minusLb12.UseVisualStyleBackColor = true;
-            minusLb12.Click += minusLb12_Click;
+            minusLb12.Click += minusLb1_Click;
             // 
             // label12
             // 
@@ -1495,7 +1496,7 @@ namespace PlotagemOpenGL
             minusLb13.TabIndex = 49;
             minusLb13.Text = "-";
             minusLb13.UseVisualStyleBackColor = true;
-            minusLb13.Click += minusLb13_Click;
+            minusLb13.Click += minusLb1_Click;
             // 
             // plusLb13
             // 
@@ -1506,7 +1507,7 @@ namespace PlotagemOpenGL
             plusLb13.TabIndex = 48;
             plusLb13.Text = "+";
             plusLb13.UseVisualStyleBackColor = true;
-            plusLb13.Click += plusLb13_Click;
+            plusLb13.Click += plusLb1_Click;
             // 
             // label13
             // 
@@ -1549,7 +1550,7 @@ namespace PlotagemOpenGL
             minusLb14.TabIndex = 51;
             minusLb14.Text = "-";
             minusLb14.UseVisualStyleBackColor = true;
-            minusLb14.Click += minusLb14_Click;
+            minusLb14.Click += minusLb1_Click;
             // 
             // plusLb14
             // 
@@ -1560,7 +1561,7 @@ namespace PlotagemOpenGL
             plusLb14.TabIndex = 50;
             plusLb14.Text = "+";
             plusLb14.UseVisualStyleBackColor = true;
-            plusLb14.Click += plusLb14_Click;
+            plusLb14.Click += plusLb1_Click;
             // 
             // label14
             // 
@@ -1603,7 +1604,7 @@ namespace PlotagemOpenGL
             minusLb15.TabIndex = 53;
             minusLb15.Text = "-";
             minusLb15.UseVisualStyleBackColor = true;
-            minusLb15.Click += minusLb15_Click;
+            minusLb15.Click += minusLb1_Click;
             // 
             // plusLb15
             // 
@@ -1614,7 +1615,7 @@ namespace PlotagemOpenGL
             plusLb15.TabIndex = 52;
             plusLb15.Text = "+";
             plusLb15.UseVisualStyleBackColor = true;
-            plusLb15.Click += plusLb15_Click;
+            plusLb15.Click += plusLb1_Click;
             // 
             // label15
             // 
@@ -1658,7 +1659,7 @@ namespace PlotagemOpenGL
             minusLb16.Text = "-";
             minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             minusLb16.UseVisualStyleBackColor = true;
-            minusLb16.Click += minusLb16_Click;
+            minusLb16.Click += minusLb1_Click;
             // 
             // plusLb16
             // 
@@ -1670,7 +1671,7 @@ namespace PlotagemOpenGL
             plusLb16.Text = "+";
             plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             plusLb16.UseVisualStyleBackColor = true;
-            plusLb16.Click += plusLb16_Click;
+            plusLb16.Click += plusLb1_Click;
             // 
             // label16
             // 
@@ -1713,7 +1714,7 @@ namespace PlotagemOpenGL
             plusLb17.TabIndex = 62;
             plusLb17.Text = "-";
             plusLb17.UseVisualStyleBackColor = true;
-            plusLb17.Click += plusLb17_Click;
+            plusLb17.Click += plusLb1_Click;
             // 
             // minusLb17
             // 
@@ -1724,7 +1725,7 @@ namespace PlotagemOpenGL
             minusLb17.TabIndex = 61;
             minusLb17.Text = "+";
             minusLb17.UseVisualStyleBackColor = true;
-            minusLb17.Click += minusLb17_Click;
+            minusLb17.Click += minusLb1_Click;
             // 
             // label17
             // 
@@ -1767,7 +1768,7 @@ namespace PlotagemOpenGL
             minusLb18.TabIndex = 64;
             minusLb18.Text = "-";
             minusLb18.UseVisualStyleBackColor = true;
-            minusLb18.Click += minusLb18_Click;
+            minusLb18.Click += minusLb1_Click;
             // 
             // plusLb18
             // 
@@ -1778,7 +1779,7 @@ namespace PlotagemOpenGL
             plusLb18.TabIndex = 63;
             plusLb18.Text = "+";
             plusLb18.UseVisualStyleBackColor = true;
-            plusLb18.Click += plusLb18_Click;
+            plusLb18.Click += plusLb1_Click;
             // 
             // label18
             // 
@@ -1821,7 +1822,7 @@ namespace PlotagemOpenGL
             minusLb19.TabIndex = 66;
             minusLb19.Text = "-";
             minusLb19.UseVisualStyleBackColor = true;
-            minusLb19.Click += minusLb19_Click;
+            minusLb19.Click += minusLb1_Click;
             // 
             // plusLb19
             // 
@@ -1832,7 +1833,7 @@ namespace PlotagemOpenGL
             plusLb19.TabIndex = 65;
             plusLb19.Text = "+";
             plusLb19.UseVisualStyleBackColor = true;
-            plusLb19.Click += plusLb19_Click;
+            plusLb19.Click += plusLb1_Click;
             // 
             // label19
             // 
@@ -1875,7 +1876,7 @@ namespace PlotagemOpenGL
             minusLb20.TabIndex = 68;
             minusLb20.Text = "-";
             minusLb20.UseVisualStyleBackColor = true;
-            minusLb20.Click += minusLb20_Click;
+            minusLb20.Click += minusLb1_Click;
             // 
             // plusLb20
             // 
@@ -1886,7 +1887,7 @@ namespace PlotagemOpenGL
             plusLb20.TabIndex = 67;
             plusLb20.Text = "+";
             plusLb20.UseVisualStyleBackColor = true;
-            plusLb20.Click += plusLb20_Click;
+            plusLb20.Click += plusLb1_Click;
             // 
             // label20
             // 
@@ -1929,7 +1930,7 @@ namespace PlotagemOpenGL
             minusLb21.TabIndex = 73;
             minusLb21.Text = "-";
             minusLb21.UseVisualStyleBackColor = true;
-            minusLb21.Click += minusLb21_Click;
+            minusLb21.Click += minusLb1_Click;
             // 
             // plusLb21
             // 
@@ -1940,7 +1941,7 @@ namespace PlotagemOpenGL
             plusLb21.TabIndex = 72;
             plusLb21.Text = "+";
             plusLb21.UseVisualStyleBackColor = true;
-            plusLb21.Click += plusLb21_Click;
+            plusLb21.Click += plusLb1_Click;
             // 
             // label21
             // 
@@ -1983,7 +1984,7 @@ namespace PlotagemOpenGL
             minusLb22.TabIndex = 75;
             minusLb22.Text = "-";
             minusLb22.UseVisualStyleBackColor = true;
-            minusLb22.Click += minusLb22_Click;
+            minusLb22.Click += minusLb1_Click;
             // 
             // plusLb22
             // 
@@ -1994,7 +1995,7 @@ namespace PlotagemOpenGL
             plusLb22.TabIndex = 74;
             plusLb22.Text = "+";
             plusLb22.UseVisualStyleBackColor = true;
-            plusLb22.Click += plusLb22_Click;
+            plusLb22.Click += plusLb1_Click;
             // 
             // label22
             // 
@@ -2037,7 +2038,7 @@ namespace PlotagemOpenGL
             minusLb23.TabIndex = 77;
             minusLb23.Text = "-";
             minusLb23.UseVisualStyleBackColor = true;
-            minusLb23.Click += minusLb23_Click;
+            minusLb23.Click += minusLb1_Click;
             // 
             // label23
             // 
@@ -2058,7 +2059,7 @@ namespace PlotagemOpenGL
             plusLb23.TabIndex = 76;
             plusLb23.Text = "+";
             plusLb23.UseVisualStyleBackColor = true;
-            plusLb23.Click += plusLb23_Click;
+            plusLb23.Click += plusLb1_Click;
             // 
             // scalaLb23
             // 
