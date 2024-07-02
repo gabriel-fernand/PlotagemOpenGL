@@ -193,8 +193,9 @@ namespace PlotagemOpenGL.auxi
             gl.Vertex(endX, EndY[YAdjusted] - 5, -1.9f);
             gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
             gl.End();
+            GlobVar.canal = YAdjusted;
 
-            plotEventos.AdicionarEventoAoDataTable((int)startX, (int)endX, YAdjusted, desenhoLoc, startY);
+            //plotEventos.AdicionarEventoAoDataTable((int)startX, (int)endX, YAdjusted, desenhoLoc, startY);
 
             //Classe para testes para fazer os numeros dos canais de respiracao e SP02
             plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);

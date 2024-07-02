@@ -26,6 +26,7 @@ using SharpGL.SceneGraph;
 using System.Linq.Expressions;
 using System.Diagnostics;
 using Input = UnityEngine.Input;
+using PlotagemOpenGL.auxi.auxPlotagem;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -941,6 +942,7 @@ namespace PlotagemOpenGL
         {
         }
         
+        
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (click)
@@ -957,7 +959,8 @@ namespace PlotagemOpenGL
                     // Set the initial end coordinates to the starting coordinates
                     Plotagem.endX = Plotagem.startX;
                     Plotagem.endY = Plotagem.startY;
-
+                    GlobVar.startX = (int)Plotagem.startX;
+                    GlobVar.startY = (int) Plotagem.startY;
                     // Redraw the control
                     openglControl1.DoRender();
                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -1000,19 +1003,23 @@ namespace PlotagemOpenGL
         {
             if (e.Button == MouseButtons.Left)
             {
-                
+                UpdateLoc();
+
                 timer2.Stop();
                 stopwatch.Stop();
-                
+
                 isDrawing = false;
 
                 // Update end coordinates when the mouse button is released
                 ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
+                GlobVar.endX = (int)Plotagem.endX;
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                UpdateLoc();
+                if (GlobVar.endX != GlobVar.startX) { 
+                plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                }
             }
             if (e.Button == MouseButtons.Right)
             {
@@ -1023,6 +1030,18 @@ namespace PlotagemOpenGL
 
             }
         }
+
+        private void OpenglControl1_MouseHover(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                //ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+
+            }
+            catch { }
+        }
+
         private void UpdateLoc(string canal = null)
         {
             if (timer2.Enabled) {
@@ -2363,7 +2382,6 @@ namespace PlotagemOpenGL
         int index = 0;
         private void timer2_Tick(object sender, EventArgs e)
         {
-            
         }
 
         private void timer1_Tick(object sender, EventArgs e)

@@ -422,6 +422,7 @@ namespace PlotagemOpenGL
             openglControl1.MouseMove += OpenGLControl_MouseMove;
             openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseWheel += OpenglControl1_MouseWheel;
+            openglControl1.MouseHover += OpenglControl1_MouseHover;
             // 
             // contextMenuStripOpenGl
             // 
@@ -2155,10 +2156,11 @@ namespace PlotagemOpenGL
             // timer1
             // 
             timer1.Interval = 20;
-            timer1.Tick += timer1_Tick;            
+            timer1.Tick += timer1_Tick;
             // 
             // timer2
             // 
+            timer2.Interval = 5;
             timer2.Tick += timer2_Tick;
 
             // 
@@ -2265,6 +2267,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
 
 

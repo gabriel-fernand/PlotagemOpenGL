@@ -93,29 +93,10 @@ namespace PlotagemOpenGL.auxi
         public static int inicioTela;
         public static int finalTela;
 
-        public static float escalaLb1 = 1.0f;
-        public static float escalaLb2 = 1.0f;
-        public static float escalaLb3 = 1.0f;
-        public static float escalaLb4 = 1.0f;
-        public static float escalaLb5 = 1.0f;
-        public static float escalaLb6 = 1.0f;
-        public static float escalaLb7 = 1.0f;
-        public static float escalaLb8 = 1.0f;
-        public static float escalaLb9 = 1.0f;
-        public static float escalaLb10 = 1.0f;
-        public static float escalaLb11 = 1.0f;
-        public static float escalaLb12 = 1.0f;
-        public static float escalaLb13 = 1.0f;
-        public static float escalaLb14 = 1.0f;
-        public static float escalaLb15 = 1.0f;
-        public static float escalaLb16 = 1.0f;
-        public static float escalaLb17 = 1.0f;
-        public static float escalaLb18 = 1.0f;
-        public static float escalaLb19 = 1.0f;
-        public static float escalaLb20 = 1.0f;
-        public static float escalaLb21 = 1.0f;
-        public static float escalaLb22 = 1.0f;
-        public static float escalaLb23 = 1.0f;
-
+        public static int endX;
+        public static int startX;
+        public static int startY;
+        public static int canal;
+        public static float[] loc;
     }
 }
