@@ -940,6 +940,55 @@ namespace PlotagemOpenGL
         }
         private void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
         {
+            try
+            {
+                if (e.Delta != 0)
+                {
+                    if(e.Delta > 0)
+                    {
+                        if(GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1)){
+                        camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                            GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            //UpdateInicioTela();
+                        }
+                        }
+                    else
+                    {
+                        if (GlobVar.indice > 0)
+                        {
+                            camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                            GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            //UpdateInicioTela();
+                        }
+                    }
+                    int alturaTela = (int)openglControl1.Height;
+                    openglControl1.DoRender();
+                    plotagem.Margem(qtdGrafics, alturaTela);
+                    plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                    gl.Translate(camera.X, 0, 1);
+                    UpdateInicioTela();
+                    //Update();
+                }
+            }
+            catch { }
         }
         
         
@@ -1222,22 +1271,27 @@ namespace PlotagemOpenGL
 
 
                     case Keys.D:
+                        if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                        {
 
-                        camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                        if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
-                        GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                        GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
 
-                        GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                        GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
-                        GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                        GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                        //UpdateInicioTela();
+                            GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            //UpdateInicioTela();
+                        }
                         break;
                     case Keys.A:
-                        camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                        if (GlobVar.indice > 0)
+                        {
+                            camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
                         if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                         GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -1249,6 +1303,7 @@ namespace PlotagemOpenGL
                         GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                         GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                         //UpdateInicioTela();
+                        }
                         break;
                 }
                 int alturaTela = (int)openglControl1.Height;

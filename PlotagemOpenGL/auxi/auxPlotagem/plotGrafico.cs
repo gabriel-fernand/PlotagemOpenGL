@@ -22,14 +22,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static void DesenhaGrafico(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
             try{
-            bool text = false;
-            //gl.Color(0.0f, 0.0f, 0.0f);
-            int des = qtdGraf - 1;
+                bool text = false;
+                //gl.Color(0.0f, 0.0f, 0.0f);
+                int des = qtdGraf - 1;
                 for (int i = 0; i < qtdGraf; i++)
                 {
                     bool verTx = false;
                     int ponteiroDesenho = 0;
-                    int h = GlobVar.indice;
+                    int h = 0;
                     float[] color = new float[3];
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[des]["Cor"]));
@@ -55,6 +55,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         {
                             verTx = true;
                             ponteiroDesenho = 512 / GlobVar.txPorCanal[index];
+                            h = GlobVar.indice / ponteiroDesenho;
                         }
                         gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                         for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
@@ -80,13 +81,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
                     }
                     des--;
-
                     gl.End();
                 }
             }
             catch { }
-
-
         }
         public static void TracejadoLinhaZero(OpenGL gl, int qtdGraf)
         {
