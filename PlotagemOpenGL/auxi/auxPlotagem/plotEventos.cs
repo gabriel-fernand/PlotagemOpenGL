@@ -10,7 +10,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 {
     public static class plotEventos
     {
-        public static void DesenhaEventos(int qtdGraf, OpenGL gl, float[] desenhoLoc) 
+        public static void DesenhaEventos(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
             try
             {
@@ -147,6 +147,37 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 throw ex;
             }
+        }
+        public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY)
+        {
+            bool isThereAnEvent = false;
+
+            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+            DataTable sequancias = new DataTable();
+            sequancias = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]).CopyToDataTable();
+            for (int i = 0; i < sequancias.Rows.Count; i++)
+            {
+                if (mouseX >= Convert.ToInt16(sequancias.Rows[i]["Inicio"]) && mouseX <= Convert.ToInt16(sequancias.Rows[i]["Duracao"]))
+                {
+                    isThereAnEvent = true;
+                }
+            }
+
+            return isThereAnEvent;
+        }
+        public static bool IsInAnEventBorder()
+        {
+            bool isThereAnEvent = false;
+
+
+            return isThereAnEvent;
+        }
+        public static bool DrawBordenInAnEvent()
+        {
+            bool isThereAnEvent = false;
+
+
+            return isThereAnEvent;
         }
 
     }

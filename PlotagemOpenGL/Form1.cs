@@ -27,6 +27,7 @@ using System.Linq.Expressions;
 using System.Diagnostics;
 using Input = UnityEngine.Input;
 using PlotagemOpenGL.auxi.auxPlotagem;
+using OpenTK.Windowing.Common.Input;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -825,7 +826,7 @@ namespace PlotagemOpenGL
 
         }
 
-        private bool isDrawing = false;
+        public static bool isDrawing = false;
         // Variável para rastrear o painel anterior
         private Panel previousPanel = null;
 
@@ -1025,7 +1026,7 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
+        bool isAnEvent = false;
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
             Vector2 a;
@@ -1046,6 +1047,30 @@ namespace PlotagemOpenGL
                 ConvertToOpenGLCoordinates(e.X, e.Y, out a.X, out a.Y);
                 //UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
             }
+            try{
+                // Update end coordinates as mouse moves
+                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.startY);
+                GlobVar.startY = (int)Plotagem.startY;
+                float endX = Plotagem.startX;
+                isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, GlobVar.startY);
+                if (!isAnEvent)
+                {
+                    this.Cursor = Cursors.Default;
+
+                    // Restaura o cursor padrão
+                }
+                else
+                {
+                    this.Cursor = Cursors.SizeAll;
+                    isAnEvent = false;
+
+
+                }
+                // Redraw the control
+                openglControl1.DoRender();
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+            }
+            catch { }
         }
 
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
@@ -1084,7 +1109,29 @@ namespace PlotagemOpenGL
         {
             try
             {
-                
+                MouseEventArgs musse = e as MouseEventArgs;
+                if(musse != null){
+                // Update end coordinates as mouse moves
+                ConvertToOpenGLCoordinates(musse.X, musse.Y, out Plotagem.endX, out Plotagem.startY);
+                GlobVar.startY = (int)Plotagem.startY;
+                float endX = Plotagem.startX;
+                isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, GlobVar.startY);
+                if (!isAnEvent)
+                {
+                    this.Cursor = Cursors.Default;
+
+                    // Restaura o cursor padrão
+                }
+                else
+                {
+                    this.Cursor = Cursors.SizeAll;
+                    isAnEvent = false;
+
+                }
+                    // Redraw the control
+                    openglControl1.DoRender();
+                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                }
                 //ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
             }
@@ -1273,7 +1320,6 @@ namespace PlotagemOpenGL
                     case Keys.D:
                         if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
                         {
-
                             camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
                             if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
@@ -1287,6 +1333,7 @@ namespace PlotagemOpenGL
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
                         }
+
                         break;
                     case Keys.A:
                         if (GlobVar.indice > 0)

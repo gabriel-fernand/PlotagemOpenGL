@@ -5,6 +5,7 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 
 namespace PlotagemOpenGL.auxi
@@ -180,19 +181,23 @@ namespace PlotagemOpenGL.auxi
 
             //Metodo para fazer o desenho da linha x0 de cada grafico
             //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
-
-            gl.Color(0.0f, 0.0f, 0.0f);
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 
-            gl.Begin(OpenGL.GL_QUADS);
-            gl.PointSize(3.0f); // Define o tamanho dos pontos
-            gl.Color(GlobVar.colors[YAdjusted].X, GlobVar.colors[YAdjusted].Y, GlobVar.colors[YAdjusted].Z, 0.001);
-            //gl.ColorMask(3, 6, 7, alpha);
-            gl.Vertex(startX, StartY[YAdjusted] + 5, -1.9f);
-            gl.Vertex(endX, StartY[YAdjusted] + 5, -1.9f);
-            gl.Vertex(endX, EndY[YAdjusted] - 5, -1.9f);
-            gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
-            gl.End();
+            if (Tela_Plotagem.isDrawing)
+            {
+                gl.Color(0.0f, 0.0f, 0.0f);
+
+                gl.Begin(OpenGL.GL_QUADS);
+                gl.PointSize(3.0f); // Define o tamanho dos pontos
+                gl.Color(GlobVar.colors[YAdjusted].X, GlobVar.colors[YAdjusted].Y, GlobVar.colors[YAdjusted].Z, 0.001);
+                //gl.ColorMask(3, 6, 7, alpha);
+                gl.Vertex(startX, StartY[YAdjusted] + 5, -1.9f);
+                gl.Vertex(endX, StartY[YAdjusted] + 5, -1.9f);
+                gl.Vertex(endX, EndY[YAdjusted] - 5, -1.9f);
+                gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
+                gl.End();
+                //startX = 0;
+            }
             GlobVar.canal = YAdjusted;
 
             //plotEventos.AdicionarEventoAoDataTable((int)startX, (int)endX, YAdjusted, desenhoLoc, startY);

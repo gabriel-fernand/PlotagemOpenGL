@@ -137,11 +137,11 @@ namespace PlotagemOpenGL.auxi
                                 GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                                 colunaCanalIndex++;
                             }
-                            else
-                            {
+                            //else
+                            //{
                                 // Se exceder os limites da matrizCanal, saia do loop
-                                break;
-                            }
+                            //    break;
+                            //}
                         }
                     }
                 }
