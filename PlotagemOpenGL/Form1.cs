@@ -998,24 +998,25 @@ namespace PlotagemOpenGL
             if (click)
             {
                 if (e.Button == MouseButtons.Left)
-                { 
-                    timer2.Start();
-                    stopwatch.Restart();
-                    isDrawing = true;
+                {
+                    if (!isAnEvent) {
+                        timer2.Start();
+                        stopwatch.Restart();
+                        isDrawing = true;
 
-                    // Convert window coordinates to OpenGL coordinates
-                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
+                        // Convert window coordinates to OpenGL coordinates
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
 
-                    // Set the initial end coordinates to the starting coordinates
-                    Plotagem.endX = Plotagem.startX;
-                    Plotagem.endY = Plotagem.startY;
-                    GlobVar.startX = (int)Plotagem.startX;
-                    GlobVar.startY = (int) Plotagem.startY;
-                    // Redraw the control
-                    openglControl1.DoRender();
-                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                        // Set the initial end coordinates to the starting coordinates
+                        Plotagem.endX = Plotagem.startX;
+                        Plotagem.endY = Plotagem.startY;
+                        GlobVar.startX = (int)Plotagem.startX;
+                        GlobVar.startY = (int)Plotagem.startY;
+                        // Redraw the control
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-                }
+                    }                }
                 if (e.Button == MouseButtons.Right)
                 {
                     isDrawing = false;
@@ -1029,54 +1030,45 @@ namespace PlotagemOpenGL
         bool isAnEvent = false;
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
-            Vector2 a;
-
-            if (isDrawing)
+            try
             {
-                // Update end coordinates as mouse moves
-                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                if (e != null)
+                {
+                    // Atualiza as coordenadas finais conforme o mouse se move
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.startY);
+                    int startY = (int)Plotagem.startY;
+                    float endX = Plotagem.endX;
+                    bool isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
 
-                // Redraw the control
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                    if (!isAnEvent)
+                    {
+                        // Restaura o cursor padrão
+                        this.Cursor = Cursors.Default;
+                    }
+                    else
+                    {
+                        // Altera o cursor para "SizeAll"
+                        this.Cursor = Cursors.SizeAll;
+                    }
+
+                    // Redesenha o controle
+                    openglControl1.DoRender();
+                    plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                }
             }
-            if (click)
+            catch (Exception ex)
             {
-                //UpdateLoc(stopwatch.ToString());
-
-                ConvertToOpenGLCoordinates(e.X, e.Y, out a.X, out a.Y);
-                //UpdateLoc(Canais.UpMouseLoc(a.Y, GlobVar.desenhoLoc));
+                // Lida com exceções
+                Console.WriteLine(ex.Message);
             }
-            try{
-                // Update end coordinates as mouse moves
-                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.startY);
-                GlobVar.startY = (int)Plotagem.startY;
-                float endX = Plotagem.startX;
-                isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, GlobVar.startY);
-                if (!isAnEvent)
-                {
-                    this.Cursor = Cursors.Default;
-
-                    // Restaura o cursor padrão
-                }
-                else
-                {
-                    this.Cursor = Cursors.SizeAll;
-                    isAnEvent = false;
-
-
-                }
-                // Redraw the control
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-            }
-            catch { }
         }
 
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                if(!isAnEvent)
+                {
                 UpdateLoc();
 
                 timer2.Stop();
@@ -1091,8 +1083,10 @@ namespace PlotagemOpenGL
                 // Redraw the control
                 openglControl1.DoRender();
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-                if (GlobVar.endX != GlobVar.startX) { 
-                plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                    if (GlobVar.endX != GlobVar.startX)
+                    {
+                        plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                    }
                 }
             }
             if (e.Button == MouseButtons.Right)

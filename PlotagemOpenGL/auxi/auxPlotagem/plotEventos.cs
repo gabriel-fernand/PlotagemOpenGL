@@ -1,5 +1,6 @@
 ﻿using Accord.Math;
 using SharpGL;
+using SharpGL.SceneGraph;
 using System;
 using System.Data;
 using System.IO;
@@ -15,6 +16,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             try
             {
                 DataTable eventos = GlobVar.eventosUpdate;
+                float[] color = new float[3];
 
                 var filteredRows = eventos.AsEnumerable()
                               .OrderBy(row => row.Field<int>("Seq"));
@@ -28,13 +30,19 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int codCanal1First = firstRow.Field<int>("CodCanal1");
                     int inicio = firstRow.Field<int>("Inicio");
                     int termino = firstRow.Field<int>("Duracao");
+                    int codEvento = firstRow.Field<int>("CodEvento");
                     if (GlobVar.codSelected.Contains(codCanal1First))
                     {
+                        var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
+                        int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
+                        color = plotGrafico.ObterComponentesRGB(rgbDex);
+
                         int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
 
                         gl.Begin(OpenGL.GL_QUADS);
                         gl.PointSize(3.0f); // Define o tamanho dos pontos
-                        gl.Color(GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].X, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Y, GlobVar.colors[GlobVar.codSelected.IndexOf(codCanal1First)].Z, 0.001);
+                        gl.Color(color[0], color[1], color[2], 0.44f);
                         //gl.ColorMask(3, 6, 7, alpha);
                         gl.Vertex(inicio, Plotagem.StartY[YAdjusted] + 5, -1.9f);
                         gl.Vertex(termino, Plotagem.StartY[YAdjusted] + 5, -1.9f);
@@ -94,7 +102,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
 
             // Adicionar dados ao DataTable
-            GlobVar.eventosUpdate.Rows.Add(seq, numPag, 0, GlobVar.codSelected[loc], inicio, termino);
+            GlobVar.eventosUpdate.Rows.Add(seq, numPag, 101, GlobVar.codSelected[loc], inicio, termino);
 
             // Exportar DataTable para Excel
             string excelFilePath = @"C:\Teste\Teste";
@@ -150,20 +158,42 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY)
         {
+            try {
             bool isThereAnEvent = false;
 
             int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
             DataTable sequancias = new DataTable();
-            sequancias = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]).CopyToDataTable();
+
+            // Verifica se o DataTable 'eventosUpdate' está vazio
+            if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+            {
+                return false;
+            }
+
+            sequancias = GlobVar.eventosUpdate.AsEnumerable()
+                                               .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc])
+                                               .CopyToDataTable();
+
+            // Verifica se o DataTable 'sequancias' está vazio
+            if (sequancias == null || sequancias.Rows.Count == 0)
+            {
+                return false;
+            }
+
             for (int i = 0; i < sequancias.Rows.Count; i++)
             {
                 if (mouseX >= Convert.ToInt16(sequancias.Rows[i]["Inicio"]) && mouseX <= Convert.ToInt16(sequancias.Rows[i]["Duracao"]))
                 {
                     isThereAnEvent = true;
+                    break; // Sai do loop assim que encontrar um evento
                 }
             }
 
-            return isThereAnEvent;
+            // Limpa o DataTable 'sequancias' se necessário
+            sequancias.Clear();
+
+                return isThereAnEvent; }
+            catch { return false; }
         }
         public static bool IsInAnEventBorder()
         {

@@ -34,6 +34,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_TipoExame = new DataTable();
         public static DataTable tbl_MontagemSelecionada = new DataTable();
         public static DataTable tbl_CadTipoCanal = new DataTable();
+        public static DataTable tbl_CadEvento = new DataTable();
 
         public static string tipoExame;
 

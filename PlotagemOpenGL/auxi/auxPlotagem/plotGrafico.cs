@@ -103,18 +103,22 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static float[] ObterComponentesRGB(int formatoRGB)
         {
+            string hexa = formatoRGB.ToString("X");
+            int hexValue = int.Parse(hexa, System.Globalization.NumberStyles.HexNumber);
+
             float[] colorRGB = new float[3];
-            int red = (formatoRGB >> 16) & 0xFF;
-            int green = (formatoRGB >> 8) & 0xFF;
-            int blue = formatoRGB & 0xFF;
+            int red = (hexValue >> 16) & 0xFF;
+            int green = (hexValue >> 8) & 0xFF;
+            int blue = hexValue & 0xFF;
+            float a = 1.0f; // Fully opaque
 
             // Normalizar os componentes RGB para o intervalo [0, 1]
-            colorRGB[0] = red / 256f;
-            colorRGB[1] = green / 256f;
-            colorRGB[2] = blue / 256f;
+            colorRGB[0] = blue / 255f;
+            colorRGB[1] = green / 255f;
+            colorRGB[2] = red / 255f;
 
             // Converter os valores para floats
-            string color = $"RGB({colorRGB[0]}, {colorRGB[1]}, {colorRGB[2]})";
+                         string color = $"RGB({colorRGB[0]}, {colorRGB[1]}, {colorRGB[2]})";
             // Retornar os componentes RGB como um array de floats
             return colorRGB;
         }

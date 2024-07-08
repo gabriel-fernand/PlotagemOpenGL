@@ -32,12 +32,15 @@ public class LeituraBanco
             string quaryTbl_TipoExame = "SELECT * FROM tbl_TipoExame";
             string quaryTipoExame = "SELECT TOP 1 CodTipoExame FROM tbl_DadosExame";
             string queryCadTipoCanal = "SELECT * FROM tbl_CadTipoCanal";
+            string queryCadEvento = "SELECT * FROM tbl_CadEvento";
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
             using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
             using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
             using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
+            using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
+
             using var command = new OdbcCommand(query, connectionDatBd);
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
             using var commandTipoExame = new OdbcCommand(quaryTipoExame, connectionDatBd);
@@ -47,6 +50,8 @@ public class LeituraBanco
             using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
             using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
             using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
+            using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
+
             using var adapter = new OdbcDataAdapter(command);
             using var adapterTbl_MontGrav = new OdbcDataAdapter(commandTbl_MontGrav);
             using var adapterTipoExame = new OdbcDataAdapter(commandTipoExame);
@@ -60,6 +65,7 @@ public class LeituraBanco
             adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
             adapterTbl_TipeExam.Fill(GlobVar.tbl_TipoExame);
             adapterTbl_CadTipoCanal.Fill(GlobVar.tbl_CadTipoCanal);
+            adapterCadExame.Fill(GlobVar.tbl_CadEvento);
 
             connectionConfigBd.Close();
             connectionDatBd.Close();
