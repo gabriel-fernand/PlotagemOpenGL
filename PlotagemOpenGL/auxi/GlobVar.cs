@@ -9,9 +9,9 @@ namespace PlotagemOpenGL.auxi
 {
     public class GlobVar
     {
-        public static string textFile; // = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
-        public static string bDataFile; // = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
-        public static string configBD; // = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
+        public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
+        public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
+        public static string configBD = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
         public static string cabecalho;
         public static int npagin;
         public static string npag;
@@ -23,6 +23,15 @@ namespace PlotagemOpenGL.auxi
         public static double[] valorout;
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
+
+        //Variaveis para mexer nos eventos
+        public static int iniEventoMove;
+        public static int durEventoMove;
+        public static int seqEvento;
+        public static int CodEvento;
+        public static string Event;
+        public static string InicioEvent;
+        public static string DuracaoEvent;
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();

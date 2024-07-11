@@ -28,6 +28,7 @@ using System.Diagnostics;
 using Input = UnityEngine.Input;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using OpenTK.Windowing.Common.Input;
+using PlotagemOpenGL.auxi.FormsAuxi;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -209,6 +210,7 @@ namespace PlotagemOpenGL
             this.Resize += Painel_resiz;
             this.Resize += panelLb_Resiz;
             this.Controls.Add(openglControl1);
+            toolTip1 = new CustomToolTip();
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
             painelComandoOriginalSize = painelComando.Size;
@@ -999,7 +1001,7 @@ namespace PlotagemOpenGL
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    if (!isAnEvent) {
+                    if (this.Cursor != Cursors.SizeAll) {
                         timer2.Start();
                         stopwatch.Restart();
                         isDrawing = true;
@@ -1016,7 +1018,27 @@ namespace PlotagemOpenGL
                         openglControl1.DoRender();
                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
-                    }                }
+                    }
+                    else if(this.Cursor == Cursors.SizeAll)
+                    {
+                        // Convert window coordinates to OpenGL coordinates
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
+
+                        if(Plotagem.startX < GlobVar.iniEventoMove){
+                            GlobVar.iniEventoMove -= (int)Plotagem.startX;
+
+                        }
+                        else
+                        {
+                            GlobVar.iniEventoMove += (int)Plotagem.startX;
+                        }
+                        GlobVar.startX = GlobVar.iniEventoMove;
+
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                    }
+                } 
                 if (e.Button == MouseButtons.Right)
                 {
                     isDrawing = false;
@@ -1044,16 +1066,20 @@ namespace PlotagemOpenGL
                     {
                         // Restaura o cursor padrão
                         this.Cursor = Cursors.Default;
+                        toolTip1.RemoveAll();
                     }
                     else
                     {
                         // Altera o cursor para "SizeAll"
                         this.Cursor = Cursors.SizeAll;
+                        toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
+                        return;
                     }
 
                     // Redesenha o controle
                     openglControl1.DoRender();
                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+                    
                 }
             }
             catch (Exception ex)
@@ -1065,9 +1091,10 @@ namespace PlotagemOpenGL
 
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
         {
+            try{
             if (e.Button == MouseButtons.Left)
             {
-                if(!isAnEvent)
+                if(this.Cursor != Cursors.SizeAll)
                 {
                 UpdateLoc();
 
@@ -1085,18 +1112,60 @@ namespace PlotagemOpenGL
                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                     if (GlobVar.endX != GlobVar.startX)
                     {
-                        plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                        if (GlobVar.endX < GlobVar.startX)
+                        {
+                            plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                        }
+                        else
+                        {
+                            plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                        }
+                        
                     }
                 }
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-                isDrawing = false;
+                else if (this.Cursor == Cursors.SizeAll)
+                    {
+                        // Convert window coordinates to OpenGL coordinates
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
-                // Update end coordinates when the mouse button is released
-                ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                        if (Plotagem.endX < GlobVar.durEventoMove)
+                        {
+                            GlobVar.durEventoMove -= (int)Plotagem.endX;
+                        }
+                        else
+                        {
+                            GlobVar.durEventoMove += (int)Plotagem.endX;
+                        }
 
+                        GlobVar.endX = GlobVar.durEventoMove;
+
+                        if (GlobVar.endX != GlobVar.startX)
+                        {
+                            if (GlobVar.endX < GlobVar.startX)
+                            {
+                                plotEventos.UpdateEvent(GlobVar.endX, GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                            }
+                            else
+                            {
+                                plotEventos.UpdateEvent(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                            }
+                        }
+
+                        openglControl1.DoRender();
+                        plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                    }
+                }
+                if (e.Button == MouseButtons.Right)
+                {
+                    isDrawing = false;
+
+                    // Update end coordinates when the mouse button is released
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+
+                }
             }
+            catch { }
         }
 
         private void OpenglControl1_MouseHover(object sender, EventArgs e)

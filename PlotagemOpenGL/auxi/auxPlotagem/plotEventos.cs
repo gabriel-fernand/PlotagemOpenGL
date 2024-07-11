@@ -1,10 +1,12 @@
 ﻿using Accord.Math;
 using SharpGL;
 using SharpGL.SceneGraph;
+using SharpGL.WPF;
 using System;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
@@ -17,9 +19,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 DataTable eventos = GlobVar.eventosUpdate;
                 float[] color = new float[3];
-
+                float[] colorLinha = new float[3];
                 var filteredRows = eventos.AsEnumerable()
                               .OrderBy(row => row.Field<int>("Seq"));
+                Vector2 cordenadasTexto;
 
                 // Agrupar por Seq e processar cada grupo
                 var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
@@ -37,8 +40,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                                         .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
                         int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
                         color = plotGrafico.ObterComponentesRGB(rgbDex);
+                        colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
 
                         int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+                        
 
                         gl.Begin(OpenGL.GL_QUADS);
                         gl.PointSize(3.0f); // Define o tamanho dos pontos
@@ -77,6 +83,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             return indexInvertido;
         }
+        //Metodo para salvar um evento novo
         public static void AdicionarEventoAoDataTable(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY)
         {
             DataTable eventos = GlobVar.eventosUpdate;
@@ -108,6 +115,48 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             string excelFilePath = @"C:\Teste\Teste";
             //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
         }
+        //Metodo criado para mover ou modificar um evento
+        public static void UpdateEvent(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY, int seq, int codEvento)
+        {
+            DataTable eventos = GlobVar.eventosUpdate;
+
+            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+
+            // Adicionar colunas ao DataTable se não existirem
+            if (eventos.Columns.Count == 0)
+            {
+                eventos.Columns.Add("Seq", typeof(int));
+                eventos.Columns.Add("NumPag", typeof(string));
+                eventos.Columns.Add("CodEvento", typeof(int));
+                eventos.Columns.Add("CodCanal1", typeof(int));
+                eventos.Columns.Add("Inicio", typeof(int));
+                eventos.Columns.Add("Duracao", typeof(int));
+            }
+            //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
+        }
+        /*private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
+        {
+            var gl = Tela_Plotagem.openglControl1.OpenGL;
+
+            // Get the viewport and projection/modelview matrices
+            int[] viewport = new int[4];
+            gl.GetInteger(OpenGL.GL_VIEWPORT, viewport);
+
+            double[] modelview = new double[16];
+            gl.GetDouble(OpenGL.GL_MODELVIEW_MATRIX, modelview);
+
+            double[] projection = new double[16];
+            gl.GetDouble(OpenGL.GL_PROJECTION_MATRIX, projection);
+
+            // Convert OpenGL coordinates to screen coordinates
+            double winX, winY, winZ;
+            gl.Project(openGLX, openGLY, 0, modelview, projection, viewport, out winX, out winY, out winZ);
+
+            screenX = (int)winX;
+            screenY = (int)(viewport[3] - winY); // invert Y coordinate
+
+            return new Vector2(screenX, screenY);
+        }*/
 
         // Export DataTable into an excel file with field names in the header line
         // - Save excel file without ever making it visible if filepath is given
@@ -182,10 +231,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             for (int i = 0; i < sequancias.Rows.Count; i++)
             {
-                if (mouseX >= Convert.ToInt16(sequancias.Rows[i]["Inicio"]) && mouseX <= Convert.ToInt16(sequancias.Rows[i]["Duracao"]))
+                if (mouseX >= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) && mouseX <= Convert.ToInt64(sequancias.Rows[i]["Duracao"]))
                 {
-                    isThereAnEvent = true;
-                    break; // Sai do loop assim que encontrar um evento
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
+                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        isThereAnEvent = true;
+                        //break; // Sai do loop assim que encontrar um evento
                 }
             }
 
@@ -194,6 +247,62 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 return isThereAnEvent; }
             catch { return false; }
+        }
+        public static void EventMovement(DataRow eventRow, int txPorCanal, int loc)
+        {
+            try
+            {
+                GlobVar.iniEventoMove = Convert.ToInt32(eventRow["Inicio"]); 
+                GlobVar.durEventoMove = Convert.ToInt32(eventRow["Duracao"]);
+            }
+            catch { }
+        }
+        public static void ProcessEvent(DataRow eventRow, int txPorCanal, int loc)
+        {
+            try{
+            int ini = Convert.ToInt32(eventRow["Inicio"]);
+            int dur = Convert.ToInt32(eventRow["Duracao"]);
+
+                string formattedStartTime;
+                string formattedDuration;
+
+            //Faz o calculo para arrumar a questao de taxa de amostragem, caso seja diferente das de 512 - Pois no mdb estao todos os eventos transformados para 512.
+            if (txPorCanal != 512)
+                {
+                    ini = ini / 512;
+                    dur = dur / 512;
+
+                    ini = ini * txPorCanal;
+                    dur = dur * txPorCanal;
+                }
+            // Calcula o tempo de início e o tempo de fim em segundos
+
+            double startSeconds = (double)ini / txPorCanal;
+            double endSeconds = (double)dur / txPorCanal;
+            double duriti = endSeconds - startSeconds;
+            // Cria os TimeSpan correspondentes
+            TimeSpan startTimeSpan = TimeSpan.FromSeconds(startSeconds);
+            TimeSpan endTimeSpan = TimeSpan.FromSeconds(endSeconds);
+            TimeSpan durationTimeSpan = TimeSpan.FromSeconds(duriti);// Calcula a duração
+                //Para ter uma diferenca em caso de o evento comecar em minutos e nao em hora, pois fica melhor vizualmente
+                if(startTimeSpan.Hours == 0){
+                    // Formata os TimeSpan para o formato desejado
+                    formattedStartTime = $"{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
+                    formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
+                }
+                else
+                {
+                    formattedStartTime = $"{startTimeSpan.Hours:D2}H:{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
+                    formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
+                }
+                // Atribui os valores às variáveis globais
+            GlobVar.InicioEvent = formattedStartTime;
+            GlobVar.DuracaoEvent = formattedDuration;
+
+            var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                    .Where(row => row.Field<int>("CodEvento") == Convert.ToInt16(eventRow["CodEvento"])).CopyToDataTable();
+                GlobVar.Event = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+            }catch { }
         }
         public static bool IsInAnEventBorder()
         {
@@ -209,6 +318,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             return isThereAnEvent;
         }
+
+
 
     }
 }
