@@ -29,6 +29,8 @@ namespace PlotagemOpenGL.auxi
         public static int durEventoMove;
         public static int seqEvento;
         public static int CodEvento;
+        public static int CodCanalEvent;
+        public static string NumPagEvent;
         public static string Event;
         public static string InicioEvent;
         public static string DuracaoEvent;

@@ -114,24 +114,25 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             // Exportar DataTable para Excel
             string excelFilePath = @"C:\Teste\Teste";
             //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
+            eventos.Dispose();
         }
         //Metodo criado para mover ou modificar um evento
-        public static void UpdateEvent(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY, int seq, int codEvento)
+        public static void UpdateEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
         {
-            DataTable eventos = GlobVar.eventosUpdate;
-
+            
             int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
-
-            // Adicionar colunas ao DataTable se não existirem
-            if (eventos.Columns.Count == 0)
+                        
+            DataView view = new DataView(GlobVar.eventosUpdate);
+            view.RowFilter = $"Seq = {seq}";
+                                                      
+            if (view.Count > 0)
             {
-                eventos.Columns.Add("Seq", typeof(int));
-                eventos.Columns.Add("NumPag", typeof(string));
-                eventos.Columns.Add("CodEvento", typeof(int));
-                eventos.Columns.Add("CodCanal1", typeof(int));
-                eventos.Columns.Add("Inicio", typeof(int));
-                eventos.Columns.Add("Duracao", typeof(int));
+                // Se a linha for encontrada, remova-a usando o DataTable original
+                DataRow rowToRemove = view[0].Row;
+                GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
+            GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
+
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         /*private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
@@ -237,6 +238,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
+                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
                         isThereAnEvent = true;
                         //break; // Sai do loop assim que encontrar um evento
                 }

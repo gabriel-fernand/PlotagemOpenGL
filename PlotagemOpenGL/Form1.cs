@@ -1021,16 +1021,18 @@ namespace PlotagemOpenGL
                     }
                     else if(this.Cursor == Cursors.SizeAll)
                     {
+                        Vector2 newCord = new Vector2();
                         // Convert window coordinates to OpenGL coordinates
-                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out newCord.X, out newCord.Y);
 
-                        if(Plotagem.startX < GlobVar.iniEventoMove){
-                            GlobVar.iniEventoMove -= (int)Plotagem.startX;
+                        if(GlobVar.iniEventoMove < newCord.X)
+                        {
+                            GlobVar.iniEventoMove -= (int)newCord.X;
 
                         }
                         else
                         {
-                            GlobVar.iniEventoMove += (int)Plotagem.startX;
+                            GlobVar.iniEventoMove += (int)newCord.X;
                         }
                         GlobVar.startX = GlobVar.iniEventoMove;
 
@@ -1125,16 +1127,19 @@ namespace PlotagemOpenGL
                 }
                 else if (this.Cursor == Cursors.SizeAll)
                     {
-                        // Convert window coordinates to OpenGL coordinates
-                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                        Vector2 newCord = new Vector2();
 
-                        if (Plotagem.endX < GlobVar.durEventoMove)
+                        // Convert window coordinates to OpenGL coordinates
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out newCord.X, out newCord.Y);
+
+
+                        if (GlobVar.durEventoMove < newCord.X)
                         {
-                            GlobVar.durEventoMove -= (int)Plotagem.endX;
+                            GlobVar.durEventoMove -= (int)newCord.X;
                         }
                         else
                         {
-                            GlobVar.durEventoMove += (int)Plotagem.endX;
+                            GlobVar.durEventoMove += (int)newCord.X;
                         }
 
                         GlobVar.endX = GlobVar.durEventoMove;
@@ -1143,11 +1148,11 @@ namespace PlotagemOpenGL
                         {
                             if (GlobVar.endX < GlobVar.startX)
                             {
-                                plotEventos.UpdateEvent(GlobVar.endX, GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                                plotEventos.UpdateEvent(GlobVar.durEventoMove, GlobVar.iniEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             }
                             else
                             {
-                                plotEventos.UpdateEvent(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                                plotEventos.UpdateEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             }
                         }
 
