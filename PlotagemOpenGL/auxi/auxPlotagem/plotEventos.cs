@@ -7,6 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using static System.Windows.Forms.AxHost;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
@@ -44,17 +45,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                         int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
                         string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
-                        
+
 
                         gl.Begin(OpenGL.GL_QUADS);
                         gl.PointSize(3.0f); // Define o tamanho dos pontos
                         gl.Color(color[0], color[1], color[2], 0.44f);
                         //gl.ColorMask(3, 6, 7, alpha);
-                        gl.Vertex(inicio, Plotagem.StartY[YAdjusted] + 5, -1.9f);
-                        gl.Vertex(termino, Plotagem.StartY[YAdjusted] + 5, -1.9f);
-                        gl.Vertex(termino, Plotagem.EndY[YAdjusted] - 5, -1.9f);
-                        gl.Vertex(inicio, Plotagem.EndY[YAdjusted] - 5, -1.9f);
+                        gl.Vertex(inicio, Plotagem.StartY[YAdjusted] + 5, -1.5f);
+                        gl.Vertex(termino, Plotagem.StartY[YAdjusted] + 5, -1.5f);
+                        gl.Vertex(termino, Plotagem.EndY[YAdjusted] - 5, -1.5f);
+                        gl.Vertex(inicio, Plotagem.EndY[YAdjusted] - 5, -1.5f);
                         gl.End();
+                        gl.Flush();
                         des--;
                     }
                 }
@@ -119,12 +121,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         //Metodo criado para mover ou modificar um evento
         public static void UpdateEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
         {
-            
+
             int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
-                        
+
             DataView view = new DataView(GlobVar.eventosUpdate);
             view.RowFilter = $"Seq = {seq}";
-                                                      
+
             if (view.Count > 0)
             {
                 // Se a linha for encontrada, remova-a usando o DataTable original
@@ -132,7 +134,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
-
+            int a = 0;
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         /*private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
@@ -206,71 +208,27 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 throw ex;
             }
         }
-        public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY)
-        {
-            try {
-            bool isThereAnEvent = false;
-
-            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
-            DataTable sequancias = new DataTable();
-
-            // Verifica se o DataTable 'eventosUpdate' está vazio
-            if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
-            {
-                return false;
-            }
-
-            sequancias = GlobVar.eventosUpdate.AsEnumerable()
-                                               .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc])
-                                               .CopyToDataTable();
-
-            // Verifica se o DataTable 'sequancias' está vazio
-            if (sequancias == null || sequancias.Rows.Count == 0)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < sequancias.Rows.Count; i++)
-            {
-                if (mouseX >= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) && mouseX <= Convert.ToInt64(sequancias.Rows[i]["Duracao"]))
-                {
-                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
-                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
-                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
-                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
-                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
-                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
-                        isThereAnEvent = true;
-                        //break; // Sai do loop assim que encontrar um evento
-                }
-            }
-
-            // Limpa o DataTable 'sequancias' se necessário
-            sequancias.Clear();
-
-                return isThereAnEvent; }
-            catch { return false; }
-        }
         public static void EventMovement(DataRow eventRow, int txPorCanal, int loc)
         {
             try
             {
-                GlobVar.iniEventoMove = Convert.ToInt32(eventRow["Inicio"]); 
+                GlobVar.iniEventoMove = Convert.ToInt32(eventRow["Inicio"]);
                 GlobVar.durEventoMove = Convert.ToInt32(eventRow["Duracao"]);
             }
             catch { }
         }
         public static void ProcessEvent(DataRow eventRow, int txPorCanal, int loc)
         {
-            try{
-            int ini = Convert.ToInt32(eventRow["Inicio"]);
-            int dur = Convert.ToInt32(eventRow["Duracao"]);
+            try
+            {
+                int ini = Convert.ToInt32(eventRow["Inicio"]);
+                int dur = Convert.ToInt32(eventRow["Duracao"]);
 
                 string formattedStartTime;
                 string formattedDuration;
 
-            //Faz o calculo para arrumar a questao de taxa de amostragem, caso seja diferente das de 512 - Pois no mdb estao todos os eventos transformados para 512.
-            if (txPorCanal != 512)
+                //Faz o calculo para arrumar a questao de taxa de amostragem, caso seja diferente das de 512 - Pois no mdb estao todos os eventos transformados para 512.
+                if (txPorCanal != 512)
                 {
                     ini = ini / 512;
                     dur = dur / 512;
@@ -278,17 +236,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     ini = ini * txPorCanal;
                     dur = dur * txPorCanal;
                 }
-            // Calcula o tempo de início e o tempo de fim em segundos
+                // Calcula o tempo de início e o tempo de fim em segundos
 
-            double startSeconds = (double)ini / txPorCanal;
-            double endSeconds = (double)dur / txPorCanal;
-            double duriti = endSeconds - startSeconds;
-            // Cria os TimeSpan correspondentes
-            TimeSpan startTimeSpan = TimeSpan.FromSeconds(startSeconds);
-            TimeSpan endTimeSpan = TimeSpan.FromSeconds(endSeconds);
-            TimeSpan durationTimeSpan = TimeSpan.FromSeconds(duriti);// Calcula a duração
+                double startSeconds = (double)ini / txPorCanal;
+                double endSeconds = (double)dur / txPorCanal;
+                double duriti = endSeconds - startSeconds;
+                // Cria os TimeSpan correspondentes
+                TimeSpan startTimeSpan = TimeSpan.FromSeconds(startSeconds);
+                TimeSpan endTimeSpan = TimeSpan.FromSeconds(endSeconds);
+                TimeSpan durationTimeSpan = TimeSpan.FromSeconds(duriti);// Calcula a duração
                 //Para ter uma diferenca em caso de o evento comecar em minutos e nao em hora, pois fica melhor vizualmente
-                if(startTimeSpan.Hours == 0){
+                if (startTimeSpan.Hours == 0)
+                {
                     // Formata os TimeSpan para o formato desejado
                     formattedStartTime = $"{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
                     formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
@@ -299,30 +258,169 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
                 }
                 // Atribui os valores às variáveis globais
-            GlobVar.InicioEvent = formattedStartTime;
-            GlobVar.DuracaoEvent = formattedDuration;
+                GlobVar.InicioEvent = formattedStartTime;
+                GlobVar.DuracaoEvent = formattedDuration;
 
-            var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
-                    .Where(row => row.Field<int>("CodEvento") == Convert.ToInt16(eventRow["CodEvento"])).CopyToDataTable();
+                var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                        .Where(row => row.Field<int>("CodEvento") == Convert.ToInt16(eventRow["CodEvento"])).CopyToDataTable();
                 GlobVar.Event = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
-            }catch { }
+            }
+            catch { }
         }
-        public static bool IsInAnEventBorder()
+        public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY)
         {
-            bool isThereAnEvent = false;
+            try
+            {
+                bool isThereAnEvent = false;
 
 
-            return isThereAnEvent;
+                int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                DataTable sequancias = new DataTable();
+
+                // Verifica se o DataTable 'eventosUpdate' está vazio
+                if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                sequancias = GlobVar.eventosUpdate.AsEnumerable()
+                                                   .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc])
+                                                   .CopyToDataTable();
+
+                // Verifica se o DataTable 'sequancias' está vazio
+                if (sequancias == null || sequancias.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < sequancias.Rows.Count; i++)
+                {
+                    if (mouseX > Convert.ToInt64(sequancias.Rows[i]["Inicio"]) + 25 && mouseX < Convert.ToInt64(sequancias.Rows[i]["Duracao"]) - 25)
+                    {
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
+                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
+                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        isThereAnEvent = true;
+                        //break; // Sai do loop assim que encontrar um evento
+                    }
+                }
+
+                // Limpa o DataTable 'sequancias' se necessário
+                sequancias.Dispose();
+
+
+                return isThereAnEvent;
+            }
+            catch { return false; }
         }
-        public static bool DrawBordenInAnEvent()
+
+        public static bool IsInAnEventStart(int mouseX, float[] desenhoLoc, float startY)
         {
-            bool isThereAnEvent = false;
+            try
+            {
+                bool isThereAnEvent = false;
+                int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                DataTable sequancias = new DataTable();
+                // Verifica se o DataTable 'eventosUpdate' está vazio
+                if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+                {
+                    return false;
+                }
+                sequancias = GlobVar.eventosUpdate.AsEnumerable()
+                                                   .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc])
+                                                   .CopyToDataTable();
+                // Verifica se o DataTable 'sequancias' está vazio
+                if (sequancias == null || sequancias.Rows.Count == 0)
+                {
+                    return false;
+                }
+                for (int i = 0; i < sequancias.Rows.Count; i++)
+                {
+                    if ((mouseX <= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) + 25) && (mouseX >= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) - 25))
+                    {
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
+                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
+                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        isThereAnEvent = true;
+                        //break; // Sai do loop assim que encontrar um evento
+                    }
+                }
+                // Limpa o DataTable 'sequancias' se necessário
+                sequancias.Dispose();
 
 
-            return isThereAnEvent;
+                return isThereAnEvent;
+            }
+            catch { return false; }
+        }
+        public static bool IsInAnEventEnd(int mouseX, float[] desenhoLoc, float startY)
+        {
+            try
+            {
+                bool isThereAnEvent = false;
+                int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                DataTable sequancias = new DataTable();
+                // Verifica se o DataTable 'eventosUpdate' está vazio
+                if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+                {
+                    return false;
+                }
+                sequancias = GlobVar.eventosUpdate.AsEnumerable()
+                                                   .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc])
+                                                   .CopyToDataTable();
+                // Verifica se o DataTable 'sequancias' está vazio
+                if (sequancias == null || sequancias.Rows.Count == 0)
+                {
+                    return false;
+                }
+                for (int i = 0; i < sequancias.Rows.Count; i++)
+                {
+                    if ((mouseX >= Convert.ToInt64(sequancias.Rows[i]["Duracao"]) - 25) && (mouseX <= Convert.ToInt64(sequancias.Rows[i]["Duracao"]) + 25))
+                    {
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
+                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
+                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        isThereAnEvent = true;
+                        //break; // Sai do loop assim que encontrar um evento
+                    }
+                }
+                // Limpa o DataTable 'sequancias' se necessário
+                sequancias.Dispose();
+
+                return isThereAnEvent;
+            }
+            catch { return false; }
         }
 
+        public static void DrawBordenInAnEvent(bool slaDpsEuPenso, OpenGL gl, float[] desenhoLoc)
+        {
+            if (slaDpsEuPenso)
+            {
+                int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(GlobVar.CodCanalEvent)]);
 
+                gl.Begin(OpenGL.GL_LINE_LOOP);
+                gl.PointSize(2.0f); // Define o tamanho dos pontos
+                gl.Color(0, 0, 1, 0.44f);
+                //gl.ColorMask(3, 6, 7, alpha);
+                gl.Vertex(GlobVar.iniEventoMove - 25, Plotagem.StartY[YAdjusted] + 1, -1.9f);
+                gl.Vertex(GlobVar.durEventoMove + 25, Plotagem.StartY[YAdjusted] + 1, -1.9f);
+                gl.Vertex(GlobVar.durEventoMove + 25, Plotagem.EndY[YAdjusted] - 1, -1.9f);
+                gl.Vertex(GlobVar.iniEventoMove - 25, Plotagem.EndY[YAdjusted] - 1, -1.9f);
+                gl.End();
+                gl.Flush();
+            }
+
+        }
 
     }
 }
+

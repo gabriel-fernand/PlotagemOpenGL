@@ -9,6 +9,8 @@ namespace PlotagemOpenGL.auxi
 {
     public class GlobVar
     {
+        public static string STRINGAO;
+
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
         public static string configBD = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
@@ -25,6 +27,7 @@ namespace PlotagemOpenGL.auxi
         public static int indiceDat = 0;
 
         //Variaveis para mexer nos eventos
+        public static bool drawBordenInAnEvent;
         public static int iniEventoMove;
         public static int durEventoMove;
         public static int seqEvento;

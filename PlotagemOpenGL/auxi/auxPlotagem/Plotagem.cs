@@ -1,5 +1,4 @@
-﻿using PlotagemOpenGL.auxi.auxPlotagem;
-using SharpGL;
+﻿using SharpGL;
 using SharpGL.SceneGraph.Assets;
 using System;
 using System.Data;
@@ -8,7 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 
 
-namespace PlotagemOpenGL.auxi
+namespace PlotagemOpenGL.auxi.auxPlotagem
 {
     public class Plotagem
     {
@@ -37,13 +36,13 @@ namespace PlotagemOpenGL.auxi
                 if (qtdGraf == 0)
                 {
                     float[] nada = new float[qtdGraf];
-                    this.margem = nada;
+                    margem = nada;
                 }
             }
             else
             {
                 margem = new float[qtdGraf];
-                float loc = (float)altura / (float)qtdGraf;
+                float loc = altura / (float)qtdGraf;
                 float aux = loc;
 
                 for (int i = 0; i < qtdGraf; i++)
@@ -69,7 +68,7 @@ namespace PlotagemOpenGL.auxi
             }
             else
             {
-                float loc = ((float)altura / (float)qtdGraf) / 2;
+                float loc = altura / (float)qtdGraf / 2;
                 float aux = loc;
                 traco = new float[qtdGraf];
 
@@ -85,14 +84,14 @@ namespace PlotagemOpenGL.auxi
 
         public void DesenhaGrafico(int altura, int qtdGraf)
         {
-
+            Tela_Plotagem.plotanu = true;
             Canula = new string[] { "Apneia", "Apneia central", "Hipopneia", "Dessaturacao", "Hera", "Ronco" };
-            float loc = ((float)altura / (float)qtdGraf) / 2;
+            float loc = altura / (float)qtdGraf / 2;
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
             GlobVar.desenhoLoc = new float[desenhoLoc.Length];
             GlobVar.desenhoLoc = desenhoLoc;
-            float locY = (float)altura / (float)qtdGraf;
+            float locY = altura / (float)qtdGraf;
             float auxY = 0;
             StartY = new float[qtdGraf];
             EndY = new float[qtdGraf];
@@ -101,7 +100,7 @@ namespace PlotagemOpenGL.auxi
                 desenhoLoc[i] = aux;
                 aux += margem[0];
             }
-            for(int i = 0; i < StartY.Length; i++)
+            for (int i = 0; i < StartY.Length; i++)
             {
                 StartY[i] = auxY;
                 auxY += locY;
@@ -174,6 +173,7 @@ namespace PlotagemOpenGL.auxi
             }
 
             plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
+            plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, desenhoLoc);
 
             //classe para fazer o desenho do grafico
             plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
@@ -183,7 +183,7 @@ namespace PlotagemOpenGL.auxi
             //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 
-            if (Tela_Plotagem.isDrawing)
+            if (Tela_Plotagem.isDrawingRectangle)
             {
                 gl.Color(0.0f, 0.0f, 0.0f);
 
@@ -191,10 +191,10 @@ namespace PlotagemOpenGL.auxi
                 gl.PointSize(3.0f); // Define o tamanho dos pontos
                 gl.Color(GlobVar.colors[YAdjusted].X, GlobVar.colors[YAdjusted].Y, GlobVar.colors[YAdjusted].Z, 0.001);
                 //gl.ColorMask(3, 6, 7, alpha);
-                gl.Vertex(startX, StartY[YAdjusted] + 5, -1.9f);
-                gl.Vertex(endX, StartY[YAdjusted] + 5, -1.9f);
-                gl.Vertex(endX, EndY[YAdjusted] - 5, -1.9f);
-                gl.Vertex(startX, EndY[YAdjusted] - 5, -1.9f);
+                gl.Vertex(startX, StartY[YAdjusted] + 5, -1.5f);
+                gl.Vertex(endX, StartY[YAdjusted] + 5, -1.5f);
+                gl.Vertex(endX, EndY[YAdjusted] - 5, -1.5f);
+                gl.Vertex(startX, EndY[YAdjusted] - 5, -1.5f);
                 gl.End();
                 //startX = 0;
             }
@@ -206,7 +206,7 @@ namespace PlotagemOpenGL.auxi
             plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
 
             double time = (endX - startX) / GlobVar.namos; //Faz o calculo para mostrar quantos segundos o quadrado de evento ta captando
-            writeX = ((startX / GlobVar.tmpEmTela) * GlobVar.sizeOpenGl.X) + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
+            writeX = startX / GlobVar.tmpEmTela * GlobVar.sizeOpenGl.X + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
             writeY = (int)EndY[YAdjusted] - 25;
             //gl.DrawText((int)writeX, (int)writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 18, Canula[YAdjusted] + $" {time:F2} seg");
 
@@ -214,7 +214,7 @@ namespace PlotagemOpenGL.auxi
 
             gl.Flush();
             //System.Windows.MessageBox.Show("Tamanho da janela openGl " + Tela_Plotagem.openglControl1.Height + " x " + Tela_Plotagem.openglControl1.Width);
-
+            Tela_Plotagem.plotanu = false;
         }
         public static int EncontrarValorMaisProximo(float[] valores, float y)
         {

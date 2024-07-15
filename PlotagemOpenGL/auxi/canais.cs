@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
 using Accord.Math;
 using System.Linq;
+using PlotagemOpenGL.auxi.auxPlotagem;
 
 namespace PlotagemOpenGL.auxi
 {

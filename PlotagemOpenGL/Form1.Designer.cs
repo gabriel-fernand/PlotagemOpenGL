@@ -103,6 +103,10 @@ namespace PlotagemOpenGL
             hertz01 = new ToolStripMenuItem();
             outroHigh = new ToolStripMenuItem();
             NotchPassFilter = new ToolStripMenuItem();
+            NenhumNotch = new ToolStripMenuItem();
+            hertz60N = new ToolStripMenuItem();
+            hertz50N = new ToolStripMenuItem();
+            OutroNotch = new ToolStripMenuItem();
             painelExames = new Panel();
             panel1 = new Panel();
             minusLb1 = new Button();
@@ -216,6 +220,7 @@ namespace PlotagemOpenGL
             scalaLb23 = new Label();
             painelTelaGl = new Panel();
             painelComando = new Panel();
+            Stringao = new Label();
             MouseLoc = new TextBox();
             playSelect = new Button();
             minusAll = new Button();
@@ -224,10 +229,7 @@ namespace PlotagemOpenGL
             toolTip1 = new ToolTip(components);
             timer1 = new Timer(components);
             timer2 = new Timer(components);
-            OutroNotch = new ToolStripMenuItem();
-            hertz50N = new ToolStripMenuItem();
-            hertz60N = new ToolStripMenuItem();
-            NenhumNotch = new ToolStripMenuItem();
+            timer3 = new Timer(components);
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -311,7 +313,7 @@ namespace PlotagemOpenGL
             tempoEmTela.FormatString = "N1";
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
-            tempoEmTela.Items.AddRange(new object[] {"1 seg", "2 seg", "4 seg", "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
+            tempoEmTela.Items.AddRange(new object[] { "1 seg", "2 seg", "4 seg", "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
             tempoEmTela.Location = new System.Drawing.Point(256, 4);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
@@ -419,10 +421,10 @@ namespace PlotagemOpenGL
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.MouseDown += OpenGLControl_MouseDown;
+            openglControl1.MouseHover += OpenglControl1_MouseHover;
             openglControl1.MouseMove += OpenGLControl_MouseMove;
             openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseWheel += OpenglControl1_MouseWheel;
-            openglControl1.MouseHover += OpenglControl1_MouseHover;
             // 
             // contextMenuStripOpenGl
             // 
@@ -629,14 +631,14 @@ namespace PlotagemOpenGL
             contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { LowPassFilter, HighPassFilter, NotchPassFilter });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(211, 104);
+            contextMenuStrip1.Size = new System.Drawing.Size(187, 76);
             contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // LowPassFilter
             // 
             LowPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumLow, hertz70, hertz50, hertz40, hertz35, hertz30, hertz25, hertz20, hertz15, hertz10, hertz5, OutroLow });
             LowPassFilter.Name = "LowPassFilter";
-            LowPassFilter.Size = new System.Drawing.Size(210, 24);
+            LowPassFilter.Size = new System.Drawing.Size(186, 24);
             LowPassFilter.Text = "Low Pass Filter";
             LowPassFilter.DropDownOpening += toolTripItemDropDown_OpeningLow;
             // 
@@ -644,7 +646,7 @@ namespace PlotagemOpenGL
             // 
             NenhumLow.CheckOnClick = true;
             NenhumLow.Name = "NenhumLow";
-            NenhumLow.Size = new System.Drawing.Size(224, 26);
+            NenhumLow.Size = new System.Drawing.Size(148, 26);
             NenhumLow.Text = "Nenhum";
             NenhumLow.Click += MenuItem_Click;
             // 
@@ -652,7 +654,7 @@ namespace PlotagemOpenGL
             // 
             hertz70.CheckOnClick = true;
             hertz70.Name = "hertz70";
-            hertz70.Size = new System.Drawing.Size(224, 26);
+            hertz70.Size = new System.Drawing.Size(148, 26);
             hertz70.Text = "70 hz";
             hertz70.Click += MenuItem_Click;
             // 
@@ -660,7 +662,7 @@ namespace PlotagemOpenGL
             // 
             hertz50.CheckOnClick = true;
             hertz50.Name = "hertz50";
-            hertz50.Size = new System.Drawing.Size(224, 26);
+            hertz50.Size = new System.Drawing.Size(148, 26);
             hertz50.Text = "50 hz";
             hertz50.Click += MenuItem_Click;
             // 
@@ -668,7 +670,7 @@ namespace PlotagemOpenGL
             // 
             hertz40.CheckOnClick = true;
             hertz40.Name = "hertz40";
-            hertz40.Size = new System.Drawing.Size(224, 26);
+            hertz40.Size = new System.Drawing.Size(148, 26);
             hertz40.Text = "40 hz";
             hertz40.Click += MenuItem_Click;
             // 
@@ -676,7 +678,7 @@ namespace PlotagemOpenGL
             // 
             hertz35.CheckOnClick = true;
             hertz35.Name = "hertz35";
-            hertz35.Size = new System.Drawing.Size(224, 26);
+            hertz35.Size = new System.Drawing.Size(148, 26);
             hertz35.Text = "35 hz";
             hertz35.Click += MenuItem_Click;
             // 
@@ -684,7 +686,7 @@ namespace PlotagemOpenGL
             // 
             hertz30.CheckOnClick = true;
             hertz30.Name = "hertz30";
-            hertz30.Size = new System.Drawing.Size(224, 26);
+            hertz30.Size = new System.Drawing.Size(148, 26);
             hertz30.Text = "30 hz";
             hertz30.Click += MenuItem_Click;
             // 
@@ -692,7 +694,7 @@ namespace PlotagemOpenGL
             // 
             hertz25.CheckOnClick = true;
             hertz25.Name = "hertz25";
-            hertz25.Size = new System.Drawing.Size(224, 26);
+            hertz25.Size = new System.Drawing.Size(148, 26);
             hertz25.Text = "25 hz";
             hertz25.Click += MenuItem_Click;
             // 
@@ -700,7 +702,7 @@ namespace PlotagemOpenGL
             // 
             hertz20.CheckOnClick = true;
             hertz20.Name = "hertz20";
-            hertz20.Size = new System.Drawing.Size(224, 26);
+            hertz20.Size = new System.Drawing.Size(148, 26);
             hertz20.Text = "20 hz";
             hertz20.Click += MenuItem_Click;
             // 
@@ -708,7 +710,7 @@ namespace PlotagemOpenGL
             // 
             hertz15.CheckOnClick = true;
             hertz15.Name = "hertz15";
-            hertz15.Size = new System.Drawing.Size(224, 26);
+            hertz15.Size = new System.Drawing.Size(148, 26);
             hertz15.Text = "15 hz";
             hertz15.Click += MenuItem_Click;
             // 
@@ -716,7 +718,7 @@ namespace PlotagemOpenGL
             // 
             hertz10.CheckOnClick = true;
             hertz10.Name = "hertz10";
-            hertz10.Size = new System.Drawing.Size(224, 26);
+            hertz10.Size = new System.Drawing.Size(148, 26);
             hertz10.Text = "10 hz";
             hertz10.Click += MenuItem_Click;
             // 
@@ -724,7 +726,7 @@ namespace PlotagemOpenGL
             // 
             hertz5.CheckOnClick = true;
             hertz5.Name = "hertz5";
-            hertz5.Size = new System.Drawing.Size(224, 26);
+            hertz5.Size = new System.Drawing.Size(148, 26);
             hertz5.Text = "5  hz";
             hertz5.Click += MenuItem_Click;
             // 
@@ -732,7 +734,7 @@ namespace PlotagemOpenGL
             // 
             OutroLow.CheckOnClick = true;
             OutroLow.Name = "OutroLow";
-            OutroLow.Size = new System.Drawing.Size(224, 26);
+            OutroLow.Size = new System.Drawing.Size(148, 26);
             OutroLow.Text = "Outro";
             OutroLow.Click += MenuItem_Click;
             // 
@@ -740,7 +742,7 @@ namespace PlotagemOpenGL
             // 
             HighPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumHigh, hertz10H, hertz7, hertz5H, hertz3, hertz1, hertz07, hertz05, hertz03, hertz01, outroHigh });
             HighPassFilter.Name = "HighPassFilter";
-            HighPassFilter.Size = new System.Drawing.Size(210, 24);
+            HighPassFilter.Size = new System.Drawing.Size(186, 24);
             HighPassFilter.Text = "High Pass Filter";
             HighPassFilter.DropDownOpening += toolTripItemDropDown_OpeningHigh;
             // 
@@ -748,7 +750,7 @@ namespace PlotagemOpenGL
             // 
             NenhumHigh.CheckOnClick = true;
             NenhumHigh.Name = "NenhumHigh";
-            NenhumHigh.Size = new System.Drawing.Size(224, 26);
+            NenhumHigh.Size = new System.Drawing.Size(148, 26);
             NenhumHigh.Text = "Nenhum";
             NenhumHigh.Click += MenuItem_Click;
             // 
@@ -756,7 +758,7 @@ namespace PlotagemOpenGL
             // 
             hertz10H.CheckOnClick = true;
             hertz10H.Name = "hertz10H";
-            hertz10H.Size = new System.Drawing.Size(224, 26);
+            hertz10H.Size = new System.Drawing.Size(148, 26);
             hertz10H.Text = "10 hz";
             hertz10H.Click += MenuItem_Click;
             // 
@@ -764,7 +766,7 @@ namespace PlotagemOpenGL
             // 
             hertz7.CheckOnClick = true;
             hertz7.Name = "hertz7";
-            hertz7.Size = new System.Drawing.Size(224, 26);
+            hertz7.Size = new System.Drawing.Size(148, 26);
             hertz7.Text = "7  hz";
             hertz7.Click += MenuItem_Click;
             // 
@@ -772,7 +774,7 @@ namespace PlotagemOpenGL
             // 
             hertz5H.CheckOnClick = true;
             hertz5H.Name = "hertz5H";
-            hertz5H.Size = new System.Drawing.Size(224, 26);
+            hertz5H.Size = new System.Drawing.Size(148, 26);
             hertz5H.Text = "5  hz";
             hertz5H.Click += MenuItem_Click;
             // 
@@ -780,7 +782,7 @@ namespace PlotagemOpenGL
             // 
             hertz3.CheckOnClick = true;
             hertz3.Name = "hertz3";
-            hertz3.Size = new System.Drawing.Size(224, 26);
+            hertz3.Size = new System.Drawing.Size(148, 26);
             hertz3.Text = "3  hz";
             hertz3.Click += MenuItem_Click;
             // 
@@ -788,7 +790,7 @@ namespace PlotagemOpenGL
             // 
             hertz1.CheckOnClick = true;
             hertz1.Name = "hertz1";
-            hertz1.Size = new System.Drawing.Size(224, 26);
+            hertz1.Size = new System.Drawing.Size(148, 26);
             hertz1.Text = "1  hz";
             hertz1.Click += MenuItem_Click;
             // 
@@ -796,7 +798,7 @@ namespace PlotagemOpenGL
             // 
             hertz07.CheckOnClick = true;
             hertz07.Name = "hertz07";
-            hertz07.Size = new System.Drawing.Size(224, 26);
+            hertz07.Size = new System.Drawing.Size(148, 26);
             hertz07.Text = "0,7 hz";
             hertz07.Click += MenuItem_Click;
             // 
@@ -804,7 +806,7 @@ namespace PlotagemOpenGL
             // 
             hertz05.CheckOnClick = true;
             hertz05.Name = "hertz05";
-            hertz05.Size = new System.Drawing.Size(224, 26);
+            hertz05.Size = new System.Drawing.Size(148, 26);
             hertz05.Text = "0,5 hz";
             hertz05.Click += MenuItem_Click;
             // 
@@ -812,7 +814,7 @@ namespace PlotagemOpenGL
             // 
             hertz03.CheckOnClick = true;
             hertz03.Name = "hertz03";
-            hertz03.Size = new System.Drawing.Size(224, 26);
+            hertz03.Size = new System.Drawing.Size(148, 26);
             hertz03.Text = "0,3 hz";
             hertz03.Click += MenuItem_Click;
             // 
@@ -820,7 +822,7 @@ namespace PlotagemOpenGL
             // 
             hertz01.CheckOnClick = true;
             hertz01.Name = "hertz01";
-            hertz01.Size = new System.Drawing.Size(224, 26);
+            hertz01.Size = new System.Drawing.Size(148, 26);
             hertz01.Text = "0,1 hz";
             hertz01.Click += MenuItem_Click;
             // 
@@ -828,7 +830,7 @@ namespace PlotagemOpenGL
             // 
             outroHigh.CheckOnClick = true;
             outroHigh.Name = "outroHigh";
-            outroHigh.Size = new System.Drawing.Size(224, 26);
+            outroHigh.Size = new System.Drawing.Size(148, 26);
             outroHigh.Text = "Outro";
             outroHigh.Click += MenuItem_Click;
             // 
@@ -836,9 +838,41 @@ namespace PlotagemOpenGL
             // 
             NotchPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumNotch, hertz60N, hertz50N, OutroNotch });
             NotchPassFilter.Name = "NotchPassFilter";
-            NotchPassFilter.Size = new System.Drawing.Size(210, 24);
+            NotchPassFilter.Size = new System.Drawing.Size(186, 24);
             NotchPassFilter.Text = "Notch Pass Filter";
             NotchPassFilter.DropDownOpening += toolTripItemDropDown_OpeningNotch;
+            // 
+            // NenhumNotch
+            // 
+            NenhumNotch.CheckOnClick = true;
+            NenhumNotch.Name = "NenhumNotch";
+            NenhumNotch.Size = new System.Drawing.Size(148, 26);
+            NenhumNotch.Text = "Nenhum";
+            NenhumNotch.Click += MenuItem_Click;
+            // 
+            // hertz60N
+            // 
+            hertz60N.CheckOnClick = true;
+            hertz60N.Name = "hertz60N";
+            hertz60N.Size = new System.Drawing.Size(148, 26);
+            hertz60N.Text = "60 hz";
+            hertz60N.Click += MenuItem_Click;
+            // 
+            // hertz50N
+            // 
+            hertz50N.CheckOnClick = true;
+            hertz50N.Name = "hertz50N";
+            hertz50N.Size = new System.Drawing.Size(148, 26);
+            hertz50N.Text = "50 hz";
+            hertz50N.Click += MenuItem_Click;
+            // 
+            // OutroNotch
+            // 
+            OutroNotch.CheckOnClick = true;
+            OutroNotch.Name = "OutroNotch";
+            OutroNotch.Size = new System.Drawing.Size(148, 26);
+            OutroNotch.Text = "Outro";
+            OutroNotch.Click += MenuItem_Click;
             // 
             // painelExames
             // 
@@ -2085,6 +2119,7 @@ namespace PlotagemOpenGL
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(Stringao);
             painelComando.Controls.Add(MouseLoc);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
@@ -2101,6 +2136,15 @@ namespace PlotagemOpenGL
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(997, 65);
             painelComando.TabIndex = 53;
+            // 
+            // Stringao
+            // 
+            Stringao.AutoSize = true;
+            Stringao.Location = new System.Drawing.Point(100, 38);
+            Stringao.Name = "Stringao";
+            Stringao.Size = new System.Drawing.Size(65, 20);
+            Stringao.TabIndex = 59;
+            Stringao.Text = "Stringao";
             // 
             // MouseLoc
             // 
@@ -2153,6 +2197,13 @@ namespace PlotagemOpenGL
             qtdGraficos.TabIndex = 50;
             qtdGraficos.TextChanged += qtdGraficos_TextChanged;
             // 
+            // toolTip1
+            // 
+            toolTip1.AutoPopDelay = 5000;
+            toolTip1.InitialDelay = 1;
+            toolTip1.IsBalloon = true;
+            toolTip1.ReshowDelay = 1;
+            // 
             // timer1
             // 
             timer1.Interval = 20;
@@ -2160,41 +2211,13 @@ namespace PlotagemOpenGL
             // 
             // timer2
             // 
-            timer2.Interval = 5;
+            timer2.Interval = 30;
             timer2.Tick += timer2_Tick;
-
             // 
-            // OutroNotch
+            // timer3
             // 
-            OutroNotch.CheckOnClick = true;
-            OutroNotch.Name = "OutroNotch";
-            OutroNotch.Size = new System.Drawing.Size(224, 26);
-            OutroNotch.Text = "Outro";
-            OutroNotch.Click += MenuItem_Click;
-            // 
-            // hertz50N
-            // 
-            hertz50N.CheckOnClick = true;
-            hertz50N.Name = "hertz50N";
-            hertz50N.Size = new System.Drawing.Size(224, 26);
-            hertz50N.Text = "50 hz";
-            hertz50N.Click += MenuItem_Click;
-            // 
-            // hertz60N
-            // 
-            hertz60N.CheckOnClick = true;
-            hertz60N.Name = "hertz60N";
-            hertz60N.Size = new System.Drawing.Size(224, 26);
-            hertz60N.Text = "60 hz";
-            hertz60N.Click += MenuItem_Click;
-            // 
-            // NenhumNotch
-            // 
-            NenhumNotch.CheckOnClick = true;
-            NenhumNotch.Name = "NenhumNotch";
-            NenhumNotch.Size = new System.Drawing.Size(224, 26);
-            NenhumNotch.Text = "Nenhum";
-            NenhumNotch.Click += MenuItem_Click;
+            timer3.Interval = 1;
+            timer3.Tick += timer3_Tick;
             // 
             // Tela_Plotagem
             // 
@@ -2207,7 +2230,9 @@ namespace PlotagemOpenGL
             Controls.Add(painelComando);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "Tela_Plotagem";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Tela_Plotagem";
+            WindowState = FormWindowState.Maximized;
             Load += Tela_Plotagem_Load;
             ResizeBegin += Tela_Plotagem_ResizeBegin;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
@@ -2276,10 +2301,12 @@ namespace PlotagemOpenGL
         public static ToolStripItem item2ToolStripMenuItem;
         public static ToolStripItem item3ToolStripMenuItem;
         public static ToolStripMenuItem NenhumLow1;
+        public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
         public static ToolTip toolTip1;
         public static Timer timer1;
         public static Timer timer2;
+        public static Timer timer3;
         public static ContextMenuStrip contextMenuStripOpenGl;
         public static ToolStripMenuItem OutroLow;
         public static ToolStripMenuItem LowPassFilter;
@@ -2471,6 +2498,6 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem OutroNotch;
         public static ToolStripMenuItem hertz50N;
         public static ToolStripMenuItem NotchPassFilter;
-        public static ToolStripMenuItem toolStripMenuItem3;
+        public static Label Stringao;
     }
 }
