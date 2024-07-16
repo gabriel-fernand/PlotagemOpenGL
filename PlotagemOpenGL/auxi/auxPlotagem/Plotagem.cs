@@ -93,18 +93,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             GlobVar.desenhoLoc = desenhoLoc;
             float locY = altura / (float)qtdGraf;
             float auxY = 0;
-            StartY = new float[qtdGraf];
-            EndY = new float[qtdGraf];
+            GlobVar.StartY = new float[qtdGraf];
+            GlobVar.EndY = new float[qtdGraf];
             for (int i = 0; i < qtdGraf; i++)
             {
                 desenhoLoc[i] = aux;
                 aux += margem[0];
             }
-            for (int i = 0; i < StartY.Length; i++)
+            for (int i = 0; i < GlobVar.StartY.Length; i++)
             {
-                StartY[i] = auxY;
+                GlobVar.StartY[i] = auxY;
                 auxY += locY;
-                EndY[i] = auxY;
+                GlobVar.EndY[i] = auxY;
             }
 
             gl.Viewport(0, 0, (int)GlobVar.sizeOpenGl.X, (int)GlobVar.sizeOpenGl.Y);
@@ -172,18 +172,21 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 ind++;
             }
 
-            plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
+            //classe para fazer o desenho do grafico
+            //plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
+
+            //plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
+
+
             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, desenhoLoc);
 
-            //classe para fazer o desenho do grafico
-            plotGrafico.DesenhaGrafico(qtdGraf, gl, desenhoLoc);
 
 
             //Metodo para fazer o desenho da linha x0 de cada grafico
             //plotGrafico.TracejadoLinhaZero(gl, qtdGraf);
             int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, startY);
 
-            if (Tela_Plotagem.isDrawingRectangle)
+            /*if (Tela_Plotagem.isDrawingRectangle)
             {
                 gl.Color(0.0f, 0.0f, 0.0f);
 
@@ -191,13 +194,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.PointSize(3.0f); // Define o tamanho dos pontos
                 gl.Color(GlobVar.colors[YAdjusted].X, GlobVar.colors[YAdjusted].Y, GlobVar.colors[YAdjusted].Z, 0.001);
                 //gl.ColorMask(3, 6, 7, alpha);
-                gl.Vertex(startX, StartY[YAdjusted] + 5, -1.5f);
-                gl.Vertex(endX, StartY[YAdjusted] + 5, -1.5f);
-                gl.Vertex(endX, EndY[YAdjusted] - 5, -1.5f);
-                gl.Vertex(startX, EndY[YAdjusted] - 5, -1.5f);
+                gl.Vertex(startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
+                gl.Vertex(endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
+                gl.Vertex(endX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+                gl.Vertex(startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
                 gl.End();
                 //startX = 0;
-            }
+            }*/
+
             GlobVar.canal = YAdjusted;
 
             //plotEventos.AdicionarEventoAoDataTable((int)startX, (int)endX, YAdjusted, desenhoLoc, startY);
@@ -207,7 +211,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             double time = (endX - startX) / GlobVar.namos; //Faz o calculo para mostrar quantos segundos o quadrado de evento ta captando
             writeX = startX / GlobVar.tmpEmTela * GlobVar.sizeOpenGl.X + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela
-            writeY = (int)EndY[YAdjusted] - 25;
+            writeY = (int)GlobVar.EndY[YAdjusted] - 25;
             //gl.DrawText((int)writeX, (int)writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 18, Canula[YAdjusted] + $" {time:F2} seg");
 
 
@@ -234,5 +238,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int index = Array.IndexOf(valores, valorMaisProximo);
             return index;
         }
+
+
     }
 }

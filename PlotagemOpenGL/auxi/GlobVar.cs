@@ -109,8 +109,11 @@ namespace PlotagemOpenGL.auxi
         public static int finalTela;
 
         public static int endX;
+        public static int endY;
         public static int startX;
         public static int startY;
+        public static float[] EndY;
+        public static float[] StartY;
         public static int canal;
         public static float[] loc;
     }
