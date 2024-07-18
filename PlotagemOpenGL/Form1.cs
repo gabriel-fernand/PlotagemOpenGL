@@ -1009,9 +1009,7 @@ namespace PlotagemOpenGL
                         }
                     }
                     int alturaTela = (int)openglControl1.Height;
-                    openglControl1.DoRender();
-                    plotagem.Margem(qtdGrafics, alturaTela);
-                    plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                    TelaClearAndReload();
                     gl.Translate(camera.X, 0, 1);
                     UpdateInicioTela();
                     //Update();
@@ -1056,11 +1054,12 @@ namespace PlotagemOpenGL
                     {
                         timer2.Start();
                         isDrawing = true;
-
                         lastMousePosition = e.Location;
                         GlobVar.startX = GlobVar.iniEventoMove;
                         openglControl1.DoRender();
-                        plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
+                        //plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
+                        //plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                        TelaClearAndReload();
 
 
                         //TelaClearAndReload();
@@ -1089,6 +1088,20 @@ namespace PlotagemOpenGL
                 {
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+
+                    if (this.Cursor == Cursors.SizeAll)
+                    {
+                        timer2.Start();
+                        lastMousePosition = e.Location;
+                        GlobVar.startX = GlobVar.iniEventoMove;
+                        openglControl1.DoRender();
+                        plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
+                        //plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                        TelaClearAndReload();
+
+
+                        //TelaClearAndReload();
+                    }
                 }
             }
         }
@@ -1106,7 +1119,7 @@ namespace PlotagemOpenGL
                     int startY = (int)Plotagem.startY;
                     float endX = Plotagem.endX;
 
-                    bool isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
+                    this.isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
                     this.isAnStartEvent = plotEventos.IsInAnEventStart((int)endX, GlobVar.desenhoLoc, startY);
                     this.isAnEndEvent = plotEventos.IsInAnEventEnd((int)endX, GlobVar.desenhoLoc, startY);
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
@@ -1118,50 +1131,52 @@ namespace PlotagemOpenGL
                             this.Cursor = Cursors.Default;
                         }
                         toolTip1.RemoveAll();
-                        this.isAnEvent = isAnEvent;
                         if (isDrawing)
                         {
-                            openglControl1.DoRender();
+                            if(GlobVar.endX >= GlobVar.startX)
+                            {
+                                if(e.X <= musezin.X)
+                                {
+                                    GlobVar.endX = (int)endX;
+                                    TelaClearAndReload();
+                                }
+                                else
+                                {
+                                    GlobVar.endX = (int)endX;
+                                }
+                            }
+                            openglControl1.Invalidate();
                             plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-                            //TelaClearAndReload();
                         }
                     }
-                    else if (isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent))
+                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
                     {
                         if (!isMouseDown)
                         {
                             this.Cursor = Cursors.SizeAll;
-                        }
-                        this.isAnEvent = isAnEvent;
-
-                        if (!isDrawing)
-                        {
                             openglControl1.DoRender();
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
                             toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
                         }
                         else
                         {
+                            float outX = 0;
+                            isDrawing = false;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
+
                             if (e.X != lastMousePosition.X)
                             {
                                 if (e.X < lastMousePosition.X)
                                 {
-                                    GlobVar.iniEventoMove -= (e.X / 2);
-                                    GlobVar.durEventoMove -= (e.X / 2);
+                                    GlobVar.iniEventoMove -= ((int)outX / 2);
+                                    GlobVar.durEventoMove -= ((int)outX / 2);
                                 }
                                 else
                                 {
-                                    GlobVar.iniEventoMove += (e.X / 2);
-                                    GlobVar.durEventoMove += (e.X / 2);
+                                    GlobVar.iniEventoMove += (int)outX / 2;
+                                    GlobVar.durEventoMove += (int)outX / 2;
                                 }
                             }
-                            GlobVar.endX = GlobVar.durEventoMove;
-
-                            //if (GlobVar.endX != GlobVar.startX)
-                            //{
-                            //    plotEventos.UpdateEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
-                            //}
-                            lastMousePosition = e.Location;
                             openglControl1.Refresh();
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
 
@@ -1183,11 +1198,11 @@ namespace PlotagemOpenGL
                                 {
                                     if (e.X < lastMousePosition.X)
                                     {
-                                        GlobVar.iniEventoMove -= (e.X / 2);
+                                        GlobVar.iniEventoMove -= (e.X);
                                     }
                                     else
                                     {
-                                        GlobVar.iniEventoMove += (e.X / 2);
+                                        GlobVar.iniEventoMove += (e.X);
                                     }
                                     GlobVar.endX = GlobVar.durEventoMove;
 
@@ -1204,11 +1219,11 @@ namespace PlotagemOpenGL
                                 {
                                     if (e.X < lastMousePosition.X)
                                     {
-                                        GlobVar.durEventoMove -= (e.X / 2);
+                                        GlobVar.durEventoMove -= (e.X);
                                     }
                                     else
                                     {
-                                        GlobVar.durEventoMove += (e.X / 2);
+                                        GlobVar.durEventoMove += (e.X);
                                     }
 
                                     GlobVar.startX = GlobVar.iniEventoMove;
@@ -1270,19 +1285,21 @@ namespace PlotagemOpenGL
                     }
                     else if (this.Cursor == Cursors.SizeAll)
                     {
+                        float outX = 0 ;
                         isDrawing = false;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
 
                         if (e.X != lastMousePosition.X)
                         {
                             if (e.X < lastMousePosition.X)
                             {
-                                GlobVar.iniEventoMove -= (e.X / 4);
-                                GlobVar.durEventoMove -= (e.X / 4);
+                                GlobVar.iniEventoMove -= ((int)outX / 4);
+                                GlobVar.durEventoMove -= ((int)outX / 4);
                             }
                             else
                             {
-                                GlobVar.iniEventoMove += (e.X / 4);
-                                GlobVar.durEventoMove += (e.X / 4);
+                                GlobVar.iniEventoMove += (int)outX / 4;
+                                GlobVar.durEventoMove += (int)outX / 4;
                             }
                         }
 
@@ -1346,6 +1363,15 @@ namespace PlotagemOpenGL
                 {
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+
+                    if (this.Cursor == Cursors.SizeAll)
+                    {
+                        isDrawing = false;
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+
+                        //TelaClearAndReload();
+                    }
                 }
                 clickCount = 0;
                 timer2.Stop();
@@ -1596,9 +1622,7 @@ namespace PlotagemOpenGL
                         break;
                 }
                 int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.Margem(qtdGrafics, alturaTela);
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                TelaClearAndReload();
                 gl.Translate(camera.X, 0, 1);
                 UpdateInicioTela();
                 //Update();
@@ -1641,9 +1665,7 @@ namespace PlotagemOpenGL
                 }
 
                 int alturaTela = (int)openglControl1.Height;
-                openglControl1.DoRender();
-                plotagem.Margem(qtdGrafics, alturaTela);
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
+                TelaClearAndReload();
                 gl.Translate(camera.X, 0, 1);
                 UpdateInicioTela();
             }

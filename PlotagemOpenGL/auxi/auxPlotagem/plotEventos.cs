@@ -134,7 +134,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
-            int a = 0;
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         /*private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
@@ -160,6 +159,22 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             return new Vector2(screenX, screenY);
         }*/
+
+        public static void DeleteEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
+        {
+            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+
+            DataView view = new DataView(GlobVar.eventosUpdate);
+            view.RowFilter = $"Seq = {seq}";
+
+            if (view.Count > 0)
+            {
+                // Se a linha for encontrada, remova-a usando o DataTable original
+                DataRow rowToRemove = view[0].Row;
+                GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
+            }
+
+        }
 
         // Export DataTable into an excel file with field names in the header line
         // - Save excel file without ever making it visible if filepath is given
@@ -441,7 +456,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 gl.Begin(OpenGL.GL_LINE_LOOP);
                 gl.PointSize(2.0f); // Define o tamanho dos pontos
-                gl.Color(0, 0, 1, 0.44f);
+                gl.Color(1, 0, 0, 0.44f);
                 //gl.ColorMask(3, 6, 7, alpha);
                 gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.StartY[YAdjusted] + 1, -1.9f);
                 gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.StartY[YAdjusted] + 1, -1.9f);
@@ -466,8 +481,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             gl.Begin(OpenGL.GL_QUADS);
             gl.PointSize(3.0f); // Define o tamanho dos pontos
-            //gl.Color(color[0], color[1], color[2], 0.44f);
-            gl.Color(0, 0, 0);
+            gl.Color(color[0], color[1], color[2], 0.44f);
+            //gl.Color(0, 0, 0);
             //gl.ColorMask(3, 6, 7, alpha);
             gl.Vertex(GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
             gl.Vertex(GlobVar.endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);

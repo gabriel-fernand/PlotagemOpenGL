@@ -421,10 +421,12 @@ namespace PlotagemOpenGL
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.MouseDown += OpenGLControl_MouseDown;
+            openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseHover += OpenglControl1_MouseHover;
             openglControl1.MouseMove += OpenGLControl_MouseMove;
-            openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseWheel += OpenglControl1_MouseWheel;
+            //openglControl1.Controls.Add(FlowLayoutPanel);
+            //openglControl1.ControlAdded += 
             // 
             // contextMenuStripOpenGl
             // 
