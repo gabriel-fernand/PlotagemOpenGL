@@ -420,6 +420,7 @@ namespace PlotagemOpenGL
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
+            openglControl1.KeyUp += TelaPlotagem_KeyUp;
             openglControl1.MouseDown += OpenGLControl_MouseDown;
             openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseHover += OpenglControl1_MouseHover;

@@ -458,10 +458,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.PointSize(2.0f); // Define o tamanho dos pontos
                 gl.Color(1, 0, 0, 0.44f);
                 //gl.ColorMask(3, 6, 7, alpha);
-                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.StartY[YAdjusted] + 1, -1.9f);
-                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.StartY[YAdjusted] + 1, -1.9f);
-                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.EndY[YAdjusted] - 1, -1.9f);
-                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.EndY[YAdjusted] - 1, -1.9f);
+                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.StartY[YAdjusted] + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.StartY[YAdjusted] + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.EndY[YAdjusted] - 1, -1.0f);
+                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.EndY[YAdjusted] - 1, -1.0f);
                 gl.End();
                 gl.Flush();
             }
