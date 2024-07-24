@@ -1,14 +1,12 @@
 ﻿using Accord.Math;
 using SharpGL;
 using SharpGL.SceneGraph;
-using SharpGL.WPF;
 using System;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using static System.Windows.Forms.AxHost;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -46,7 +44,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
                         string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
 
-
                         gl.Begin(OpenGL.GL_QUADS);
                         gl.PointSize(3.0f); // Define o tamanho dos pontos
                         gl.Color(color[0], color[1], color[2], 0.44f);
@@ -57,7 +54,53 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         gl.Vertex(inicio, GlobVar.EndY[YAdjusted] - 5, -1.5f);
                         gl.End();
                         gl.Flush();
+
+
+
+                        gl.Begin(OpenGL.GL_2D);
+                        int writeX = 0;
+                        int writeY = 0;
+                        ConvertToScreenCoordinates(inicio, 0, out writeX, out writeX);
+
+
+                        gl.DrawText((int)writeX, (int)GlobVar.StartY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
+
+                        gl.End();
+                        gl.Flush();
                         des--;
+                    }
+                    if (codEvento == 18 || codEvento == 19)
+                    {
+                        var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
+                        int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
+                        color = plotGrafico.ObterComponentesRGB(rgbDex);
+                        colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
+
+                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+
+                        gl.Begin(OpenGL.GL_QUADS);
+                        gl.PointSize(3.0f); // Define o tamanho dos pontos
+                        gl.Color(color[0], color[1], color[2], 0.44f);
+                        //gl.ColorMask(3, 6, 7, alpha);
+                        gl.Vertex(inicio, 0 + 5, -1.8f);
+                        gl.Vertex(termino, 0 + 5, -1.8f);
+                        gl.Vertex(termino, GlobVar.sizeOpenGl.Y - 5, -1.8f);
+                        gl.Vertex(inicio, GlobVar.sizeOpenGl.Y - 5, -1.8f);
+                        gl.End();
+                        gl.Flush();
+                        des--;
+
+                        int writeX = 0;
+                        int writeY;
+                        int whereToDraw = ((termino - inicio) / 2) + inicio;
+                        ConvertToScreenCoordinates(whereToDraw, 0, out writeX,out writeY);
+                        writeY = (int)(GlobVar.sizeOpenGl.Y / 2);
+
+                        DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial Narrow", 20);
+                        gl.End();
+                        gl.Flush();
+
                     }
                 }
             }
@@ -136,7 +179,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
-        /*private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
+        private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
         {
             var gl = Tela_Plotagem.openglControl1.OpenGL;
 
@@ -150,15 +193,19 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             double[] projection = new double[16];
             gl.GetDouble(OpenGL.GL_PROJECTION_MATRIX, projection);
 
-            // Convert OpenGL coordinates to screen coordinates
-            double winX, winY, winZ;
-            gl.Project(openGLX, openGLY, 0, modelview, projection, viewport, out winX, out winY, out winZ);
+            // Arrays to store the window coordinates
+            double[] winX = new double[1];
+            double[] winY = new double[1];
+            double[] winZ = new double[1];
 
-            screenX = (int)winX;
-            screenY = (int)(viewport[3] - winY); // invert Y coordinate
+            // Convert OpenGL coordinates to screen coordinates
+            gl.Project(openGLX, openGLY, 0, modelview, projection, viewport, winX, winY, winZ);
+
+            screenX = (int)winX[0];
+            screenY = (int)(viewport[3] - winY[0]); // invert Y coordinate
 
             return new Vector2(screenX, screenY);
-        }*/
+        }
 
         public static void DeleteEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
         {
@@ -491,6 +538,22 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.End();  
             //startX = 0;
 
+        }
+
+        //metodo para fazer a escrita vertial para o Bom dia e Boa noite --- Testes
+        public static void DrawVerticalText(OpenGL gl, float startX, float startY, string text, string fontName, int fontSize)
+        {
+            float verticalSpacing = 20; // Ajuste conforme necessário para o espaçamento vertical entre caracteres
+            float currentY = startY;
+            gl.Begin(OpenGL.GL_2D);
+
+            foreach (char c in text)
+            {
+                gl.DrawText((int)startX, (int)currentY, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontSize, "");
+                gl.DrawText((int)startX, (int)currentY, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontSize, c.ToString());
+                currentY -= verticalSpacing; // Move para a próxima linha verticalmente
+            }
+            gl.End();
         }
     }
 }

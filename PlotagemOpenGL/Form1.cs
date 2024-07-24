@@ -1038,7 +1038,7 @@ namespace PlotagemOpenGL
                     // Armazena o cursor original e marca que o mouse está pressionado
                     originalCursor = this.Cursor;
                     isMouseDown = true;
-
+                                        
                     if (!isAnEvent && !isAnStartEvent && !isAnEndEvent)
                     {
                         timer2.Start();
@@ -1077,12 +1077,9 @@ namespace PlotagemOpenGL
                             initialMousePosition.Y = e.X;
                             GlobVar.startX = GlobVar.iniEventoMove;
                             openglControl1.DoRender();
-                            //plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
-                            //plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             TelaClearAndReload();
                         }
 
-                        //TelaClearAndReload();
                     }
                     else if (this.isAnStartEvent || this.isAnEndEvent)
                     {
@@ -1131,7 +1128,6 @@ namespace PlotagemOpenGL
                         plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
                         plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                         TelaClearAndReload();
-                        //TelaClearAndReload();
                     }
                 }
             }
@@ -1317,27 +1313,29 @@ namespace PlotagemOpenGL
                 {
                     if (!isAnEvent && !isAnStartEvent && !isAnEndEvent)
                     {
-                        UpdateLoc();
-                        isDrawingRectangle = false;
-                        isDrawing = false;
+                        if(!crtlAtivo){
+                            UpdateLoc();
+                            isDrawingRectangle = false;
+                            isDrawing = false;
 
-                        ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
-                        GlobVar.endX = (int)Plotagem.endX;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                            GlobVar.endX = (int)Plotagem.endX;
 
-                        if (GlobVar.endX != GlobVar.startX)
-                        {
-                            if (GlobVar.endX < GlobVar.startX)
+                            if (GlobVar.endX != GlobVar.startX)
                             {
-                                plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                if (GlobVar.endX < GlobVar.startX)
+                                {
+                                    plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                }
+                                else
+                                {
+                                    plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                }
                             }
-                            else
-                            {
-                                plotEventos.AdicionarEventoAoDataTable(GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
-                            }
+
+                            openglControl1.DoRender();
+                            plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
-
-                        openglControl1.DoRender();
-                        plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                     }
                     else if (isAnEvent)
                     {

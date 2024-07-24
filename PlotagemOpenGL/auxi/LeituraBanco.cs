@@ -208,10 +208,10 @@ public class LeituraBanco
             int codCanal1 = firstRow.Field<int>("CodCanal1");
 
             int inicio = firstRow.Field<int>("Inicio");
-            inicio += ((firstRow.Field<int>("NumPag")-1) * 512);
+            inicio += ((firstRow.Field<int>("NumPag")) * 512);
 
             int duracao = lastRow.Field<int>("Duracao");
-            duracao += ((lastRow.Field<int>("NumPag")-1) * 512);
+            duracao += ((lastRow.Field<int>("NumPag")) * 512);
 
             DataRow newRow = GlobVar.eventosUpdate.NewRow();
             newRow["Seq"] = seq;
