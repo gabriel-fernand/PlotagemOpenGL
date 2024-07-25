@@ -63,7 +63,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         ConvertToScreenCoordinates(inicio, 0, out writeX, out writeX);
 
 
-                        gl.DrawText((int)writeX, (int)GlobVar.StartY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
+                        gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
 
                         gl.End();
                         gl.Flush();
@@ -311,13 +311,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 if (startTimeSpan.Hours == 0)
                 {
                     // Formata os TimeSpan para o formato desejado
+                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Nanoseconds}seg";
                     formattedStartTime = $"{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
-                    formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
+                    formattedDuration = $"{durAux}";
                 }
                 else
                 {
+                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Nanoseconds}seg";
                     formattedStartTime = $"{startTimeSpan.Hours:D2}H:{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
-                    formattedDuration = $"{durationTimeSpan.Minutes:D2}M:{durationTimeSpan.Seconds:D2}S";
+                    formattedDuration = $"{durAux}";
                 }
                 // Atribui os valores às variáveis globais
                 GlobVar.InicioEvent = formattedStartTime;
@@ -531,10 +533,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.Color(color[0], color[1], color[2], 0.44f);
             //gl.Color(0, 0, 0);
             //gl.ColorMask(3, 6, 7, alpha);
-            gl.Vertex(GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
+            gl.Vertex((int)GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
             gl.Vertex(GlobVar.endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
             gl.Vertex(GlobVar.endX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
-            gl.Vertex(GlobVar.startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+            gl.Vertex((int)GlobVar.startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
             gl.End();  
             //startX = 0;
 

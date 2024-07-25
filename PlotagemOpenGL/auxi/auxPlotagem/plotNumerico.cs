@@ -42,6 +42,52 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                         else
                         {
+                            if (GlobVar.codSelected[i] == 14)
+                            {
+                                x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
+                                gl.End();
+                                gl.Begin(OpenGL.GL_2D);
+
+                                int y;
+
+                                int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+
+                                if (posi <= (21502 - 2110) && posi >= (21502 + 2110)) // CIMA
+                                {
+                                    txtEmTela = "ã";
+                                }
+                                else if (posi <= (-4070 - 2110) && posi >= (-4070 + 2110)) // DIREITA
+                                {
+                                    txtEmTela = "á";
+                                }
+                                else if (posi <= (-16887 - 2110) && posi >= (-16887 + 2110)) //BAIXO
+                                {
+                                    txtEmTela = "ä";
+                                }
+                                else if (posi <= (-14031 - 2110) && posi >= (-14031 + 2110)) // ESQUERDA
+                                {
+                                    txtEmTela = "â";
+                                }
+                                else
+                                {
+                                    txtEmTela = "ã";
+
+                                }
+
+
+                                //txtEmTela = "ã";
+                                float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
+                                x += (int)writeX;
+                                y = (int)desenhoLoc[des] - 5;
+                                gl.DrawText(0, 0, color[0], color[1], color[2], "Wingdings 3", 18, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                gl.DrawText(x, y, color[0], color[1], color[2], "Wingdings 3", 22, txtEmTela);
+
+                                h++; //aqui tem plotar 3 graficos diferentes                                
+                                j += 7;
+                                gl.Flush();
+
+                            }
+
                             if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67)
                             {
                                 gl.End();
@@ -68,51 +114,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 j += 7;
                                 gl.Flush();
                             }
-                            if (GlobVar.codSelected[i] == 14)
-                            {
-                                x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
-                                gl.End();
-                                gl.Begin(OpenGL.GL_2D);
-
-                                int y;
-
-                                int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
-
-                                if(posi <= (21502 - 2110) && posi >= (21502 + 2110)) // CIMA
-                                {
-                                    txtEmTela = "ã";
-                                }
-                                else if (posi <= (-4070 - 2110) && posi >= (-4070 + 2110)) // DIREITA
-                                {
-                                    txtEmTela = "á";
-                                }
-                                else if (posi <= (-16887 - 2110) && posi >= (-16887 + 2110)) //BAIXO
-                                {
-                                    txtEmTela = "ä";
-                                }
-                                else if (posi <= (-14031 - 2110) && posi >= (-14031 + 2110)) // ESQUERDA
-                                {
-                                    txtEmTela = "â";
-                                }
-                                else
-                                {
-                                    txtEmTela = "ã";
-
-                                }
-
-
-                                txtEmTela = "ã";
-                                float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
-                                x += (int)writeX;
-                                y = (int)desenhoLoc[des] - 5;
-                                gl.DrawText(0, 0, color[0], color[1], color[2], "Wingdings 3", 18, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
-                                gl.DrawText(x, y, color[0], color[1], color[2], "Wingdings 3", 22, txtEmTela);
-
-                                h++; //aqui tem plotar 3 graficos diferentes                                
-                                j += 7;
-                                gl.Flush();
-
-                            }
+                            
                         }
                     }
                     gl.End();

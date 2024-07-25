@@ -37,6 +37,7 @@ namespace PlotagemOpenGL.auxi
         public static string Event;
         public static string InicioEvent;
         public static string DuracaoEvent;
+        public static int MinimumValueEvent = 256;
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();
@@ -110,7 +111,7 @@ namespace PlotagemOpenGL.auxi
 
         public static int endX;
         public static int endY;
-        public static int startX;
+        public static int? startX;
         public static int startY;
         public static float[] EndY;
         public static float[] StartY;

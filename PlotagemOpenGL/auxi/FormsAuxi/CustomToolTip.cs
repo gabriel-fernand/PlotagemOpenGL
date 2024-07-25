@@ -58,7 +58,7 @@ namespace PlotagemOpenGL.auxi.FormsAuxi
             }
 
             // Texto no retângulo inferior
-            string lowerText = $"INICIO : {GlobVar.InicioEvent}\nDura;ao : {GlobVar.DuracaoEvent}\nValor dessaturacao : 87%\n";
+            string lowerText = $"Inicio : {GlobVar.InicioEvent}\nDuraçao : {GlobVar.DuracaoEvent}\nValor dessaturacao : 87%\n";
             string[] lowerLines = lowerText.Split(new[] { '\n' }, StringSplitOptions.None);
 
             y = lowerRect.Y + 10;
