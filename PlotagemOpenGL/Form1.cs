@@ -880,10 +880,13 @@ namespace PlotagemOpenGL
         {
             openglControl1.DoRender();
             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-            plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             //plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+
+            plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+
 
         }
 
@@ -1181,6 +1184,7 @@ namespace PlotagemOpenGL
                     }
                     else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
                     {
+
                         isTelaClearAndReloadExecuted = false;
 
                         if (!isMouseDown)
@@ -1308,7 +1312,10 @@ namespace PlotagemOpenGL
                 {
                     if (!isAnEvent && !isAnStartEvent && !isAnEndEvent)
                     {
-                        if(!crtlAtivo){
+                        isDrawing = false;
+                        isDrawingRectangle = false;
+
+                        if (!crtlAtivo){
                             UpdateLoc();
                             isDrawingRectangle = false;
                             isDrawing = false;
@@ -1319,18 +1326,18 @@ namespace PlotagemOpenGL
                             if(GlobVar.startX == GlobVar.endX)
                             {
                                 GlobVar.startX = null;
+                                isDrawing = false;
                             }
-
-                            int LimiteAux = Math.Abs(GlobVar.endX - (int)GlobVar.startX);
-
-                            if (LimiteAux < GlobVar.MinimumValueEvent)
-                            {
-                                GlobVar.endX = (int)GlobVar.startX + GlobVar.MinimumValueEvent;
-                            }
-
 
                             if (GlobVar.startX != null)
                             {
+                                int LimiteAux = Math.Abs(GlobVar.endX - (int)GlobVar.startX);
+
+                                if (LimiteAux < GlobVar.MinimumValueEvent)
+                                {
+                                    GlobVar.endX = (int)GlobVar.startX + GlobVar.MinimumValueEvent;
+                                }
+
                                 if (GlobVar.endX != GlobVar.startX)
                                 {
                                     if (GlobVar.endX < GlobVar.startX)

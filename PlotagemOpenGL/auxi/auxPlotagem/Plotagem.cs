@@ -113,7 +113,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.LoadIdentity();
             //gl.Perspective(0, 0, 0.1, 50.0);
             //gl.LookAt(0, 0, 0, 0, 0, 0, 0, 0, 0);
-            gl.Ortho(0, GlobVar.tmpEmTela, 0, GlobVar.sizeOpenGl.Y, -1, 1); // Define a projeção
+            gl.Ortho(0, GlobVar.tmpEmTela, 0, GlobVar.sizeOpenGl.Y, -2, 2); // Define a projeção
 
             // Define a matriz de modelo-visualização
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -207,7 +207,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             //plotEventos.AdicionarEventoAoDataTable((int)startX, (int)endX, YAdjusted, desenhoLoc, startY);
 
             //Classe para testes para fazer os numeros dos canais de respiracao e SP02
-            plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
+            //plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
 
             double time = (endX - startX) / GlobVar.namos; //Faz o calculo para mostrar quantos segundos o quadrado de evento ta captando
             writeX = startX / GlobVar.tmpEmTela * GlobVar.sizeOpenGl.X + 5; //Faz o mapeamento para fazer a escrita no quadrado com base no tamanho da tela

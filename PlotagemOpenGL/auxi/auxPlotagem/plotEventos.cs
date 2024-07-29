@@ -57,17 +57,20 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
 
 
-                        gl.Begin(OpenGL.GL_2D);
+                        //gl.Begin(OpenGL.GL_2D);
                         int writeX = 0;
                         int writeY = 0;
                         ConvertToScreenCoordinates(inicio, 0, out writeX, out writeX);
 
+                        //gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, "");
+                        //gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
 
-                        gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
-
-                        gl.End();
-                        gl.Flush();
+                        //gl.End();
+                        //gl.Flush();
                         des--;
+
+                        //plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
+
                     }
                     if (codEvento == 18 || codEvento == 19)
                     {
@@ -95,11 +98,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int writeY;
                         int whereToDraw = ((termino - inicio) / 2) + inicio;
                         ConvertToScreenCoordinates(whereToDraw, 0, out writeX,out writeY);
-                        writeY = (int)(GlobVar.sizeOpenGl.Y / 2);
+                        writeY = (int)GlobVar.sizeOpenGl.Y - (int)(GlobVar.sizeOpenGl.Y / 3) - 30;
 
-                        DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial Narrow", 20);
-                        gl.End();
-                        gl.Flush();
+
+                        //DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial Narrow", 20);
 
                     }
                 }
@@ -311,13 +313,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 if (startTimeSpan.Hours == 0)
                 {
                     // Formata os TimeSpan para o formato desejado
-                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Nanoseconds}seg";
+                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Milliseconds}seg";
                     formattedStartTime = $"{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
                     formattedDuration = $"{durAux}";
                 }
                 else
                 {
-                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Nanoseconds}seg";
+                    string durAux = $"{durationTimeSpan.Seconds},{durationTimeSpan.Milliseconds}seg";
                     formattedStartTime = $"{startTimeSpan.Hours:D2}H:{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
                     formattedDuration = $"{durAux}";
                 }
@@ -545,17 +547,27 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         //metodo para fazer a escrita vertial para o Bom dia e Boa noite --- Testes
         public static void DrawVerticalText(OpenGL gl, float startX, float startY, string text, string fontName, int fontSize)
         {
-            float verticalSpacing = 20; // Ajuste conforme necessário para o espaçamento vertical entre caracteres
-            float currentY = startY;
-            gl.Begin(OpenGL.GL_2D);
-
-            foreach (char c in text)
+            try
             {
-                gl.DrawText((int)startX, (int)currentY, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontSize, "");
-                gl.DrawText((int)startX, (int)currentY, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontSize, c.ToString());
-                currentY -= verticalSpacing; // Move para a próxima linha verticalmente
+                float verticalSpacing = fontSize; // Ajuste conforme necessário para o espaçamento vertical entre caracteres
+                float currentY = startY;
+
+                gl.Begin(OpenGL.GL_2D);
+
+                foreach (char c in text)
+                {
+                    gl.DrawText((int)startX, (int)currentY, 1.0f, 1.0f, 1.0f, fontName, fontSize, c.ToString());
+                    currentY -= verticalSpacing; // Move para a próxima linha verticalmente
+                }
+
+                gl.End();
+                gl.Flush();
             }
-            gl.End();
+            catch (Exception ex)
+            {
+                // Handle exception if needed
+                Console.WriteLine($"Error drawing vertical text: {ex.Message}");
+            }
         }
     }
 }
