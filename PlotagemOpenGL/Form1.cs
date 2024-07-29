@@ -575,7 +575,7 @@ namespace PlotagemOpenGL
                 canais.PainelLb_Resize();
                 canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.reloc();
+                canais.reloc(); 
 
 
                 gl = openglControl1.OpenGL;
@@ -1003,6 +1003,8 @@ namespace PlotagemOpenGL
                     int alturaTela = (int)openglControl1.Height;
                     TelaClearAndReload();
                     gl.Translate(camera.X, 0, 1);
+                    hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                    hScrollBar1.Refresh();
                     UpdateInicioTela();
                     //Update();
                 }
@@ -1313,6 +1315,11 @@ namespace PlotagemOpenGL
 
                             ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
                             GlobVar.endX = (int)Plotagem.endX;
+
+                            if(GlobVar.startX == GlobVar.endX)
+                            {
+                                GlobVar.startX = null;
+                            }
 
                             int LimiteAux = Math.Abs(GlobVar.endX - (int)GlobVar.startX);
 
@@ -1703,6 +1710,8 @@ namespace PlotagemOpenGL
                 int alturaTela = (int)openglControl1.Height;
                 gl.Translate(camera.X, 0, 1);
                 TelaClearAndReload();
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Refresh();
                 UpdateInicioTela();
                 //Update();
             }
