@@ -138,7 +138,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
 
             // Adicionar dados ao DataTable
-            GlobVar.eventosUpdate.Rows.Add(seq, numPag, 101, GlobVar.codSelected[loc], inicio, termino);
+            GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino);
 
             // Exportar DataTable para Excel
             string excelFilePath = @"C:\Teste\Teste";
@@ -505,7 +505,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             float[] color = new float[3];
 
             var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
-                                                        .Where(row => row.Field<int>("CodEvento") == 101).CopyToDataTable();
+                                                        .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
             int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
             color = plotGrafico.ObterComponentesRGB(rgbDex);
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
@@ -617,6 +617,49 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             catch (Exception ex)
             {
             }
+        }
+
+        public static void LastEvent(float[] desenhoLoc, float startY)
+        {
+            try{
+                int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                DataTable sequancias = new DataTable();
+
+                // Verifica se o DataTable 'eventosUpdate' está vazio
+                if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+                {
+                    return;
+                }
+
+                var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
+
+
+                // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
+                if (!filteredRows.Any())
+                {
+                    return;
+                }
+                filteredRows.AsEnumerable().OrderBy(row => row.Field<int>("Seq"));
+
+                sequancias = filteredRows.CopyToDataTable();
+
+                // Verifica se o DataTable 'sequancias' está vazio
+                if (sequancias == null || sequancias.Rows.Count == 0)
+                {
+                    return;
+                }
+                var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
+
+                foreach (var group in groupedRows)
+                {
+                    var firstRow = group.Last();
+                    int codEvento = firstRow.Field<int>("CodEvento");
+                    GlobVar.lastEvent = codEvento;
+                }
+
+            }
+            catch (Exception ex) { }
         }
     }
 }

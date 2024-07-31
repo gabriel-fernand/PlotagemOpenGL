@@ -89,7 +89,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67)
                                 {
                                     gl.End();
-                                    gl.Begin(OpenGL.);
                                     int y;
 
                                     int aux = 0;

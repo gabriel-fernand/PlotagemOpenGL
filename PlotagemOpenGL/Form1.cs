@@ -1141,6 +1141,8 @@ namespace PlotagemOpenGL
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.startY);
                     int startY = (int)Plotagem.startY;
                     float endX = Plotagem.endX;
+                    plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
+
                     if (!isDrawing) {
                         this.isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnStartEvent = plotEventos.IsInAnEventStart((int)endX, GlobVar.desenhoLoc, startY);
@@ -2885,7 +2887,7 @@ namespace PlotagemOpenGL
         {
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]}| InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount}";
+            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]}| InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent}";
         }
     }
 }
