@@ -875,7 +875,7 @@ namespace PlotagemOpenGL
             }
         }
 
-
+        //Metodo que faz a plotagem, e a replotagem quando precisa
         public static void TelaClearAndReload()
         {
             openglControl1.DoRender();
@@ -886,8 +886,7 @@ namespace PlotagemOpenGL
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-
-
+            //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)

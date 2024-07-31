@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
@@ -55,18 +56,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         gl.End();
                         gl.Flush();
 
-
-
-                        //gl.Begin(OpenGL.GL_2D);
-                        int writeX = 0;
-                        int writeY = 0;
-                        ConvertToScreenCoordinates(inicio, 0, out writeX, out writeX);
-
-                        //gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, "");
-                        //gl.DrawText((int)writeX + 4, (int)GlobVar.EndY[YAdjusted] - 10, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
-
-                        //gl.End();
-                        //gl.Flush();
                         des--;
 
                         //plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
@@ -94,14 +83,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         gl.Flush();
                         des--;
 
-                        int writeX = 0;
-                        int writeY;
-                        int whereToDraw = ((termino - inicio) / 2) + inicio;
-                        ConvertToScreenCoordinates(whereToDraw, 0, out writeX,out writeY);
-                        writeY = (int)GlobVar.sizeOpenGl.Y - (int)(GlobVar.sizeOpenGl.Y / 3) - 30;
-
-
-                        //DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial Narrow", 20);
+                        //DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial", 20);
 
                     }
                 }
@@ -544,29 +526,96 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
         }
 
-        //metodo para fazer a escrita vertial para o Bom dia e Boa noite --- Testes
-        public static void DrawVerticalText(OpenGL gl, float startX, float startY, string text, string fontName, int fontSize)
+        //metodo para fazer a escrita do Bom dia e dos tipos de eventos sobre eles
+        public static void DrawTexts(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
             try
             {
-                float verticalSpacing = fontSize; // Ajuste conforme necessário para o espaçamento vertical entre caracteres
-                float currentY = startY;
+                DataTable eventos = GlobVar.eventosUpdate;
+                float[] color = new float[3];
+                float[] colorLinha = new float[3];
+                var filteredRows = eventos.AsEnumerable()
+                              .OrderBy(row => row.Field<int>("Seq"));
 
-                gl.Begin(OpenGL.GL_2D);
-
-                foreach (char c in text)
+                // Agrupar por Seq e processar cada grupo
+                var groupedRows = filteredRows.GroupBy(row => row.Field<int>("Seq"));
+                int des = qtdGraf - 1;
+                foreach (var group in groupedRows)
                 {
-                    gl.DrawText((int)startX, (int)currentY, 1.0f, 1.0f, 1.0f, fontName, fontSize, c.ToString());
-                    currentY -= verticalSpacing; // Move para a próxima linha verticalmente
+                    var firstRow = group.First();
+                    int codCanal1First = firstRow.Field<int>("CodCanal1");
+                    int inicio = firstRow.Field<int>("Inicio");
+                    int termino = firstRow.Field<int>("Duracao");
+                    int codEvento = firstRow.Field<int>("CodEvento");
+                    if (GlobVar.codSelected.Contains(codCanal1First))
+                    {
+                        var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
+                        int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
+                        color = plotGrafico.ObterComponentesRGB(rgbDex);
+                        colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
+
+                        int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+
+                        gl.Begin(OpenGL.GL_2D);
+                        int writeX = 0;
+                        int writeY = (int)GlobVar.EndY[YAdjusted] - 10;
+                        ConvertToScreenCoordinates(inicio, 0, out writeX, out writeY);
+                        writeX += 4;
+                        writeY = (int)GlobVar.EndY[YAdjusted] - 15;
+                        gl.DrawText(writeX, writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, "");
+                        gl.DrawText(writeX, writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
+
+                        gl.End();
+                        gl.Flush();
+                        des--;
+
+                        //plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
+
+                    }
+                    if (codEvento == 18 || codEvento == 19)
+                    {
+                        var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
+                        int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
+                        color = plotGrafico.ObterComponentesRGB(rgbDex);
+                        colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
+
+                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+
+                        int writeX = 0;
+                        int writeY;
+                        int whereToDraw = ((termino - inicio) / 2) + inicio;
+                        ConvertToScreenCoordinates(whereToDraw, 0, out writeX, out writeY);
+                        writeY = (int)GlobVar.sizeOpenGl.Y - (int)(GlobVar.sizeOpenGl.Y / 3) - 30;
+
+
+
+                        float verticalSpacing = 18; // Ajuste conforme necessário para o espaçamento vertical entre caracteres
+                        float currentY = writeY;
+
+                        //gl.DrawText((int)writeX, (int)writeY, 0, 0, 0, "Arial Narrow", 2, "");
+                        //gl.DrawText((int)writeX, (int)writeY, 0, 0, 0, "Arial Narrow", 2, ".");
+                        gl.Begin(OpenGL.GL_2D);
+                        for (int i = 0; i < tipoCanal.Length; i++)
+                        {
+                            string a = Convert.ToString(tipoCanal[i]);
+                            gl.DrawText((int)writeX, (int)currentY, 0, 0, 0, "Arial Narrow", 18, a);
+                            gl.DrawText((int)writeX, (int)currentY, 0, 0, 0, "Arial Narrow", 18, a);
+                            currentY -= verticalSpacing; // Move para a próxima linha verticalmente
+                        }
+                        gl.End();
+                        gl.Flush();
+
+                        //DrawVerticalText(gl, (int)writeX, (int)writeY, $"{tipoCanal}", "Arial", 20);
+
+                    }
                 }
 
-                gl.End();
-                gl.Flush();
             }
             catch (Exception ex)
             {
-                // Handle exception if needed
-                Console.WriteLine($"Error drawing vertical text: {ex.Message}");
             }
         }
     }

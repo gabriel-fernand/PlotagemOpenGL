@@ -89,7 +89,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67)
                                 {
                                     gl.End();
-                                    gl.Begin(OpenGL.GL_2D);
+                                    gl.Begin(OpenGL.);
                                     int y;
 
                                     int aux = 0;
@@ -111,7 +111,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     h++; //aqui tem plotar 3 graficos diferentes                                
                                     j += 7;
                                     gl.End();
-
+                                    gl.Flush();
+                                    
                                 }
 
                             }
@@ -191,6 +192,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     h++; //aqui tem plotar 3 graficos diferentes                                
                                     j += 7;
                                     gl.End();
+                                    gl.Flush();
                                 }
                             }
                         }
