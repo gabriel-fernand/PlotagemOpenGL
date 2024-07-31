@@ -38,11 +38,12 @@ namespace PlotagemOpenGL.auxi
         public static string InicioEvent;
         public static string DuracaoEvent;
         public static int MinimumValueEvent = 256;
-        public static int lastEvent;
+        public static int? lastEvent;
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();
         public static DataTable codEventos = new DataTable();
+        public static DataTable tbl_TipoCanal = new DataTable();
         public static DataTable tbl_EventoTipoCanal = new DataTable();
 
         public static DataTable tbl_Montagem = new DataTable();

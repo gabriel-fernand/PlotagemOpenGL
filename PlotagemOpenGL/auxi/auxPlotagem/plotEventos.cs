@@ -115,35 +115,40 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         //Metodo para salvar um evento novo
         public static void AdicionarEventoAoDataTable(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY)
         {
-            DataTable eventos = GlobVar.eventosUpdate;
+            try{
+                if (GlobVar.lastEvent != null){
+                    DataTable eventos = GlobVar.eventosUpdate;
 
-            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                    int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
 
-            // Adicionar colunas ao DataTable se não existirem
-            if (eventos.Columns.Count == 0)
-            {
-                eventos.Columns.Add("Seq", typeof(int));
-                eventos.Columns.Add("NumPag", typeof(string));
-                eventos.Columns.Add("CodEvento", typeof(int));
-                eventos.Columns.Add("CodCanal1", typeof(int));
-                eventos.Columns.Add("Inicio", typeof(int));
-                eventos.Columns.Add("Duracao", typeof(int));
+                    // Adicionar colunas ao DataTable se não existirem
+                    if (eventos.Columns.Count == 0)
+                    {
+                        eventos.Columns.Add("Seq", typeof(int));
+                        eventos.Columns.Add("NumPag", typeof(string));
+                        eventos.Columns.Add("CodEvento", typeof(int));
+                        eventos.Columns.Add("CodCanal1", typeof(int));
+                        eventos.Columns.Add("Inicio", typeof(int));
+                        eventos.Columns.Add("Duracao", typeof(int));
+                    }
+
+                    // Calcular NumPag para início e término
+                    int numPagInicio = inicio / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    int numPagTermino = termino / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    string numPag = $"{numPagInicio} -- {numPagTermino}";
+                    // Obter o próximo valor de Seq
+                    int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
+
+                    // Adicionar dados ao DataTable
+                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino);
+
+                    // Exportar DataTable para Excel
+                    string excelFilePath = @"C:\Teste\Teste";
+                    //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
+                    eventos.Dispose();
+                }
             }
-
-            // Calcular NumPag para início e término
-            int numPagInicio = inicio / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-            int numPagTermino = termino / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-            string numPag = $"{numPagInicio} -- {numPagTermino}";
-            // Obter o próximo valor de Seq
-            int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
-
-            // Adicionar dados ao DataTable
-            GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino);
-
-            // Exportar DataTable para Excel
-            string excelFilePath = @"C:\Teste\Teste";
-            //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
-            eventos.Dispose();
+            catch { }
         }
         //Metodo criado para mover ou modificar um evento
         public static void UpdateEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
@@ -502,28 +507,33 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
         public static void DrawingAnEvent(int qtdGraf, OpenGL gl, float[] desenhoLoc) 
         {
-            float[] color = new float[3];
+            try
+            {
+                if (GlobVar.lastEvent != null) {
+                    float[] color = new float[3];
 
-            var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
-                                                        .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
-            int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
-            color = plotGrafico.ObterComponentesRGB(rgbDex);
-            int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
+                    var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                                .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
+                    int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
+                    color = plotGrafico.ObterComponentesRGB(rgbDex);
+                    int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
 
-            //gl.Color(0.0f, 0.0f, 0.0f);
+                    //gl.Color(0.0f, 0.0f, 0.0f);
 
-            gl.Begin(OpenGL.GL_QUADS);
-            gl.PointSize(3.0f); // Define o tamanho dos pontos
-            gl.Color(color[0], color[1], color[2], 0.44f);
-            //gl.Color(0, 0, 0);
-            //gl.ColorMask(3, 6, 7, alpha);
-            gl.Vertex((int)GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-            gl.Vertex(GlobVar.endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-            gl.Vertex(GlobVar.endX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
-            gl.Vertex((int)GlobVar.startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
-            gl.End();  
-            //startX = 0;
-
+                    gl.Begin(OpenGL.GL_QUADS);
+                    gl.PointSize(3.0f); // Define o tamanho dos pontos
+                    gl.Color(color[0], color[1], color[2], 0.44f);
+                    //gl.Color(0, 0, 0);
+                    //gl.ColorMask(3, 6, 7, alpha);
+                    gl.Vertex((int)GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
+                    gl.Vertex(GlobVar.endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
+                    gl.Vertex(GlobVar.endX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+                    gl.Vertex((int)GlobVar.startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+                    gl.End();
+                    //startX = 0;
+                }
+            }
+            catch { }
         }
 
         //metodo para fazer a escrita do Bom dia e dos tipos de eventos sobre eles
@@ -634,11 +644,40 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
                                                     .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
 
-
                 // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
                 if (!filteredRows.Any())
                 {
-                    return;
+                    DataTable canHaveEventTable = new DataTable();
+
+                    int codCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+
+                    var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodCanal") == codCanal).CopyToDataTable();
+                    int tipoCanal = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+
+
+                    var canHaveEvent = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodTipoCanal") == tipoCanal);
+                    if(canHaveEvent.Any()) {
+                        if(tipoCanal == 13) // forca para que no canal da canula o primeiro evento a ser criado, seja uma hipopneia
+                        {
+                            GlobVar.lastEvent = 5;
+                            return;
+                        }
+                        else
+                        {
+                            canHaveEventTable = canHaveEvent.CopyToDataTable();
+                            canHaveEventTable.AsEnumerable().OrderBy(row => row.Field<int>("CodCanal"));
+
+                            GlobVar.lastEvent = Convert.ToInt16(canHaveEventTable.Rows[0]["CodEvento"]);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        GlobVar.lastEvent = null;
+                        return;
+                    }
                 }
                 filteredRows.AsEnumerable().OrderBy(row => row.Field<int>("Seq"));
 

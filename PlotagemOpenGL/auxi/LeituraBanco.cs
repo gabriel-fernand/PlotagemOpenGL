@@ -34,6 +34,7 @@ public class LeituraBanco
             string queryCadTipoCanal = "SELECT * FROM tbl_CadTipoCanal";
             string queryCadEvento = "SELECT * FROM tbl_CadEvento";
             string queryEventTipCanal = "SELECT * FROM tbl_EventoTipoCanal";
+            string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
@@ -42,6 +43,7 @@ public class LeituraBanco
             using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
             using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
             using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
+            using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
 
             using var command = new OdbcCommand(query, connectionDatBd);
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
@@ -54,6 +56,7 @@ public class LeituraBanco
             using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
             using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
             using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
+            using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
 
             using var adapter = new OdbcDataAdapter(command);
             using var adapterTbl_MontGrav = new OdbcDataAdapter(commandTbl_MontGrav);
@@ -70,6 +73,7 @@ public class LeituraBanco
             adapterTbl_CadTipoCanal.Fill(GlobVar.tbl_CadTipoCanal);
             adapterCadExame.Fill(GlobVar.tbl_CadEvento);
             adapterEventTipCanal.Fill(GlobVar.tbl_EventoTipoCanal);
+            adapterTipoCanal.Fill(GlobVar.tbl_TipoCanal);
 
 
             connectionConfigBd.Close();

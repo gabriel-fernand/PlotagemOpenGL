@@ -1648,6 +1648,8 @@ namespace PlotagemOpenGL
         private bool isScrollingRight = true;
         private bool crtlAtivo = false;
         private bool telaMovi = false;
+
+        //Comecando a mexer nos KeyDown para alterar os eventos, usar o KeyUp para "replotar a tela"
         private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown()
@@ -1743,6 +1745,7 @@ namespace PlotagemOpenGL
             {
             }
         }
+
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             try
