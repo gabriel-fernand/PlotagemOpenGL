@@ -1,4 +1,5 @@
 ﻿using Accord.IO;
+using System;
 using System.Windows.Forms;
 
 namespace PlotagemOpenGL
@@ -48,8 +49,9 @@ namespace PlotagemOpenGL
             Play = new Button();
             openglControl1 = new SharpGL.OpenGLControl();
             contextMenuStripOpenGl = new ContextMenuStrip(components);
-            BomDia = new ToolStripTextBox();
-            BoaNoite = new ToolStripTextBox();
+            BomDia = new ToolStripMenuItem();
+            BoaNoite = new ToolStripMenuItem();
+            Excluir = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             LowPassFilterGl = new ToolStripMenuItem();
             NenhumLowGl = new ToolStripMenuItem();
@@ -436,6 +438,13 @@ namespace PlotagemOpenGL
             contextMenuStripOpenGl.Name = "contextMenuStripOpenGl";
             contextMenuStripOpenGl.Size = new System.Drawing.Size(179, 116);
             contextMenuStripOpenGl.Opening += ContextMenuStripOpenGl_Opening;
+            // 
+            // BomDia
+            // 
+            Excluir.Name = "Excluir";
+            Excluir.Size = new System.Drawing.Size(100, 27);
+            Excluir.Text = "Excluir";
+            Excluir.Click += DeletEventClick();
             // 
             // BomDia
             // 
@@ -2299,10 +2308,12 @@ namespace PlotagemOpenGL
 
 
 
+
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
         public static ToolStripItem item2ToolStripMenuItem;
         public static ToolStripItem item3ToolStripMenuItem;
+        public static ToolStripMenuItem Excluir;
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
@@ -2468,9 +2479,9 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem hertz03;
         public static ToolStripMenuItem hertz01;
         public static ToolStripMenuItem outroHigh;
-        public static ToolStripTextBox BomDia;
+        public static ToolStripMenuItem BomDia;
         public static ToolStripSeparator toolStripSeparator1;
-        public static ToolStripTextBox BoaNoite;
+        public static ToolStripMenuItem BoaNoite;
         public static ToolStripMenuItem LowPassFilterGl;
         public static ToolStripMenuItem NenhumLowGl;
         public static ToolStripMenuItem hertz70Gl;

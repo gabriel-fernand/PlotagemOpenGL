@@ -201,6 +201,7 @@ namespace PlotagemOpenGL
             //Leitura.LerArquivo();           
             Leitura.QuantidadeCanais();
             //Leitura.LeituraDat();
+            LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
 
             LeituraEmMatrizTeste.LeituraDat();
             SetStyle(ControlStyles.DoubleBuffer, true);
@@ -1112,19 +1113,11 @@ namespace PlotagemOpenGL
                 }
                 if (e.Button == MouseButtons.Right)
                 {
+
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                    toolTip1.RemoveAll();
 
-                    if (this.Cursor == Cursors.SizeAll)
-                    {
-                        timer2.Start();
-                        lastMousePosition = e.Location;
-                        GlobVar.startX = GlobVar.iniEventoMove;
-                        openglControl1.DoRender();
-                        plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
-                        //plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
-                        TelaClearAndReload();
-                    }
                 }
             }
         }
@@ -1447,14 +1440,6 @@ namespace PlotagemOpenGL
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
 
-                    if (this.Cursor == Cursors.SizeAll)
-                    {
-                        isDrawing = false;
-                        lastMousePosition = e.Location;
-                        TelaClearAndReload();
-
-                        //TelaClearAndReload();
-                    }
                 }
                 clickCount = 0;
                 timer2.Stop();
@@ -1656,67 +1641,93 @@ namespace PlotagemOpenGL
         {
             try
             {
-                if(e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
-                {
-                    crtlAtivo = true;
-                }
-                if(e.KeyValue == 37)
-                {
-                    this.Close();
-                }
-                switch (e.KeyData)
-                {
-                    case Keys.Left:
-                        this.Close();
-                        break;
 
-                    case Keys.Escape:
-                        this.Close();
-                        break;
-
-
-                    case Keys.D:
-                        if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                if (isAnEvent || isAnEndEvent || isAnStartEvent)
+                {
+                    if(e.KeyValue == 46)
+                    {
+                        plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                    }
+                    else{
+                    var rowteclaRapida = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                                .Where(row => row.Field<int>("TeclaRapida") == e.KeyValue);
+                        if (rowteclaRapida.Any())
                         {
-                            camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                            GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                            GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-
-                            GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                            GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                            GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                            GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                            //UpdateInicioTela();
-                            //TelaClearAndReload();
-
+                            var tableTeclaRapida = rowteclaRapida.CopyToDataTable();
+                            for (int i = 0; i < tableTeclaRapida.Rows.Count; i++)
+                            {
+                                if (!GlobVar.EventHasChange)
+                                {
+                                    int NewCodEvento = Convert.ToInt16(tableTeclaRapida.Rows[i]["CodEvento"]);
+                                    plotEventos.ChangeEventType(GlobVar.CodCanalEvent, GlobVar.seqEvento, NewCodEvento);
+                                }
+                            }
                         }
-
-                        break;
-                    case Keys.A:
-
-                        if (GlobVar.indice > 0)
-                        {
-                            camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                            GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                            GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-
-                            GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                            GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-
-                            GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                            GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                            //UpdateInicioTela();
-                            //TelaClearAndReload();
-
-                        }
-                        break;
+                    }
                 }
+                else
+                {
+                    if (e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
+                    {
+                        crtlAtivo = true;
+                    }
+                    if(e.KeyValue == 37)
+                    {
+                        this.Close();
+                    }
+                    switch (e.KeyData)
+                    {
+                        case Keys.Left:
+                            this.Close();
+                            break;
 
+                        case Keys.Escape:
+                            this.Close();
+                            break;
+
+
+                        case Keys.D:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                //UpdateInicioTela();
+                                //TelaClearAndReload();
+
+                            }
+
+                            break;
+                        case Keys.A:
+
+                            if (GlobVar.indice > 0)
+                            {
+                                camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                //UpdateInicioTela();
+                                //TelaClearAndReload();
+
+                            }
+                        break;
+                    }
+                }
                 int alturaTela = (int)openglControl1.Height;
                 gl.Translate(camera.X, 0, 1);
                 TelaClearAndReload();
@@ -1735,7 +1746,28 @@ namespace PlotagemOpenGL
             {
                 if(e != null)
                 {
-                    if(e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
+                    if (isAnEvent || isAnEndEvent || isAnStartEvent)
+                    {
+                        if (e.KeyValue == 46)
+                        {
+                            TelaClearAndReload();
+                        }
+                        else
+                        {
+                            var rowteclaRapida = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                                    .Where(row => row.Field<int>("TeclaRapida") == e.KeyValue);
+                            if (rowteclaRapida.Any())
+                            {
+                                if (GlobVar.EventHasChange)
+                                {
+                                    TelaClearAndReload();
+                                    GlobVar.EventHasChange = false;
+                                }
+                            }
+}
+                    }
+
+                    if (e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
                     {
                         crtlAtivo = false;
                     }
@@ -1963,12 +1995,41 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
+        //Menuzinho para mudar os eventos ou mudar na tela
         private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
         {
-            int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, Plotagem.endY);
-            //GlobVar.nomeCanais[GlobVar.grafSelected[YAdjusted]];
+            try{
+            contextMenuStripOpenGl.Items.Clear();
+
+                if (isAnEvent || isAnEndEvent || isAnStartEvent)
+                {
+                    //GlobVar.CodEvento; GlobVar.seqEvento; GlobVar.CodCanalEvent; GlobVar.CodTipoCanalEvent;
+                    contextMenuStripOpenGl.Items.Add(BomDia);
+
+
+                    contextMenuStripOpenGl.Items.Add(toolStripSeparator1); // separador
+                    contextMenuStripOpenGl.Items.Add(Excluir);
+
+                }
+                else
+                {
+                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                }
+            }
+            catch { }
+
         }
+
+        private EventHandler DeletEventClick()
+        {
+            try
+            {
+
+            }
+            catch { }
+            throw new NotImplementedException();
+        }
+
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             timer1.Start();
@@ -2890,7 +2951,7 @@ namespace PlotagemOpenGL
         {
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]}| InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent}";
+            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent}";
         }
     }
 }

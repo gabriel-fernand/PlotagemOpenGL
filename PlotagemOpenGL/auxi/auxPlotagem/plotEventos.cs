@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Windows.Documents;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
 
@@ -168,6 +169,40 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
+        public static void ChangeEventType(int codCanal, int seq, int codEvento)
+        {
+            try{
+                //Verifica se o evento pode ser do tipo
+                var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodCanal") == codCanal).CopyToDataTable();
+                int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+
+                var EventoTipo = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodTipoCanal") == TipoCanal).CopyToDataTable();
+                var CanHaveAnEvent = EventoTipo.AsEnumerable()
+                                                 .Where(row => row.Field<int>("CodEvento") == codEvento);
+                if (CanHaveAnEvent.Any())
+                {
+                    DataRow[] rowsToUpdate = GlobVar.eventosUpdate.Select($"Seq = {seq}");
+
+                    foreach (DataRow row in rowsToUpdate)
+                    {
+                        // Altera o valor da coluna 'CodEvento' para 'newCodEvento'
+                        row["CodEvento"] = codEvento;
+                    }
+
+                    // Se necessário, aceite as alterações na tabela
+                    GlobVar.eventosUpdate.AcceptChanges();
+                    GlobVar.EventHasChange = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch { }
+
+        }
         private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
         {
             var gl = Tela_Plotagem.openglControl1.OpenGL;
@@ -326,8 +361,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 bool isThereAnEvent = false;
 
-
                 int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+
+                GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+
+                var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
+                GlobVar.CodTipoCanalEvent = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+
                 DataTable sequancias = new DataTable();
 
                 // Verifica se o DataTable 'eventosUpdate' está vazio
@@ -478,6 +519,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         //break; // Sai do loop assim que encontrar um evento
                     }
                 }
+                GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+
+                var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
+                GlobVar.CodTipoCanalEvent = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+
                 // Limpa o DataTable 'sequancias' se necessário
                 sequancias.Dispose();
 
@@ -700,6 +747,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
             catch (Exception ex) { }
         }
+
     }
 }
 

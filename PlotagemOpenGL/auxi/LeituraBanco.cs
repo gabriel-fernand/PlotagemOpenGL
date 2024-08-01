@@ -233,4 +233,15 @@ public class LeituraBanco
             GlobVar.eventosUpdate.Rows.Add(newRow);
         }
     }
+
+    public static void AjustaCadEvent()// Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
+    {
+        for(int i = 0; i < GlobVar.tbl_CadEvento.Rows.Count; i++)
+        {
+            if (GlobVar.tbl_CadEvento.Rows[i]["TeclaRapida"] == DBNull.Value)
+            {
+                GlobVar.tbl_CadEvento.Rows[i]["TeclaRapida"] = -1;
+            }
+        }
+    }
 }
