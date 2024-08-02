@@ -444,7 +444,7 @@ namespace PlotagemOpenGL
             Excluir.Name = "Excluir";
             Excluir.Size = new System.Drawing.Size(100, 27);
             Excluir.Text = "Excluir";
-            Excluir.Click += DeletEventClick();
+            Excluir.Click += DeletEventClick;
             // 
             // BomDia
             // 

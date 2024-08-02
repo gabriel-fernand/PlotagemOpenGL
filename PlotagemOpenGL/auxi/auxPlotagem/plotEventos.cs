@@ -748,6 +748,20 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             catch (Exception ex) { }
         }
 
+        public static void ListOfEvent()
+        {
+            GlobVar.listEventsCanHave.Clear();
+
+            var EventsCan = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodTipoCanal") == GlobVar.CodTipoCanalEvent).CopyToDataTable();
+            for(int i = 0; i < EventsCan.Rows.Count; i++)
+            {
+                int AuxCodCanal = Convert.ToInt16(EventsCan.Rows[i]["CodEvento"]);
+                var auxTabelEvents = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<int>("CodEvento") == AuxCodCanal).CopyToDataTable();
+
+                GlobVar.listEventsCanHave.Add(auxTabelEvents.Rows[0]["DescrEvento"].ToString());
+            }
+        }
     }
 }
 

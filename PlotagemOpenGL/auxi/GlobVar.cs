@@ -42,6 +42,7 @@ namespace PlotagemOpenGL.auxi
         public static int MinimumValueEvent = 256;
         public static int? lastEvent;
         public static bool EventHasChange = false;
+        public static List<string> listEventsCanHave = new List<string>();
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();

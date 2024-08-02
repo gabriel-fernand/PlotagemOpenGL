@@ -29,6 +29,7 @@ using Input = UnityEngine.Input;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using OpenTK.Windowing.Common.Input;
 using PlotagemOpenGL.auxi.FormsAuxi;
+using System.Windows.Media;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -1995,24 +1996,46 @@ namespace PlotagemOpenGL
                 }
             }
         }
+
         //Menuzinho para mudar os eventos ou mudar na tela
         private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
         {
             try{
-            contextMenuStripOpenGl.Items.Clear();
-
+                //Toda vez que o context e aberto, ele "da um clear nos itens que ele tem e altera com base no que ele vai fazer"
+                contextMenuStripOpenGl.Items.Clear();
+                
+                //Quero colocar para quando ele abrir dentro de um evento ele saber os tipos de evento que esse canal pode ter, e assim apenas mostrar esses 
+                //ToolStripMenuItem dos eventos que podem ter, porem nao quero criar no form um para cada tipo de evento que podem ter, quero algo mais dinamico
+                
                 if (isAnEvent || isAnEndEvent || isAnStartEvent)
                 {
+                    plotEventos.ListOfEvent(); //Faz a lista dinamica
+                    //Aqui eu coloquei as variaveis globais que eu preciso usar para pegar a informacao dos eventos que podem ser nesse canal
                     //GlobVar.CodEvento; GlobVar.seqEvento; GlobVar.CodCanalEvent; GlobVar.CodTipoCanalEvent;
-                    contextMenuStripOpenGl.Items.Add(BomDia);
+                    for(int i = 0; i < GlobVar.listEventsCanHave.Count; i++)
+                    {
+                        var newMenuItem = new ToolStripMenuItem();
+                        newMenuItem.Text = GlobVar.listEventsCanHave[i];
+                        //newMenuItem.Size = new System.Drawing.Size(100, 27);
+                        newMenuItem.Name = GlobVar.listEventsCanHave[i];
+                        //newMenuItem.Click += NewMenuItem_Click;
 
+                        contextMenuStripOpenGl.Items.Add(newMenuItem.Name);
+                    }
 
-                    contextMenuStripOpenGl.Items.Add(toolStripSeparator1); // separador
-                    contextMenuStripOpenGl.Items.Add(Excluir);
+                    for (int i = 0; i < contextMenuStripOpenGl.Items.Count; i++)
+                    {
+                        contextMenuStripOpenGl.Items[i].Size = new System.Drawing.Size(100, 27);
+                        contextMenuStripOpenGl.Items[i].Click += NewMenuItem_Click;
+                    }
+
+                        contextMenuStripOpenGl.Items.Add(toolStripSeparator1); // separador
+                        contextMenuStripOpenGl.Items.Add(Excluir);
 
                 }
                 else
                 {
+                    //Else seria quando ele abre fora de um evento
                     contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
                 }
             }
@@ -2020,14 +2043,35 @@ namespace PlotagemOpenGL
 
         }
 
-        private EventHandler DeletEventClick()
+        private void NewMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
+                ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+                if (clickedItem != null)
+                {
+                    string nameEvent = clickedItem.Text;
+                    var TableAux = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<string>("DescrEvento").Equals(nameEvent)).CopyToDataTable();
+                    int newCodevento = Convert.ToInt16(TableAux.Rows[0]["CodEvento"]);
 
+                    plotEventos.ChangeEventType(GlobVar.CodCanalEvent, GlobVar.seqEvento, newCodevento);
+
+                    TelaClearAndReload();
+                }
             }
             catch { }
-            throw new NotImplementedException();
+        }
+
+
+
+        private void DeletEventClick(object sender, EventArgs e)
+        {
+            try
+            {
+                plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                TelaClearAndReload();
+            }
+            catch { }
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
