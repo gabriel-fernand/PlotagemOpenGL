@@ -30,6 +30,7 @@ using PlotagemOpenGL.auxi.auxPlotagem;
 using OpenTK.Windowing.Common.Input;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using System.Windows.Media;
+using ClassesBDNano;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -264,6 +265,7 @@ namespace PlotagemOpenGL
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+
 
             load();
             camera.X = 0.0f;
@@ -1114,7 +1116,7 @@ namespace PlotagemOpenGL
                 }
                 if (e.Button == MouseButtons.Right)
                 {
-
+                    GlobVar.rightClickSave = e.Location;
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
                     toolTip1.RemoveAll();
@@ -2031,12 +2033,11 @@ namespace PlotagemOpenGL
 
                         contextMenuStripOpenGl.Items.Add(toolStripSeparator1); // separador
                         contextMenuStripOpenGl.Items.Add(Excluir);
-
                 }
                 else
                 {
                     //Else seria quando ele abre fora de um evento
-                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, InicioCPAP, ExcluirBdBnCpap, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
                 }
             }
             catch { }
@@ -2062,6 +2063,71 @@ namespace PlotagemOpenGL
             catch { }
         }
 
+        private void BomDiaCpapBoaNoite_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+                if(clickedItem != null)
+                {
+                    int? valueCodCanal = null;
+
+                    if (clickedItem.Text.Equals("Bom Dia"))
+                    {
+                        valueCodCanal = 19;
+                    }
+                    else if (clickedItem.Text.Equals("Boa Noite"))
+                    {
+                        valueCodCanal = 18;
+                    }
+                    else if (clickedItem.Text.Equals("Inicio CPAP"))
+                    {
+                        valueCodCanal = 50;
+                    }
+                    float aux = 0;
+                    float auy = 0;
+                    ConvertToOpenGLCoordinates(GlobVar.rightClickSave.X, GlobVar.rightClickSave.Y, out aux, out auy);
+                    if(valueCodCanal != null)
+                    {
+                        plotEventos.CreatBomDiaCpapBoaNoite((int)aux, (int)valueCodCanal);
+                    }
+
+                    TelaClearAndReload();
+                }
+            }
+            catch { }
+        }
+        private void ExcluiBomDiaCpapBoaNoite_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+                if (clickedItem != null)
+                {
+                    int? valueCodCanal = null;
+
+                    if (clickedItem.Text.Equals("Bom Dia"))
+                    {
+                        valueCodCanal = 19;
+                    }
+                    else if (clickedItem.Text.Equals("Boa Noite"))
+                    {
+                        valueCodCanal = 18;
+                    }
+                    else if (clickedItem.Text.Equals("Inicio CPAP"))
+                    {
+                        valueCodCanal = 50;
+                    }
+                    if (valueCodCanal != null)
+                    {
+                        plotEventos.DeleteBomDiaCpapBoaNoite((int)valueCodCanal);
+                    }
+
+                    TelaClearAndReload();
+                }
+            }
+            catch { }
+        }
 
 
         private void DeletEventClick(object sender, EventArgs e)
@@ -2995,7 +3061,7 @@ namespace PlotagemOpenGL
         {
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent}";
+            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} | OpenThe?: {GlobVar.isTheDBOpen}";
         }
     }
 }

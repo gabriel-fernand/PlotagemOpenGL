@@ -3,7 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
+using Point = System.Drawing.Point;
 using System.Text;
+using ClassesBDNano;
+using System.Data;
+using System.Data.Odbc;
+using Connection = ADODB.Connection;
+
+
 
 namespace PlotagemOpenGL.auxi
 {
@@ -43,6 +50,15 @@ namespace PlotagemOpenGL.auxi
         public static int? lastEvent;
         public static bool EventHasChange = false;
         public static List<string> listEventsCanHave = new List<string>();
+        public static Point rightClickSave;
+        public static bool isTheDBOpen = false;
+
+        public static Connection cnn_dbExame = new Connection();
+        public static Connection cnn_dbConfig = new Connection();
+
+        //public static cls_dbExame obj_dbEventos = new ClassesBDNano.cls_dbExame();  //Nao esta funcionando, pois da um erro para estanciar
+        public static cls_DataSource obj_dbDataSource;
+        public static cls_dbConfig obj_dbConfig;
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();

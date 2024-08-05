@@ -51,6 +51,11 @@ namespace PlotagemOpenGL
             contextMenuStripOpenGl = new ContextMenuStrip(components);
             BomDia = new ToolStripMenuItem();
             BoaNoite = new ToolStripMenuItem();
+            InicioCPAP = new ToolStripMenuItem();
+            BomDiaExclui = new ToolStripMenuItem();
+            BoaNoiteExclui = new ToolStripMenuItem();
+            InicioCPAPExclui = new ToolStripMenuItem();
+            ExcluirBdBnCpap = new ToolStripMenuItem();
             Excluir = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             LowPassFilterGl = new ToolStripMenuItem();
@@ -451,17 +456,54 @@ namespace PlotagemOpenGL
             BomDia.Name = "BomDia";
             BomDia.Size = new System.Drawing.Size(100, 27);
             BomDia.Text = "Bom Dia";
+            BomDia.Click += BomDiaCpapBoaNoite_Click;
             // 
             // BoaNoite
             // 
             BoaNoite.Name = "BoaNoite";
             BoaNoite.Size = new System.Drawing.Size(100, 27);
             BoaNoite.Text = "Boa Noite";
+            BoaNoite.Click += BomDiaCpapBoaNoite_Click;
+            // 
+            // InicioCPAP
+            // 
+            InicioCPAP.Name = "InicioCPAP";
+            InicioCPAP.Size = new System.Drawing.Size(100, 27);
+            InicioCPAP.Text = "Inicio CPAP";
+            InicioCPAP.Click += BomDiaCpapBoaNoite_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
+            //
+            //ExcluirBdBnCpap
+            //
+            ExcluirBdBnCpap.DropDownItems.AddRange(new ToolStripItem[] { BomDiaExclui, BoaNoiteExclui, InicioCPAPExclui} );
+            ExcluirBdBnCpap.Name = "Excluir";
+            ExcluirBdBnCpap.Size = new System.Drawing.Size(178, 24);
+            ExcluirBdBnCpap.Text = "Excluir";
+            // 
+            // BomDiaExclui
+            // 
+            BomDiaExclui.Name = "BomDiaExclui";
+            BomDiaExclui.Size = new System.Drawing.Size(100, 27);
+            BomDiaExclui.Text = "Bom Dia";
+            BomDiaExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // BoaNoiteExclui
+            // 
+            BoaNoiteExclui.Name = "BoaNoiteExclui";
+            BoaNoiteExclui.Size = new System.Drawing.Size(100, 27);
+            BoaNoiteExclui.Text = "Boa Noite";
+            BoaNoiteExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // InicioCPAPExclui
+            // 
+            InicioCPAPExclui.Name = "InicioCPAPExclui";
+            InicioCPAPExclui.Size = new System.Drawing.Size(100, 27);
+            InicioCPAPExclui.Text = "Inicio CPAP";
+            InicioCPAPExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
             // 
             // LowPassFilterGl
             // 
@@ -2480,8 +2522,13 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem hertz01;
         public static ToolStripMenuItem outroHigh;
         public static ToolStripMenuItem BomDia;
-        public static ToolStripSeparator toolStripSeparator1;
         public static ToolStripMenuItem BoaNoite;
+        public static ToolStripMenuItem InicioCPAP;
+        public static ToolStripMenuItem BomDiaExclui;
+        public static ToolStripMenuItem BoaNoiteExclui;
+        public static ToolStripMenuItem InicioCPAPExclui;
+        public static ToolStripSeparator toolStripSeparator1;
+        public static ToolStripMenuItem ExcluirBdBnCpap;
         public static ToolStripMenuItem LowPassFilterGl;
         public static ToolStripMenuItem NenhumLowGl;
         public static ToolStripMenuItem hertz70Gl;

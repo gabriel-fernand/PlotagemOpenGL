@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <COMReference Include="ClassesBDNano">
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>44a8a9fc-a56c-4c3a-912d-6366bd4078af</Guid>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Accord" Version="3.8.2-alpha" />
     <PackageReference Include="Accord.Audio" Version="3.8.2-alpha" />
     <PackageReference Include="Accord.Math" Version="3.8.2-alpha" />
@@ -32,6 +44,12 @@
     <PackageReference Include="System.Drawing.Common" Version="6.0.0-preview.1.21102.12" />
     <PackageReference Include="Unity.Container" Version="5.11.11" />
     <PackageReference Include="UnityEngine" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.ADODB">
+      <HintPath>..\..\Dat\Interop.ADODB.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

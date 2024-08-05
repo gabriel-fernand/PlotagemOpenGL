@@ -9,11 +9,14 @@ using System.Numerics;
 using System.Windows.Documents;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
+using ClassesBDNano;
+using ADODB;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
     public static class plotEventos
     {
+        
         public static void DesenhaEventos(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
             try
@@ -62,7 +65,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         //plotNumerico.PlotNumerico(qtdGraf, gl, desenhoLoc);
 
                     }
-                    if (codEvento == 18 || codEvento == 19)
+                    if (codEvento == 18 || codEvento == 19 || codEvento == 50)
                     {
                         var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
                                 .Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
@@ -244,7 +247,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 DataRow rowToRemove = view[0].Row;
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
-
+            //GlobVar.obj_dbEventos = new cls_dbExame();
+            //bool Real = GlobVar.obj_dbEventos.OpenConnection(GlobVar.bDataFile, GlobVar.cnn_dbExame, 512);
+            //GlobVar.isTheDBOpen = Real;
+            //bool x = GlobVar.obj_dbEventos.ExcluiEvento(GlobVar.cnn_dbExame, seq);
+            //GlobVar.isTheDBOpen = x;
         }
 
         // Export DataTable into an excel file with field names in the header line
@@ -748,19 +755,87 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             catch (Exception ex) { }
         }
 
+        public static void CreatBomDiaCpapBoaNoite(int inicio, int codEvento)
+        {
+            try
+            {
+                if(GlobVar.eventosUpdate.AsEnumerable().Any(row => row.Field<int>("CodEvento") == codEvento))
+                {
+                    DeleteBomDiaCpapBoaNoite(codEvento);
+                }
+
+                DataTable eventos = GlobVar.eventosUpdate;
+
+                // Adicionar colunas ao DataTable se não existirem
+                if (eventos.Columns.Count == 0)
+                {
+                    eventos.Columns.Add("Seq", typeof(int));
+                    eventos.Columns.Add("NumPag", typeof(string));
+                    eventos.Columns.Add("CodEvento", typeof(int));
+                    eventos.Columns.Add("CodCanal1", typeof(int));
+                    eventos.Columns.Add("Inicio", typeof(int));
+                    eventos.Columns.Add("Duracao", typeof(int));
+                }
+                int auxLoc = inicio / GlobVar.namos;
+
+                int inicioBCB = ((auxLoc * GlobVar.namos) + 1);
+                int finalBCB = (((auxLoc + 1) * GlobVar.namos) - 1);
+
+                // Calcular NumPag para início e término
+                int numPagInicio = inicioBCB / GlobVar.namos;
+                int numPagTermino = finalBCB / GlobVar.namos;
+                string numPag = $"{numPagInicio} -- {numPagTermino}";
+                // Obter o próximo valor de Seq
+                int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
+                // Adicionar dados ao DataTable
+                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB);
+
+                // Exportar DataTable para Excel
+                string excelFilePath = @"C:\Teste\Teste";
+                //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
+                eventos.Dispose();
+
+            }
+            catch { }
+        }
+
+        //Metodo feito para encontrar o Bom dia, Boa boite e o Cpap para deletar do dt
+        public static void DeleteBomDiaCpapBoaNoite(int codEvento)
+        {
+            DataView view = new DataView(GlobVar.eventosUpdate);
+            view.RowFilter = $"CodEvento = {codEvento}";
+
+            if (view.Count > 0)
+            {
+                // Se a linha for encontrada, remova-a usando o DataTable original
+                DataRow rowToRemove = view[0].Row;
+                GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
+            }
+
+        }
+
         public static void ListOfEvent()
         {
+            try{
             GlobVar.listEventsCanHave.Clear();
 
             var EventsCan = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
                                                         .Where(row => row.Field<int>("CodTipoCanal") == GlobVar.CodTipoCanalEvent).CopyToDataTable();
-            for(int i = 0; i < EventsCan.Rows.Count; i++)
-            {
-                int AuxCodCanal = Convert.ToInt16(EventsCan.Rows[i]["CodEvento"]);
-                var auxTabelEvents = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<int>("CodEvento") == AuxCodCanal).CopyToDataTable();
+                for (int i = 0; i < EventsCan.Rows.Count; i++)
+                {
+                    int AuxCodCanal = Convert.ToInt16(EventsCan.Rows[i]["CodEvento"]);
 
-                GlobVar.listEventsCanHave.Add(auxTabelEvents.Rows[0]["DescrEvento"].ToString());
+                    if (GlobVar.tbl_CadEvento.AsEnumerable().Any(row => row.Field<int>("CodEvento") == AuxCodCanal))
+                    {
+                        var auxTabelEvents = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<int>("CodEvento") == AuxCodCanal).CopyToDataTable();
+                        if (auxTabelEvents != null)
+                        {
+                            GlobVar.listEventsCanHave.Add(auxTabelEvents.Rows[0]["DescrEvento"].ToString());
+                        }
+                    }
+                }
             }
+            catch { }
         }
     }
 }

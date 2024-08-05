@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Windows;
 using System.Windows.Markup;
+using ClassesBDNano;
 
 public class LeituraBanco
 {
