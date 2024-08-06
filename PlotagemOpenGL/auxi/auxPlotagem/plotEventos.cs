@@ -11,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
 using ClassesBDNano;
 using ADODB;
+using PlotagemOpenGL.BD;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -116,6 +117,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             return indexInvertido;
         }
+
+
         //Metodo para salvar um evento novo
         public static void AdicionarEventoAoDataTable(int inicio, int termino, int YAdjusted, float[] desenhoLoc, float startY)
         {
@@ -137,15 +140,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     }
 
                     // Calcular NumPag para início e término
-                    int numPagInicio = inicio / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-                    int numPagTermino = termino / GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    int numPagInicio = inicio / 512;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    int numPagTermino = termino / 512;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
                     string numPag = $"{numPagInicio} -- {numPagTermino}";
                     // Obter o próximo valor de Seq
                     int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
 
                     // Adicionar dados ao DataTable
                     GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino);
-
+                    AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
                     //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
@@ -170,6 +173,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
+            int Inicio = (int)inicio / 512;
+            int numPagTermino = (int)termino / 512;
+            AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         public static void ChangeEventType(int codCanal, int seq, int codEvento)
@@ -192,6 +198,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     {
                         // Altera o valor da coluna 'CodEvento' para 'newCodEvento'
                         row["CodEvento"] = codEvento;
+
+                        int codCanal1 = (int)row["CodCanal1"];
+                        int inicio = (int)row["Inicio"];
+                        int termino = (int)row["Duracao"];
+                        int Inicio = (int)row["inicio"] / 521;
+                        int numPagTermino = (int)termino / 512;
+
+                        AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
                     }
 
                     // Se necessário, aceite as alterações na tabela
@@ -206,6 +220,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             catch { }
 
         }
+
+
+
         private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
         {
             var gl = Tela_Plotagem.openglControl1.OpenGL;
@@ -247,8 +264,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 DataRow rowToRemove = view[0].Row;
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
+            AlteraBD.ExcluiEvento(seq);
+
             //GlobVar.obj_dbEventos = new cls_dbExame();
-            //bool Real = GlobVar.obj_dbEventos.OpenConnection(GlobVar.bDataFile, GlobVar.cnn_dbExame, 512);
+            //bool Real = cls_dbExame.OpenConnection(GlobVar.bDataFile,ref GlobVar.cnn_dbExame, 512);
             //GlobVar.isTheDBOpen = Real;
             //bool x = GlobVar.obj_dbEventos.ExcluiEvento(GlobVar.cnn_dbExame, seq);
             //GlobVar.isTheDBOpen = x;
@@ -301,7 +320,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 throw ex;
             }
         }
-        public static void EventMovement(DataRow eventRow, int txPorCanal, int loc)
+        public static void EventMovement(DataRow eventRow, int txPorCanal, int loc = 0)
         {
             try
             {
@@ -310,7 +329,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
             catch { }
         }
-        public static void ProcessEvent(DataRow eventRow, int txPorCanal, int loc)
+        public static void ProcessEvent(DataRow eventRow, int txPorCanal, int loc = 0)
         {
             try
             {
@@ -362,7 +381,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
             catch { }
         }
-        public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY)
+        public static bool IsThereAnEvent(int mouseX, float[] desenhoLoc, float startY) 
         {
             try
             {
@@ -539,6 +558,68 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
             catch { return false; }
         }
+        public static bool EUmBoaNoite_Cpap_BomDia(int mouseX)
+        {
+            try
+            {
+                bool isThereAnEvent = false;
+
+                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+
+
+                DataTable sequancias = new DataTable();
+
+                // Verifica se o DataTable 'eventosUpdate' está vazio
+                if (GlobVar.eventosUpdate == null || GlobVar.eventosUpdate.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                // Filtra as linhas correspondentes
+                var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodCanal1") == -1);
+
+                // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
+                if (!filteredRows.Any())
+                {
+                    return false;
+                }
+
+                sequancias = filteredRows.CopyToDataTable();
+
+                // Verifica se o DataTable 'sequancias' está vazio
+                if (sequancias == null || sequancias.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < sequancias.Rows.Count; i++)
+                {
+                    if (mouseX > Convert.ToInt64(sequancias.Rows[i]["Inicio"])&& mouseX < Convert.ToInt64(sequancias.Rows[i]["Duracao"]))
+                    {
+                        ProcessEvent(sequancias.Rows[i], 512);
+                        EventMovement(sequancias.Rows[i], 512);
+                        GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
+                        GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
+                        GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
+                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+
+                        var rowAux = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<int>("CodEvento") == GlobVar.CodEvento).CopyToDataTable();
+                        GlobVar.nomeEvento = rowAux.Rows[0]["DescrOriginal"].ToString();
+                        isThereAnEvent = true;
+                        //break; // Sai do loop assim que encontrar um evento
+                    }
+                }
+
+                // Limpa o DataTable 'sequancias' se necessário
+                sequancias.Dispose();
+
+
+                return isThereAnEvent;
+            }
+            catch { return false; }
+        }
+
 
         public static void DrawBordenInAnEvent(bool slaDpsEuPenso, OpenGL gl, float[] desenhoLoc)
         {
@@ -789,6 +870,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
                 // Adicionar dados ao DataTable
                 GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB);
+                AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino);
 
                 // Exportar DataTable para Excel
                 string excelFilePath = @"C:\Teste\Teste";
@@ -803,6 +885,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static void DeleteBomDiaCpapBoaNoite(int codEvento)
         {
             DataView view = new DataView(GlobVar.eventosUpdate);
+            var auxTable = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
+            int Seq = Convert.ToInt16(auxTable.Rows[0]["Seq"]);
             view.RowFilter = $"CodEvento = {codEvento}";
 
             if (view.Count > 0)
@@ -812,6 +896,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
 
+            AlteraBD.ExcluiEvento(Seq);
         }
 
         public static void ListOfEvent()

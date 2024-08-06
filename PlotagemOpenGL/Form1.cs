@@ -1027,6 +1027,7 @@ namespace PlotagemOpenGL
         public bool isAnEvent = false;
         public bool isAnStartEvent = false;
         public bool isAnEndEvent = false;
+        public bool isA_BN_CPAP_BD = false;
         private bool isTelaClearAndReloadExecuted;
 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
@@ -1143,8 +1144,18 @@ namespace PlotagemOpenGL
                         this.isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnStartEvent = plotEventos.IsInAnEventStart((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnEndEvent = plotEventos.IsInAnEventEnd((int)endX, GlobVar.desenhoLoc, startY);
-
-                    } 
+                        if (this.isAnEvent)
+                        {
+                            isA_BN_CPAP_BD = false;
+                        }
+                    }
+                    if (!isDrawing)
+                    {
+                        if (!this.isAnEvent)
+                        {
+                            this.isA_BN_CPAP_BD = plotEventos.EUmBoaNoite_Cpap_BomDia((int)endX);
+                        }
+                    }
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
 
                     if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent))
@@ -2034,6 +2045,21 @@ namespace PlotagemOpenGL
                         contextMenuStripOpenGl.Items.Add(toolStripSeparator1); // separador
                         contextMenuStripOpenGl.Items.Add(Excluir);
                 }
+                else if (isA_BN_CPAP_BD){
+                    if (GlobVar.nomeEvento.Equals("Bom dia"))
+                    {
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BomDiaExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                    }
+                    else if (GlobVar.nomeEvento.Equals("Boa noite"))
+                    {
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BoaNoiteExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                    }
+                    else if (GlobVar.nomeEvento.Equals("Início CPAP"))
+                    {
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {InicioCPAPExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                    }
+
+                }
                 else
                 {
                     //Else seria quando ele abre fora de um evento
@@ -2080,7 +2106,7 @@ namespace PlotagemOpenGL
                     {
                         valueCodCanal = 18;
                     }
-                    else if (clickedItem.Text.Equals("Inicio CPAP"))
+                    else if (clickedItem.Text.Equals("Início CPAP"))
                     {
                         valueCodCanal = 50;
                     }
@@ -2106,15 +2132,15 @@ namespace PlotagemOpenGL
                 {
                     int? valueCodCanal = null;
 
-                    if (clickedItem.Text.Equals("Bom Dia"))
+                    if (clickedItem.Text.Equals("Excluir Bom Dia"))
                     {
                         valueCodCanal = 19;
                     }
-                    else if (clickedItem.Text.Equals("Boa Noite"))
+                    else if (clickedItem.Text.Equals("Excluir Boa Noite"))
                     {
                         valueCodCanal = 18;
                     }
-                    else if (clickedItem.Text.Equals("Inicio CPAP"))
+                    else if (clickedItem.Text.Equals("Excluir Inicio CPAP"))
                     {
                         valueCodCanal = 50;
                     }
@@ -3061,7 +3087,7 @@ namespace PlotagemOpenGL
         {
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} | OpenThe?: {GlobVar.isTheDBOpen}";
+            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent} | Bd: {isA_BN_CPAP_BD}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} | SeqEvent: {GlobVar.seqEvento}";
         }
     }
 }

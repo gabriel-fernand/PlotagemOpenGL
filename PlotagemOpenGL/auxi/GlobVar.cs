@@ -42,6 +42,7 @@ namespace PlotagemOpenGL.auxi
         public static int CodCanal;
         public static int CodCanalEvent;
         public static int CodTipoCanalEvent;
+        public static string nomeEvento;
         public static string NumPagEvent;
         public static string Event;
         public static string InicioEvent;

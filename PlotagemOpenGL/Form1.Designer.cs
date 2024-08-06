@@ -467,9 +467,9 @@ namespace PlotagemOpenGL
             // 
             // InicioCPAP
             // 
-            InicioCPAP.Name = "InicioCPAP";
+            InicioCPAP.Name = "InícioCPAP";
             InicioCPAP.Size = new System.Drawing.Size(100, 27);
-            InicioCPAP.Text = "Inicio CPAP";
+            InicioCPAP.Text = "Início CPAP";
             InicioCPAP.Click += BomDiaCpapBoaNoite_Click;
             // 
             // toolStripSeparator1
@@ -488,21 +488,21 @@ namespace PlotagemOpenGL
             // 
             BomDiaExclui.Name = "BomDiaExclui";
             BomDiaExclui.Size = new System.Drawing.Size(100, 27);
-            BomDiaExclui.Text = "Bom Dia";
+            BomDiaExclui.Text = "Excluir Bom Dia";
             BomDiaExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
             // 
             // BoaNoiteExclui
             // 
             BoaNoiteExclui.Name = "BoaNoiteExclui";
             BoaNoiteExclui.Size = new System.Drawing.Size(100, 27);
-            BoaNoiteExclui.Text = "Boa Noite";
+            BoaNoiteExclui.Text = "Excluir Boa Noite";
             BoaNoiteExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
             // 
             // InicioCPAPExclui
             // 
             InicioCPAPExclui.Name = "InicioCPAPExclui";
             InicioCPAPExclui.Size = new System.Drawing.Size(100, 27);
-            InicioCPAPExclui.Text = "Inicio CPAP";
+            InicioCPAPExclui.Text = "Excluir Inicio CPAP";
             InicioCPAPExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
             // 
             // LowPassFilterGl
