@@ -237,6 +237,7 @@ namespace PlotagemOpenGL
             timer1 = new Timer(components);
             timer2 = new Timer(components);
             timer3 = new Timer(components);
+            timerClick = new Timer(components);
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -2258,6 +2259,11 @@ namespace PlotagemOpenGL
             toolTip1.IsBalloon = true;
             toolTip1.ReshowDelay = 1;
             // 
+            // timerClick
+            // 
+            timerClick.Interval = 20;
+            timerClick.Tick += timerClick_Tick;
+            // 
             // timer1
             // 
             timer1.Interval = 20;
@@ -2265,7 +2271,7 @@ namespace PlotagemOpenGL
             // 
             // timer2
             // 
-            timer2.Interval = 30;
+            timer2.Interval = 33;
             timer2.Tick += timer2_Tick;
             // 
             // timer3
@@ -2363,6 +2369,7 @@ namespace PlotagemOpenGL
         public static Timer timer1;
         public static Timer timer2;
         public static Timer timer3;
+        public static Timer timerClick;
         public static ContextMenuStrip contextMenuStripOpenGl;
         public static ToolStripMenuItem OutroLow;
         public static ToolStripMenuItem LowPassFilter;
