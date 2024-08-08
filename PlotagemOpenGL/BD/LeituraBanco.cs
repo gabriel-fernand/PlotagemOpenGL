@@ -198,6 +198,8 @@ public class LeituraBanco
         GlobVar.eventosUpdate.Columns.Add("CodCanal1", typeof(int));
         GlobVar.eventosUpdate.Columns.Add("Inicio", typeof(int));
         GlobVar.eventosUpdate.Columns.Add("Duracao", typeof(int));
+        GlobVar.eventosUpdate.Columns.Add("MenorSat", typeof(int));
+        GlobVar.eventosUpdate.Columns.Add("Posicao", typeof(string));
 
         // Ordenar por NumPag e Seq
         var filteredRows = eventos.AsEnumerable()
@@ -223,6 +225,9 @@ public class LeituraBanco
             int duracao = lastRow.Field<int>("Duracao");
             duracao += ((lastRow.Field<int>("NumPag")) * 512);
 
+            int satu = Convert.ToInt16(firstRow.Field<float>("MenorSat"));
+            string posi = firstRow.Field<string>("Posicao");
+
             DataRow newRow = GlobVar.eventosUpdate.NewRow();
             newRow["Seq"] = seq;
             newRow["NumPag"] = numPag;
@@ -230,6 +235,8 @@ public class LeituraBanco
             newRow["CodCanal1"] = codCanal1;
             newRow["Inicio"] = inicio;
             newRow["Duracao"] = duracao;
+            newRow["MenorSat"] = satu;
+            newRow["Posicao"] = posi;
 
             GlobVar.eventosUpdate.Rows.Add(newRow);
         }

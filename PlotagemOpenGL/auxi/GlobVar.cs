@@ -46,13 +46,17 @@ namespace PlotagemOpenGL.auxi
         public static string NumPagEvent;
         public static string Event;
         public static string InicioEvent;
-        public static string DuracaoEvent;
+        public static float DuracaoEvent;
         public static int MinimumValueEvent = 256;
         public static int? lastEvent;
         public static bool EventHasChange = false;
         public static List<string> listEventsCanHave = new List<string>();
         public static Point rightClickSave;
         public static bool isTheDBOpen = false;
+        public static int satuMinCanal;
+        public static string posiCanal;
+        public static int[] minSat;
+        public static int[] minPosi;
 
         public static Connection cnn_dbExame = new Connection();
         public static Connection cnn_dbConfig = new Connection();

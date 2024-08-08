@@ -137,6 +137,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         eventos.Columns.Add("CodCanal1", typeof(int));
                         eventos.Columns.Add("Inicio", typeof(int));
                         eventos.Columns.Add("Duracao", typeof(int));
+                        eventos.Columns.Add("MenorSat", typeof(int));
+                        eventos.Columns.Add("Posicao", typeof(string));
+
                     }
 
                     // Calcular NumPag para início e término
@@ -146,9 +149,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     // Obter o próximo valor de Seq
                     int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
 
+                    minSaturacao(numPagInicio, numPagTermino);
+                    int minSat = GlobVar.minSat.Min();
+                    string posi = Posicao(numPagInicio, numPagTermino);                    
+
                     // Adicionar dados ao DataTable
-                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino);
-                    AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
+                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino, minSat, posi);
+                    AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
                     //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
@@ -172,10 +179,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 DataRow rowToRemove = view[0].Row;
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
-            GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino);
+            minSaturacao(inicio, termino);
+            int minSat = GlobVar.minSat.Min();
+            string posi = Posicao(inicio, termino);
+
+            GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
             int Inicio = (int)inicio / 512;
             int numPagTermino = (int)termino / 512;
-            AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
+            AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         public static void ChangeEventType(int codCanal, int seq, int codEvento)
@@ -204,8 +215,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int termino = (int)row["Duracao"];
                         int Inicio = (int)row["inicio"] / 521;
                         int numPagTermino = (int)termino / 512;
+                        int minSat = (int)row["MenorSat"];
+                        string posi = row["Posicao"].ToString();
 
-                        AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino);
+                        AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
                     }
 
                     // Se necessário, aceite as alterações na tabela
@@ -333,21 +346,21 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             try
             {
-                int ini = Convert.ToInt32(eventRow["Inicio"]);
-                int dur = Convert.ToInt32(eventRow["Duracao"]);
+                float ini = Convert.ToInt32(eventRow["Inicio"]);
+                float dur = Convert.ToInt32(eventRow["Duracao"]);
 
-                string formattedStartTime;
-                string formattedDuration;
+                float iniPag;
+                float durPag;
+
+                float formattedDuration;
 
                 //Faz o calculo para arrumar a questao de taxa de amostragem, caso seja diferente das de 512 - Pois no mdb estao todos os eventos transformados para 512.
-                if (txPorCanal != 512)
-                {
-                    ini = ini / 512;
-                    dur = dur / 512;
+                iniPag = ini / 512;
+                durPag = dur / 512;
+                formattedDuration = durPag - iniPag;
+                GlobVar.DuracaoEvent = formattedDuration;
 
-                    ini = ini * txPorCanal;
-                    dur = dur * txPorCanal;
-                }
+                /*
                 // Calcula o tempo de início e o tempo de fim em segundos
 
                 double startSeconds = (double)ini / txPorCanal;
@@ -371,9 +384,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     formattedStartTime = $"{startTimeSpan.Hours:D2}H:{startTimeSpan.Minutes:D2}M:{startTimeSpan.Seconds:D2}S";
                     formattedDuration = $"{durAux}";
                 }
+
                 // Atribui os valores às variáveis globais
-                GlobVar.InicioEvent = formattedStartTime;
-                GlobVar.DuracaoEvent = formattedDuration;
+                GlobVar.InicioEvent = formattedStartTime;*/
 
                 var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
                         .Where(row => row.Field<int>("CodEvento") == Convert.ToInt16(eventRow["CodEvento"])).CopyToDataTable();
@@ -431,6 +444,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
                         GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
+
                         isThereAnEvent = true;
                         //break; // Sai do loop assim que encontrar um evento
                     }
@@ -487,6 +503,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
                         GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
+
+
                         isThereAnEvent = true;
                         //break; // Sai do loop assim que encontrar um evento
                     }
@@ -541,6 +561,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
                         GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
+
+
                         isThereAnEvent = true;
                         //break; // Sai do loop assim que encontrar um evento
                     }
@@ -921,6 +945,67 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
             }
             catch { }
+        }
+
+        //Metodo craido para encontrar a menor saturacao em um especifico tempo
+        public static void minSaturacao(int pagInicio, int pagFinal)
+        {
+            int ponteiroInicio = (pagInicio / 512) * 8;
+            int ponteiroFinal = ((pagFinal / 512) + 1) * 8;
+
+            int tamanho = ((ponteiroFinal - ponteiroInicio));
+            GlobVar.minSat = new int[tamanho];
+
+
+            int linhaSaturacao = GlobVar.codSelected.IndexOf(66);
+
+            for(int i = 0; ponteiroInicio < ponteiroFinal; i++)
+            {
+                GlobVar.minSat[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao , ponteiroInicio]);
+                ponteiroInicio++;
+            }
+        }
+        //Metodo criado para saber qual a posicao que esta no evento
+        public static string Posicao(int pagInicio, int pagFinal)
+        {
+            string posi;
+            int ponteiroInicio = (pagInicio / 512) * 8; 
+            int ponteiroFinal = ((pagFinal / 512) + 1) * 8;
+
+            int tamanho = ((ponteiroFinal - ponteiroInicio));
+            GlobVar.minPosi = new int[tamanho];
+
+            int linhaSaturacao = GlobVar.codSelected.IndexOf(14);
+
+            for (int i = 0; ponteiroInicio < ponteiroFinal; i++)
+            {
+                GlobVar.minPosi[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao, ponteiroInicio]);
+                ponteiroInicio++;
+            }
+            int minPosi = GlobVar.minPosi.Min();
+            if (minPosi <= (21502 - 2110) && minPosi >= (21502 + 2110)) // CIMA
+            {
+                posi = "C";
+            }
+            else if (minPosi <= (-4070 - 2110) && minPosi >= (-4070 + 2110)) // DIREITA
+            {
+                posi = "D";
+            }
+            else if (minPosi <= (-16887 - 2110) && minPosi >= (-16887 + 2110)) //BAIXO
+            {
+                posi = "B";
+            }
+            else if (minPosi <= (-14031 - 2110) && minPosi >= (-14031 + 2110)) // ESQUERDA
+            {
+                posi = "E";
+            }
+            else
+            {
+                posi = "C";
+
+            }
+
+            return posi;
         }
     }
 }

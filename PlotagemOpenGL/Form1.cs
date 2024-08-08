@@ -1095,7 +1095,9 @@ namespace PlotagemOpenGL
                             //TelaClearAndReload();
                         }
                         else{
-                            float aux;
+                            float aux; 
+                            timer2.Start();
+
 
                             isDrawing = true;
                             ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out Plotagem.startY);
@@ -1235,6 +1237,7 @@ namespace PlotagemOpenGL
                     }
                     else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
                     {
+                        timerClick.Start();
 
                         isTelaClearAndReloadExecuted = false;
 
@@ -1326,6 +1329,25 @@ namespace PlotagemOpenGL
                                     }
 
                                     GlobVar.startX = GlobVar.iniEventoMove;
+
+                                    if (e.X >= openglControl1.Size.Width)
+                                    {
+
+                                        camera.X += GlobVar.namos;
+                                        if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
+
+                                        GlobVar.indiceNumero += 8 * 1; //(int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED; // 8 * 1;
+                                        GlobVar.maximaNumero += 8 * 1;
+
+                                        GlobVar.maximaVect += GlobVar.namos;
+                                        GlobVar.indice += GlobVar.namos;
+
+                                        GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
+                                        GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
+                                        //TelaClearAndReload();
+                                        gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
+                                        UpdateInicioTela();
+                                    }
 
                                 }
 
@@ -1428,7 +1450,7 @@ namespace PlotagemOpenGL
                                 plotEventos.UpdateEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             }
                             lastMousePosition = e.Location;
-                            //TelaClearAndReload();
+                            TelaClearAndReload();
                             timerClick.Stop();
 
                         }
@@ -1491,7 +1513,7 @@ namespace PlotagemOpenGL
                                     plotEventos.UpdateEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                                 }
                             }
-
+                            timerClick.Stop();
                             TelaClearAndReload();
                         }
                     }
@@ -1776,6 +1798,11 @@ namespace PlotagemOpenGL
 
                                 GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                                 GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                                }
 
                                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;

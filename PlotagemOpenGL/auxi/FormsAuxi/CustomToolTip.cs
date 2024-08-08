@@ -17,7 +17,7 @@ namespace PlotagemOpenGL.auxi.FormsAuxi
         private void OnPopup(object sender, PopupEventArgs e)
         {
             // Defina o tamanho da tooltip de acordo com o conteúdo
-            e.ToolTipSize = new Size(250, 100); // Ajuste o tamanho conforme necessário
+            e.ToolTipSize = new Size(250, 75); // Ajuste o tamanho conforme necessário
         }
 
         private void OnDraw(object sender, DrawToolTipEventArgs e)
@@ -42,8 +42,8 @@ namespace PlotagemOpenGL.auxi.FormsAuxi
             }
 
             // Configuração das fontes e brushes
-            Font titleFont = new Font(e.Font.FontFamily, 10, FontStyle.Bold);
-            Font textFont = new Font(e.Font.FontFamily, 9, FontStyle.Regular);
+            Font titleFont = new Font("Arial", 10, FontStyle.Bold);
+            Font textFont = new Font("Arial", 9, FontStyle.Regular);
             Brush textBrush = Brushes.Black;
 
             // Texto no retângulo superior
@@ -58,7 +58,7 @@ namespace PlotagemOpenGL.auxi.FormsAuxi
             }
 
             // Texto no retângulo inferior
-            string lowerText = $"Inicio : {GlobVar.InicioEvent}\nDuraçao : {GlobVar.DuracaoEvent}\nValor dessaturacao : 87%\n";
+            string lowerText = $"Duração: {GlobVar.DuracaoEvent:F2}s\nMenor Saturação: {GlobVar.satuMinCanal}\n";
             string[] lowerLines = lowerText.Split(new[] { '\n' }, StringSplitOptions.None);
 
             y = lowerRect.Y + 10;

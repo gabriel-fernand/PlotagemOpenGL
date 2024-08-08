@@ -35,7 +35,7 @@ namespace PlotagemOpenGL.BD
             }
             catch { int i = 0; return i; }
         }
-        public static long GravaEvento(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int? MenorSat = null)
+        public static long GravaEvento(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int MenorSat = 0, string Posicao = ".")
         {
             try
             {
@@ -43,7 +43,7 @@ namespace PlotagemOpenGL.BD
 
                 long seq_aux;
                 int codret = 0;
-                string Posicao = ".";
+                //string Posicao = ".";
                 duracao = (duracao - Inicio);// / LasPag;
                 int auxInicio = Inicio / sizepag;
                 Inicio = Inicio - (auxInicio * sizepag);
@@ -100,7 +100,7 @@ namespace PlotagemOpenGL.BD
                         if (rs.Rows.Count > 0)
                         {
                             if (MenorSat != null) {
-                                MenorSat = (int)rs.Rows[0]["MenorSat"];
+                                MenorSat = Convert.ToInt16(rs.Rows[0]["MenorSat"]);
                             }
                             Posicao = rs.Rows[0]["Posicao"].ToString();
                         }
@@ -126,7 +126,7 @@ namespace PlotagemOpenGL.BD
                         {
                             newRow["Duracao"] = duracao;
                         }
-                        if (MenorSat.HasValue) newRow["MenorSat"] = MenorSat;
+                        if (MenorSat != 0) newRow["MenorSat"] = MenorSat;
                         newRow["Posicao"] = Posicao;
 
                         rs.Rows.Add(newRow);
