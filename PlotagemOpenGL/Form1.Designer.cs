@@ -314,7 +314,6 @@ namespace PlotagemOpenGL
             // 
             // tempoEmTela
             // 
-            tempoEmTela.DisplayMember = "8s";
             tempoEmTela.DropDownStyle = ComboBoxStyle.DropDownList;
             tempoEmTela.FlatStyle = FlatStyle.System;
             tempoEmTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
@@ -325,7 +324,7 @@ namespace PlotagemOpenGL
             tempoEmTela.Location = new System.Drawing.Point(256, 4);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
-            tempoEmTela.TabIndex = 6;
+            tempoEmTela.TabIndex = 5;
             tempoEmTela.SelectedIndexChanged += tempoEmTela_SelectedIndexChanged;
             // 
             // velocidadeScroll
@@ -2261,7 +2260,7 @@ namespace PlotagemOpenGL
             // 
             // timerClick
             // 
-            timerClick.Interval = 20;
+            timerClick.Interval = 1;
             timerClick.Tick += timerClick_Tick;
             // 
             // timer1

@@ -93,12 +93,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                                     int aux = 0;
                                     float me = 0;
-                                    for (int g = j; g < j + 8; g++)
+                                    for (int g = j; g < j + 8;)
                                     {
                                         //if(GlobVar.matrizCanal[GlobVar.grafSelected[i], g] < 0) { GlobVar.matrizCanal[GlobVar.grafSelected[i], g] *= -1;  }
                                         aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
+                                        g += 8;
                                     }
-                                    me = aux / 8;
+                                    me = aux;
 
                                     txtEmTela = $" {me} ";
                                     float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;

@@ -179,7 +179,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 DataRow rowToRemove = view[0].Row;
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
-            minSaturacao(inicio, termino);
+            minSaturacao((inicio /  512), (termino / 512));
             int minSat = GlobVar.minSat.Min();
             string posi = Posicao(inicio, termino);
 
@@ -655,10 +655,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.PointSize(2.0f); // Define o tamanho dos pontos
                 gl.Color(1, 0, 0, 0.44f);
                 //gl.ColorMask(3, 6, 7, alpha);
-                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.StartY[YAdjusted] + 1, -1.0f);
-                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.StartY[YAdjusted] + 1, -1.0f);
-                gl.Vertex(GlobVar.durEventoMove + 25, GlobVar.EndY[YAdjusted] - 1, -1.0f);
-                gl.Vertex(GlobVar.iniEventoMove - 25, GlobVar.EndY[YAdjusted] - 1, -1.0f);
+                gl.Vertex(GlobVar.iniEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove, GlobVar.EndY[YAdjusted] - 1, -1.0f);
+                gl.Vertex(GlobVar.iniEventoMove, GlobVar.EndY[YAdjusted] - 1, -1.0f);
                 gl.End();
                 gl.Flush();
             }
@@ -950,39 +950,40 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         //Metodo craido para encontrar a menor saturacao em um especifico tempo
         public static void minSaturacao(int pagInicio, int pagFinal)
         {
-            int ponteiroInicio = (pagInicio / 512) * 8;
-            int ponteiroFinal = ((pagFinal / 512) + 1) * 8;
+            int ponteiroInicio = (pagInicio) * 8;
+            int ponteiroFinal = ((pagFinal + 1)) * 8;
 
-            int tamanho = ((ponteiroFinal - ponteiroInicio));
+            int tamanho = (((pagFinal) - (pagInicio) + 1));
+
             GlobVar.minSat = new int[tamanho];
 
 
             int linhaSaturacao = GlobVar.codSelected.IndexOf(66);
 
-            for(int i = 0; ponteiroInicio < ponteiroFinal; i++)
+            for(int i = 0; i < tamanho; i++)
             {
-                GlobVar.minSat[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao , ponteiroInicio]);
-                ponteiroInicio++;
+                 GlobVar.minSat[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao , ponteiroInicio]);
+                ponteiroInicio += 8;
             }
         }
         //Metodo criado para saber qual a posicao que esta no evento
         public static string Posicao(int pagInicio, int pagFinal)
         {
             string posi;
-            int ponteiroInicio = (pagInicio / 512) * 8; 
-            int ponteiroFinal = ((pagFinal / 512) + 1) * 8;
+            int ponteiroInicio = (pagInicio) * 8;
+            int ponteiroFinal = ((pagFinal + 1)) * 8;
 
-            int tamanho = ((ponteiroFinal - ponteiroInicio));
+            int tamanho = (((pagFinal) - (pagInicio) + 1));
             GlobVar.minPosi = new int[tamanho];
 
             int linhaSaturacao = GlobVar.codSelected.IndexOf(14);
 
-            for (int i = 0; ponteiroInicio < ponteiroFinal; i++)
+            for (int i = 0; i < tamanho; i++)
             {
                 GlobVar.minPosi[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao, ponteiroInicio]);
-                ponteiroInicio++;
+                ponteiroInicio += 8;
             }
-            int minPosi = GlobVar.minPosi.Min();
+            int minPosi = GlobVar.minPosi[0];
             if (minPosi <= (21502 - 2110) && minPosi >= (21502 + 2110)) // CIMA
             {
                 posi = "C";

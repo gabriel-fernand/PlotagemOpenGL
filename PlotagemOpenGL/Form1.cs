@@ -271,7 +271,6 @@ namespace PlotagemOpenGL
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
-            tempoEmTela.SelectedIndex = 5;
             GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             velocidadeScroll.SelectedIndex = 0;
             stopwatch = new Stopwatch();
@@ -286,6 +285,7 @@ namespace PlotagemOpenGL
             Play_OpenGl();
 
             timer3.Start();
+            tempoEmTela.SelectedIndex = 5;
         }
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
@@ -1128,7 +1128,9 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
+        Point locMuse;
+        Point dimMouse;
+        Point endEvent;
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -1228,11 +1230,11 @@ namespace PlotagemOpenGL
                                     GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
-                                    UpdateInicioTela();
+                                    //UpdateInicioTela();
                                 }
                             }
-                            openglControl1.Invalidate();
-                            plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                            //openglControl1.Invalidate();
+                            //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
                     }
                     else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
@@ -1290,6 +1292,7 @@ namespace PlotagemOpenGL
                         if (isDrawing)
                         {
                             toolTip1.RemoveAll();
+                            timerClick.Start();
 
                             float outX = 0;
                             ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
@@ -1317,22 +1320,9 @@ namespace PlotagemOpenGL
 
                                 else if (this.isAnEndEvent)
                                 {
-                                    deltaX = GlobVar.durEventoMove - outX;
-
-                                    if (e.X < lastMousePosition.X)
-                                    {
-                                        GlobVar.durEventoMove -= ((int)Math.Abs(deltaX));
-                                    }
-                                    else
-                                    {
-                                        GlobVar.durEventoMove += ((int)Math.Abs(deltaX));
-                                    }
-
-                                    GlobVar.startX = GlobVar.iniEventoMove;
-
                                     if (e.X >= openglControl1.Size.Width)
                                     {
-
+                                        //lastMousePosition = e.Location;
                                         camera.X += GlobVar.namos;
                                         if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
 
@@ -1344,10 +1334,37 @@ namespace PlotagemOpenGL
 
                                         GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
                                         GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
-                                        //TelaClearAndReload();
                                         gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                         UpdateInicioTela();
+
+                                        ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
+                                        lastMousePosition = e.Location;
                                     }
+
+                                    deltaX = (int)Math.Abs(outX - GlobVar.durEventoMove);
+                                    locMuse.X = e.X;
+                                    dimMouse.X = (int)outX;
+                                    if (e.X < lastMousePosition.X)
+                                    {
+                                        endEvent.Y = GlobVar.durEventoMove;
+                                        GlobVar.durEventoMove -= ((int)Math.Abs(deltaX));
+                                        Math.Abs(GlobVar.durEventoMove);
+                                        endEvent.X = GlobVar.durEventoMove;
+
+                                    }
+                                    else if(e.X >= lastMousePosition.X)
+                                    {
+
+                                        endEvent.Y = GlobVar.durEventoMove;
+
+                                        GlobVar.durEventoMove += ((int)Math.Abs(deltaX));
+
+                                        endEvent.X = GlobVar.durEventoMove;
+                                    }
+
+                                    GlobVar.startX = GlobVar.iniEventoMove;
+                                    //openglControl1.Invalidate();
+                                    //plotEventos.DrawBordenInAnEvent(isDrawing, gl, GlobVar.desenhoLoc);
 
                                 }
 
@@ -1807,7 +1824,7 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
-                                if(GlobVar.indice < 0)
+                                if (GlobVar.indice < 0)
                                 {
                                     GlobVar.indice = 0;
                                     camera.X = 0;
@@ -1815,6 +1832,11 @@ namespace PlotagemOpenGL
 
                                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                                }
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
 
@@ -1920,18 +1942,24 @@ namespace PlotagemOpenGL
             {
                 GlobVar.segundos = int.Parse(match.Value);
             }
-            GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
-            GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
-            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
 
             GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
-            GlobVar.inicioTela = 0;
+
+            GlobVar.inicioTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
             //if (GlobVar.segundos >= 120)
             //{
             //    GlobVar.maximaVect *= 10;
             //}
-            GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+            GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos + (int)GlobVar.inicioTela;
+
+            GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
+            GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
+            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+
+            UpdateInicioTela();
+
+            TelaClearAndReload();
         }
 
         private void velocidadeScroll_SelectedIndexChanged(object sender, EventArgs e)
@@ -1992,8 +2020,7 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-
-         }
+        }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -3141,6 +3168,7 @@ namespace PlotagemOpenGL
             {
                 if(Cursor.Position.X >= (openglControl1.Width + openglControl1.Location.X))
                 {
+                    Cursor.Position = new Point(openglControl1.Width + openglControl1.Location.X - 1, Cursor.Position.Y);
                     Cursor.Position = new Point(openglControl1.Width + openglControl1.Location.X, Cursor.Position.Y);
                 }
             }
@@ -3148,6 +3176,8 @@ namespace PlotagemOpenGL
 
         private void timer2_Tick(object sender, EventArgs e)
         {
+            openglControl1.Update();
+
             TelaClearAndReload();
 
             if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent))
@@ -3172,11 +3202,10 @@ namespace PlotagemOpenGL
                 }
             }
             //plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            //openglControl1.Update();
 
         }
 
-            private void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             int? rowIndex = null;
             for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
@@ -3204,7 +3233,8 @@ namespace PlotagemOpenGL
             }
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent} | Bd: {isA_BN_CPAP_BD}| MouseClick: {isDrawing} | Plotando: {plotanu} | Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} | SeqEvent: {GlobVar.seqEvento}";
+            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} |" +
+                $" SeqEvent: {GlobVar.seqEvento} | LocMouse: {locMuse.X} | EventoFim Bef: {endEvent.Y} | EventoFim pos: {endEvent.X} | DimMoue: {dimMouse}";
         }
     }
 }
