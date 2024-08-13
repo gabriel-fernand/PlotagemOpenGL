@@ -1,3 +1,4 @@
+using PlotagemOpenGL.auxi.FormComentario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace PlotagemOpenGL
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Tela_Plotagem());
+            //Application.Run(new InserirComentario());
         }
     }
 }

@@ -147,7 +147,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int numPagTermino = termino / 512;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
                     string numPag = $"{numPagInicio} -- {numPagTermino}";
                     // Obter o próximo valor de Seq
-                    int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
+                    int seq = plotComentatios.AtualizarProxSeqEvento();
 
                     minSaturacao(numPagInicio, numPagTermino);
                     int minSat = GlobVar.minSat.Min();

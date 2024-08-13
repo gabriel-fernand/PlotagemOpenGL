@@ -1,4 +1,5 @@
 ﻿using Accord.IO;
+using PlotagemOpenGL.auxi.FormComentario;
 using System;
 using System.Windows.Forms;
 
@@ -52,6 +53,7 @@ namespace PlotagemOpenGL
             BomDia = new ToolStripMenuItem();
             BoaNoite = new ToolStripMenuItem();
             InicioCPAP = new ToolStripMenuItem();
+            InserirCom = new ToolStripMenuItem();
             BomDiaExclui = new ToolStripMenuItem();
             BoaNoiteExclui = new ToolStripMenuItem();
             InicioCPAPExclui = new ToolStripMenuItem();
@@ -471,6 +473,13 @@ namespace PlotagemOpenGL
             InicioCPAP.Size = new System.Drawing.Size(100, 27);
             InicioCPAP.Text = "Início CPAP";
             InicioCPAP.Click += BomDiaCpapBoaNoite_Click;
+            // 
+            // InserirComentario
+            // 
+            InserirCom.Name = "InserirCom";
+            InserirCom.Size = new System.Drawing.Size(100, 27);
+            InserirCom.Text = "Inserir Comentário";
+            InserirCom.Click += InserirCom_Click;
             // 
             // toolStripSeparator1
             // 
@@ -2533,6 +2542,7 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem BomDiaExclui;
         public static ToolStripMenuItem BoaNoiteExclui;
         public static ToolStripMenuItem InicioCPAPExclui;
+        public static ToolStripMenuItem InserirCom;
         public static ToolStripSeparator toolStripSeparator1;
         public static ToolStripMenuItem ExcluirBdBnCpap;
         public static ToolStripMenuItem LowPassFilterGl;

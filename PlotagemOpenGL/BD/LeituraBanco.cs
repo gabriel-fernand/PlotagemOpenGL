@@ -36,6 +36,7 @@ public class LeituraBanco
             string queryCadEvento = "SELECT * FROM tbl_CadEvento";
             string queryEventTipCanal = "SELECT * FROM tbl_EventoTipoCanal";
             string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
+            string queryTbl_Comentarios = "SELECT * FROM tbl_Comentarios";
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
@@ -49,6 +50,7 @@ public class LeituraBanco
             using var command = new OdbcCommand(query, connectionDatBd);
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
             using var commandTipoExame = new OdbcCommand(quaryTipoExame, connectionDatBd);
+            using var commandTbl_Comentarios = new OdbcCommand(queryTbl_Comentarios, connectionDatBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -62,8 +64,10 @@ public class LeituraBanco
             using var adapter = new OdbcDataAdapter(command);
             using var adapterTbl_MontGrav = new OdbcDataAdapter(commandTbl_MontGrav);
             using var adapterTipoExame = new OdbcDataAdapter(commandTipoExame);
+            using var adapterTbl_Comentarios = new OdbcDataAdapter(commandTbl_Comentarios);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_Comentarios.Fill(GlobVar.tbl_Comentarios);
             adapterTipoExame.Fill(sele);
             adapterConfig.Fill(GlobVar.codEventos);
             adapter.Fill(GlobVar.eventos);
@@ -225,7 +229,7 @@ public class LeituraBanco
             int duracao = lastRow.Field<int>("Duracao");
             duracao += ((lastRow.Field<int>("NumPag")) * 512);
 
-            int satu = Convert.ToInt16(firstRow.Field<float>("MenorSat"));
+            int? satu = Convert.ToInt16(firstRow.Field<float>("MenorSat"));
             string posi = firstRow.Field<string>("Posicao");
 
             DataRow newRow = GlobVar.eventosUpdate.NewRow();

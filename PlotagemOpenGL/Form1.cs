@@ -31,6 +31,7 @@ using OpenTK.Windowing.Common.Input;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using System.Windows.Media;
 using ClassesBDNano;
+using PlotagemOpenGL.auxi.FormComentario;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -890,6 +891,7 @@ namespace PlotagemOpenGL
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotComentatios.DesenhaComentario(gl);
             //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
@@ -1392,6 +1394,8 @@ namespace PlotagemOpenGL
         }
 
         int lastStartX;
+
+        Point LocationMouseClickComentario;
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
         {
             try
@@ -1539,7 +1543,7 @@ namespace PlotagemOpenGL
                 {
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
-
+                    LocationMouseClickComentario = e.Location;
                 }
                 clickCount = 0;
                 timer2.Stop();
@@ -1575,7 +1579,7 @@ namespace PlotagemOpenGL
 
         }
 
-        private void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
+        public static void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
         {
             var gl = openglControl1.OpenGL;
 
@@ -2170,7 +2174,7 @@ namespace PlotagemOpenGL
                 else
                 {
                     //Else seria quando ele abre fora de um evento
-                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, InicioCPAP, ExcluirBdBnCpap, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, InicioCPAP, toolStripSeparator1, InserirCom, LowPassFilterGl, HighPassFilterGl });
                 }
             }
             catch { }
@@ -2262,6 +2266,15 @@ namespace PlotagemOpenGL
             catch { }
         }
 
+        private void InserirCom_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                InserirComentario insert = new InserirComentario();
+                insert.Show();
+            }
+            catch { }
+        }
 
         private void DeletEventClick(object sender, EventArgs e)
         {
