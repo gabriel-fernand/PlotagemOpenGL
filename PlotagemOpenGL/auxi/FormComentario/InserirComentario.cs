@@ -1,4 +1,5 @@
 ﻿using ADODB;
+using PlotagemOpenGL.auxi.auxPlotagem;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,6 +62,14 @@ namespace PlotagemOpenGL.auxi.FormComentario
 
         private void Cancelar_Click(object sender, EventArgs e)
         {
+            this.Close();
+        }
+
+        private void Confirmar_Click(object sender, EventArgs e)
+        {
+            Point XiYi = Tela_Plotagem.LocationMouseClickComentario;
+            plotComentatios.AdicionarComentario(XiYi.X, XiYi.Y, textBox1.Text.ToString());
+            Tela_Plotagem.TelaClearAndReload();
             this.Close();
         }
     }

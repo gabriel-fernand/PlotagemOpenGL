@@ -35,6 +35,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.tbl_Comentarios.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == codMontagem);
                 for(int i = 0; i< GlobVar.tbl_Comentarios.Rows.Count; i++)
                 {
+                    XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
                     string comentario = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
                     float xLoc = 0;
                     float yLoc = 0;
@@ -47,7 +49,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int pagLoc = pag * GlobVar.namos;
 
                     xLoc = pagLoc + Xi;
-                    yLoc = Tela_Plotagem.openglControl1.Height - YSize;// - Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    //yLoc = Tela_Plotagem.openglControl1.Height;// - Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
                     //yLoc = Math.Abs(Yi - Tela_Plotagem.openglControl1.Height);
 
                     gl.Begin(OpenGL.GL_QUADS);
@@ -56,8 +58,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     //gl.ColorMask(3, 6, 7, alpha);
                     gl.Vertex(xLoc, yLoc, -1.8f);
                     gl.Vertex(xLoc + XSize, yLoc, -1.8f);
-                    gl.Vertex(xLoc + XSize, yLoc + YSize, -1.8f);
-                    gl.Vertex(xLoc, yLoc + YSize, -1.8f);
+                    gl.Vertex(xLoc + XSize, yLoc - YSize, -1.8f);
+                    gl.Vertex(xLoc, yLoc - YSize, -1.8f);
                     gl.End();
                     gl.Flush();
 
@@ -67,9 +69,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static int AtualizarProxSeqEvento()
         {
-            string connectionString = @"Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=path_to_your_database_file;Uid=Admin;Pwd=;";
-            string querySelect = "SELECT ProxSeqEvento FROM tbl_SeqEventos";
-            string queryUpdate = "UPDATE tbl_SeqEventos SET ProxSeqEvento = ?";
+
+            string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+            string querySelect = "SELECT ProxSeqEvento FROM tbl_SeqEvento";
+            string queryUpdate = "UPDATE tbl_SeqEvento SET ProxSeqEvento = ?";
             int seq;
             try
             {
@@ -109,12 +112,129 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             try{
                 seq = AtualizarProxSeqEvento();
+                int CodMontagem = Convert.ToInt16(GlobVar.tbl_MontGrav.Rows[0]["CodMontagem"]);
+                float outX;
+                float outY;
+                int XSize = 100 * (GlobVar.segundos / 2);
+                int YSize = 100;
 
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+
+                int numPag = (int)outX / 512;
+                int Xi = Math.Abs((int)(numPag * 512) - (int)outX);
+
+                GlobVar.tbl_Comentarios.Rows.Add(seq, Comentario, CodMontagem, numPag, Xi, Yinicial, XSize, YSize);
             }
             catch
             {
 
             }
+        }
+
+        public static void RecebeOsValores(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                if (Tela_Plotagem.isThereAComment)
+                {
+                    float outX;
+                    float outY;
+
+                    Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                    int numPag = (int)outX / 512;
+
+                    for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                    {
+                        int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                        int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                        int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                        int Xdur = Xini + XSize;
+                        if ((outX >= Xini && outX <= Xdur))
+                        {
+                            if (Yinicial >= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) && Yinicial <= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize)
+                            {
+                                GlobVar.XiYi.X = Xini;
+                                GlobVar.XiYi.Y = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+
+                                GlobVar.XfYf.X = Xdur;
+                                GlobVar.YSize = YSize;
+                                GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                                GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch { }
+        }
+
+        public static bool IsThereAComment(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                bool sim = false;
+                float outX;
+                float outY;
+
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                int numPag = (int)outX / 512;
+                //DataTable existente = new DataTable();
+
+
+                if (GlobVar.tbl_Comentarios == null || GlobVar.tbl_Comentarios.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                {
+                    int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                    int Xdur = Xini + XSize;
+                    if((outX >= Xini && outX <= Xdur))
+                    {
+                        if (Yinicial >= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) && Yinicial <= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize)
+                        {
+                            GlobVar.XiYi.X = Xini;
+                            GlobVar.XiYi.Y = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+
+                            GlobVar.XfYf.X = Xdur;
+                            GlobVar.YSize = YSize;
+                            GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                            GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            return true;
+                        }
+                    }
+                }
+
+                return sim;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static void DrawCommentBorder(OpenGL gl, int locPlus = 0)
+        {
+            float Yloc;
+            int x = 0;
+            float y = 0;
+            Tela_Plotagem.ConvertToOpenGLCoordinates(x, GlobVar.XiYi.Y, out y, out Yloc);
+
+
+            gl.Begin(OpenGL.GL_LINE_LOOP);
+            gl.PointSize(2.0f); // Define o tamanho dos pontos
+            gl.Color(0, 0, 0, 0.44f);
+            //gl.ColorMask(3, 6, 7, alpha);
+            gl.Vertex(GlobVar.XiYi.X - 3, Yloc + 3, -1.0f);
+            gl.Vertex(GlobVar.XfYf.X + 3, Yloc + 3, -1.0f);
+            gl.Vertex(GlobVar.XfYf.X + 3, Math.Abs(GlobVar.YSize - Yloc) - 3, -1.0f);
+            gl.Vertex(GlobVar.XiYi.X - 3, Math.Abs(GlobVar.YSize - Yloc) - 3, -1.0f);
+            gl.End();
+            gl.Flush();
+
         }
     }
 }

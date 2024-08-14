@@ -54,6 +54,7 @@
             Confirmar.TabIndex = 1;
             Confirmar.Text = "Confirmar";
             Confirmar.UseVisualStyleBackColor = true;
+            Confirmar.Click += Confirmar_Click;
             // 
             // Cancelar
             // 

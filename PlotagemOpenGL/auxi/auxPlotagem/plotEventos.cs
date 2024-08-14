@@ -653,7 +653,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 gl.Begin(OpenGL.GL_LINE_LOOP);
                 gl.PointSize(2.0f); // Define o tamanho dos pontos
-                gl.Color(1, 0, 0, 0.44f);
+                gl.Color(0, 0, 0, 0.44f);
                 //gl.ColorMask(3, 6, 7, alpha);
                 gl.Vertex(GlobVar.iniEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);
                 gl.Vertex(GlobVar.durEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);

@@ -58,6 +58,12 @@ namespace PlotagemOpenGL.auxi
         public static int[] minSat;
         public static int[] minPosi;
 
+        //variaveis pasra mexer nos coimentasrios
+        public static Point XiYi;
+        public static Point XfYf;
+        public static int CommentSeq;
+        public static int YSize;
+
         public static Connection cnn_dbExame = new Connection();
         public static Connection cnn_dbConfig = new Connection();
 

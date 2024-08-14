@@ -1030,6 +1030,7 @@ namespace PlotagemOpenGL
         public bool isAnStartEvent = false;
         public bool isAnEndEvent = false;
         public bool isA_BN_CPAP_BD = false;
+        public static bool isThereAComment = false;
         private bool isTelaClearAndReloadExecuted;
 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
@@ -1077,12 +1078,24 @@ namespace PlotagemOpenGL
                             ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out Plotagem.startY);
                             initialMousePosition.X = (int)aux;
                             //initialMousePosition.X = e.X;
-                            initialMousePosition.Y = (int)aux;
                             initialMousePosition.Y = e.X;
                             GlobVar.startX = GlobVar.iniEventoMove;
                             openglControl1.DoRender();
                             //TelaClearAndReload();
                         }
+
+                    }
+                    else if (isThereAComment)
+                    {
+                        float aux;
+                        float auy;
+                        timer2.Start();
+                        isDrawing = true;
+                        lastMousePosition = e.Location;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                        plotComentatios.RecebeOsValores(e.X, e.Y);
+                        initialMousePosition.X = (int)aux;
+                        initialMousePosition.Y = (int)auy;
 
                     }
                     else if (this.isAnStartEvent || this.isAnEndEvent)
@@ -1133,6 +1146,7 @@ namespace PlotagemOpenGL
         Point locMuse;
         Point dimMouse;
         Point endEvent;
+
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -1154,6 +1168,7 @@ namespace PlotagemOpenGL
                         if (this.isAnEvent)
                         {
                             isA_BN_CPAP_BD = false;
+                            isThereAComment = false;
                         }
                     }
                     if (!isDrawing)
@@ -1161,11 +1176,12 @@ namespace PlotagemOpenGL
                         if (!this.isAnEvent)
                         {
                             this.isA_BN_CPAP_BD = plotEventos.EUmBoaNoite_Cpap_BomDia((int)endX);
+                            isThereAComment = plotComentatios.IsThereAComment(e.X, e.Y);
                         }
                     }
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
 
-                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent))
+                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment)
                     {
                         if (!isMouseDown)
                         {
@@ -1239,7 +1255,47 @@ namespace PlotagemOpenGL
                             //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
                     }
-                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
+                    else if(!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment)
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeAll;
+                            openglControl1.DoRender();
+                            plotComentatios.DrawCommentBorder(gl);
+                        }
+                        else
+                        {
+                            float outX = 0;
+                            float outY = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+
+                            float initialMouseX = initialMousePosition.X;
+                            float initialMouseY = initialMousePosition.Y;
+
+                            if (e.X != lastMousePosition.X && e.Y != lastMousePosition.Y)
+                            {
+                                float deltaX = outX - initialMouseX;
+                                float deltaY = outY - initialMouseY;
+
+                                // Atualizar as coordenadas do quadrado
+                                GlobVar.XiYi.X += (int)deltaX;
+                                GlobVar.XiYi.Y -= (int)deltaY;
+                                GlobVar.XfYf.X += (int)deltaX;
+                                //GlobVar.XfYf.Y -= (int)deltaY;
+
+                                // Atualizar a posição inicial do mouse para a nova posição
+                                initialMousePosition.X = (int)outX;
+                                initialMousePosition.Y = (int)outY;
+                            }  
+                            // Atualizar a última posição do mouse
+                            lastMousePosition.X = e.X;
+                            lastMousePosition.Y = e.Y;
+
+                        }
+                    }
+                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent) && !isThereAComment)
                     {
                         timerClick.Start();
 
@@ -1281,7 +1337,7 @@ namespace PlotagemOpenGL
                             initialMousePosition.X = (int)outX;
                         }
                     }
-                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent))
+                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1395,7 +1451,7 @@ namespace PlotagemOpenGL
 
         int lastStartX;
 
-        Point LocationMouseClickComentario;
+        public static Point LocationMouseClickComentario;
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
         {
             try
@@ -1404,7 +1460,7 @@ namespace PlotagemOpenGL
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent)
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment)
                     {
                         isDrawing = false;
                         isDrawingRectangle = false;
@@ -1476,8 +1532,15 @@ namespace PlotagemOpenGL
 
                         }
                     }
-                    else if (this.isAnStartEvent || this.isAnEndEvent)
+                    else if (isThereAComment)
                     {
+                        isDrawing = false;
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+                        timerClick.Stop();
+                    }
+                    else if (this.isAnStartEvent || this.isAnEndEvent)
+                            {
 
                         if (crtlAtivo)
                         {
@@ -3193,11 +3256,18 @@ namespace PlotagemOpenGL
 
             TelaClearAndReload();
 
-            if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent))
+            if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment)
             {
                 if (isDrawing)
                 {
                     plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                }
+            }
+            else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment)
+            {
+                if (isDrawing)
+                {
+                    plotComentatios.DrawCommentBorder(gl);
                 }
             }
             else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent))
@@ -3247,7 +3317,7 @@ namespace PlotagemOpenGL
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
 
             Stringao.Text = $"X: {musezin.X}Y: {musezin.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} | CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioEvento: {isAnStartEvent}| Evento: {isAnEvent}| FimEvento: {isAnEndEvent} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | Ultimo Evento: {GlobVar.lastEvent} |" +
-                $" SeqEvent: {GlobVar.seqEvento} | LocMouse: {locMuse.X} | EventoFim Bef: {endEvent.Y} | EventoFim pos: {endEvent.X} | DimMoue: {dimMouse}";
+                $" SeqEvent: {GlobVar.seqEvento} | EUmComentario: {isThereAComment}";
         }
     }
 }
