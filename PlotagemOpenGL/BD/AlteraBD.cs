@@ -149,6 +149,119 @@ namespace PlotagemOpenGL.BD
                 return -1;
             }
         }
+        public static int ExcluiComentario(int Seq)
+        {
+            try
+            {
+                int i = -1;
+                using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+                connectionDatBd.Open();
+
+                string queryDelete = $"DELETE FROM tbl_Comentarios WHERE Seq = {Seq};";
+
+                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+
+                DeleteCommand.ExecuteNonQuery();
+
+                connectionDatBd.Close();
+                return i;
+            }
+            catch { int i = 0; return i; }
+        }
+
+        public static long GravaComentario(int seq,  string Comentario, int CodMontagem, int NumPag, int xi, int yi, int DuracaoX, int DuracaoY)
+        {
+            try
+            {
+                using var cnn = new OdbcConnection(connectionStringDatBd);
+
+                int seq_aux;
+                string strSQL;
+
+                // Consulta para verificar se o comentário já existe com o Seq fornecido
+                strSQL = $"SELECT * FROM tbl_Comentarios WHERE Seq = {seq}";
+
+                using (OdbcDataAdapter adapter = new OdbcDataAdapter(strSQL, cnn))
+                {
+                    DataTable rs = new DataTable();
+                    adapter.Fill(rs);
+
+                    if (seq == -1)
+                    {
+                        // Buscar o próximo sequencial de evento
+                        strSQL = "SELECT * FROM tbl_SeqEvento";
+                        DataTable rs_seq = new DataTable();
+                        using (OdbcDataAdapter seqAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        {
+                            seqAdapter.Fill(rs_seq);
+                            if (rs_seq.Rows.Count == 0)
+                            {
+                                seq_aux = 1;
+                                using (OdbcCommand cmdInsert = new OdbcCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", cnn))
+                                {
+                                    cmdInsert.ExecuteNonQuery();
+                                }
+                            }
+                            else
+                            {
+                                seq_aux = Convert.ToInt16(rs_seq.Rows[0]["ProxSeqEvento"]);
+                                using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
+                                {
+                                    cmdUpdate.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        seq_aux = seq;
+                        ExcluiComentario(seq);
+
+                    }
+
+                    // Verifica se existe registro, caso contrário, cria um novo
+                    DataRow newRow = rs.NewRow();
+                    //if (rs.Rows.Count == 0)
+                    //{
+                    //    newRow = rs.NewRow();
+                    //    newRow["Seq"] = seq_aux;
+                    //}
+                    //else
+                    //{
+                    //    newRow = rs.Rows[0];
+                    //}
+
+                    //int NumPag, string Comentario, int CodMontagem, int xi, int yi, int DuracaoX, int DuracaoY
+
+                    // Atribui os valores para as colunas
+                    newRow["Seq"] = seq_aux;
+                    newRow["Comentario"] = Comentario;
+                    newRow["CodMontagem"] = CodMontagem;                    
+                    newRow["NumPag"] = NumPag;
+                    newRow["Xi"] = xi;
+                    newRow["Yi"] = yi;
+                    newRow["DuracaoX"] = DuracaoX;
+                    newRow["DuracaoY"] = DuracaoY;
+
+                    // Se for uma nova linha, adicione ao DataTable
+                    if (rs.Rows.Count == 0)
+                    {
+                    }
+                    rs.Rows.Add(newRow);
+
+                    OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
+                    adapter.Update(rs);
+
+                }
+
+                return seq_aux;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro: {ex.Message}");
+                return -1;
+            }
+        }
 
     }
 }

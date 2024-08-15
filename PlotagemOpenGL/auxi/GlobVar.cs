@@ -17,7 +17,7 @@ namespace PlotagemOpenGL.auxi
     public class GlobVar
     {
         public static string STRINGAO;
-
+        public static Point DimXY;
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
         public static string configBD = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
@@ -61,7 +61,10 @@ namespace PlotagemOpenGL.auxi
         //variaveis pasra mexer nos coimentasrios
         public static Point XiYi;
         public static Point XfYf;
+        public static int Yi;
+        public static string txtComment;
         public static int CommentSeq;
+        public static int XSize;
         public static int YSize;
 
         public static Connection cnn_dbExame = new Connection();
