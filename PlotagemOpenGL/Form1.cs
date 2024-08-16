@@ -1037,6 +1037,11 @@ namespace PlotagemOpenGL
         public static bool isThereAYStartComment = false;
         public static bool isThereAYEndComment = false;
 
+        public static bool isThereX0Y0Comment = false;
+        public static bool isThereX0Y1Comment = false;
+        public static bool isThereX1Y0Comment = false;
+        public static bool isThereX1Y1Comment = false;
+
         private bool isTelaClearAndReloadExecuted;
 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
@@ -1049,7 +1054,7 @@ namespace PlotagemOpenGL
                     originalCursor = this.Cursor;
                     isMouseDown = true;
                                         
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         timer2.Start();
                         isDrawing = true;
@@ -1152,6 +1157,33 @@ namespace PlotagemOpenGL
 
                     }
 
+                    else if (isThereX0Y1Comment)
+                    {
+                        float aux;
+                        float auy;
+                        timerComment.Start();
+                        isDrawing = true;
+                        lastMousePosition = e.Location;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                        initialMousePosition.X = (int)aux;
+                        initialMousePosition.Y = (int)auy;
+
+                    }
+
+                    else if (isThereX1Y1Comment)
+                    {
+                        float aux;
+                        float auy;
+                        timerComment.Start();
+                        isDrawing = true;
+                        lastMousePosition = e.Location;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                        initialMousePosition.X = (int)aux;
+                        initialMousePosition.Y = (int)auy;
+
+                    }
+
+
                     else if (this.isAnStartEvent || this.isAnEndEvent)
                     {
                         if (crtlAtivo)
@@ -1238,11 +1270,17 @@ namespace PlotagemOpenGL
                             isThereAXEndComment = plotComentatios.IsThereAXEndComment(e.X, e.Y);
                             isThereAYStartComment = plotComentatios.IsThereAYstartComment(e.X, e.Y);
                             isThereAYEndComment = plotComentatios.IsThereAYEndComment(e.X, e.Y);
+
+                            isThereX0Y0Comment = plotComentatios.IsThereX0Y0Comment(e.X, e.Y);
+                            isThereX0Y1Comment = plotComentatios.IsThereX0Y1Comment(e.X, e.Y);
+                            isThereX1Y0Comment = plotComentatios.IsThereX1Y0Comment(e.X, e.Y);
+                            isThereX1Y1Comment = plotComentatios.IsThereX1Y1Comment(e.X, e.Y);
+
                         }
                     }
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
 
-                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         if (!isMouseDown)
                         {
@@ -1316,7 +1354,7 @@ namespace PlotagemOpenGL
                             //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
                     }
-                    else if(!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+                    else if(!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1357,7 +1395,7 @@ namespace PlotagemOpenGL
                         }
                     }
 
-/* x Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+/* x Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1387,7 +1425,7 @@ namespace PlotagemOpenGL
 
                         }
                     }
-/* x Fim */         else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+/* x Fim */         else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1415,7 +1453,7 @@ namespace PlotagemOpenGL
                         }
 
                     }
-/* y Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment))
+/* y Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1448,8 +1486,7 @@ namespace PlotagemOpenGL
                         }
 
                     }
-                    /* y Fim */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment))
+/* y Fim */         else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -1481,7 +1518,111 @@ namespace PlotagemOpenGL
 
                     }
 
-                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+/* X0 - Y0 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeNWSE;
+                            openglControl1.DoRender();
+                            plotComentatios.DrawCommentBorder(gl);
+                        }
+
+                    }
+/* X0 - Y1 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeNESW;
+                            openglControl1.DoRender();
+                            plotComentatios.DrawCommentBorder(gl);
+                        }
+                        else
+                        {
+                            float outX = 0;
+                            float outY = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+                            float initialMouseX = initialMousePosition.X;
+
+
+                            float initialMouseY = initialMousePosition.Y;
+
+                            if (e.Y != lastMousePosition.Y && e.X != lastMousePosition.X)
+                            {
+                                float deltaY = outY - initialMouseY;
+                                float deltaX = outX - initialMouseX;
+                                int AuXsize = GlobVar.XiYi.X + GlobVar.XSize;
+
+                                GlobVar.YSize -= (int)deltaY;
+                                initialMousePosition.Y = (int)outY;
+
+
+                                GlobVar.XiYi.X += (int)deltaX;
+                                GlobVar.XSize = Math.Abs(AuXsize - GlobVar.XiYi.X);
+                                initialMousePosition.X = (int)outX;
+
+                            }
+                            lastMousePosition.X = e.X;
+                            lastMousePosition.Y = e.Y;
+
+                        }
+
+                    }
+/* X1 - Y0 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && isThereX1Y0Comment && !isThereX1Y1Comment))
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeNESW;
+                            openglControl1.DoRender();
+                            plotComentatios.DrawCommentBorder(gl);
+                        }
+
+                    }
+/* X1 - Y1 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment))
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeNWSE;
+                            openglControl1.DoRender();
+                            plotComentatios.DrawCommentBorder(gl);
+                        }
+                        else
+                        {
+                            float outX = 0;
+                            float outY = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+                            float initialMouseX = initialMousePosition.X;
+
+
+                            float initialMouseY = initialMousePosition.Y;
+
+                            if (e.Y != lastMousePosition.Y && e.X != lastMousePosition.X)
+                            {
+                                float deltaY = outY - initialMouseY;
+                                float deltaX = outX - initialMouseX;
+
+                                GlobVar.XSize += (int)deltaX;
+                                initialMousePosition.X = (int)outX;
+
+                                GlobVar.YSize -= (int)deltaY;
+                                initialMousePosition.Y = (int)outY;
+
+                            }
+                            lastMousePosition.X = e.X;
+                            lastMousePosition.Y = e.Y;
+
+                        }
+
+                    }
+
+                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         timerClick.Start();
 
@@ -1523,13 +1664,17 @@ namespace PlotagemOpenGL
                             initialMousePosition.X = (int)outX;
                         }
                     }
-                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
                         if (!isMouseDown)
                         {
                             this.Cursor = Cursors.SizeWE;
+                                                        openglControl1.DoRender();
+                            plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
+                            toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
+
                         }
                         
 
@@ -1646,7 +1791,7 @@ namespace PlotagemOpenGL
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment))
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isDrawing = false;
                         isDrawingRectangle = false;
@@ -1755,6 +1900,25 @@ namespace PlotagemOpenGL
                         timerComment.Stop();
                     }
                     else if (isThereAYEndComment)
+                    {
+                        isDrawing = false;
+
+                        plotComentatios.UpdateComment(e.X, e.Y);
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+                        timerComment.Stop();
+                    }
+
+                    else if (isThereX0Y1Comment)
+                    {
+                        isDrawing = false;
+
+                        plotComentatios.UpdateComment(e.X, e.Y);
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+                        timerComment.Stop();
+                    }
+                    else if (isThereX1Y1Comment)
                     {
                         isDrawing = false;
 
@@ -3518,7 +3682,7 @@ namespace PlotagemOpenGL
 
             TelaClearAndReload();
 
-            if ((isThereAXSartComment || isThereAXEndComment || isThereAYStartComment || isThereAYEndComment))
+            if ((isThereAXSartComment || isThereAXEndComment || isThereAYStartComment || isThereAYEndComment || isThereX0Y0Comment || isThereX0Y1Comment || isThereX1Y0Comment || isThereX1Y1Comment))
             {
                 if (isDrawing)
                 {
@@ -3560,7 +3724,7 @@ namespace PlotagemOpenGL
             Stringao.Text = $"X: {musezin.X}Y: {musezin.Y} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
                 $"| CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
                 $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
-                $"| XfYf: {GlobVar.XfYf} | CommentSeq: {GlobVar.CommentSeq} | EUmComentario: {isThereAComment}";
+                $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";
         }
     }
 }

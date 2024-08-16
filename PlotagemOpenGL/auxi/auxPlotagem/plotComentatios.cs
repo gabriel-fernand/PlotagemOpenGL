@@ -158,9 +158,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
                     int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
                     int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
                     if ((outX >= Xini + 20 && outX <= Xdur - 20))
                     {
-                        if (Yinicial >= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) && Yinicial <= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize)
+                        if (Yinicial >= Yini + 10 && Yinicial <= Ydur - 10)
                         {
                             float xLoc = 0;
                             float yLoc = 0;
@@ -215,9 +218,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
                     int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
                     int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
                     if ((outX >= Xini - 20 && outX <= Xini + 20))
                     {
-                        if (Yinicial >= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) && Yinicial <= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize)
+                        if (Yinicial >= Yini + 10 && Yinicial <= Ydur - 10)
                         {
                             float xLoc = 0;
                             float yLoc = 0;
@@ -272,9 +278,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
                     int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
                     int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
                     if ((outX <= Xdur + 20 && outX >= Xdur - 20))
                     {
-                        if (Yinicial >= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) && Yinicial <= Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize)
+                        if (Yinicial >= Yini + 10 && Yinicial <= Ydur - 10)
                         {
                             float xLoc = 0;
                             float yLoc = 0;
@@ -331,9 +340,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int Xdur = Xini + XSize;
                     int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
                     int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
-                    if ((outX >= Xini && outX <= Xdur))
+                    if ((outX >= Xini + 35 && outX <= Xdur - 35))
                     {
-                        if (Yinicial <= Yini + 20 && Yinicial >= Yini - 20)
+                        if (Yinicial <= Yini + 10 && Yinicial >= Yini - 10)
                         {
                             float xLoc = 0;
                             float yLoc = 0;
@@ -391,9 +400,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
                     int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
 
-                    if ((outX >= Xini && outX <= Xdur))
+                    if ((outX >= Xini + 35 && outX <= Xdur - 35))
                     {
-                        if (Yinicial >= Ydur - 20 && Yinicial <= Ydur + 20)
+                        if (Yinicial >= Ydur - 10 && Yinicial <= Ydur + 10)
                         {
                             float xLoc = 0;
                             float yLoc = 0;
@@ -425,6 +434,250 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
         }
 
+        public static bool IsThereX0Y0Comment(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                bool sim = false;
+                float outX;
+                float outY;
+
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                int numPag = (int)outX / 512;
+                //DataTable existente = new DataTable();
+
+
+                if (GlobVar.tbl_Comentarios == null || GlobVar.tbl_Comentarios.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                {
+                    int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                    int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
+                    if ((outX >= Xini - 20 && outX <= Xini + 20))
+                    {
+                        if (Yinicial >= Yini - 10 && Yinicial <= Yini + 10)
+                        {
+                            float xLoc = 0;
+                            float yLoc = 0;
+
+                            int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                            int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                            Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
+
+
+                            GlobVar.txtComment = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
+                            GlobVar.XiYi.X = Xini;
+                            GlobVar.XiYi.Y = (int)yLoc;
+                            GlobVar.Yi = Yi;
+                            GlobVar.XfYf.X = Xdur;
+                            GlobVar.YSize = YSize;
+                            GlobVar.XSize = XSize;
+                            GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                            GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            return true;
+                        }
+                    }
+                }
+
+                return sim;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        public static bool IsThereX1Y0Comment(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                bool sim = false;
+                float outX;
+                float outY;
+
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                int numPag = (int)outX / 512;
+                //DataTable existente = new DataTable();
+
+
+                if (GlobVar.tbl_Comentarios == null || GlobVar.tbl_Comentarios.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                {
+                    int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                    int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
+                    if ((outX >= Xdur - 20 && outX <= Xdur + 20))
+                    {
+                        if (Yinicial >= Yini - 10 && Yinicial <= Yini + 10)
+                        {
+                            float xLoc = 0;
+                            float yLoc = 0;
+
+                            int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                            int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                            Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
+
+
+                            GlobVar.txtComment = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
+                            GlobVar.XiYi.X = Xini;
+                            GlobVar.XiYi.Y = (int)yLoc;
+                            GlobVar.Yi = Yi;
+                            GlobVar.XfYf.X = Xdur;
+                            GlobVar.YSize = YSize;
+                            GlobVar.XSize = XSize;
+                            GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                            GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            return true;
+                        }
+                    }
+                }
+
+                return sim;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        public static bool IsThereX0Y1Comment(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                bool sim = false;
+                float outX;
+                float outY;
+
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                int numPag = (int)outX / 512;
+                //DataTable existente = new DataTable();
+
+
+                if (GlobVar.tbl_Comentarios == null || GlobVar.tbl_Comentarios.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                {
+                    int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                    int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
+                    if ((outX >= Xini - 20 && outX <= Xini + 20))
+                    {
+                        if (Yinicial >= Ydur - 10 && Yinicial <= Ydur + 10)
+                        {
+                            float xLoc = 0;
+                            float yLoc = 0;
+
+                            int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                            int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                            Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
+
+
+                            GlobVar.txtComment = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
+                            GlobVar.XiYi.X = Xini;
+                            GlobVar.XiYi.Y = (int)yLoc;
+                            GlobVar.Yi = Yi;
+                            GlobVar.XfYf.X = Xdur;
+                            GlobVar.YSize = YSize;
+                            GlobVar.XSize = XSize;
+                            GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                            GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            return true;
+                        }
+                    }
+                }
+
+                return sim;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        public static bool IsThereX1Y1Comment(int Xinicial, int Yinicial)
+        {
+            try
+            {
+                bool sim = false;
+                float outX;
+                float outY;
+
+                Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
+                int numPag = (int)outX / 512;
+                //DataTable existente = new DataTable();
+
+
+                if (GlobVar.tbl_Comentarios == null || GlobVar.tbl_Comentarios.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                {
+                    int XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                    int YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                    int Xini = (Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]) * GlobVar.namos) + Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                    int Xdur = Xini + XSize;
+                    int Yini = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                    int Ydur = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]) + YSize;
+
+                    if ((outX >= Xdur - 20 && outX <= Xdur + 20))
+                    {
+                        if (Yinicial >= Ydur - 10 && Yinicial <= Ydur + 10)
+                        {
+                            float xLoc = 0;
+                            float yLoc = 0;
+
+                            int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                            int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                            Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
+
+
+                            GlobVar.txtComment = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
+                            GlobVar.XiYi.X = Xini;
+                            GlobVar.XiYi.Y = (int)yLoc;
+                            GlobVar.Yi = Yi;
+                            GlobVar.XfYf.X = Xdur;
+                            GlobVar.YSize = YSize;
+                            GlobVar.XSize = XSize;
+                            GlobVar.XfYf.Y = (int)outY - YSize; //Recebe o valor de tamanho, pois o Yi esta armazedado com valor de tela nao dimensao
+                            GlobVar.CommentSeq = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Seq"]);
+                            return true;
+                        }
+                    }
+                }
+
+                return sim;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
 
         public static void DrawCommentBorder(OpenGL gl, int locPlus = 0)
         {
