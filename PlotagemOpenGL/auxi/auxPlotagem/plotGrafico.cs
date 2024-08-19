@@ -91,7 +91,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             for (int i = 0; i < qtdGraf; i++)
             {
                 gl.LineStipple(1, 0xAAAA);
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
                 gl.Begin(OpenGL.GL_LINES);
                 gl.Color(0.752941f, 0.752941f, 0.752941f);
                 gl.Vertex(1, Plotagem.traco[i]);

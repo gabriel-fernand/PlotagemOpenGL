@@ -1,6 +1,7 @@
 ﻿using Accord.IO;
 using PlotagemOpenGL.auxi.FormComentario;
 using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PlotagemOpenGL
@@ -54,6 +55,17 @@ namespace PlotagemOpenGL
             BoaNoite = new ToolStripMenuItem();
             InicioCPAP = new ToolStripMenuItem();
             InserirCom = new ToolStripMenuItem();
+            ExcluirComentario = new ToolStripMenuItem();
+            EditarComentario = new ToolStripMenuItem();
+            CorDeFundo = new ToolStripMenuItem();
+            Linha1Seg = new ToolStripMenuItem();
+            MesmaAlturaCanais = new ToolStripMenuItem();
+            ReeshowAllCanal = new ToolStripMenuItem();
+            LinhaZeroCanais = new ToolStripMenuItem();
+            MostarAmplitudes = new ToolStripMenuItem();
+            Epoca30Seg = new ToolStripMenuItem();
+            Regua = new ToolStripMenuItem();
+            Pontilhado200Mili = new ToolStripMenuItem();
             BomDiaExclui = new ToolStripMenuItem();
             BoaNoiteExclui = new ToolStripMenuItem();
             InicioCPAPExclui = new ToolStripMenuItem();
@@ -447,7 +459,7 @@ namespace PlotagemOpenGL
             contextMenuStripOpenGl.Size = new System.Drawing.Size(179, 116);
             contextMenuStripOpenGl.Opening += ContextMenuStripOpenGl_Opening;
             // 
-            // BomDia
+            // EWxcluir Evento
             // 
             Excluir.Name = "Excluir";
             Excluir.Size = new System.Drawing.Size(100, 27);
@@ -482,10 +494,101 @@ namespace PlotagemOpenGL
             InserirCom.Text = "Inserir Comentário";
             InserirCom.Click += InserirCom_Click;
             // 
+            // Excluir Comentario
+            // 
+            ExcluirComentario.Name = "ExcluirComentario";
+            ExcluirComentario.Size = new System.Drawing.Size(100, 27);
+            ExcluirComentario.Text = "Excluir";
+            ExcluirComentario.Click += DeletCommentClick;
+            // 
+            // Editar Comentario
+            // 
+            EditarComentario.Name = "EditarComentario";
+            EditarComentario.Size = new System.Drawing.Size(100, 27);
+            EditarComentario.Text = "Editar";
+            EditarComentario.Click += EditarComentarioClick;
+            // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
+            // 
+            // CorDeFundo
+            // 
+            CorDeFundo.Name = "CorDeFundo";
+            CorDeFundo.Size = new System.Drawing.Size(148, 26);
+            CorDeFundo.Text = "Cor De Fundo";
+            CorDeFundo.Click += CorDeFundo_Click;
+            // 
+            // Linha1Seg
+            // 
+            Linha1Seg.CheckOnClick = true;
+            Linha1Seg.Name = "Linha1Seg";
+            Linha1Seg.Size = new System.Drawing.Size(148, 26);
+            Linha1Seg.Text = "Pontilhado de 1 Segundo";
+            Linha1Seg.Click += Regua_Click;
+            // 
+            // MesmaAlturaCanais
+            // 
+            MesmaAlturaCanais.CheckOnClick = true;
+            MesmaAlturaCanais.Name = "MesmaAlturaCanais";
+            MesmaAlturaCanais.Size = new System.Drawing.Size(148, 26);
+            MesmaAlturaCanais.Text = "Mesma Altura para todos Canais";
+            // 
+            // ReeshowAllCanal
+            // 
+            ReeshowAllCanal.CheckOnClick = true;
+            ReeshowAllCanal.Name = "ReeshowAllCanal";
+            ReeshowAllCanal.Size = new System.Drawing.Size(148, 26);
+            ReeshowAllCanal.Text = "Reexibir todos canais";
+            // 
+            // LinhaZeroCanais
+            // 
+            LinhaZeroCanais.CheckOnClick = true;
+            LinhaZeroCanais.Name = "LinhaZeroCanais";
+            LinhaZeroCanais.Size = new System.Drawing.Size(148, 26);
+            LinhaZeroCanais.Text = "Pontilhado das amplitudes";
+            LinhaZeroCanais.Click += Regua_Click;
+            // 
+            // MostarAmplitudes
+            // 
+            MostarAmplitudes.CheckOnClick = true;
+            MostarAmplitudes.Checked = true;
+            MostarAmplitudes.Name = "MostarAmplitudes";
+            MostarAmplitudes.Size = new System.Drawing.Size(148, 26);
+            MostarAmplitudes.Text = "Mostar Amplitudes";
+            MostarAmplitudes.Click += MostarAmplitudes_Click;
+            // 
+            // Epoca30Seg
+            // 
+            Epoca30Seg.CheckOnClick = true;
+            Epoca30Seg.Name = "Epoca30Seg";
+            Epoca30Seg.Size = new System.Drawing.Size(148, 26);
+            Epoca30Seg.Text = "Época de 30 segundos";
+            // 
+            // Regua
+            // 
+            Regua.CheckOnClick = true;
+            Regua.Checked = true;
+            Regua.Name = "Regua";
+            Regua.Size = new System.Drawing.Size(148, 26);
+            Regua.Text = "Regua";
+            Regua.Click += Regua_Click;
+            // 
+            // Pontilhado200Mili
+            // 
+            Pontilhado200Mili.CheckOnClick = true;
+            Pontilhado200Mili.Name = "Pontilhado200Mili";
+            Pontilhado200Mili.Size = new System.Drawing.Size(148, 26);
+            Pontilhado200Mili.Text = "Pontilhado de 200 Milisegundos";
+            Pontilhado200Mili.Click += Regua_Click;
+            // 
+            // NenhumLowGl
+            // 
+            NenhumLowGl.CheckOnClick = true;
+            NenhumLowGl.Name = "NenhumLowGl";
+            NenhumLowGl.Size = new System.Drawing.Size(148, 26);
+            NenhumLowGl.Text = "Nenhum";
             //
             //ExcluirBdBnCpap
             //
@@ -2367,6 +2470,10 @@ namespace PlotagemOpenGL
             PerformLayout();
         }
 
+     
+
+
+
 
 
 
@@ -2550,6 +2657,17 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem BoaNoiteExclui;
         public static ToolStripMenuItem InicioCPAPExclui;
         public static ToolStripMenuItem InserirCom;
+        public static ToolStripMenuItem ExcluirComentario;
+        public static ToolStripMenuItem EditarComentario;
+        public static ToolStripMenuItem CorDeFundo;
+        public static ToolStripMenuItem Linha1Seg;
+        public static ToolStripMenuItem MesmaAlturaCanais;
+        public static ToolStripMenuItem ReeshowAllCanal;
+        public static ToolStripMenuItem LinhaZeroCanais;
+        public static ToolStripMenuItem MostarAmplitudes;
+        public static ToolStripMenuItem Epoca30Seg;
+        public static ToolStripMenuItem Regua;
+        public static ToolStripMenuItem Pontilhado200Mili;
         public static ToolStripSeparator toolStripSeparator1;
         public static ToolStripMenuItem ExcluirBdBnCpap;
         public static ToolStripMenuItem LowPassFilterGl;

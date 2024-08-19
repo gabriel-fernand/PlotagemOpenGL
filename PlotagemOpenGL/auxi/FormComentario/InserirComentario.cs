@@ -19,6 +19,8 @@ namespace PlotagemOpenGL.auxi.FormComentario
         {
             InitializeComponent();
             popularlista();
+
+            if (Tela_Plotagem.EditComentClick) { textBox1.Text = GlobVar.txtComment;  }
         }
 
         private void popularlista()
@@ -67,10 +69,20 @@ namespace PlotagemOpenGL.auxi.FormComentario
 
         private void Confirmar_Click(object sender, EventArgs e)
         {
-            Point XiYi = Tela_Plotagem.LocationMouseClickComentario;
-            plotComentatios.AdicionarComentario(XiYi.X, XiYi.Y, textBox1.Text.ToString());
-            Tela_Plotagem.TelaClearAndReload();
-            this.Close();
+            if (Tela_Plotagem.EditComentClick)
+            {
+                Point XiYi = Tela_Plotagem.LocationMouseClickComentario;
+                plotComentatios.UpdateComment(XiYi.X, XiYi.Y, textBox1.Text.ToString());
+                Tela_Plotagem.EditComentClick = false;
+                this.Close();
+            }
+            else
+            {
+                Point XiYi = Tela_Plotagem.LocationMouseClickComentario;
+                plotComentatios.AdicionarComentario(XiYi.X, XiYi.Y, textBox1.Text.ToString());
+                Tela_Plotagem.TelaClearAndReload();
+                this.Close();
+            }
         }
     }
 }

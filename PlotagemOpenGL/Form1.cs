@@ -221,7 +221,7 @@ namespace PlotagemOpenGL
             UpdateStyles();
             qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
 
-
+            GlobVar.FundoColor = new int[] { 255, 255, 255, 255};
             openglControl1.Focus();
             GlobVar.colors = new Vector3[]
             {
@@ -889,9 +889,9 @@ namespace PlotagemOpenGL
 
             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotComentatios.DesenhaComentario(gl);
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotComentatios.DesenhaComentario(gl);
             //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
@@ -1157,6 +1157,18 @@ namespace PlotagemOpenGL
 
                     }
 
+                    else if (isThereX0Y0Comment)
+                    {
+                        float aux;
+                        float auy;
+                        timerComment.Start();
+                        isDrawing = true;
+                        lastMousePosition = e.Location;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                        initialMousePosition.X = (int)aux;
+                        initialMousePosition.Y = (int)auy;
+
+                    }
                     else if (isThereX0Y1Comment)
                     {
                         float aux;
@@ -1169,7 +1181,18 @@ namespace PlotagemOpenGL
                         initialMousePosition.Y = (int)auy;
 
                     }
+                    else if (isThereX1Y0Comment)
+                    {
+                        float aux;
+                        float auy;
+                        timerComment.Start();
+                        isDrawing = true;
+                        lastMousePosition = e.Location;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                        initialMousePosition.X = (int)aux;
+                        initialMousePosition.Y = (int)auy;
 
+                    }
                     else if (isThereX1Y1Comment)
                     {
                         float aux;
@@ -1418,6 +1441,10 @@ namespace PlotagemOpenGL
 
                                 GlobVar.XiYi.X += (int)deltaX;
                                 GlobVar.XSize = Math.Abs(AuXsize - GlobVar.XiYi.X);
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
                                 initialMousePosition.X = (int)outX;
 
                             }
@@ -1445,6 +1472,11 @@ namespace PlotagemOpenGL
                             if (e.X != lastMousePosition.X)
                             {
                                 GlobVar.XSize += (int)deltaX;
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
+
                                 initialMousePosition.X = (int)outX;
 
                             }
@@ -1475,10 +1507,17 @@ namespace PlotagemOpenGL
                             {
 
                                 float deltaY = outY - initialMouseY;
-                                int AuYsize = GlobVar.XiYi.Y - GlobVar.YSize;
+                                float ddeltaY = e.Y - lastMousePosition.Y;
 
+                                int AuYsize = GlobVar.Yi + GlobVar.YSize;
+
+                                GlobVar.Yi += (int)ddeltaY;
                                 GlobVar.XiYi.Y += (int)deltaY;
-                                GlobVar.YSize = AuYsize + GlobVar.XiYi.Y;
+                                GlobVar.YSize = AuYsize - GlobVar.Yi;
+                                if(GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
                                 initialMousePosition.Y = (int)outY;
 
                             }
@@ -1509,6 +1548,11 @@ namespace PlotagemOpenGL
                                 float deltaY = outY - initialMouseY;
 
                                 GlobVar.YSize -= (int)deltaY;
+                                if (GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
+
                                 initialMousePosition.Y = (int)outY;
 
                             }
@@ -1527,6 +1571,47 @@ namespace PlotagemOpenGL
                             this.Cursor = Cursors.SizeNWSE;
                             openglControl1.DoRender();
                             plotComentatios.DrawCommentBorder(gl);
+                        }
+                        else
+                        {
+                            float outX = 0;
+                            float outY = 0;
+
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+
+                            float initialMouseX = initialMousePosition.X;
+                            float initialMouseY = initialMousePosition.Y;
+
+                            float deltaX = outX - initialMouseX;
+                            if (e.X != lastMousePosition.X)
+                            {
+                                float deltaY = outY - initialMouseY;
+                                float ddeltaY = e.Y - lastMousePosition.Y;
+
+                                int AuXsize = GlobVar.XiYi.X + GlobVar.XSize;
+                                int AuYsize = GlobVar.Yi + GlobVar.YSize;
+
+                                GlobVar.Yi += (int)ddeltaY;
+                                GlobVar.XiYi.Y += (int)deltaY;
+                                GlobVar.YSize = AuYsize - GlobVar.Yi;
+                                GlobVar.XiYi.X += (int)deltaX;
+                                GlobVar.XSize = Math.Abs(AuXsize - GlobVar.XiYi.X);
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
+                                if (GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
+
+                                initialMousePosition.X = (int)outX;
+                                initialMousePosition.Y = (int)outY;
+
+                            }
+                            lastMousePosition.X = e.X;
+                            lastMousePosition.Y = e.Y;
+
                         }
 
                     }
@@ -1562,6 +1647,15 @@ namespace PlotagemOpenGL
 
                                 GlobVar.XiYi.X += (int)deltaX;
                                 GlobVar.XSize = Math.Abs(AuXsize - GlobVar.XiYi.X);
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
+                                if (GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
+
                                 initialMousePosition.X = (int)outX;
 
                             }
@@ -1581,7 +1675,44 @@ namespace PlotagemOpenGL
                             openglControl1.DoRender();
                             plotComentatios.DrawCommentBorder(gl);
                         }
+                        else
+                        {
+                            float outX = 0;
+                            float outY = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
 
+                            float initialMouseY = initialMousePosition.Y;
+                            float initialMouseX = initialMousePosition.X;
+
+                            float deltaX = outX - initialMouseX;
+                            if (e.Y != lastMousePosition.Y)
+                            {
+
+                                float deltaY = outY - initialMouseY;
+                                float ddeltaY = e.Y - lastMousePosition.Y;
+
+                                int AuYsize = GlobVar.Yi + GlobVar.YSize;
+
+                                GlobVar.Yi += (int)ddeltaY;
+                                GlobVar.XiYi.Y += (int)deltaY;
+                                GlobVar.YSize = AuYsize - GlobVar.Yi;
+                                GlobVar.XSize += (int)deltaX;
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
+                                if (GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
+
+                                initialMousePosition.Y = (int)outY;
+                                initialMousePosition.X = (int)outX;
+
+                            }
+                            lastMousePosition.Y = e.Y;
+                            lastMousePosition.X = e.X;
+                        }
                     }
 /* X1 - Y1 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment))
                     {
@@ -1610,6 +1741,14 @@ namespace PlotagemOpenGL
 
                                 GlobVar.XSize += (int)deltaX;
                                 initialMousePosition.X = (int)outX;
+                                if (GlobVar.XSize < 250)
+                                {
+                                    GlobVar.XSize = 250;
+                                }
+                                if (GlobVar.YSize < 30)
+                                {
+                                    GlobVar.YSize = 30;
+                                }
 
                                 GlobVar.YSize -= (int)deltaY;
                                 initialMousePosition.Y = (int)outY;
@@ -1909,7 +2048,25 @@ namespace PlotagemOpenGL
                         timerComment.Stop();
                     }
 
+                    else if (isThereX0Y0Comment)
+                    {
+                        isDrawing = false;
+
+                        plotComentatios.UpdateComment(e.X, e.Y);
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+                        timerComment.Stop();
+                    }
                     else if (isThereX0Y1Comment)
+                    {
+                        isDrawing = false;
+
+                        plotComentatios.UpdateComment(e.X, e.Y);
+                        lastMousePosition = e.Location;
+                        TelaClearAndReload();
+                        timerComment.Stop();
+                    }
+                    else if (isThereX1Y0Comment)
                     {
                         isDrawing = false;
 
@@ -2623,14 +2780,65 @@ namespace PlotagemOpenGL
                     }
 
                 }
+                else if ((isThereAComment || isThereAXSartComment || isThereAXEndComment || isThereAYStartComment || isThereAYEndComment || isThereX0Y0Comment || isThereX0Y1Comment || isThereX1Y0Comment || isThereX1Y1Comment))
+                {
+                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { EditarComentario, toolStripSeparator1, ExcluirComentario });
+                }
                 else
                 {
                     //Else seria quando ele abre fora de um evento
-                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, InicioCPAP, toolStripSeparator1, InserirCom, LowPassFilterGl, HighPassFilterGl });
+                    contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, InicioCPAP, toolStripSeparator1, CorDeFundo, InserirCom, Linha1Seg, MesmaAlturaCanais, ReeshowAllCanal, LinhaZeroCanais, MostarAmplitudes, Epoca30Seg, Regua, Pontilhado200Mili});
                 }
             }
             catch { }
 
+        }
+        private void CorDeFundo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                PlotagemOpenGL.auxi.FormColorRGB.Colors insert = new PlotagemOpenGL.auxi.FormColorRGB.Colors();
+                insert.Show();
+            }
+            catch { }
+
+        }
+        private void Regua_Click(object sender, EventArgs e)
+        {
+            TelaClearAndReload();
+        }
+        private void MostarAmplitudes_Click(object sender, EventArgs e)
+        {
+            if (!MostarAmplitudes.Checked)
+            {
+                for (int i = 1; i <= 23; i++) //Relaloca os Label's os butoes dentro do panel
+                {
+                    FieldInfo field = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
+                    if (field != null)
+                    { //(Panel)field.GetValue(this);
+                        Label label = (Label)field.GetValue(this);
+                        if (label != null)
+                        {
+                            label.Hide();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 1; i <= 23; i++) //Relaloca os Label's os butoes dentro do panel
+                {
+                    FieldInfo field = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
+                    if (field != null)
+                    { //(Panel)field.GetValue(this);
+                        Label label = (Label)field.GetValue(this);
+                        if (label != null)
+                        {
+                            label.Show();
+                        }
+                    }
+                }
+            }
         }
 
         private void NewMenuItem_Click(object sender, EventArgs e)
@@ -2737,7 +2945,27 @@ namespace PlotagemOpenGL
             }
             catch { }
         }
+        private void DeletCommentClick(object sender, EventArgs e)
+        {
+            try
+            {
+                plotComentatios.DeleteComment(GlobVar.CommentSeq);
+                TelaClearAndReload();
+            }
+            catch { }
+        }
+        public static bool EditComentClick = false;
+        private void EditarComentarioClick(object sender, EventArgs args)
+        {
+            try
+            {
+                EditComentClick = true;
+                InserirComentario insert = new InserirComentario();                
+                insert.Show();
 
+            }
+            catch { }
+        }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             timer1.Start();

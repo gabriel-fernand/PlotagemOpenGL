@@ -133,6 +133,26 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
         }
 
+        public static void DeleteComment(int seq)
+        {
+            DataView view = new DataView(GlobVar.tbl_Comentarios);
+            view.RowFilter = $"Seq = {seq}";
+
+            if (view.Count > 0)
+            {
+                // Se a linha for encontrada, remova-a usando o DataTable original
+                DataRow rowToRemove = view[0].Row;
+                GlobVar.tbl_Comentarios.Rows.Remove(rowToRemove);
+            }
+            AlteraBD.ExcluiComentario(seq);
+
+            //GlobVar.obj_dbEventos = new cls_dbExame();
+            //bool Real = cls_dbExame.OpenConnection(GlobVar.bDataFile,ref GlobVar.cnn_dbExame, 512);
+            //GlobVar.isTheDBOpen = Real;
+            //bool x = GlobVar.obj_dbEventos.ExcluiEvento(GlobVar.cnn_dbExame, seq);
+            //GlobVar.isTheDBOpen = x;
+        }
+
         //Metodos para saber se o mouse esta no evento ou na suas respectivas bordas
         public static bool IsThereAComment(int Xinicial, int Yinicial)
         {
@@ -699,7 +719,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.Flush();
 
         }
-        public static void UpdateComment(int Xinicial, int Yinicial)
+        public static void UpdateComment(int Xinicial, int Yinicial, string comment = "null")
         {
             try{
                 int CodMontagem = Convert.ToInt16(GlobVar.tbl_MontGrav.Rows[0]["CodMontagem"]);
@@ -707,6 +727,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 int numPag = GlobVar.XiYi.X / 512;
 
                 int Xi = Math.Abs((int)(numPag * 512) - GlobVar.XiYi.X);
+
+                if(comment.Equals("null"))
+                {
+                    comment = GlobVar.txtComment;
+                }
 
                 DataView view = new DataView(GlobVar.tbl_Comentarios);
                 view.RowFilter = $"Seq = {GlobVar.CommentSeq}";
@@ -716,7 +741,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     DataRow rowToUpdate = view[0].Row;
 
 
-                    rowToUpdate["Comentario"] = GlobVar.txtComment;
+                    rowToUpdate["Comentario"] = comment;
                     rowToUpdate["CodMontagem"] = CodMontagem;
                     rowToUpdate["NumPag"] = numPag;
                     rowToUpdate["Xi"] = Xi;
@@ -724,7 +749,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     rowToUpdate["DuracaoX"] = GlobVar.XSize;
                     rowToUpdate["DuracaoY"] = GlobVar.YSize;
                 }
-                AlteraBD.GravaComentario(GlobVar.CommentSeq,  GlobVar.txtComment, CodMontagem, numPag, Xi, GlobVar.Yi, GlobVar.XSize, GlobVar.YSize);
+                AlteraBD.GravaComentario(GlobVar.CommentSeq, comment, CodMontagem, numPag, Xi, GlobVar.Yi, GlobVar.XSize, GlobVar.YSize);
             }
             catch { }
         }

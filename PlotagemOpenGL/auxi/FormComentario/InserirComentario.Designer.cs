@@ -115,11 +115,11 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button Confirmar;
-        private System.Windows.Forms.Button Cancelar;
-        private System.Windows.Forms.ListBox ListaComentarios;
-        private System.Windows.Forms.Label ListComent;
-        private System.Windows.Forms.Label Comentario;
+        public static System.Windows.Forms.TextBox textBox1;
+        public static System.Windows.Forms.Button Confirmar;
+        public static System.Windows.Forms.Button Cancelar;
+        public static System.Windows.Forms.ListBox ListaComentarios;
+        public static System.Windows.Forms.Label ListComent;
+        public static System.Windows.Forms.Label Comentario;
     }
 }

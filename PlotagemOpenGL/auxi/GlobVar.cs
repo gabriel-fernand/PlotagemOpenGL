@@ -32,6 +32,7 @@ namespace PlotagemOpenGL.auxi
         public static double[] valorout;
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
+        public static int[] FundoColor;
 
         //Variaveis para mexer nos eventos
         public static bool drawBordenInAnEvent;

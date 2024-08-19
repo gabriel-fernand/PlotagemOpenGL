@@ -107,27 +107,29 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.EndY[i] = auxY;
             }
 
+            // Supondo que GlobVar.FundoColor[3] seja uma instância da struct Color (ou similar) com propriedades R, G, B.
+            float red = GlobVar.FundoColor[0] / 255.0f;
+            float green = GlobVar.FundoColor[1] / 255.0f;
+            float blue = GlobVar.FundoColor[2] / 255.0f;
+            float alpha = GlobVar.FundoColor[3] / 255.0f;
+
+            // Defina a cor de fundo com os valores RGB normalizados
+            gl.ClearColor(red, green, blue, alpha); // A última variável é o alpha (opacidade), 1.0f para opaco
+
+            // Continue com as configurações normais do OpenGL
+            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             gl.Viewport(0, 0, (int)GlobVar.sizeOpenGl.X, (int)GlobVar.sizeOpenGl.Y);
 
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
-            //gl.Perspective(0, 0, 0.1, 50.0);
-            //gl.LookAt(0, 0, 0, 0, 0, 0, 0, 0, 0);
-            gl.Ortho(0, GlobVar.tmpEmTela, 0, GlobVar.sizeOpenGl.Y, -2, 2); // Define a projeção
+            gl.Ortho(0, GlobVar.tmpEmTela, 0, GlobVar.sizeOpenGl.Y, -2, 2);
 
-            // Define a matriz de modelo-visualização
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity(); // Carrega a matriz identidade
-            // Aplica transformações da câmera
+            gl.LoadIdentity();
             gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
-
-            gl.ClearColor(1, 1, 1, 1);
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.PointSize(3.0f); // Define o tamanho dos pontos
-            gl.Color(0.0f, 0.0f, 0.0f); // Define a cor das linhas (preto)
-            gl.Scale(1, 1, 1);// state.yScale, 1);
-                              // Define a primeira projeção ortográfica para o primeiro conjunto de pontos (canalA)             
-
+            gl.PointSize(3.0f);
+            gl.Color(0.0f, 0.0f, 0.0f);
+            gl.Scale(1, 1, 1);
 
 
 
@@ -139,37 +141,102 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.End();
             }*/
 
-            //Faz o desenho da regua com base no tamanho da tela
-            int ind = 0;
-            for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
+            if (Tela_Plotagem.Linha1Seg.Checked)
             {
-                if (ind % 10 == 0)
+                int ind = 0;
+                for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
+                {
+                    gl.Color(0.0f, 0.0f, 0.0f); // Define a cor das linhas (preto)
+
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(i, 0);
+                    gl.Vertex(i, GlobVar.sizeOpenGl.Y);
+                    gl.End();
+
+                    i += GlobVar.namos;
+                    ind++;
+                }
+            }
+            if(Tela_Plotagem.Pontilhado200Mili.Checked)
+            {
+                float mili200seg = 102.4f;
+                for (float i = GlobVar.indice; i < GlobVar.maximaVect;)
                 {
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, 0);
-                    gl.Vertex(i, 10);
-                    gl.End();
-
-                    gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, GlobVar.sizeOpenGl.Y);
-                    gl.Vertex(i, GlobVar.sizeOpenGl.Y - 10);
+                    gl.End();
+                    i += mili200seg;
+                }
+            }
+            if (Tela_Plotagem.LinhaZeroCanais.Checked) 
+            {
+                for (int i = 0; i < qtdGraf; i++)
+                {
+                    gl.Color(127, 125, 125);
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(GlobVar.indice, traco[i]);
+                    gl.Vertex(GlobVar.maximaVect, traco[i]);
                     gl.End();
                 }
-                else
+
+            }
+            //Faz o desenho da regua com base no tamanho da tela
+            if (Tela_Plotagem.Regua.Checked){
+                int ind = 0;
+                for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
+                {
+                    if (ind % 10 == 0)
+                    {
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, 0);
+                        gl.Vertex(i, 10);
+                        gl.End();
+
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y - 10);
+                        gl.End();
+                    }
+                    else
+                    {
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, 0);
+                        gl.Vertex(i, 5);
+                        gl.End();
+
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y - 5);
+                        gl.End();
+                    }
+
+                    i += GlobVar.namos;
+                    ind++;
+                }
+                float mili200seg = 102.4f;
+                for (float i = GlobVar.indice; i < GlobVar.maximaVect;)
                 {
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, 0);
-                    gl.Vertex(i, 5);
-                    gl.End();
+                    gl.Vertex(i, 3);
+                    gl.End(); 
 
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, GlobVar.sizeOpenGl.Y);
-                    gl.Vertex(i, GlobVar.sizeOpenGl.Y - 5);
+                    gl.Vertex(i, GlobVar.sizeOpenGl.Y - 3);
+                    gl.End();
+                    i += mili200seg;
+                }
+                for (int i = 0; i < qtdGraf; i++)
+                {
+                    gl.Color(127, 125, 125);
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(GlobVar.indice, traco[i]);
+                    gl.Vertex(GlobVar.indice + 150, traco[i]);
                     gl.End();
                 }
 
-                i += GlobVar.namos;
-                ind++;
             }
 
             //classe para fazer o desenho do grafico
