@@ -561,10 +561,10 @@ namespace PlotagemOpenGL
             // 
             // Epoca30Seg
             // 
-            Epoca30Seg.CheckOnClick = true;
             Epoca30Seg.Name = "Epoca30Seg";
             Epoca30Seg.Size = new System.Drawing.Size(148, 26);
             Epoca30Seg.Text = "Época de 30 segundos";
+            Epoca30Seg.Click += Epoca30Seg_Click;
             // 
             // Regua
             // 
@@ -2469,13 +2469,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
-     
-
-
-
-
-
 
 
         #endregion

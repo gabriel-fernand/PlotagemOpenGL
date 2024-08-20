@@ -86,7 +86,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             Tela_Plotagem.plotanu = true;
             Canula = new string[] { "Apneia", "Apneia central", "Hipopneia", "Dessaturacao", "Hera", "Ronco" };
-            float loc = altura / (float)qtdGraf / 2;
+            float loc = Canais.pnSizes[1] / 2;
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
             GlobVar.desenhoLoc = new float[desenhoLoc.Length];
@@ -98,13 +98,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             for (int i = 0; i < qtdGraf; i++)
             {
                 desenhoLoc[i] = aux;
-                aux += margem[0];
+                aux += Canais.pnSizes[i + 1] - Canais.pnSizes[i];
             }
             for (int i = 0; i < GlobVar.StartY.Length; i++)
             {
-                GlobVar.StartY[i] = auxY;
+                GlobVar.StartY[i] = Canais.pnSizes[i];
                 auxY += locY;
-                GlobVar.EndY[i] = auxY;
+                GlobVar.EndY[i] = Canais.pnSizes[i + 1];
             }
 
             // Supondo que GlobVar.FundoColor[3] seja uma instância da struct Color (ou similar) com propriedades R, G, B.
@@ -171,13 +171,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             }
             if (Tela_Plotagem.LinhaZeroCanais.Checked) 
             {
+
+                int des = qtdGraf - 1;
                 for (int i = 0; i < qtdGraf; i++)
                 {
                     gl.Color(127, 125, 125);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice, traco[i]);
-                    gl.Vertex(GlobVar.maximaVect, traco[i]);
+                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[des]);
+                    gl.Vertex(GlobVar.maximaVect, GlobVar.desenhoLoc[des]);
                     gl.End();
+                    des--;
                 }
 
             }
@@ -228,13 +231,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     gl.End();
                     i += mili200seg;
                 }
+                int des = qtdGraf - 1;
                 for (int i = 0; i < qtdGraf; i++)
                 {
                     gl.Color(127, 125, 125);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice, traco[i]);
-                    gl.Vertex(GlobVar.indice + 150, traco[i]);
+                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[des]);
+                    gl.Vertex(GlobVar.indice + 150, GlobVar.desenhoLoc[des]);
                     gl.End();
+                    des--;
                 }
 
             }

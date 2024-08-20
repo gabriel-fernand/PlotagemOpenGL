@@ -277,10 +277,6 @@ namespace PlotagemOpenGL
             stopwatch = new Stopwatch();
             this.MouseUp += Form1_MouseUp;
             this.MouseMove += openglControl1_MouseMove;
-            //InitializeContextMenu();
-            //this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
-            //var backlog = new backLog();
-            //backlog.Show();
 
             toolTip1.SetToolTip(openglControl1, "Teste");
             Play_OpenGl();
@@ -576,10 +572,10 @@ namespace PlotagemOpenGL
                 int alturaTela = (int)openglControl1.Height;
 
                 canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.RealocButton();
-                canais.PainelLb_Resize();
                 canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
                 canais.reloc(); 
 
 
@@ -805,10 +801,10 @@ namespace PlotagemOpenGL
                 int alturaTela = (int)openglControl1.Height;
 
                 canais = new Canais(qtdGrafics);
-                canais.RealocButton();
-                canais.PainelLb_Resize();
                 canais.RealocPanel(qtdGrafics);
                 canais.quantidadeGraf(qtdGrafics);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
                 canais.reloc();
 
 
@@ -992,6 +988,7 @@ namespace PlotagemOpenGL
                     }
                     else
                     {
+
                         if (GlobVar.indice > 0)
                         {
                             camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
@@ -999,10 +996,21 @@ namespace PlotagemOpenGL
 
                             GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            if (GlobVar.indiceNumero < 0)
+                            {
+                                GlobVar.indiceNumero = 0;
+                                GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                            }
 
                             GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                             GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
+                            if (GlobVar.indice < 0)
+                            {
+                                GlobVar.indice = 0;
+                                GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                                camera.X = 0;
+                            }
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
@@ -1922,6 +1930,7 @@ namespace PlotagemOpenGL
         int lastStartX;
 
         public static Point LocationMouseClickComentario;
+        public static Point DimensionRightClick;
         private void OpenGLControl_MouseUp(object sender, MouseEventArgs e)
         {
             try
@@ -2151,7 +2160,11 @@ namespace PlotagemOpenGL
                 if (e.Button == MouseButtons.Right)
                 {
                     isDrawing = false;
-                    ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
+                    float aux;
+                    float auy;
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out aux, out auy);
+                    DimensionRightClick.X = (int)aux;
+                    DimensionRightClick.Y = (int)auy;
                     LocationMouseClickComentario = e.Location;
                 }
                 clickCount = 0;
@@ -2440,6 +2453,7 @@ namespace PlotagemOpenGL
                                 if (GlobVar.indice < 0)
                                 {
                                     GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                                     camera.X = 0;
                                 }
 
@@ -2556,7 +2570,8 @@ namespace PlotagemOpenGL
                 GlobVar.segundos = int.Parse(match.Value);
             }
 
-            GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
+
+            GlobVar.tmpEmTela =(GlobVar.namos * GlobVar.segundos);
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
 
             GlobVar.inicioTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
@@ -2566,9 +2581,12 @@ namespace PlotagemOpenGL
             //}
             GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos + (int)GlobVar.inicioTela;
 
-            GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
+            GlobVar.tmpEmTelaNumerico =(GlobVar.namosNumerico * GlobVar.segundos);
             GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+
+            GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+            GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
 
             UpdateInicioTela();
 
@@ -2661,10 +2679,10 @@ namespace PlotagemOpenGL
                 int alturaTela = (int)openglControl1.Height;
 
                 canais = new Canais(qtdGrafic);
-                canais.RealocButton();
-                canais.PainelLb_Resize();
                 canais.RealocPanel(qtdGrafic);
                 canais.quantidadeGraf(qtdGrafic);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
                 canais.reloc();
 
 
@@ -2803,6 +2821,47 @@ namespace PlotagemOpenGL
             catch { }
 
         }
+
+        private void Epoca30Seg_Click(object sender, EventArgs e)
+        {
+            tempoEmTela.SelectedIndex = 5;
+            GlobVar.segundos = 30;
+
+            GlobVar.tmpEmTela = GlobVar.namos * GlobVar.segundos;
+            GlobVar.saltoTelas = GlobVar.tmpEmTela;
+
+            GlobVar.inicioTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+            //if (GlobVar.segundos >= 120)
+            //{
+            //    GlobVar.maximaVect *= 10;
+            //}
+            GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos + (int)GlobVar.inicioTela;
+
+            GlobVar.tmpEmTelaNumerico = GlobVar.namosNumerico * GlobVar.segundos;
+            GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
+            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+
+
+            int PagAux = DimensionRightClick.X / GlobVar.namos;
+            int inicioPag = PagAux - 15;
+            int finalPag = PagAux + 15;
+            if (inicioPag < 0)
+            {
+                inicioPag = 0;
+                finalPag = 30;
+            }
+
+            GlobVar.indice = inicioPag * GlobVar.namos;
+            GlobVar.maximaVect = finalPag * GlobVar.namos;
+            GlobVar.indiceNumero = inicioPag * GlobVar.namosNumerico;
+            GlobVar.maximaNumero = finalPag * GlobVar.namosNumerico;
+            camera.X = GlobVar.indice;
+            UpdateInicioTela();
+
+            TelaClearAndReload();
+
+        }
+
         private void Regua_Click(object sender, EventArgs e)
         {
             TelaClearAndReload();

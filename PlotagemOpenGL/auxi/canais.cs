@@ -11,6 +11,7 @@ using static System.Windows.Forms.AxHost;
 using Accord.Math;
 using System.Linq;
 using PlotagemOpenGL.auxi.auxPlotagem;
+using System.Windows;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -19,7 +20,8 @@ namespace PlotagemOpenGL.auxi
         public static float[] yCanais;
         public static string[] canais;
         public int qtdGraf;
-        public static int pnSize;
+        public static float pnSize;
+        public static float[] pnSizes;
         public static int labelLocY;
         public static int plusLoc;
         public static int minusLoc;
@@ -38,13 +40,13 @@ namespace PlotagemOpenGL.auxi
         public void PainelLb_Resize()
         {
             int sizeLb = (int)GlobVar.sizeLabelExams.Y / 2;
-            int pnSizeY = pnSize / 2;
+            int pnSizeY = (int)pnSize / 2;
             labelLocY = pnSizeY - sizeLb;
 
         }
         public void RealocButton()
         {
-            int sizePn = pnSize / 2;
+            int sizePn = (int)pnSize / 2;
             int sizeBut = (int)GlobVar.sizeButtons.Y;
 
             plusLoc = sizePn - sizeBut;
@@ -102,9 +104,11 @@ namespace PlotagemOpenGL.auxi
         }
         public void quantidadeGraf(int qtdGraf)
         {
-            
+
+            pnSizes = new float[qtdGraf + 1];
+            float auzpnSize = 0;
             int pnSizeX = (int)GlobVar.sizePainelExams.X;
-            for (int i = 1; i <= qtdGraf; i++) //Reloca os panel para fora do form fazendo com eles desaparecam da tela
+            for (int i = 1; i <= 30; i++) //Reloca os panel para fora do form fazendo com eles desaparecam da tela
             {
                 FieldInfo field = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
                 if (field != null)
@@ -114,7 +118,7 @@ namespace PlotagemOpenGL.auxi
                     if (panel != null)
                     {
                         panel.Location = new System.Drawing.Point(-500, 26);
-                        panel.Size = new System.Drawing.Size(pnSizeX, pnSize);
+                        panel.Size = new System.Drawing.Size(pnSizeX, (int)pnSize);
                     }
                 }
             }
@@ -129,10 +133,16 @@ namespace PlotagemOpenGL.auxi
                     Panel panel = (Panel)field.GetValue(this);
                     Label label = (Label)labelName.GetValue(this);
 
-                    if (panel != null )
+                    if (panel != null || label != null)
                     {
+                        //Faz a verificacao no banco de dados para saber quantos %aquele panel tem, deacordo com o a diferenca dele
+                        float ySizeAux = (float)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Altura"]) / 100;
+                        pnSize = (int)GlobVar.sizePainelExams.Y * ySizeAux;
+                        auzpnSize += pnSize;
+                        pnSizes[i] = auzpnSize;
+
                         panel.Location = new System.Drawing.Point(0, (int)yCanais[j]);
-                        panel.Size = new System.Drawing.Size(pnSizeX, pnSize);
+                        panel.Size = new System.Drawing.Size(pnSizeX, (int)pnSize);
                         label.Text = GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Legenda"].ToString();
                         j++;
                     }                    
