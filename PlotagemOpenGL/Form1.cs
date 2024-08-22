@@ -277,6 +277,15 @@ namespace PlotagemOpenGL
             stopwatch = new Stopwatch();
             this.MouseUp += Form1_MouseUp;
             this.MouseMove += openglControl1_MouseMove;
+            foreach (Control panel in painelExames.Controls)
+            {
+                if (panel is Panel)
+                {
+                    panel.MouseDown += Panel_MouseDown;
+                    panel.MouseMove += Panel_MouseMove;
+                    panel.MouseUp += Panel_MouseUp;
+                }
+            }
 
             toolTip1.SetToolTip(openglControl1, "Teste");
             Play_OpenGl();
@@ -558,6 +567,170 @@ namespace PlotagemOpenGL
                 panelNotchFilterStates[panel]["NenhumNotch"] = true;
             }
         }
+        private Panel movingPanel = null;
+        private Label tempLabel = null; // Usando Label para a movimentação
+        private int initialPanelY;
+        private System.Drawing.Point mouseDownLocation;
+
+        private void Panel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Inicializar o painel que será movido
+                movingPanel = sender as Panel;
+                mouseDownLocation = e.Location;
+                initialPanelY = movingPanel.Top;
+
+                // Criar e configurar o Label auxiliar
+                tempLabel = new Label
+                {
+                    Size = movingPanel.Size,
+                    BackColor = System.Drawing.Color.Transparent, // Fundo transparente
+                    BorderStyle = BorderStyle.Fixed3D, // Apenas para visualização
+                    Location = movingPanel.Location,
+                    Text = string.Empty
+                };
+                painelExames.Controls.Add(tempLabel);
+                tempLabel.BringToFront(); // Coloca o Label auxiliar acima dos outros
+
+                // Reposicionar o Label auxiliar
+                tempLabel.Top = initialPanelY;
+            }
+        }
+
+        private void Panel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (tempLabel != null)
+            {
+                int deltaY = e.Y - mouseDownLocation.Y;
+                int newTop = initialPanelY + deltaY;
+
+                // Garantir que o Label auxiliar não saia do topo ou da parte inferior do PanelCanais
+                newTop = Math.Max(0, Math.Min(newTop, painelExames.Height - tempLabel.Height));
+
+                tempLabel.Top = newTop;
+            }
+        }
+
+        private void Panel_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (tempLabel != null)
+            {
+                // Determinar a nova posição para o painel selecionado
+                int newTop = tempLabel.Top;
+                painelExames.Controls.Remove(tempLabel);
+
+                // Reposicionar o painel selecionado
+                movingPanel.Top = newTop;
+
+                // Reposicionar todos os painéis para garantir a ordem correta
+                RepositionPanels();
+                // Atualizar a linha do DataTable com base na nova posição do painel
+                UpdateDataTableRow(movingPanel);
+
+                ReorderGrafSelectedCodSelectedAndScale();
+
+                movingPanel = null;
+                tempLabel = null;
+                TelaClearAndReload();
+            }
+        }
+
+        private void RepositionPanels()
+        {
+            // Definir o espaçamento entre os painéis
+            const int spacing = 0;
+
+            // Ordenar os controles por sua posição Top para garantir que o reposicionamento
+            // seja feito corretamente
+            var panels = painelExames.Controls.OfType<Panel>()
+                                             .OrderBy(p => p.Top)
+                                             .ToList();
+
+            int y = 0;
+            foreach (Panel panel in panels)
+            {
+                panel.Top = y;
+                y = panel.Bottom + spacing;
+            }
+        }
+        private void UpdateDataTableRow(Panel panel)
+        {
+            // Recupera o valor de CodCanal1 associado ao painel
+            var codCanal = panel.Tag.ToString();
+
+            // Encontrar a linha no DataTable com base no valor de CodCanal1
+            DataRow rowToMove = null;
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (row["CodCanal1"].ToString().Equals(codCanal))
+                {
+                    rowToMove = row;
+                    break;
+                }
+            }
+
+            if (rowToMove != null)
+            {
+                // Criar uma linha auxiliar e copiar os dados da linha original
+                DataRow newRow = GlobVar.tbl_MontagemSelecionada.NewRow();
+                newRow.ItemArray = rowToMove.ItemArray.Clone() as object[];
+
+                double auxIndex = painelExames.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+                // Calcular o novo índice baseado na nova posição do painel
+                int newRowIndex = (int)Math.Round(panel.Top / (double)auxIndex);
+
+                // Remover a linha original
+                GlobVar.tbl_MontagemSelecionada.Rows.Remove(rowToMove);
+
+                // Adicionar a linha auxiliar na nova posição
+                if (newRowIndex >= GlobVar.tbl_MontagemSelecionada.Rows.Count)
+                {
+                    GlobVar.tbl_MontagemSelecionada.Rows.Add(newRow);
+                }
+                else
+                {
+                    GlobVar.tbl_MontagemSelecionada.Rows.InsertAt(newRow, newRowIndex);
+                }
+
+                // Reordenar os índices da tabela para refletir a nova ordem
+                //ReorderDataTable();
+            }
+        }
+        private void ReorderGrafSelectedCodSelectedAndScale()
+        {
+            // Criar cópias temporárias para reorganizar os vetores
+            int[] tempGrafSelected = new int[GlobVar.grafSelected.Length];
+            int[] tempCodSelected = new int[GlobVar.codSelected.Length];
+            float[] tempScale = new float[GlobVar.scale.Length];
+            //int[] tempTxPorCanal = new int[GlobVar.txPorCanal.Length];
+
+            // Reordenar conforme a nova ordem no DataTable
+            for (int newIndex = 0; newIndex < GlobVar.tbl_MontagemSelecionada.Rows.Count; newIndex++)
+            {
+                // Obter o CodCanal1 da nova posição
+                int codCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[newIndex]["CodCanal1"]);
+                // Encontrar a posição original do codCanal no codSelected
+                int originalIndex = Array.IndexOf(GlobVar.codSelected, codCanal);
+
+                // Reorganizar os vetores
+                tempGrafSelected[newIndex] = GlobVar.grafSelected[originalIndex];
+                tempCodSelected[newIndex] = codCanal;
+
+                // Recalcular o valor para o vetor scale
+                float scala = (float)(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[newIndex]["AmplitudeMin"]) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(newIndex)));
+                tempScale[newIndex] = scala;
+                //tempTxPorCanal[newIndex] = GlobVar.txPorCanal[originalIndex];
+            }
+
+            // Copiar os valores reorganizados de volta para os vetores originais
+            //Array.Copy(tempTxPorCanal, GlobVar.txPorCanal, tempTxPorCanal.Length);
+            Array.Copy(tempGrafSelected, GlobVar.grafSelected, tempGrafSelected.Length);
+            Array.Copy(tempCodSelected, GlobVar.codSelected, tempCodSelected.Length);
+            Array.Copy(tempScale, GlobVar.scale, tempScale.Length);
+        }
+
 
         private void Play_OpenGl()
         {

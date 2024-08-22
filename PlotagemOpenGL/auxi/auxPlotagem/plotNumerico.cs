@@ -32,7 +32,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int h = GlobVar.indice;
                         float[] color = new float[3];
 
-                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["Cor"]));
+                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                         string txtEmTela = $"";
                         float espacoEntreNumeros = GlobVar.sizeOpenGl.X / (GlobVar.maximaNumero - GlobVar.indiceNumero);
 
@@ -140,7 +140,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int h = GlobVar.indice;
                         float[] color = new float[3];
 
-                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["Cor"]));
+                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                         string txtEmTela = $"";
                         float espacoEntreNumeros = GlobVar.sizeOpenGl.X / (GlobVar.maximaNumero - GlobVar.indiceNumero);
 

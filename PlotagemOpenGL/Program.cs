@@ -19,6 +19,7 @@ namespace PlotagemOpenGL
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new backLog());
             Application.Run(new Tela_Plotagem());
             //Application.Run(new InserirComentario());
         }

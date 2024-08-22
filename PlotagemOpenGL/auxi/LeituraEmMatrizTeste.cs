@@ -243,21 +243,6 @@ namespace PlotagemOpenGL.auxi
                     ind++;
                 }
 
-
-                //faz a leitura das taixa de amostra para cada canal, para ajustar as amostras de outros valores a tela de 512 amostras por segundo
-                /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
-                {
-                    if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))] < 512)
-                    {
-                        int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]))];
-                        GlobVar.matrizCanal.SetRow<short>(i , RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
-                    }
-                }*/
-
-                //Verifica se o canal esta para aparecer em Numero ou Grafico
-                //GlobVar.SomenteNums[0] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[13]["InverteSinal"];
-                //GlobVar.SomenteNums[1] = (bool)GlobVar.tbl_MontagemSelecionada.Rows[20]["InverteSinal"];
-
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
                     float scala = (float)( Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i))) ;

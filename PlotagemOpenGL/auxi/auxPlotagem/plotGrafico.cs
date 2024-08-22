@@ -34,7 +34,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
-                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)
+                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
 
                     }
@@ -42,7 +42,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     {
 
 
-                        int codCanal1 = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[i]]["CodCanal1"]);
+                        int codCanal1 = GlobVar.codSelected[i] ;
                         if (!GlobVar.codCanal.Contains(codCanal1))
                         {
                             // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
