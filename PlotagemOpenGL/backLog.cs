@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using System.Drawing;
+using Point = System.Drawing.Point;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
@@ -11,6 +12,9 @@ using ADODB;
 using OpenTK.Mathematics;
 using System.Windows.Interop;
 using System.Collections.Generic;
+using PlotagemOpenGL.auxi.FormsAuxi;
+using PlotagemOpenGL.auxi.auxPlotagem;
+using System.Windows.Media;
 
 
 namespace PlotagemOpenGL
@@ -176,121 +180,217 @@ namespace PlotagemOpenGL
                     panel.MouseUp += Panel_MouseUp;
                 }
             }
+            timer3.Start();
         }
-        private Panel movingPanel = null;
-        private Label tempLabel = null; // Usando Label para a movimentação
+        private bool mouseIsDown = false;
+        private const int borderWidth = 6; // Largura da borda sensível para redimensionamento
+        private bool isResizing = false;
+        private bool isResizingFromTop = false;
+        private int originalHeight;
+        private int originalTop;
+        private Point mouseDownLocation;
         private int initialPanelY;
-        private System.Drawing.Point mouseDownLocation;
+        private Panel movingPanel;
+        private bool isMoving = false;
+        private auxi.FormsAuxi.OverlayForm overlayForm;
+        public bool isOnBottomBorder = false;
+        public bool isOnTopBorder = false;
 
         private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            Panel panel = sender as Panel;
+
+
+            if ((isOnBottomBorder || isOnTopBorder) && e.Button == MouseButtons.Left)
             {
-                // Inicializar o painel que será movido
-                movingPanel = sender as Panel;
+                // Inicia o redimensionamento
+                isResizing = true;
+                isResizingFromTop = isOnTopBorder;
+                originalHeight = panel.Height;
+                originalTop = panel.Top;
+                movingPanel = panel;
+
+                overlayForm = new OverlayForm();
+                overlayForm.Bounds = PanelCanais.RectangleToScreen(PanelCanais.ClientRectangle);
+                overlayForm.TempRect = new Rectangle(panel.Left, originalTop, panel.Width, originalHeight);
+
+                mouseDownLocation = e.Location;
+
+                overlayForm.Show();
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                mouseIsDown = true;
+                movingPanel = panel;
                 mouseDownLocation = e.Location;
                 initialPanelY = movingPanel.Top;
 
-                // Criar e configurar o Label auxiliar
-                tempLabel = new Label
-                {
-                    Size = movingPanel.Size,
-                    BackColor = Color.Transparent, // Fundo transparente
-                    BorderStyle = BorderStyle.Fixed3D, // Apenas para visualização
-                    Location = movingPanel.Location,
-                    Text = string.Empty
-                };
-                PanelCanais.Controls.Add(tempLabel);
-                tempLabel.BringToFront(); // Coloca o Label auxiliar acima dos outros
+                overlayForm = new OverlayForm();
+                overlayForm.Bounds = PanelCanais.RectangleToScreen(PanelCanais.ClientRectangle);
+                overlayForm.TempRect = new Rectangle(movingPanel.Left, movingPanel.Top, movingPanel.Width, movingPanel.Height);
+                overlayForm.Show();
 
-                // Reposicionar o Label auxiliar
-                tempLabel.Top = initialPanelY;
+                isMoving = true;
             }
         }
 
         private void Panel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (tempLabel != null)
+            Panel panel = sender as Panel;
+
+            if(!mouseIsDown || !isResizing)
+            {
+                // Verifica se o mouse está na borda inferior ou superior do painel ao clicar
+                isOnBottomBorder = Math.Abs(e.Y - panel.Height) <= borderWidth;
+                isOnTopBorder = Math.Abs(e.Y) <= borderWidth;
+
+                if(isOnBottomBorder || isOnTopBorder)
+                {
+                    this.Cursor = Cursors.SizeNS;
+                }
+                else
+                {
+                    this.Cursor = Cursors.Default;
+                }
+            }
+            if (isResizing && overlayForm != null)
+            {
+                int deltaY = e.Y - mouseDownLocation.Y;
+
+                if (isResizingFromTop)
+                {
+                    int newTop = originalTop + deltaY;
+                    int newHeight = originalHeight - deltaY;
+
+                    newTop = Math.Max(0, Math.Min(newTop, PanelCanais.Height - newHeight));
+                    newHeight = Math.Max(0, Math.Min(newHeight, PanelCanais.Height - newTop));
+
+                    overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, newTop, overlayForm.TempRect.Width, newHeight);
+                }
+                else
+                {
+                    int newHeight = originalHeight + deltaY;
+
+                    newHeight = Math.Max(0, Math.Min(newHeight, PanelCanais.Height - originalTop));
+
+                    overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, overlayForm.TempRect.Y, overlayForm.TempRect.Width, newHeight);
+                }
+
+                overlayForm.Invalidate(); // Redesenha o retângulo no overlay
+            }
+            else if (isMoving && overlayForm != null)
             {
                 int deltaY = e.Y - mouseDownLocation.Y;
                 int newTop = initialPanelY + deltaY;
 
-                // Garantir que o Label auxiliar não saia do topo ou da parte inferior do PanelCanais
-                newTop = Math.Max(0, Math.Min(newTop, PanelCanais.Height - tempLabel.Height));
+                // Garantir que o retângulo temporário não saia do topo ou da parte inferior do PanelCanais
+                newTop = Math.Max(0, Math.Min(newTop, PanelCanais.Height - overlayForm.TempRect.Height));
 
-                tempLabel.Top = newTop;
+                overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, newTop, overlayForm.TempRect.Width, overlayForm.TempRect.Height);
+                overlayForm.Invalidate(); // Redesenha o retângulo no overlay
             }
         }
 
         private void Panel_MouseUp(object sender, MouseEventArgs e)
         {
-            if (tempLabel != null)
-            {
-                // Determinar a nova posição para o painel selecionado
-                int newTop = tempLabel.Top;
-                PanelCanais.Controls.Remove(tempLabel);
+            Panel panel = sender as Panel;
 
-                // Reposicionar o painel selecionado
+            if (isResizing && overlayForm != null)
+            {
+                // Finaliza o redimensionamento
+                isResizing = false;
+                isResizingFromTop = false;
+                panel.Cursor = Cursors.Default;
+
+                // Ajusta a altura e a posição do painel
+                if (isOnTopBorder)
+                {
+                    movingPanel.Top = overlayForm.TempRect.Top;
+                    movingPanel.Height = overlayForm.TempRect.Height;
+                }
+                else if (isOnBottomBorder)
+                {
+                    movingPanel.Height = overlayForm.TempRect.Height;
+                }
+
+                // Fecha o overlay
+                overlayForm.Close();
+                overlayForm.Dispose();
+                overlayForm = null;
+                AdjustPanelsAfterResize(movingPanel);
+                // Atualiza a altura no DataTable após o redimensionamento
+                UpdatePanelHeightInDataTable(movingPanel);
+            }
+
+            if (isMoving && overlayForm != null)
+            {
+                int newTop = overlayForm.TempRect.Top;
+
+                // Reposiciona o painel
                 movingPanel.Top = newTop;
+
+                // Fecha o overlay
+                overlayForm.Close();
+                overlayForm.Dispose();
+                overlayForm = null;
 
                 // Reposicionar todos os painéis para garantir a ordem correta
                 RepositionPanels();
-
                 // Atualizar a linha do DataTable com base na nova posição do painel
                 UpdateDataTableRow(movingPanel);
 
-
+                isMoving = false;
                 movingPanel = null;
-                tempLabel = null;
             }
         }
-        private void UpdateDataTableRow(Panel panel)
+        // Ajusta os painéis após o redimensionamento de um painel
+        private void AdjustPanelsAfterResize(Panel resizedPanel)
         {
-            // Recupera o valor de CodCanal1 associado ao painel
-            var codCanal = panel.Tag.ToString();
+            // Definir o espaçamento entre os painéis
+            const int spacing = 0;
 
-            // Encontrar a linha no DataTable com base no valor de CodCanal1
-            DataRow rowToMove = null;
-            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            // Obter a altura total do container
+            int totalHeight = PanelCanais.Height;
+            // Calcular a altura restante após o redimensionamento
+            int remainingHeight = totalHeight - resizedPanel.Height;
+
+            // Obter os painéis que não são o que foi redimensionado
+            var otherPanels = PanelCanais.Controls.OfType<Panel>().Where(p => p != resizedPanel).ToList();
+
+            if (otherPanels.Count > 0)
             {
-                if (row["CodCanal1"].ToString().Equals(codCanal))
+                // Calcula a nova altura proporcional para os outros painéis
+                int newHeightPerPanel = remainingHeight / otherPanels.Count;
+
+                // Ordenar os painéis por sua posição Top para garantir que o reposicionamento
+                // seja feito corretamente
+                var panels = PanelCanais.Controls.OfType<Panel>()
+                                                 .OrderBy(p => p.Top)
+                                                 .ToList();
+
+                int currentTop = 0;
+
+                // Ajustar os painéis para manter o layout correto
+                foreach (Panel panel in panels)
                 {
-                    rowToMove = row;
-                    break;
+                    if (panel == resizedPanel)
+                    {
+                        // O painel redimensionado mantém a posição e altura
+                        panel.Top = currentTop;
+                        currentTop += panel.Height + spacing;
+                    }
+                    else
+                    {
+                        // Os outros painéis são ajustados proporcionalmente
+                        panel.Top = currentTop;
+                        panel.Height = newHeightPerPanel;
+                        currentTop += panel.Height + spacing;
+                    }
                 }
-            }
-
-            if (rowToMove != null)
-            {
-                // Criar uma linha auxiliar e copiar os dados da linha original
-                DataRow newRow = GlobVar.tbl_MontagemSelecionada.NewRow();
-                newRow.ItemArray = rowToMove.ItemArray.Clone() as object[];
-
-                double auxIndex = PanelCanais.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
-
-                // Calcular o novo índice baseado na nova posição do painel
-                int newRowIndex = (int)Math.Round(panel.Top / (double)auxIndex);
-
-                // Remover a linha original
-                GlobVar.tbl_MontagemSelecionada.Rows.Remove(rowToMove);
-
-                // Adicionar a linha auxiliar na nova posição
-                if (newRowIndex >= GlobVar.tbl_MontagemSelecionada.Rows.Count)
-                {
-                    GlobVar.tbl_MontagemSelecionada.Rows.Add(newRow);
-                }
-                else
-                {
-                    GlobVar.tbl_MontagemSelecionada.Rows.InsertAt(newRow, newRowIndex);
-                }
-
-                // Reordenar os índices da tabela para refletir a nova ordem
-                //ReorderDataTable();
             }
         }
 
-
-
+        // Reposiciona todos os painéis após uma alteração de tamanho ou movimento
         private void RepositionPanels()
         {
             // Definir o espaçamento entre os painéis
@@ -309,6 +409,79 @@ namespace PlotagemOpenGL
                 y = panel.Bottom + spacing;
             }
         }
+
+        // Atualiza a altura do painel correspondente na tabela de dados
+        private void UpdatePanelHeightInDataTable(Panel panel)
+        {
+            var codCanal = panel.Tag.ToString();
+
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (row["CodCanal1"].ToString().Equals(codCanal))
+                {
+                    row["Altura"] = (float)panel.Height / PanelCanais.Height * 100;
+                    break;
+                }
+            }
+        }
+
+        // Atualiza a linha do DataTable com base na nova posição do painel
+        private void UpdateDataTableRow(Panel panel)
+        {
+            var codCanal = panel.Tag.ToString();
+
+            DataRow rowToMove = null;
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (row["CodCanal1"].ToString().Equals(codCanal))
+                {
+                    rowToMove = row;
+                    break;
+                }
+            }
+
+            if (rowToMove != null)
+            {
+                DataRow newRow = GlobVar.tbl_MontagemSelecionada.NewRow();
+                newRow.ItemArray = rowToMove.ItemArray.Clone() as object[];
+
+                double auxIndex = PanelCanais.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+                int newRowIndex = (int)Math.Round(panel.Top / (double)auxIndex);
+
+                GlobVar.tbl_MontagemSelecionada.Rows.Remove(rowToMove);
+
+                if (newRowIndex >= GlobVar.tbl_MontagemSelecionada.Rows.Count)
+                {
+                    GlobVar.tbl_MontagemSelecionada.Rows.Add(newRow);
+                }
+                else
+                {
+                    GlobVar.tbl_MontagemSelecionada.Rows.InsertAt(newRow, newRowIndex);
+                }
+            }
+        }
+
+
+
+        /*private void RepositionPanels()
+        {
+            // Definir o espaçamento entre os painéis
+            const int spacing = 0;
+
+            // Ordenar os controles por sua posição Top para garantir que o reposicionamento
+            // seja feito corretamente
+            var panels = PanelCanais.Controls.OfType<Panel>()
+                                             .OrderBy(p => p.Top)
+                                             .ToList();
+
+            int y = 0;
+            foreach (Panel panel in panels)
+            {
+                panel.Top = y;
+                y = panel.Bottom + spacing;
+            }
+        }*/
 
         private void rectangleLoad()
         {
@@ -430,7 +603,7 @@ namespace PlotagemOpenGL
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
         {
             resize_Control(PanelCanais, pncan);
-            resize_Control(dataGridView1, gridView); 
+            resize_Control(dataGridView1, gridView);
             resize_Control(button2, bt2);
         }
         private void button2_Click(object sender, EventArgs e)
@@ -621,7 +794,7 @@ namespace PlotagemOpenGL
                 FieldInfo plus = typeof(backLog).GetField($"plusLb{i}", BindingFlags.Static | BindingFlags.Public);
                 FieldInfo minus = typeof(backLog).GetField($"minusLb{i}", BindingFlags.Static | BindingFlags.Public);
                 FieldInfo scale = typeof(backLog).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
-                if (field != null);
+                if (field != null) ;
                 { //(Panel)field.GetValue(this);
                     Label label = (Label)labelName.GetValue(this);
                     Button btnPlus = (Button)plus.GetValue(this);
@@ -685,6 +858,17 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+        }
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+
+            Stringao.Text = $"isOnBottomBorder: {isOnBottomBorder} | isOnTopBorder: {isOnTopBorder}";
+        }
+
+
+        private void PanelCanais_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

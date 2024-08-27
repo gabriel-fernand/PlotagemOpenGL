@@ -55,6 +55,16 @@ namespace PlotagemOpenGL
             plusLb20 = new Button();
             label20 = new Label();
             scalaLb20 = new Label();
+            panel15 = new Panel();
+            minusLb15 = new Button();
+            plusLb15 = new Button();
+            label15 = new Label();
+            scalaLb15 = new Label();
+            panel14 = new Panel();
+            minusLb14 = new Button();
+            plusLb14 = new Button();
+            label14 = new Label();
+            scalaLb14 = new Label();
             panel19 = new Panel();
             minusLb19 = new Button();
             plusLb19 = new Button();
@@ -75,16 +85,6 @@ namespace PlotagemOpenGL
             plusLb16 = new Button();
             label16 = new Label();
             scalaLb16 = new Label();
-            panel15 = new Panel();
-            minusLb15 = new Button();
-            plusLb15 = new Button();
-            label15 = new Label();
-            scalaLb15 = new Label();
-            panel14 = new Panel();
-            minusLb14 = new Button();
-            plusLb14 = new Button();
-            label14 = new Label();
-            scalaLb14 = new Label();
             panel13 = new Panel();
             minusLb13 = new Button();
             plusLb13 = new Button();
@@ -150,6 +150,9 @@ namespace PlotagemOpenGL
             plusLb1 = new Button();
             label1 = new Label();
             scalaLb1 = new Label();
+            Stringao = new Label();
+
+            timer3 = new Timer();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)leituraBancoBindingSource).BeginInit();
             PanelCanais.SuspendLayout();
@@ -157,12 +160,12 @@ namespace PlotagemOpenGL
             panel23.SuspendLayout();
             panel21.SuspendLayout();
             panel20.SuspendLayout();
+            panel15.SuspendLayout();
+            panel14.SuspendLayout();
             panel19.SuspendLayout();
             panel18.SuspendLayout();
             panel17.SuspendLayout();
             panel16.SuspendLayout();
-            panel15.SuspendLayout();
-            panel14.SuspendLayout();
             panel13.SuspendLayout();
             panel12.SuspendLayout();
             panel11.SuspendLayout();
@@ -178,13 +181,19 @@ namespace PlotagemOpenGL
             panel1.SuspendLayout();
             SuspendLayout();
             // 
+            // timer3
+            // 
+            timer3.Interval = 1;
+            timer3.Tick += timer3_Tick;
+
+            // 
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new System.Drawing.Point(165, 12);
+            dataGridView1.Location = new System.Drawing.Point(360, 12);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new System.Drawing.Size(833, 599);
+            dataGridView1.Size = new System.Drawing.Size(638, 599);
             dataGridView1.TabIndex = 0;
             // 
             // leituraBancoBindingSource
@@ -203,16 +212,17 @@ namespace PlotagemOpenGL
             // 
             // PanelCanais
             // 
+            PanelCanais.BackColor = System.Drawing.SystemColors.Control;
             PanelCanais.Controls.Add(panel22);
             PanelCanais.Controls.Add(panel23);
             PanelCanais.Controls.Add(panel21);
             PanelCanais.Controls.Add(panel20);
+            PanelCanais.Controls.Add(panel15);
+            PanelCanais.Controls.Add(panel14);
             PanelCanais.Controls.Add(panel19);
             PanelCanais.Controls.Add(panel18);
             PanelCanais.Controls.Add(panel17);
             PanelCanais.Controls.Add(panel16);
-            PanelCanais.Controls.Add(panel15);
-            PanelCanais.Controls.Add(panel14);
             PanelCanais.Controls.Add(panel13);
             PanelCanais.Controls.Add(panel12);
             PanelCanais.Controls.Add(panel11);
@@ -228,8 +238,9 @@ namespace PlotagemOpenGL
             PanelCanais.Controls.Add(panel1);
             PanelCanais.Location = new System.Drawing.Point(12, 12);
             PanelCanais.Name = "PanelCanais";
-            PanelCanais.Size = new System.Drawing.Size(147, 599);
+            PanelCanais.Size = new System.Drawing.Size(342, 599);
             PanelCanais.TabIndex = 5;
+            PanelCanais.Paint += PanelCanais_Paint;
             // 
             // panel22
             // 
@@ -238,7 +249,7 @@ namespace PlotagemOpenGL
             panel22.Controls.Add(plusLb22);
             panel22.Controls.Add(label22);
             panel22.Controls.Add(scalaLb22);
-            panel22.Location = new System.Drawing.Point(0, 546);
+            panel22.Location = new System.Drawing.Point(137, 476);
             panel22.Name = "panel22";
             panel22.Size = new System.Drawing.Size(144, 25);
             panel22.TabIndex = 82;
@@ -290,7 +301,7 @@ namespace PlotagemOpenGL
             panel23.Controls.Add(label23);
             panel23.Controls.Add(plusLb23);
             panel23.Controls.Add(scalaLb23);
-            panel23.Location = new System.Drawing.Point(0, 572);
+            panel23.Location = new System.Drawing.Point(3, 516);
             panel23.Name = "panel23";
             panel23.Size = new System.Drawing.Size(144, 25);
             panel23.TabIndex = 82;
@@ -342,7 +353,7 @@ namespace PlotagemOpenGL
             panel21.Controls.Add(plusLb21);
             panel21.Controls.Add(label21);
             panel21.Controls.Add(scalaLb21);
-            panel21.Location = new System.Drawing.Point(0, 520);
+            panel21.Location = new System.Drawing.Point(137, 450);
             panel21.Name = "panel21";
             panel21.Size = new System.Drawing.Size(144, 25);
             panel21.TabIndex = 82;
@@ -394,7 +405,7 @@ namespace PlotagemOpenGL
             panel20.Controls.Add(plusLb20);
             panel20.Controls.Add(label20);
             panel20.Controls.Add(scalaLb20);
-            panel20.Location = new System.Drawing.Point(0, 494);
+            panel20.Location = new System.Drawing.Point(137, 424);
             panel20.Name = "panel20";
             panel20.Size = new System.Drawing.Size(144, 25);
             panel20.TabIndex = 82;
@@ -439,216 +450,6 @@ namespace PlotagemOpenGL
             scalaLb20.TabIndex = 67;
             scalaLb20.Text = "1.0f";
             // 
-            // panel19
-            // 
-            panel19.BorderStyle = BorderStyle.Fixed3D;
-            panel19.Controls.Add(minusLb19);
-            panel19.Controls.Add(plusLb19);
-            panel19.Controls.Add(label19);
-            panel19.Controls.Add(scalaLb19);
-            panel19.Location = new System.Drawing.Point(0, 468);
-            panel19.Name = "panel19";
-            panel19.Size = new System.Drawing.Size(144, 25);
-            panel19.TabIndex = 82;
-            // 
-            // minusLb19
-            // 
-            minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb19.Location = new System.Drawing.Point(85, 10);
-            minusLb19.Name = "minusLb19";
-            minusLb19.Size = new System.Drawing.Size(22, 18);
-            minusLb19.TabIndex = 66;
-            minusLb19.Text = "-";
-            minusLb19.UseVisualStyleBackColor = true;
-            // 
-            // plusLb19
-            // 
-            plusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb19.Location = new System.Drawing.Point(85, -3);
-            plusLb19.Name = "plusLb19";
-            plusLb19.Size = new System.Drawing.Size(22, 18);
-            plusLb19.TabIndex = 65;
-            plusLb19.Text = "+";
-            plusLb19.UseVisualStyleBackColor = true;
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Font = new System.Drawing.Font("Arial Narrow", 12F);
-            label19.Location = new System.Drawing.Point(3, 0);
-            label19.Name = "label19";
-            label19.Size = new System.Drawing.Size(61, 24);
-            label19.TabIndex = 57;
-            label19.Text = "label19";
-            // 
-            // scalaLb19
-            // 
-            scalaLb19.AutoSize = true;
-            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb19.Location = new System.Drawing.Point(60, 0);
-            scalaLb19.Name = "scalaLb19";
-            scalaLb19.Size = new System.Drawing.Size(29, 20);
-            scalaLb19.TabIndex = 65;
-            scalaLb19.Text = "1.0f";
-            // 
-            // panel18
-            // 
-            panel18.BorderStyle = BorderStyle.Fixed3D;
-            panel18.Controls.Add(minusLb18);
-            panel18.Controls.Add(plusLb18);
-            panel18.Controls.Add(label18);
-            panel18.Controls.Add(scalaLb18);
-            panel18.Location = new System.Drawing.Point(0, 442);
-            panel18.Name = "panel18";
-            panel18.Size = new System.Drawing.Size(144, 25);
-            panel18.TabIndex = 81;
-            // 
-            // minusLb18
-            // 
-            minusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb18.Location = new System.Drawing.Point(85, 10);
-            minusLb18.Name = "minusLb18";
-            minusLb18.Size = new System.Drawing.Size(22, 18);
-            minusLb18.TabIndex = 64;
-            minusLb18.Text = "-";
-            minusLb18.UseVisualStyleBackColor = true;
-            // 
-            // plusLb18
-            // 
-            plusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb18.Location = new System.Drawing.Point(85, -3);
-            plusLb18.Name = "plusLb18";
-            plusLb18.Size = new System.Drawing.Size(22, 18);
-            plusLb18.TabIndex = 63;
-            plusLb18.Text = "+";
-            plusLb18.UseVisualStyleBackColor = true;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Font = new System.Drawing.Font("Arial Narrow", 12F);
-            label18.Location = new System.Drawing.Point(3, 0);
-            label18.Name = "label18";
-            label18.Size = new System.Drawing.Size(61, 24);
-            label18.TabIndex = 56;
-            label18.Text = "label18";
-            // 
-            // scalaLb18
-            // 
-            scalaLb18.AutoSize = true;
-            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb18.Location = new System.Drawing.Point(60, 0);
-            scalaLb18.Name = "scalaLb18";
-            scalaLb18.Size = new System.Drawing.Size(29, 20);
-            scalaLb18.TabIndex = 63;
-            scalaLb18.Text = "1.0f";
-            // 
-            // panel17
-            // 
-            panel17.BorderStyle = BorderStyle.Fixed3D;
-            panel17.Controls.Add(plusLb17);
-            panel17.Controls.Add(minusLb17);
-            panel17.Controls.Add(label17);
-            panel17.Controls.Add(scalaLb17);
-            panel17.Location = new System.Drawing.Point(0, 416);
-            panel17.Name = "panel17";
-            panel17.Size = new System.Drawing.Size(144, 25);
-            panel17.TabIndex = 80;
-            // 
-            // plusLb17
-            // 
-            plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb17.Location = new System.Drawing.Point(85, -3);
-            plusLb17.Name = "plusLb17";
-            plusLb17.Size = new System.Drawing.Size(22, 18);
-            plusLb17.TabIndex = 62;
-            plusLb17.Text = "-";
-            plusLb17.UseVisualStyleBackColor = true;
-            // 
-            // minusLb17
-            // 
-            minusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb17.Location = new System.Drawing.Point(85, 10);
-            minusLb17.Name = "minusLb17";
-            minusLb17.Size = new System.Drawing.Size(22, 18);
-            minusLb17.TabIndex = 61;
-            minusLb17.Text = "+";
-            minusLb17.UseVisualStyleBackColor = true;
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Font = new System.Drawing.Font("Arial Narrow", 12F);
-            label17.Location = new System.Drawing.Point(3, 0);
-            label17.Name = "label17";
-            label17.Size = new System.Drawing.Size(61, 24);
-            label17.TabIndex = 55;
-            label17.Text = "label17";
-            // 
-            // scalaLb17
-            // 
-            scalaLb17.AutoSize = true;
-            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb17.Location = new System.Drawing.Point(60, 0);
-            scalaLb17.Name = "scalaLb17";
-            scalaLb17.Size = new System.Drawing.Size(29, 20);
-            scalaLb17.TabIndex = 61;
-            scalaLb17.Text = "1.0f";
-            // 
-            // panel16
-            // 
-            panel16.BorderStyle = BorderStyle.Fixed3D;
-            panel16.Controls.Add(minusLb16);
-            panel16.Controls.Add(plusLb16);
-            panel16.Controls.Add(label16);
-            panel16.Controls.Add(scalaLb16);
-            panel16.Location = new System.Drawing.Point(0, 390);
-            panel16.Name = "panel16";
-            panel16.Size = new System.Drawing.Size(144, 25);
-            panel16.TabIndex = 80;
-            // 
-            // minusLb16
-            // 
-            minusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb16.Location = new System.Drawing.Point(85, 10);
-            minusLb16.Name = "minusLb16";
-            minusLb16.Size = new System.Drawing.Size(22, 18);
-            minusLb16.TabIndex = 60;
-            minusLb16.Text = "-";
-            minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb16.UseVisualStyleBackColor = true;
-            // 
-            // plusLb16
-            // 
-            plusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb16.Location = new System.Drawing.Point(85, -3);
-            plusLb16.Name = "plusLb16";
-            plusLb16.Size = new System.Drawing.Size(22, 18);
-            plusLb16.TabIndex = 59;
-            plusLb16.Text = "+";
-            plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb16.UseVisualStyleBackColor = true;
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Font = new System.Drawing.Font("Arial Narrow", 12F);
-            label16.Location = new System.Drawing.Point(3, 0);
-            label16.Name = "label16";
-            label16.Size = new System.Drawing.Size(61, 24);
-            label16.TabIndex = 54;
-            label16.Text = "label16";
-            // 
-            // scalaLb16
-            // 
-            scalaLb16.AutoSize = true;
-            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb16.Location = new System.Drawing.Point(60, 0);
-            scalaLb16.Name = "scalaLb16";
-            scalaLb16.Size = new System.Drawing.Size(29, 20);
-            scalaLb16.TabIndex = 54;
-            scalaLb16.Text = "1.0f";
-            // 
             // panel15
             // 
             panel15.BorderStyle = BorderStyle.Fixed3D;
@@ -656,7 +457,7 @@ namespace PlotagemOpenGL
             panel15.Controls.Add(plusLb15);
             panel15.Controls.Add(label15);
             panel15.Controls.Add(scalaLb15);
-            panel15.Location = new System.Drawing.Point(0, 363);
+            panel15.Location = new System.Drawing.Point(154, 231);
             panel15.Name = "panel15";
             panel15.Size = new System.Drawing.Size(144, 25);
             panel15.TabIndex = 80;
@@ -708,7 +509,7 @@ namespace PlotagemOpenGL
             panel14.Controls.Add(plusLb14);
             panel14.Controls.Add(label14);
             panel14.Controls.Add(scalaLb14);
-            panel14.Location = new System.Drawing.Point(0, 338);
+            panel14.Location = new System.Drawing.Point(189, 179);
             panel14.Name = "panel14";
             panel14.Size = new System.Drawing.Size(144, 25);
             panel14.TabIndex = 80;
@@ -753,6 +554,219 @@ namespace PlotagemOpenGL
             scalaLb14.TabIndex = 50;
             scalaLb14.Text = "1.0f";
             // 
+            // panel19
+            // 
+            panel19.BorderStyle = BorderStyle.Fixed3D;
+            panel19.Controls.Add(minusLb19);
+            panel19.Controls.Add(plusLb19);
+            panel19.Controls.Add(label19);
+            panel19.Controls.Add(scalaLb19);
+            panel19.Location = new System.Drawing.Point(137, 398);
+            panel19.Name = "panel19";
+            panel19.Size = new System.Drawing.Size(144, 25);
+            panel19.TabIndex = 82;
+            // 
+            // minusLb19
+            // 
+            minusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb19.Location = new System.Drawing.Point(85, 10);
+            minusLb19.Name = "minusLb19";
+            minusLb19.Size = new System.Drawing.Size(22, 18);
+            minusLb19.TabIndex = 66;
+            minusLb19.Text = "-";
+            minusLb19.UseVisualStyleBackColor = true;
+            // 
+            // plusLb19
+            // 
+            plusLb19.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb19.Location = new System.Drawing.Point(85, -3);
+            plusLb19.Name = "plusLb19";
+            plusLb19.Size = new System.Drawing.Size(22, 18);
+            plusLb19.TabIndex = 65;
+            plusLb19.Text = "+";
+            plusLb19.UseVisualStyleBackColor = true;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            label19.Location = new System.Drawing.Point(3, 0);
+            label19.Name = "label19";
+            label19.Size = new System.Drawing.Size(61, 24);
+            label19.TabIndex = 57;
+            label19.Text = "label19";
+            // 
+            // scalaLb19
+            // 
+            scalaLb19.AutoSize = true;
+            scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            scalaLb19.Location = new System.Drawing.Point(60, 0);
+            scalaLb19.Name = "scalaLb19";
+            scalaLb19.Size = new System.Drawing.Size(29, 20);
+            scalaLb19.TabIndex = 65;
+            scalaLb19.Text = "1.0f";
+            // 
+            // panel18
+            // 
+            panel18.BorderStyle = BorderStyle.Fixed3D;
+            panel18.Controls.Add(minusLb18);
+            panel18.Controls.Add(plusLb18);
+            panel18.Controls.Add(label18);
+            panel18.Controls.Add(scalaLb18);
+            panel18.Location = new System.Drawing.Point(137, 372);
+            panel18.Name = "panel18";
+            panel18.Size = new System.Drawing.Size(144, 25);
+            panel18.TabIndex = 81;
+            // 
+            // minusLb18
+            // 
+            minusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb18.Location = new System.Drawing.Point(85, 10);
+            minusLb18.Name = "minusLb18";
+            minusLb18.Size = new System.Drawing.Size(22, 18);
+            minusLb18.TabIndex = 64;
+            minusLb18.Text = "-";
+            minusLb18.UseVisualStyleBackColor = true;
+            // 
+            // plusLb18
+            // 
+            plusLb18.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb18.Location = new System.Drawing.Point(85, -3);
+            plusLb18.Name = "plusLb18";
+            plusLb18.Size = new System.Drawing.Size(22, 18);
+            plusLb18.TabIndex = 63;
+            plusLb18.Text = "+";
+            plusLb18.UseVisualStyleBackColor = true;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            label18.Location = new System.Drawing.Point(3, 0);
+            label18.Name = "label18";
+            label18.Size = new System.Drawing.Size(61, 24);
+            label18.TabIndex = 56;
+            label18.Text = "label18";
+            // 
+            // scalaLb18
+            // 
+            scalaLb18.AutoSize = true;
+            scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            scalaLb18.Location = new System.Drawing.Point(60, 0);
+            scalaLb18.Name = "scalaLb18";
+            scalaLb18.Size = new System.Drawing.Size(29, 20);
+            scalaLb18.TabIndex = 63;
+            scalaLb18.Text = "1.0f";
+            // 
+            // panel17
+            // 
+            panel17.BackColor = System.Drawing.SystemColors.Control;
+            panel17.BorderStyle = BorderStyle.Fixed3D;
+            panel17.Controls.Add(plusLb17);
+            panel17.Controls.Add(minusLb17);
+            panel17.Controls.Add(label17);
+            panel17.Controls.Add(scalaLb17);
+            panel17.Location = new System.Drawing.Point(117, 291);
+            panel17.Name = "panel17";
+            panel17.Size = new System.Drawing.Size(144, 25);
+            panel17.TabIndex = 80;
+            // 
+            // plusLb17
+            // 
+            plusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb17.Location = new System.Drawing.Point(85, -3);
+            plusLb17.Name = "plusLb17";
+            plusLb17.Size = new System.Drawing.Size(22, 18);
+            plusLb17.TabIndex = 62;
+            plusLb17.Text = "-";
+            plusLb17.UseVisualStyleBackColor = true;
+            // 
+            // minusLb17
+            // 
+            minusLb17.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb17.Location = new System.Drawing.Point(85, 10);
+            minusLb17.Name = "minusLb17";
+            minusLb17.Size = new System.Drawing.Size(22, 18);
+            minusLb17.TabIndex = 61;
+            minusLb17.Text = "+";
+            minusLb17.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            label17.Location = new System.Drawing.Point(3, 0);
+            label17.Name = "label17";
+            label17.Size = new System.Drawing.Size(61, 24);
+            label17.TabIndex = 55;
+            label17.Text = "label17";
+            // 
+            // scalaLb17
+            // 
+            scalaLb17.AutoSize = true;
+            scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            scalaLb17.Location = new System.Drawing.Point(60, 0);
+            scalaLb17.Name = "scalaLb17";
+            scalaLb17.Size = new System.Drawing.Size(29, 20);
+            scalaLb17.TabIndex = 61;
+            scalaLb17.Text = "1.0f";
+            // 
+            // panel16
+            // 
+            panel16.BackColor = System.Drawing.Color.Transparent;
+            panel16.BorderStyle = BorderStyle.Fixed3D;
+            panel16.Controls.Add(minusLb16);
+            panel16.Controls.Add(plusLb16);
+            panel16.Controls.Add(label16);
+            panel16.Controls.Add(scalaLb16);
+            panel16.ForeColor = System.Drawing.Color.Transparent;
+            panel16.Location = new System.Drawing.Point(11, 134);
+            panel16.Name = "panel16";
+            panel16.Size = new System.Drawing.Size(144, 25);
+            panel16.TabIndex = 80;
+            // 
+            // minusLb16
+            // 
+            minusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb16.Location = new System.Drawing.Point(85, 10);
+            minusLb16.Name = "minusLb16";
+            minusLb16.Size = new System.Drawing.Size(22, 18);
+            minusLb16.TabIndex = 60;
+            minusLb16.Text = "-";
+            minusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            minusLb16.UseVisualStyleBackColor = true;
+            // 
+            // plusLb16
+            // 
+            plusLb16.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb16.Location = new System.Drawing.Point(85, -3);
+            plusLb16.Name = "plusLb16";
+            plusLb16.Size = new System.Drawing.Size(22, 18);
+            plusLb16.TabIndex = 59;
+            plusLb16.Text = "+";
+            plusLb16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            plusLb16.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Font = new System.Drawing.Font("Arial Narrow", 12F);
+            label16.Location = new System.Drawing.Point(3, 0);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(61, 24);
+            label16.TabIndex = 54;
+            label16.Text = "label16";
+            // 
+            // scalaLb16
+            // 
+            scalaLb16.AutoSize = true;
+            scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F);
+            scalaLb16.Location = new System.Drawing.Point(60, 0);
+            scalaLb16.Name = "scalaLb16";
+            scalaLb16.Size = new System.Drawing.Size(29, 20);
+            scalaLb16.TabIndex = 54;
+            scalaLb16.Text = "1.0f";
+            // 
             // panel13
             // 
             panel13.BorderStyle = BorderStyle.Fixed3D;
@@ -760,7 +774,7 @@ namespace PlotagemOpenGL
             panel13.Controls.Add(plusLb13);
             panel13.Controls.Add(label13);
             panel13.Controls.Add(scalaLb13);
-            panel13.Location = new System.Drawing.Point(0, 312);
+            panel13.Location = new System.Drawing.Point(170, 93);
             panel13.Name = "panel13";
             panel13.Size = new System.Drawing.Size(144, 25);
             panel13.TabIndex = 80;
@@ -807,12 +821,13 @@ namespace PlotagemOpenGL
             // 
             // panel12
             // 
+            panel12.BackColor = System.Drawing.Color.Transparent;
             panel12.BorderStyle = BorderStyle.Fixed3D;
             panel12.Controls.Add(plusLb12);
             panel12.Controls.Add(minusLb12);
             panel12.Controls.Add(label12);
             panel12.Controls.Add(scalaLb12);
-            panel12.Location = new System.Drawing.Point(0, 286);
+            panel12.Location = new System.Drawing.Point(45, 395);
             panel12.Name = "panel12";
             panel12.Size = new System.Drawing.Size(144, 25);
             panel12.TabIndex = 80;
@@ -1074,7 +1089,7 @@ namespace PlotagemOpenGL
             panel7.Controls.Add(minusLb7);
             panel7.Controls.Add(label7);
             panel7.Controls.Add(scalaLb7);
-            panel7.Location = new System.Drawing.Point(0, 156);
+            panel7.Location = new System.Drawing.Point(40, 88);
             panel7.Name = "panel7";
             panel7.Size = new System.Drawing.Size(144, 25);
             panel7.TabIndex = 80;
@@ -1126,7 +1141,7 @@ namespace PlotagemOpenGL
             panel6.Controls.Add(plusLb6);
             panel6.Controls.Add(label6);
             panel6.Controls.Add(scalaLb6);
-            panel6.Location = new System.Drawing.Point(0, 130);
+            panel6.Location = new System.Drawing.Point(102, 354);
             panel6.Name = "panel6";
             panel6.Size = new System.Drawing.Size(144, 25);
             panel6.TabIndex = 80;
@@ -1180,7 +1195,7 @@ namespace PlotagemOpenGL
             panel5.Controls.Add(plusLb5);
             panel5.Controls.Add(label5);
             panel5.Controls.Add(scalaLb5);
-            panel5.Location = new System.Drawing.Point(0, 104);
+            panel5.Location = new System.Drawing.Point(142, 43);
             panel5.Name = "panel5";
             panel5.Size = new System.Drawing.Size(144, 25);
             panel5.TabIndex = 80;
@@ -1232,7 +1247,7 @@ namespace PlotagemOpenGL
             panel4.Controls.Add(plusLb4);
             panel4.Controls.Add(scalaLb4);
             panel4.Controls.Add(label4);
-            panel4.Location = new System.Drawing.Point(0, 78);
+            panel4.Location = new System.Drawing.Point(5, 31);
             panel4.Name = "panel4";
             panel4.Size = new System.Drawing.Size(144, 25);
             panel4.TabIndex = 80;
@@ -1284,7 +1299,7 @@ namespace PlotagemOpenGL
             panel3.Controls.Add(plusLb3);
             panel3.Controls.Add(scalaLb3);
             panel3.Controls.Add(label3);
-            panel3.Location = new System.Drawing.Point(0, 52);
+            panel3.Location = new System.Drawing.Point(15, 481);
             panel3.Name = "panel3";
             panel3.Size = new System.Drawing.Size(144, 25);
             panel3.TabIndex = 80;
@@ -1336,7 +1351,7 @@ namespace PlotagemOpenGL
             panel2.Controls.Add(plusLb2);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(scalaLb2);
-            panel2.Location = new System.Drawing.Point(0, 26);
+            panel2.Location = new System.Drawing.Point(20, 328);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(144, 25);
             panel2.TabIndex = 79;
@@ -1435,11 +1450,21 @@ namespace PlotagemOpenGL
             scalaLb1.TabIndex = 16;
             scalaLb1.Text = "1.0f";
             // 
+            // Stringao
+            // 
+            Stringao.AutoSize = true;
+            Stringao.Location = new System.Drawing.Point(12, 628);
+            Stringao.Name = "Stringao";
+            Stringao.Size = new System.Drawing.Size(58, 20);
+            Stringao.TabIndex = 6;
+            Stringao.Text = "label24";
+            // 
             // backLog
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1010, 688);
+            Controls.Add(Stringao);
             Controls.Add(PanelCanais);
             Controls.Add(button2);
             Controls.Add(dataGridView1);
@@ -1456,6 +1481,10 @@ namespace PlotagemOpenGL
             panel21.PerformLayout();
             panel20.ResumeLayout(false);
             panel20.PerformLayout();
+            panel15.ResumeLayout(false);
+            panel15.PerformLayout();
+            panel14.ResumeLayout(false);
+            panel14.PerformLayout();
             panel19.ResumeLayout(false);
             panel19.PerformLayout();
             panel18.ResumeLayout(false);
@@ -1464,10 +1493,6 @@ namespace PlotagemOpenGL
             panel17.PerformLayout();
             panel16.ResumeLayout(false);
             panel16.PerformLayout();
-            panel15.ResumeLayout(false);
-            panel15.PerformLayout();
-            panel14.ResumeLayout(false);
-            panel14.PerformLayout();
             panel13.ResumeLayout(false);
             panel13.PerformLayout();
             panel12.ResumeLayout(false);
@@ -1495,10 +1520,11 @@ namespace PlotagemOpenGL
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
+        public static Timer timer3;
         public static Label label1;
         public static Label label2;
         public static Label label4;
@@ -1618,5 +1644,6 @@ namespace PlotagemOpenGL
         public static Panel panel23;
         public static Panel panel21;
         public static Panel panel20;
+        public static Label Stringao;
     }
 }

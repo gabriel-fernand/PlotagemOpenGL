@@ -8,6 +8,8 @@ using SharpGL;
 using Size = System.Drawing.Size;
 using Point = System.Drawing.Point;
 using Vector3 = System.Numerics.Vector3;
+using Pen = System.Drawing.Pen;
+using Color = System.Drawing.Color;
 using System.Text.RegularExpressions;
 using PlotagemOpenGL.auxi;
 using System.Collections.Generic;
@@ -32,6 +34,7 @@ using PlotagemOpenGL.auxi.FormsAuxi;
 using System.Windows.Media;
 using ClassesBDNano;
 using PlotagemOpenGL.auxi.FormComentario;
+using Accord.Statistics.Moving;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -214,6 +217,7 @@ namespace PlotagemOpenGL
             this.Resize += Painel_resiz;
             this.Resize += panelLb_Resiz;
             this.Controls.Add(openglControl1);
+            painelExames.Paint += PainelExames_Paint;
             toolTip1 = new CustomToolTip();
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
@@ -284,6 +288,15 @@ namespace PlotagemOpenGL
                     panel.MouseDown += Panel_MouseDown;
                     panel.MouseMove += Panel_MouseMove;
                     panel.MouseUp += Panel_MouseUp;
+                    foreach (Control lable in panel.Controls)
+                    {
+                        if(lable is Label)
+                        {
+                            lable.MouseDown += Panel_MouseDown;
+                            lable.MouseMove += Panel_MouseMove;
+                            lable.MouseUp += Panel_MouseUp;
+                        }
+                    }
                 }
             }
 
@@ -568,70 +581,92 @@ namespace PlotagemOpenGL
             }
         }
         private Panel movingPanel = null;
-        private Label tempLabel = null; // Usando Label para a movimentação
+        private Panel tempLabel = null; // Usando Panel para a movimentação
+        private Rectangle tempRec;
         private int initialPanelY;
         private System.Drawing.Point mouseDownLocation;
+        private bool isMoving = false;
+        private void PainelExames_Paint(object sender, PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (isMoving)
+            {
+                using (Pen pen = new Pen(Color.Black, 2))
+                {
+                    e.Graphics.DrawRectangle(pen, tempRec);
+                }
+            }
+        }
+
+        private OverlayForm overlayForm;
 
         private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                // Inicializar o painel que será movido
-                movingPanel = sender as Panel;
+                Control clickedControl = sender as Control;
+
+                // Verifica se o controle clicado é um Label
+                if (clickedControl is Label)
+                {
+                    // Obtém o Panel pai do Label
+                    movingPanel = clickedControl.Parent as Panel;
+                }
+                else
+                {
+                    // Caso contrário, assume que o clique foi diretamente em um Panel
+                    movingPanel = clickedControl as Panel;
+                }
                 mouseDownLocation = e.Location;
                 initialPanelY = movingPanel.Top;
+                // Cria e configura o formulário de overlay
+                overlayForm = new OverlayForm();
+                overlayForm.Bounds = painelExames.RectangleToScreen(painelExames.ClientRectangle);
+                overlayForm.TempRect = new Rectangle(movingPanel.Left, movingPanel.Top, movingPanel.Width, movingPanel.Height);
+                overlayForm.Show();
 
-                // Criar e configurar o Label auxiliar
-                tempLabel = new Label
-                {
-                    Size = movingPanel.Size,
-                    BackColor = System.Drawing.Color.Transparent, // Fundo transparente
-                    BorderStyle = BorderStyle.Fixed3D, // Apenas para visualização
-                    Location = movingPanel.Location,
-                    Text = string.Empty
-                };
-                painelExames.Controls.Add(tempLabel);
-                tempLabel.BringToFront(); // Coloca o Label auxiliar acima dos outros
-
-                // Reposicionar o Label auxiliar
-                tempLabel.Top = initialPanelY;
+                isMoving = true;
             }
         }
 
         private void Panel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (tempLabel != null)
+            if (isMoving && overlayForm != null)
             {
                 int deltaY = e.Y - mouseDownLocation.Y;
                 int newTop = initialPanelY + deltaY;
 
-                // Garantir que o Label auxiliar não saia do topo ou da parte inferior do PanelCanais
-                newTop = Math.Max(0, Math.Min(newTop, painelExames.Height - tempLabel.Height));
+                // Garantir que o retângulo temporário não saia do topo ou da parte inferior do painelExames
+                newTop = Math.Max(0, Math.Min(newTop, painelExames.Height - overlayForm.TempRect.Height));
 
-                tempLabel.Top = newTop;
+                overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, newTop, overlayForm.TempRect.Width, overlayForm.TempRect.Height);
+                overlayForm.Invalidate(); // Redesenha o retângulo no overlay
             }
         }
 
         private void Panel_MouseUp(object sender, MouseEventArgs e)
         {
-            if (tempLabel != null)
+            if (isMoving && overlayForm != null)
             {
-                // Determinar a nova posição para o painel selecionado
-                int newTop = tempLabel.Top;
-                painelExames.Controls.Remove(tempLabel);
+                int newTop = overlayForm.TempRect.Top;
 
-                // Reposicionar o painel selecionado
+                // Reposiciona o painel
                 movingPanel.Top = newTop;
+
+                // Fecha o overlay
+                overlayForm.Close();
+                overlayForm.Dispose();
+                overlayForm = null;
 
                 // Reposicionar todos os painéis para garantir a ordem correta
                 RepositionPanels();
                 // Atualizar a linha do DataTable com base na nova posição do painel
                 UpdateDataTableRow(movingPanel);
-
                 ReorderGrafSelectedCodSelectedAndScale();
 
+                isMoving = false;
                 movingPanel = null;
-                tempLabel = null;
                 TelaClearAndReload();
             }
         }
