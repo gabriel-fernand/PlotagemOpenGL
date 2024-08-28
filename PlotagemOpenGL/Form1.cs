@@ -582,10 +582,18 @@ namespace PlotagemOpenGL
         }
         private Panel movingPanel = null;
         private Panel tempLabel = null; // Usando Panel para a movimentação
+        private const int borderWidth = 6; // Largura da borda sensível para redimensionamento
         private Rectangle tempRec;
         private int initialPanelY;
         private System.Drawing.Point mouseDownLocation;
         private bool isMoving = false;
+        public bool isOnBottomBorder = false;
+        public bool isOnTopBorder = false;
+        private bool mouseIsDown = false;
+        private bool isResizing = false;
+
+        private int originalHeight;
+        private int originalTop;
         private void PainelExames_Paint(object sender, PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -618,20 +626,99 @@ namespace PlotagemOpenGL
                     // Caso contrário, assume que o clique foi diretamente em um Panel
                     movingPanel = clickedControl as Panel;
                 }
-                mouseDownLocation = e.Location;
-                initialPanelY = movingPanel.Top;
-                // Cria e configura o formulário de overlay
-                overlayForm = new OverlayForm();
-                overlayForm.Bounds = painelExames.RectangleToScreen(painelExames.ClientRectangle);
-                overlayForm.TempRect = new Rectangle(movingPanel.Left, movingPanel.Top, movingPanel.Width, movingPanel.Height);
-                overlayForm.Show();
 
-                isMoving = true;
+                if ((isOnBottomBorder || isOnTopBorder) && e.Button == MouseButtons.Left)
+                {
+                    // Inicia o redimensionamento
+                    mouseIsDown = true;
+                    isResizing = true;
+                    originalHeight = movingPanel.Height;
+                    originalTop = movingPanel.Top;
+
+                    overlayForm = new OverlayForm();
+                    overlayForm.Bounds = painelExames.RectangleToScreen(painelExames.ClientRectangle);
+                    overlayForm.TempRect = new Rectangle(movingPanel.Left, originalTop, movingPanel.Width, originalHeight);
+                    mouseDownLocation = e.Location;
+
+                    overlayForm.Show();
+                }else{
+
+                    mouseDownLocation = e.Location;
+                    initialPanelY = movingPanel.Top;
+                    // Cria e configura o formulário de overlay
+                    overlayForm = new OverlayForm();
+                    overlayForm.Bounds = painelExames.RectangleToScreen(painelExames.ClientRectangle);
+                    overlayForm.TempRect = new Rectangle(movingPanel.Left, movingPanel.Top, movingPanel.Width, movingPanel.Height);
+                    overlayForm.Show();
+
+                    isMoving = true;
+                }
             }
         }
 
         private void Panel_MouseMove(object sender, MouseEventArgs e)
         {
+            Control clickedControl = sender as Control;
+
+            // Verifica se o controle clicado é um Label
+            if (clickedControl is Label)
+            {
+                // Obtém o Panel pai do Label
+                movingPanel = clickedControl.Parent as Panel;
+            }
+            else
+            {
+                // Caso contrário, assume que o clique foi diretamente em um Panel
+                movingPanel = clickedControl as Panel;
+            }
+
+            if (!mouseIsDown)
+            {
+                // Verifica se o mouse está na borda inferior ou superior do painel ao clicar
+                isOnBottomBorder = Math.Abs(e.Y - movingPanel.Height) <= borderWidth;
+                isOnTopBorder = Math.Abs(e.Y) <= borderWidth;
+
+                if (isOnBottomBorder || isOnTopBorder)
+                {
+                    this.Cursor = Cursors.SizeNS;
+                }
+                else
+                {
+                    this.Cursor = Cursors.Default;
+                }
+            }
+            if (isResizing && overlayForm != null)
+            {
+                int deltaY = e.Y - mouseDownLocation.Y;
+
+                if (isOnTopBorder)
+                {
+                    int newTop = originalTop + deltaY;
+                    int newHeight = originalHeight - deltaY;
+
+                    newTop = Math.Max(0, Math.Min(newTop, painelExames.Height - newHeight));
+                    newHeight = Math.Max(0, Math.Min(newHeight, painelExames.Height - newTop));
+                    if(newHeight < 20)
+                    {
+                        newHeight = 20;
+                    }
+                    overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, newTop, overlayForm.TempRect.Width, newHeight);
+                }
+                else
+                {
+                    int newHeight = originalHeight + deltaY;
+
+                    newHeight = Math.Max(0, Math.Min(newHeight, painelExames.Height - originalTop));
+                    if (newHeight < 20)
+                    {
+                        newHeight = 20;
+                    }
+                    overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, overlayForm.TempRect.Y, overlayForm.TempRect.Width, newHeight);
+                }
+
+                overlayForm.Invalidate(); // Redesenha o retângulo no overlay
+            }
+
             if (isMoving && overlayForm != null)
             {
                 int deltaY = e.Y - mouseDownLocation.Y;
@@ -647,6 +734,49 @@ namespace PlotagemOpenGL
 
         private void Panel_MouseUp(object sender, MouseEventArgs e)
         {
+            if (isResizing && overlayForm != null)
+            {
+                // Finaliza o redimensionamento
+                mouseIsDown = false;
+                isResizing = false;
+                movingPanel.Cursor = Cursors.Default;
+
+                // Ajusta a altura e a posição do painel
+                if (isOnTopBorder)
+                {
+                    movingPanel.Top = overlayForm.TempRect.Top;
+                    movingPanel.Height = overlayForm.TempRect.Height;
+                    if (movingPanel.Height < 20)
+                    {
+                        movingPanel.Height = 20;
+                    }
+                }
+                else if (isOnBottomBorder)
+                {
+                    movingPanel.Height = overlayForm.TempRect.Height;
+                    if(movingPanel.Height < 20)
+                    {
+                        movingPanel.Height = 20;
+                    }
+                }
+                AdjustPanelsAfterResize(movingPanel);
+
+                // Fecha o overlay
+                overlayForm.Close();
+                overlayForm.Dispose();
+                overlayForm = null;
+                // Atualiza a altura no DataTable após o redimensionamento
+                UpdatePanelHeightInDataTable();
+                canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
+                canais.reloc();
+                RepositionPanels();
+
+                TelaClearAndReload();
+            }
+
             if (isMoving && overlayForm != null)
             {
                 int newTop = overlayForm.TempRect.Top;
@@ -671,6 +801,120 @@ namespace PlotagemOpenGL
             }
         }
 
+        private void AdjustPanelsAfterResize(Panel resizedPanel)
+        {
+            int totalHeight = painelExames.ClientSize.Height; // Altura total do contêiner pai
+            int minHeightPerPanel = 20; // Altura mínima permitida para cada painel
+            int newHeight = resizedPanel.Height;
+
+            // Garantir que o painel redimensionado não seja menor que o mínimo permitido
+            if (newHeight < minHeightPerPanel) newHeight = minHeightPerPanel;
+
+            // Obter a lista de todos os outros painéis, excluindo o painel redimensionado
+            List<Panel> otherPanels = painelExames.Controls.OfType<Panel>()
+                                                .Where(p => p != resizedPanel)
+                                                .ToList();
+
+            int remainingHeight = totalHeight - newHeight; // Calcular a altura restante após redimensionar o painel
+            int newHeightPerPanel = remainingHeight / otherPanels.Count; // Calcular a nova altura para cada painel
+
+            // Verificar se a nova altura de cada painel é menor que a altura mínima
+            if (newHeightPerPanel < minHeightPerPanel)
+            {
+                newHeightPerPanel = minHeightPerPanel; // Definir a altura mínima
+                int aux = newHeightPerPanel * otherPanels.Count; // Altura total ocupada pelos outros painéis
+                resizedPanel.Height = totalHeight - aux; // Ajustar a altura do painel redimensionado
+            }
+            else
+            {
+                resizedPanel.Height = newHeight; // Definir a nova altura do painel redimensionado
+            }
+
+            // Ajustar a altura dos outros painéis
+            foreach (Panel panel in otherPanels)
+            {
+                panel.Height = newHeightPerPanel;
+            }
+
+            // Garantir que a soma das alturas seja igual à altura total
+            int currentTotalHeight = painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
+
+            if (currentTotalHeight != totalHeight)
+            {
+                int difference = totalHeight - currentTotalHeight;
+                int adjustmentPerPanel = difference / painelExames.Controls.Count;
+
+                // Ajustar a altura de cada painel
+                foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+                {
+                    panel.Height += adjustmentPerPanel;
+                }
+
+                // Caso ainda haja uma diferença devido a arredondamento
+                int finalAdjustment = totalHeight - painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
+                if (finalAdjustment != 0)
+                {
+                    painelExames.Controls.OfType<Panel>().Last().Height += finalAdjustment;
+                }
+            }
+
+            // Reposicionar todos os painéis
+            int currentY = 0; // Variável para acompanhar a posição Y atual
+            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            {
+                panel.Top = currentY; // Atualizar a posição vertical do painel
+                currentY += panel.Height; // Incrementar a posição vertical para o próximo painel
+            }
+        }
+
+        private void UpdatePanelHeightInDataTable()
+        {
+            float totalPercentage = 0;
+            DataRow lastRow = null;
+
+            // Primeiro, calcule a altura de cada painel como uma porcentagem e garanta que seja limitado a duas casas decimais
+            foreach (Panel pn in painelExames.Controls)
+            {
+                var codCanal = pn.Tag.ToString();
+
+                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    if (row["CodCanal1"].ToString().Equals(codCanal))
+                    {
+                        // Calcula a altura do painel como uma porcentagem do painelExames
+                        float alturaPercent = (float)pn.Height / painelExames.Height * 100;
+
+                        // Limita a duas casas decimais
+                        alturaPercent = (float)Math.Round(alturaPercent, 2);
+
+                        // Atribui o valor formatado à coluna "Altura"
+                        row["Altura"] = alturaPercent;
+
+                        totalPercentage += alturaPercent;
+                        lastRow = row; // Armazena a última linha encontrada
+                        break;
+                    }
+                }
+            }
+
+            // Verifica se a soma das porcentagens excede 100
+            if (totalPercentage > 100 && lastRow != null)
+            {
+                // Ajusta o valor da última linha para que a soma seja 100
+                float excess = totalPercentage - 100;
+                float lastRowValue = (float)lastRow["Altura"];
+                lastRow["Altura"] = (float)Math.Round(lastRowValue - excess, 2);
+            }
+            else if (totalPercentage < 100 && lastRow != null)
+            {
+                // Ajusta o valor da última linha para que a soma seja 100
+                float deficit = 100 - totalPercentage;
+                float lastRowValue = (float)lastRow["Altura"];
+                lastRow["Altura"] = (float)Math.Round(lastRowValue + deficit, 2);
+            }
+        }
+
+
         private void RepositionPanels()
         {
             // Definir o espaçamento entre os painéis
@@ -691,11 +935,9 @@ namespace PlotagemOpenGL
         }
         private void UpdateDataTableRow(Panel panel)
         {
-            // Recupera o valor de CodCanal1 associado ao painel
             var codCanal = panel.Tag.ToString();
-
-            // Encontrar a linha no DataTable com base no valor de CodCanal1
             DataRow rowToMove = null;
+
             foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
             {
                 if (row["CodCanal1"].ToString().Equals(codCanal))
@@ -707,19 +949,14 @@ namespace PlotagemOpenGL
 
             if (rowToMove != null)
             {
-                // Criar uma linha auxiliar e copiar os dados da linha original
                 DataRow newRow = GlobVar.tbl_MontagemSelecionada.NewRow();
                 newRow.ItemArray = rowToMove.ItemArray.Clone() as object[];
 
                 double auxIndex = painelExames.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
+                int newRowIndex = (int)Math.Max(0, Math.Min(GlobVar.tbl_MontagemSelecionada.Rows.Count - 1, panel.Top / (double)auxIndex));
 
-                // Calcular o novo índice baseado na nova posição do painel
-                int newRowIndex = (int)Math.Round(panel.Top / (double)auxIndex);
-
-                // Remover a linha original
                 GlobVar.tbl_MontagemSelecionada.Rows.Remove(rowToMove);
 
-                // Adicionar a linha auxiliar na nova posição
                 if (newRowIndex >= GlobVar.tbl_MontagemSelecionada.Rows.Count)
                 {
                     GlobVar.tbl_MontagemSelecionada.Rows.Add(newRow);
@@ -728,9 +965,6 @@ namespace PlotagemOpenGL
                 {
                     GlobVar.tbl_MontagemSelecionada.Rows.InsertAt(newRow, newRowIndex);
                 }
-
-                // Reordenar os índices da tabela para refletir a nova ordem
-                //ReorderDataTable();
             }
         }
         private void ReorderGrafSelectedCodSelectedAndScale()

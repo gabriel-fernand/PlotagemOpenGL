@@ -95,10 +95,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             float auxY = 0;
             GlobVar.StartY = new float[qtdGraf];
             GlobVar.EndY = new float[qtdGraf];
+            int olocomeu = Canais.pnSizes.Length - 1;
             for (int i = 0; i < qtdGraf; i++)
             {
                 desenhoLoc[i] = aux;
-                aux += Canais.pnSizes[i + 1] - Canais.pnSizes[i];
+                aux += Canais.pnSizes[olocomeu] - Canais.pnSizes[olocomeu - 1];
+                olocomeu--;
             }
             for (int i = 0; i < GlobVar.StartY.Length; i++)
             {

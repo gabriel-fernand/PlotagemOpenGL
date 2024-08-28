@@ -204,6 +204,7 @@ namespace PlotagemOpenGL
             if ((isOnBottomBorder || isOnTopBorder) && e.Button == MouseButtons.Left)
             {
                 // Inicia o redimensionamento
+                mouseIsDown = true;
                 isResizing = true;
                 isResizingFromTop = isOnTopBorder;
                 originalHeight = panel.Height;
@@ -238,7 +239,7 @@ namespace PlotagemOpenGL
         {
             Panel panel = sender as Panel;
 
-            if(!mouseIsDown || !isResizing)
+            if(!mouseIsDown)
             {
                 // Verifica se o mouse está na borda inferior ou superior do painel ao clicar
                 isOnBottomBorder = Math.Abs(e.Y - panel.Height) <= borderWidth;
@@ -298,6 +299,7 @@ namespace PlotagemOpenGL
             if (isResizing && overlayForm != null)
             {
                 // Finaliza o redimensionamento
+                mouseIsDown = false;
                 isResizing = false;
                 isResizingFromTop = false;
                 panel.Cursor = Cursors.Default;
@@ -307,19 +309,21 @@ namespace PlotagemOpenGL
                 {
                     movingPanel.Top = overlayForm.TempRect.Top;
                     movingPanel.Height = overlayForm.TempRect.Height;
+
                 }
                 else if (isOnBottomBorder)
                 {
                     movingPanel.Height = overlayForm.TempRect.Height;
+
                 }
+                AdjustPanelsAfterResize(movingPanel);
 
                 // Fecha o overlay
                 overlayForm.Close();
                 overlayForm.Dispose();
                 overlayForm = null;
-                AdjustPanelsAfterResize(movingPanel);
                 // Atualiza a altura no DataTable após o redimensionamento
-                UpdatePanelHeightInDataTable(movingPanel);
+                UpdatePanelHeightInDataTable();
             }
 
             if (isMoving && overlayForm != null)
@@ -411,16 +415,18 @@ namespace PlotagemOpenGL
         }
 
         // Atualiza a altura do painel correspondente na tabela de dados
-        private void UpdatePanelHeightInDataTable(Panel panel)
+        private void UpdatePanelHeightInDataTable()
         {
-            var codCanal = panel.Tag.ToString();
+            foreach(Panel pn in PanelCanais.Controls){
+                var codCanal = pn.Tag.ToString();
 
-            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
-            {
-                if (row["CodCanal1"].ToString().Equals(codCanal))
+                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
-                    row["Altura"] = (float)panel.Height / PanelCanais.Height * 100;
-                    break;
+                    if (row["CodCanal1"].ToString().Equals(codCanal))
+                    {
+                        row["Altura"] = (float)pn.Height / PanelCanais.Height * 100;
+                        break;
+                    }
                 }
             }
         }
