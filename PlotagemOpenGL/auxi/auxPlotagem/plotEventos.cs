@@ -12,6 +12,7 @@ using static System.Windows.Forms.AxHost;
 using ClassesBDNano;
 using ADODB;
 using PlotagemOpenGL.BD;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -46,18 +47,36 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
                         color = plotGrafico.ObterComponentesRGB(rgbDex);
                         colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
+                        int YAdjusted = 0;
+                        //YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
 
-                        int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+                        int locaux;
+                        int somaTamanho = 0;
+                        foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                        {
+                            int tagCod = (int)pn.Tag;
+                            if (tagCod == codCanal1First)
+                            {
+                                int topPn = pn.Top;
+                                int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                                double meioPn = pn.Height / 2;
+                                somaTamanho = (int)meioPn;
+                                YAdjusted = aux - (int)meioPn;
+                            }
+                        }
+
+
                         string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
 
                         gl.Begin(OpenGL.GL_QUADS);
                         gl.PointSize(3.0f); // Define o tamanho dos pontos
                         gl.Color(color[0], color[1], color[2], 0.44f);
                         //gl.ColorMask(3, 6, 7, alpha);
-                        gl.Vertex(inicio, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-                        gl.Vertex(termino, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-                        gl.Vertex(termino, GlobVar.EndY[YAdjusted] - 5, -1.5f);
-                        gl.Vertex(inicio, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+                        gl.Vertex(inicio, YAdjusted + somaTamanho, -1.5f);
+                        gl.Vertex(termino, YAdjusted + somaTamanho, -1.5f);
+                        gl.Vertex(termino, YAdjusted - somaTamanho, -1.5f);
+                        gl.Vertex(inicio, YAdjusted - somaTamanho, -1.5f);
                         gl.End();
                         gl.Flush();
 
@@ -97,6 +116,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static int EncontrarValorMaisProximo(float[] valores, float y)
         {
+            int voltaSapora = 0;
+            for(int i = 0; i < valores.Length; i++)
+            {
+                if(y < valores[i])
+                {
+                    voltaSapora = i;
+                    break;
+                }
+            }
+            /*
             float valorMaisProximo = valores[0];
             float menorDiferenca = Math.Abs(valores[0] - y);
 
@@ -111,9 +140,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
             }
             int index = Array.IndexOf(valores, valorMaisProximo);
-
+            */
             // Invertendo o índice
-            int indexInvertido = valores.Length - 1 - index;
+
+            int indexInvertido = valores.Length - 1 - voltaSapora;
 
             return indexInvertido;
         }
@@ -154,7 +184,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     string posi = Posicao(numPagInicio, numPagTermino);                    
 
                     // Adicionar dados ao DataTable
-                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.codSelected[loc], inicio, termino, minSat, posi);
+                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.CodCanal, inicio, termino, minSat, posi);
                     AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
@@ -400,9 +430,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 bool isThereAnEvent = false;
 
-                int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                //int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                //int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, startY);
 
-                GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+
+                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
                 var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                 .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
@@ -418,7 +450,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 // Filtra as linhas correspondentes
                 var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
-                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
+                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.CodCanal);
 
                 // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
                 if (!filteredRows.Any())
@@ -438,8 +470,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 {
                     if (mouseX > Convert.ToInt64(sequancias.Rows[i]["Inicio"]) + 25 && mouseX < Convert.ToInt64(sequancias.Rows[i]["Duracao"]) - 25)
                     {
-                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
-                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)]);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)] );
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
@@ -477,7 +509,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 // Filtra as linhas correspondentes
                 var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
-                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
+                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.CodCanal);
 
                 // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
                 if (!filteredRows.Any())
@@ -497,8 +529,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 {
                     if ((mouseX <= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) + 25) && (mouseX >= Convert.ToInt64(sequancias.Rows[i]["Inicio"]) - 25))
                     {
-                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
-                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)], loc);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)], loc);
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
@@ -535,7 +567,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 // Filtra as linhas correspondentes
                 var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
-                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
+                                                        .Where(row => row.Field<int>("CodCanal1") == GlobVar.CodCanal);
 
                 // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
                 if (!filteredRows.Any())
@@ -555,8 +587,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 {
                     if ((mouseX >= Convert.ToInt64(sequancias.Rows[i]["Duracao"]) - 25) && (mouseX <= Convert.ToInt64(sequancias.Rows[i]["Duracao"]) + 25))
                     {
-                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
-                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[loc])], loc);
+                        ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)]);
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)]);
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
@@ -569,7 +601,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         //break; // Sai do loop assim que encontrar um evento
                     }
                 }
-                GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.CodCanal);
 
                 var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                 .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
@@ -588,7 +620,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 bool isThereAnEvent = false;
 
-                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.CodCanal);
 
 
                 DataTable sequancias = new DataTable();
@@ -649,16 +681,34 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             if (slaDpsEuPenso)
             {
-                int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(GlobVar.CodCanalEvent)]);
+                int YAdjusted = 0;
+                //YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+
+                int locaux;
+                int somaTamanho = 0;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                {
+                    int tagCod = (int)pn.Tag;
+                    if (tagCod == GlobVar.CodCanalEvent)
+                    {
+                        int topPn = pn.Top;
+                        int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                        double meioPn = pn.Height / 2;
+                        somaTamanho = (int)meioPn;
+                        YAdjusted = aux - (int)meioPn;
+                    }
+                }
+
 
                 gl.Begin(OpenGL.GL_LINE_LOOP);
                 gl.PointSize(2.0f); // Define o tamanho dos pontos
                 gl.Color(0, 0, 0, 0.44f);
                 //gl.ColorMask(3, 6, 7, alpha);
-                gl.Vertex(GlobVar.iniEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);
-                gl.Vertex(GlobVar.durEventoMove, GlobVar.StartY[YAdjusted] + 1, -1.0f);
-                gl.Vertex(GlobVar.durEventoMove, GlobVar.EndY[YAdjusted] - 1, -1.0f);
-                gl.Vertex(GlobVar.iniEventoMove, GlobVar.EndY[YAdjusted] - 1, -1.0f);
+                gl.Vertex(GlobVar.iniEventoMove, YAdjusted + somaTamanho + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove, YAdjusted + somaTamanho + 1, -1.0f);
+                gl.Vertex(GlobVar.durEventoMove, YAdjusted - somaTamanho - 1, -1.0f);
+                gl.Vertex(GlobVar.iniEventoMove, YAdjusted - somaTamanho - 1, -1.0f);
                 gl.End();
                 gl.Flush();
             }
@@ -801,14 +851,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
 
                 var filteredRows = GlobVar.eventosUpdate.AsEnumerable()
-                                                    .Where(row => row.Field<int>("CodCanal1") == GlobVar.codSelected[loc]);
+                                                    .Where(row => row.Field<int>("CodCanal1") == GlobVar.CodCanal);
 
                 // Verifica se há linhas filtradas antes de tentar copiar para um DataTable
                 if (!filteredRows.Any())
                 {
                     DataTable canHaveEventTable = new DataTable();
 
-                    int codCanal = Convert.ToInt16(GlobVar.codSelected[loc]);
+                    int codCanal = Convert.ToInt16(GlobVar.CodCanal);
 
                     var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                     .Where(row => row.Field<int>("CodCanal") == codCanal).CopyToDataTable();

@@ -271,7 +271,6 @@ namespace PlotagemOpenGL
             GlobVar.locScale.X = scalaLb1.Location.X;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
 
-
             load();
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -302,6 +301,7 @@ namespace PlotagemOpenGL
 
             toolTip1.SetToolTip(openglControl1, "Teste");
             Play_OpenGl();
+            AjustarFonteDosLabels();
 
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
@@ -767,11 +767,7 @@ namespace PlotagemOpenGL
                 overlayForm = null;
                 // Atualiza a altura no DataTable após o redimensionamento
                 UpdatePanelHeightInDataTable();
-                canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.RealocButton();
-                canais.PainelLb_Resize();
-                canais.reloc();
+                AjustarFonteDosLabels();
                 RepositionPanels();
 
                 TelaClearAndReload();
@@ -911,6 +907,35 @@ namespace PlotagemOpenGL
                 float deficit = 100 - totalPercentage;
                 float lastRowValue = (float)lastRow["Altura"];
                 lastRow["Altura"] = (float)Math.Round(lastRowValue + deficit, 2);
+            }
+        }
+        private void AjustarFonteDosLabels()
+        {
+            // Definindo os limites de tamanho da fonte
+            int minFontSize = 6;
+            int maxFontSize = 12;
+
+            // Iterar sobre cada Panel no painelExames
+            foreach (Panel pn in painelExames.Controls.OfType<Panel>())
+            {
+                // Calcula um tamanho de fonte proporcional à altura do Panel
+                int novaFonteTamanho = Math.Max(minFontSize, Math.Min(maxFontSize, pn.Height / 3)); // Dividido por 3 como fator de ajuste
+                int novaFonteScala = Math.Max(3, Math.Min(8, pn.Height / 4));
+                int TopLoc = pn.Height / 2 - (novaFonteTamanho);
+                // Iterar sobre cada Label dentro do Panel
+                foreach (Label lb in pn.Controls.OfType<Label>())
+                {
+                    if(lb.Tag == pn.Tag){//Para diferenciar o Panel de Titulo do Label de scala
+                        // Ajustar o tamanho da fonte do Label
+                        lb.Top = TopLoc;
+                        lb.Font = new Font(lb.Font.FontFamily, novaFonteTamanho, lb.Font.Style);
+                    }
+                    else
+                    {
+                        lb.Top = pn.Height / 2 - novaFonteScala;
+                        lb.Font = new Font(lb.Font.FontFamily, novaFonteScala, lb.Font.Style);
+                    }
+                }
             }
         }
 
@@ -4449,6 +4474,7 @@ namespace PlotagemOpenGL
                 clickCount++;
             }
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
+            GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
             Stringao.Text = $"X: {musezin.X}Y: {musezin.Y} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
                 $"| CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +

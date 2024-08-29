@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -40,9 +41,23 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     }
                     else
                     {
-
+                        int loc = 0;
 
                         int codCanal1 = GlobVar.codSelected[i] ;
+                        int locaux;
+                        foreach (Panel pn in Tela_Plotagem.painelExames.Controls) 
+                        {
+                            int tagCod = (int)pn.Tag;
+                            if(tagCod == codCanal1){
+                                int topPn = pn.Top;
+                                int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                                double meioPn = pn.Height / 2;
+                                loc = aux - (int)meioPn;
+                            }
+                        }
+
+
                         if (!GlobVar.codCanal.Contains(codCanal1))
                         {
                             // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
@@ -68,14 +83,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                 //else
                                 //{
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] / GlobVar.scale[i]) + desenhoLoc[des]);
+                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] / GlobVar.scale[i]) + loc);
                                 h++; //aqui tem plotar 3 graficos diferentes
                                 j += ponteiroDesenho - 1;
                                 //}
                             }
                             else
                             {
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] / GlobVar.scale[i]) + desenhoLoc[des]); //aqui tem plotar 3 graficos diferentes
+                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] / GlobVar.scale[i]) + loc); //aqui tem plotar 3 graficos diferentes
                             }
                             //}
                         }

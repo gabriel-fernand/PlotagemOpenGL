@@ -90,7 +90,19 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
             GlobVar.desenhoLoc = new float[desenhoLoc.Length];
-            GlobVar.desenhoLoc = desenhoLoc;
+
+            int indiot = 0;
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+            {
+                int topPn = pn.Top;
+                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                int meioPn = pn.Height;
+                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                indiot++;
+            }
+
+
             float locY = altura / (float)qtdGraf;
             float auxY = 0;
             GlobVar.StartY = new float[qtdGraf];
@@ -174,15 +186,20 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             if (Tela_Plotagem.LinhaZeroCanais.Checked) 
             {
 
-                int des = qtdGraf - 1;
-                for (int i = 0; i < qtdGraf; i++)
+                int locZero = 0;
+                int locaux;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                 {
+                    int topPn = pn.Top;
+                    int auxZero = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                    double meioPn = pn.Height / 2;
+                    locZero = auxZero - (int)meioPn;
                     gl.Color(127, 125, 125);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[des]);
-                    gl.Vertex(GlobVar.maximaVect, GlobVar.desenhoLoc[des]);
+                    gl.Vertex(GlobVar.indice, locZero);
+                    gl.Vertex(GlobVar.maximaVect, locZero);
                     gl.End();
-                    des--;
                 }
 
             }
@@ -233,15 +250,20 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     gl.End();
                     i += mili200seg;
                 }
-                int des = qtdGraf - 1;
-                for (int i = 0; i < qtdGraf; i++)
+                int locZero = 0;
+                int locaux;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                 {
+                    int topPn = pn.Top;
+                    int auxZero = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                    double meioPn = pn.Height / 2;
+                    locZero = auxZero - (int)meioPn;
                     gl.Color(127, 125, 125);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[des]);
-                    gl.Vertex(GlobVar.indice + 150, GlobVar.desenhoLoc[des]);
+                    gl.Vertex(GlobVar.indice, locZero);
+                    gl.Vertex(GlobVar.indice + 100, locZero);
                     gl.End();
-                    des--;
                 }
 
             }
@@ -296,6 +318,17 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         }
         public static int EncontrarValorMaisProximo(float[] valores, float y)
         {
+
+            int voltaSapora = 0;
+            for (int i = 0; i < valores.Length; i++)
+            {
+                if (y < valores[i])
+                {
+                    voltaSapora = i;
+                    break;
+                }
+            }
+            /*
             float valorMaisProximo = valores[0];
             float menorDiferenca = Math.Abs(valores[0] - y);
 
@@ -310,7 +343,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
             }
             int index = Array.IndexOf(valores, valorMaisProximo);
-            return index;
+
+            */
+            return voltaSapora;
         }
 
 

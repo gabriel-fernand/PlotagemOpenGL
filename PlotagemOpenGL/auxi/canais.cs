@@ -145,6 +145,7 @@ namespace PlotagemOpenGL.auxi
                         panel.Size = new System.Drawing.Size(pnSizeX, (int)pnSize);
                         panel.Tag = (int)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["CodCanal1"]);
                         label.Text = GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Legenda"].ToString();
+                        label.Tag = panel.Tag;
                         j++;
                     }                    
                 }                
