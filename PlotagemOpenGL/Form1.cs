@@ -280,6 +280,9 @@ namespace PlotagemOpenGL
             stopwatch = new Stopwatch();
             this.MouseUp += Form1_MouseUp;
             this.MouseMove += openglControl1_MouseMove;
+            painelExames.MouseLeave += panel_MouseLeave;
+            painelComando.MouseEnter += panel_MouseLeave;
+            openglControl1.MouseEnter += panel_MouseLeave;
             foreach (Control panel in painelExames.Controls)
             {
                 if (panel is Panel)
@@ -287,6 +290,9 @@ namespace PlotagemOpenGL
                     panel.MouseDown += Panel_MouseDown;
                     panel.MouseMove += Panel_MouseMove;
                     panel.MouseUp += Panel_MouseUp;
+                    panel.MouseEnter += panel_MouseEnter;
+                    //panel.MouseLeave += panel_MouseLeave;
+                    panel.Click += Panel_Click;
                     foreach (Control lable in panel.Controls)
                     {
                         if(lable is Label)
@@ -302,7 +308,8 @@ namespace PlotagemOpenGL
             toolTip1.SetToolTip(openglControl1, "Teste");
             Play_OpenGl();
             AjustarFonteDosLabels();
-
+            AjustarBotoesMinusEPlus();
+            InicializarButtonForm();
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
         }
@@ -768,6 +775,7 @@ namespace PlotagemOpenGL
                 // Atualiza a altura no DataTable após o redimensionamento
                 UpdatePanelHeightInDataTable();
                 AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
                 RepositionPanels();
 
                 TelaClearAndReload();
@@ -939,6 +947,104 @@ namespace PlotagemOpenGL
             }
         }
 
+        private void AjustarBotoesMinusEPlus()
+        {
+            foreach(Panel pn in painelExames.Controls)
+            {
+
+                int newHeight = Math.Clamp(pn.Height / 2, 10, 20);
+                foreach (System.Windows.Forms.Button bt in pn.Controls.OfType<System.Windows.Forms.Button>())
+                {
+                    bt.Hide();
+                    bt.Height = newHeight;
+                    if (bt.Tag.Equals("+"))
+                    {
+                        bt.Top = (pn.Height / 2) - (newHeight);
+                    }else if (bt.Tag.Equals("-"))
+                    {
+                        bt.Top = (pn.Height / 2);
+                    }
+                }
+            }
+        }
+        int tagCodCanal;
+        // Evento de mouse enter para mostrar o ButtonForm
+        private void panel_MouseEnter(object sender, EventArgs e)
+        {
+            timer1.Start();
+            Panel panel = sender as Panel;
+            if (panel != null && buttonForm != null)
+            {
+                tagCodCanal = (int)panel.Tag;
+                // Define a posição do ButtonForm em relação ao painel
+                Point location = panel.PointToScreen(Point.Empty); // Posição do painel na tela
+                buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y - 10), new Size(25 , 50));
+            }
+        }
+
+        // Evento de mouse leave para ocultar o ButtonForm
+        private void panel_MouseLeave(object sender, EventArgs e)
+        {
+            if (sender is Panel) {
+                this.Cursor = Cursors.Default;
+                buttonForm.HideOverlay();
+            }
+            else
+            {
+                buttonForm.HideOverlay();
+            }
+        }
+
+        // Evento de clique no painel para mostrar o ButtonForm
+        private void Panel_Click(object sender, EventArgs e)
+        {
+            Panel panel = sender as Panel;
+            if (panel != null && buttonForm != null)
+            {
+                // Exibe o ButtonForm no clique, na posição desejada
+                Point location = panel.PointToScreen(Point.Empty);
+                buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y - 10), new Size(25, 50));
+            }
+        }
+
+        // Declaração do ButtonForm na classe principal
+        private ButtonForm buttonForm;
+
+        // Método para inicializar o ButtonForm
+        private void InicializarButtonForm()
+        {
+            // Instancia o ButtonForm e configura os botões necessários
+            buttonForm = new ButtonForm();
+            buttonForm.Size = new Size(25, 50); // Ajuste o tamanho conforme necessário
+
+            // Adiciona botões ou outros controles ao ButtonForm
+            Button btnPlus = new Button
+            {
+                Text = "+",
+                Size = new Size(25, 25),
+                Location = new Point(0, 0),
+                Tag = "+"
+            };
+
+            Button btnMinus = new Button
+            {
+                Text = "-",
+                Size = new Size(25, 25),
+                Location = new Point(0, 25),
+                Tag = "-"
+            };
+
+            btnPlus.Tag = tagCodCanal;
+            btnMinus.Tag = tagCodCanal;
+
+            // Adiciona eventos aos botões se necessário
+            btnPlus.Click += plusLb1_Click;
+            btnMinus.Click += minusLb1_Click;
+
+            // Adiciona os botões ao form
+            buttonForm.Controls.Add(btnPlus);
+            buttonForm.Controls.Add(btnMinus);
+        }
 
         private void RepositionPanels()
         {
@@ -2760,7 +2866,7 @@ namespace PlotagemOpenGL
         {
             try
             {
-                UpdateSelected(sender);
+                //UpdateSelected(sender);
                 
                 //timer1.Start();
                 int alturaTela = (int)openglControl1.Height;
@@ -2773,17 +2879,10 @@ namespace PlotagemOpenGL
 
                 GlobVar.scale[index] = scala;
 
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-
-                plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-                plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-
-
-                gl.Translate(0, 0, 1);
                 UpdateInicioTela();
 
-                
+                TelaClearAndReload();
+
             }
             catch
             {
@@ -2794,7 +2893,7 @@ namespace PlotagemOpenGL
         {
             try
             {
-                UpdateSelected(sender);
+                //UpdateSelected(sender);
                 //timer1.Start();
                 int alturaTela = (int)openglControl1.Height;
 
@@ -2806,15 +2905,10 @@ namespace PlotagemOpenGL
 
                 GlobVar.scale[index] = scala;
 
-                openglControl1.DoRender();
-                plotagem.DesenhaGrafico(alturaTela, qtdGrafics);
-
-                plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-                plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-
-
-                gl.Translate(0, 0, 1);
                 UpdateInicioTela();
+
+
+                TelaClearAndReload();
 
             }
             catch
@@ -4452,7 +4546,7 @@ namespace PlotagemOpenGL
             int? rowIndex = null;
             for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
-                if (GlobVar.tbl_MontagemSelecionada.Rows[i].Field<string>("Legenda") == selectedLabelValue)
+                if (GlobVar.tbl_MontagemSelecionada.Rows[i].Field<int>("CodCanal1") == tagCodCanal)
                 {
                     rowIndex = i;
                     break;
