@@ -320,12 +320,30 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
 
             int voltaSapora = 0;
-            for (int i = 0; i < valores.Length; i++)
+            //for (int i = 0; i < valores.Length; i++)
+            //{
+            //    if (y < valores[i])
+            //    {
+            //        voltaSapora = i;
+            //        break;
+            //   }
+            //}
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
             {
-                if (y < valores[i])
+                if (pn.Top < y && pn.Bottom > y)
                 {
-                    voltaSapora = i;
-                    break;
+                    int codiguin = (int)pn.Tag;
+
+                    // Encontrar a linha correspondente no DataTable
+                    DataRow rowIndex = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                                .FirstOrDefault(row => row.Field<int>("CodCanal1") == codiguin);
+
+                    // Verificar se uma linha foi encontrada antes de obter o índice
+                    if (rowIndex != null)
+                    {
+                        int index = GlobVar.tbl_MontagemSelecionada.Rows.IndexOf(rowIndex);
+                        voltaSapora = index;
+                    }
                 }
             }
             /*

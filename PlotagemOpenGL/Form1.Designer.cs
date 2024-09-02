@@ -71,6 +71,23 @@ namespace PlotagemOpenGL
             InicioCPAPExclui = new ToolStripMenuItem();
             ExcluirBdBnCpap = new ToolStripMenuItem();
             Excluir = new ToolStripMenuItem();
+            // -- MenuNormais
+            Descricao = new ToolStripMenuItem();
+            CanalCor = new ToolStripMenuItem();
+            Legenda = new ToolStripMenuItem();
+            AltoScala = new ToolStripMenuItem();
+            Amplitude = new ToolStripMenuItem();
+            OcultarCanal = new ToolStripMenuItem();
+            // -- MenuEEG Adicionais
+            MostrarFaixaDeAmpli = new ToolStripMenuItem();
+            AlterarRef = new ToolStripMenuItem();
+            // -- Menu Setas Adicionais
+            MostrarSetas = new ToolStripMenuItem();
+            // -- Menu Numeros Adicionais
+            GraficoENumero = new ToolStripMenuItem();
+            ApenasNumero = new ToolStripMenuItem();
+            LimiteSuperior = new ToolStripMenuItem();
+            LimiteInferior = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             LowPassFilterGl = new ToolStripMenuItem();
             NenhumLowGl = new ToolStripMenuItem();
@@ -534,6 +551,7 @@ namespace PlotagemOpenGL
             MesmaAlturaCanais.Name = "MesmaAlturaCanais";
             MesmaAlturaCanais.Size = new System.Drawing.Size(148, 26);
             MesmaAlturaCanais.Text = "Mesma Altura para todos Canais";
+            MesmaAlturaCanais.Click += MesmaAlturaCanais_Click;
             // 
             // ReeshowAllCanal
             // 
@@ -617,6 +635,100 @@ namespace PlotagemOpenGL
             InicioCPAPExclui.Size = new System.Drawing.Size(100, 27);
             InicioCPAPExclui.Text = "Excluir Inicio CPAP";
             InicioCPAPExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // Descricao
+            // 
+            Descricao.Name = "Descricao";
+            Descricao.Size = new System.Drawing.Size(148, 26);
+            Descricao.Text = "Descrição";
+
+            // 
+            // CanalCor
+            // 
+            CanalCor.Name = "CanalCor";
+            CanalCor.Size = new System.Drawing.Size(148, 26);
+            CanalCor.Text = "Canal Cor";
+
+            // 
+            // Legenda
+            // 
+            Legenda.Name = "Legenda";
+            Legenda.Size = new System.Drawing.Size(148, 26);
+            Legenda.Text = "Legenda";
+
+            // 
+            // AltoScala
+            // 
+            AltoScala.Name = "AltoScala";
+            AltoScala.Size = new System.Drawing.Size(148, 26);
+            AltoScala.Text = "Alto Scala";
+
+            // 
+            // Amplitude
+            // 
+            Amplitude.Name = "Amplitude";
+            Amplitude.Size = new System.Drawing.Size(148, 26);
+            Amplitude.Text = "Amplitude";
+
+            // 
+            // OcultarCanal
+            // 
+            OcultarCanal.Name = "OcultarCanal";
+            OcultarCanal.Size = new System.Drawing.Size(148, 26);
+            OcultarCanal.Text = "Ocultar Canal";
+
+            // 
+            // MostrarFaixaDeAmpli
+            // 
+            MostrarFaixaDeAmpli.CheckOnClick = true;
+            MostrarFaixaDeAmpli.Name = "MostrarFaixaDeAmpli";
+            MostrarFaixaDeAmpli.Size = new System.Drawing.Size(148, 26);
+            MostrarFaixaDeAmpli.Text = "Mostrar Faixa de Amplitude";
+
+            // 
+            // AlterarRef
+            // 
+            AlterarRef.Name = "AlterarRef";
+            AlterarRef.Size = new System.Drawing.Size(148, 26);
+            AlterarRef.Text = "Alterar Referência";
+
+            // 
+            // MostrarSetas
+            // 
+            MostrarSetas.CheckOnClick = true;
+            MostrarSetas.Name = "MostrarSetas";
+            MostrarSetas.Size = new System.Drawing.Size(148, 26);
+            MostrarSetas.Text = "Mostrar Setas";
+
+            // 
+            // GraficoENumero
+            // 
+            GraficoENumero.CheckOnClick = true;
+            GraficoENumero.Name = "GraficoENumero";
+            GraficoENumero.Size = new System.Drawing.Size(148, 26);
+            GraficoENumero.Text = "Gráfico e Número";
+
+            // 
+            // ApenasNumero
+            // 
+            ApenasNumero.CheckOnClick = true;
+            ApenasNumero.Name = "ApenasNumero";
+            ApenasNumero.Size = new System.Drawing.Size(148, 26);
+            ApenasNumero.Text = "Apenas Número";
+
+            // 
+            // LimiteSuperior
+            // 
+            LimiteSuperior.Name = "LimiteSuperior";
+            LimiteSuperior.Size = new System.Drawing.Size(148, 26);
+            LimiteSuperior.Text = "Limite Superior";
+
+            // 
+            // LimiteInferior
+            // 
+            LimiteInferior.Name = "LimiteInferior";
+            LimiteInferior.Size = new System.Drawing.Size(148, 26);
+            LimiteInferior.Text = "Limite Inferior";
             // 
             // LowPassFilterGl
             // 
@@ -1112,7 +1224,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb1.AutoSize = true;
             scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb1.Location = new System.Drawing.Point(60, 0);
+            scalaLb1.Location = new System.Drawing.Point(87, 0);
             scalaLb1.Name = "scalaLb1";
             scalaLb1.Size = new System.Drawing.Size(29, 20);
             scalaLb1.TabIndex = 16;
@@ -1156,7 +1268,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb2.AutoSize = true;
             scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb2.Location = new System.Drawing.Point(60, 0);
+            scalaLb2.Location = new System.Drawing.Point(87, 0);
             scalaLb2.Name = "scalaLb2";
             scalaLb2.Size = new System.Drawing.Size(29, 20);
             scalaLb2.TabIndex = 17;
@@ -1200,7 +1312,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb3.AutoSize = true;
             scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb3.Location = new System.Drawing.Point(60, 0);
+            scalaLb3.Location = new System.Drawing.Point(87, 0);
             scalaLb3.Name = "scalaLb3";
             scalaLb3.Size = new System.Drawing.Size(29, 20);
             scalaLb3.TabIndex = 18;
@@ -1244,7 +1356,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb4.AutoSize = true;
             scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb4.Location = new System.Drawing.Point(60, 0);
+            scalaLb4.Location = new System.Drawing.Point(87, 0);
             scalaLb4.Name = "scalaLb4";
             scalaLb4.Size = new System.Drawing.Size(29, 20);
             scalaLb4.TabIndex = 20;
@@ -1288,7 +1400,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb5.AutoSize = true;
             scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb5.Location = new System.Drawing.Point(60, 0);
+            scalaLb5.Location = new System.Drawing.Point(87, 0);
             scalaLb5.Name = "scalaLb5";
             scalaLb5.Size = new System.Drawing.Size(29, 20);
             scalaLb5.TabIndex = 22;
@@ -1344,7 +1456,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb6.AutoSize = true;
             scalaLb6.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb6.Location = new System.Drawing.Point(60, 0);
+            scalaLb6.Location = new System.Drawing.Point(87, 0);
             scalaLb6.Name = "scalaLb6";
             scalaLb6.Size = new System.Drawing.Size(29, 20);
             scalaLb6.TabIndex = 24;
@@ -1398,7 +1510,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb7.AutoSize = true;
             scalaLb7.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb7.Location = new System.Drawing.Point(60, 0);
+            scalaLb7.Location = new System.Drawing.Point(87, 0);
             scalaLb7.Name = "scalaLb7";
             scalaLb7.Size = new System.Drawing.Size(29, 20);
             scalaLb7.TabIndex = 31;
@@ -1452,7 +1564,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb8.AutoSize = true;
             scalaLb8.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb8.Location = new System.Drawing.Point(60, 0);
+            scalaLb8.Location = new System.Drawing.Point(87, 0);
             scalaLb8.Name = "scalaLb8";
             scalaLb8.Size = new System.Drawing.Size(29, 20);
             scalaLb8.TabIndex = 33;
@@ -1506,7 +1618,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb9.AutoSize = true;
             scalaLb9.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb9.Location = new System.Drawing.Point(60, 0);
+            scalaLb9.Location = new System.Drawing.Point(87, 0);
             scalaLb9.Name = "scalaLb9";
             scalaLb9.Size = new System.Drawing.Size(29, 20);
             scalaLb9.TabIndex = 35;
@@ -1560,7 +1672,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb10.AutoSize = true;
             scalaLb10.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb10.Location = new System.Drawing.Point(60, 0);
+            scalaLb10.Location = new System.Drawing.Point(87, 0);
             scalaLb10.Name = "scalaLb10";
             scalaLb10.Size = new System.Drawing.Size(29, 20);
             scalaLb10.TabIndex = 37;
@@ -1616,7 +1728,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb11.AutoSize = true;
             scalaLb11.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb11.Location = new System.Drawing.Point(60, 0);
+            scalaLb11.Location = new System.Drawing.Point(87, 0);
             scalaLb11.Name = "scalaLb11";
             scalaLb11.Size = new System.Drawing.Size(29, 20);
             scalaLb11.TabIndex = 39;
@@ -1670,7 +1782,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb12.AutoSize = true;
             scalaLb12.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb12.Location = new System.Drawing.Point(60, 0);
+            scalaLb12.Location = new System.Drawing.Point(87, 0);
             scalaLb12.Name = "scalaLb12";
             scalaLb12.Size = new System.Drawing.Size(29, 20);
             scalaLb12.TabIndex = 46;
@@ -1724,7 +1836,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb13.AutoSize = true;
             scalaLb13.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb13.Location = new System.Drawing.Point(60, 0);
+            scalaLb13.Location = new System.Drawing.Point(87, 0);
             scalaLb13.Name = "scalaLb13";
             scalaLb13.Size = new System.Drawing.Size(29, 20);
             scalaLb13.TabIndex = 48;
@@ -1778,7 +1890,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb14.AutoSize = true;
             scalaLb14.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb14.Location = new System.Drawing.Point(60, 0);
+            scalaLb14.Location = new System.Drawing.Point(87, 0);
             scalaLb14.Name = "scalaLb14";
             scalaLb14.Size = new System.Drawing.Size(29, 20);
             scalaLb14.TabIndex = 50;
@@ -1832,7 +1944,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb15.AutoSize = true;
             scalaLb15.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb15.Location = new System.Drawing.Point(60, 0);
+            scalaLb15.Location = new System.Drawing.Point(87, 0);
             scalaLb15.Name = "scalaLb15";
             scalaLb15.Size = new System.Drawing.Size(29, 20);
             scalaLb15.TabIndex = 52;
@@ -1888,7 +2000,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb16.AutoSize = true;
             scalaLb16.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb16.Location = new System.Drawing.Point(60, 0);
+            scalaLb16.Location = new System.Drawing.Point(87, 0);
             scalaLb16.Name = "scalaLb16";
             scalaLb16.Size = new System.Drawing.Size(29, 20);
             scalaLb16.TabIndex = 54;
@@ -1942,7 +2054,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb17.AutoSize = true;
             scalaLb17.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb17.Location = new System.Drawing.Point(60, 0);
+            scalaLb17.Location = new System.Drawing.Point(87, 0);
             scalaLb17.Name = "scalaLb17";
             scalaLb17.Size = new System.Drawing.Size(29, 20);
             scalaLb17.TabIndex = 61;
@@ -1996,7 +2108,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb18.AutoSize = true;
             scalaLb18.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb18.Location = new System.Drawing.Point(60, 0);
+            scalaLb18.Location = new System.Drawing.Point(87, 0);
             scalaLb18.Name = "scalaLb18";
             scalaLb18.Size = new System.Drawing.Size(29, 20);
             scalaLb18.TabIndex = 63;
@@ -2050,7 +2162,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb19.AutoSize = true;
             scalaLb19.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb19.Location = new System.Drawing.Point(60, 0);
+            scalaLb19.Location = new System.Drawing.Point(87, 0);
             scalaLb19.Name = "scalaLb19";
             scalaLb19.Size = new System.Drawing.Size(29, 20);
             scalaLb19.TabIndex = 65;
@@ -2104,7 +2216,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb20.AutoSize = true;
             scalaLb20.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb20.Location = new System.Drawing.Point(60, 0);
+            scalaLb20.Location = new System.Drawing.Point(87, 0);
             scalaLb20.Name = "scalaLb20";
             scalaLb20.Size = new System.Drawing.Size(29, 20);
             scalaLb20.TabIndex = 67;
@@ -2158,7 +2270,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb21.AutoSize = true;
             scalaLb21.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb21.Location = new System.Drawing.Point(60, 0);
+            scalaLb21.Location = new System.Drawing.Point(87, 0);
             scalaLb21.Name = "scalaLb21";
             scalaLb21.Size = new System.Drawing.Size(29, 20);
             scalaLb21.TabIndex = 69;
@@ -2212,7 +2324,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb22.AutoSize = true;
             scalaLb22.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb22.Location = new System.Drawing.Point(60, 0);
+            scalaLb22.Location = new System.Drawing.Point(87, 0);
             scalaLb22.Name = "scalaLb22";
             scalaLb22.Size = new System.Drawing.Size(29, 20);
             scalaLb22.TabIndex = 74;
@@ -2266,7 +2378,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb23.AutoSize = true;
             scalaLb23.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb23.Location = new System.Drawing.Point(60, 0);
+            scalaLb23.Location = new System.Drawing.Point(87, 0);
             scalaLb23.Name = "scalaLb23";
             scalaLb23.Size = new System.Drawing.Size(29, 20);
             scalaLb23.TabIndex = 76;
@@ -2471,6 +2583,7 @@ namespace PlotagemOpenGL
         }
 
 
+
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
         public static ToolStripItem item2ToolStripMenuItem;
@@ -2489,6 +2602,24 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem OutroLow;
         public static ToolStripMenuItem LowPassFilter;
         public static ToolStripMenuItem HighPassFilter;
+        // -- MenuNormais
+        public static ToolStripMenuItem Descricao;
+        public static ToolStripMenuItem CanalCor;
+        public static ToolStripMenuItem Legenda;
+        public static ToolStripMenuItem AltoScala;
+        public static ToolStripMenuItem Amplitude;
+        public static ToolStripMenuItem OcultarCanal;
+        // -- MenuEEG Adicionais
+        public static ToolStripMenuItem MostrarFaixaDeAmpli;
+        public static ToolStripMenuItem AlterarRef;
+        //  -- Menu Setas Adicionais
+        public static ToolStripMenuItem MostrarSetas;
+        // -- Menu Numeros Adicionais
+        public static ToolStripMenuItem GraficoENumero;
+        public static ToolStripMenuItem ApenasNumero;
+        public static ToolStripMenuItem LimiteSuperior;
+        public static ToolStripMenuItem LimiteInferior;
+
         public static ContextMenuStrip contextMenuStrip1;
         public static Button playSelect;
         public static Label scalaLb1;

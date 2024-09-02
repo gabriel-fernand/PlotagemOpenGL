@@ -601,6 +601,7 @@ namespace PlotagemOpenGL
 
         private int originalHeight;
         private int originalTop;
+        private int originalBut;
         private void PainelExames_Paint(object sender, PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -641,6 +642,7 @@ namespace PlotagemOpenGL
                     isResizing = true;
                     originalHeight = movingPanel.Height;
                     originalTop = movingPanel.Top;
+                    originalBut = movingPanel.Bottom;
 
                     overlayForm = new OverlayForm();
                     overlayForm.Bounds = painelExames.RectangleToScreen(painelExames.ClientRectangle);
@@ -703,12 +705,25 @@ namespace PlotagemOpenGL
                     int newTop = originalTop + deltaY;
                     int newHeight = originalHeight - deltaY;
 
+                    // Garantir que o novo topo e altura estejam dentro dos limites do painelExames
                     newTop = Math.Max(0, Math.Min(newTop, painelExames.Height - newHeight));
                     newHeight = Math.Max(0, Math.Min(newHeight, painelExames.Height - newTop));
-                    if(newHeight < 20)
+
+                    // Impedir que o painel fique menor que a altura mínima
+                    if (newHeight < 20)
                     {
+                        // Definir a altura mínima e corrigir o topo para evitar movimento indesejado
                         newHeight = 20;
+                        newTop = originalTop + (originalHeight - newHeight); // Ajusta o Top para que o painel não se mova mais para cima
                     }
+                    else if (newHeight > painelExames.Height * 0.35)
+                    {
+                        // Limitar a altura máxima do painel
+                        newHeight = (int)(painelExames.Height * 0.35);
+                        newTop = originalTop + (originalHeight - newHeight); // Ajusta o Top corretamente para o novo tamanho
+                    }
+
+                    // Atualizar a posição e o tamanho do overlay
                     overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, newTop, overlayForm.TempRect.Width, newHeight);
                 }
                 else
@@ -719,6 +734,10 @@ namespace PlotagemOpenGL
                     if (newHeight < 20)
                     {
                         newHeight = 20;
+                    }
+                    else if (newHeight > painelExames.Height * 0.35)
+                    {
+                        newHeight = (int)(painelExames.Height * 0.35);
                     }
                     overlayForm.TempRect = new Rectangle(overlayForm.TempRect.X, overlayForm.TempRect.Y, overlayForm.TempRect.Width, newHeight);
                 }
@@ -809,66 +828,120 @@ namespace PlotagemOpenGL
         {
             int totalHeight = painelExames.ClientSize.Height; // Altura total do contêiner pai
             int minHeightPerPanel = 20; // Altura mínima permitida para cada painel
-            int newHeight = resizedPanel.Height;
+            int newHeight = resizedPanel.Height; // Nova altura desejada do painel redimensionado
 
             // Garantir que o painel redimensionado não seja menor que o mínimo permitido
-            if (newHeight < minHeightPerPanel) newHeight = minHeightPerPanel;
+            if (newHeight < minHeightPerPanel)
+            {
+                newHeight = minHeightPerPanel;
+            }
+
+            // Definir a nova altura do painel redimensionado
+            resizedPanel.Height = newHeight;
+            int remainingHeight = totalHeight - newHeight; // Altura restante após redimensionar o painel
 
             // Obter a lista de todos os outros painéis, excluindo o painel redimensionado
             List<Panel> otherPanels = painelExames.Controls.OfType<Panel>()
                                                 .Where(p => p != resizedPanel)
                                                 .ToList();
 
-            int remainingHeight = totalHeight - newHeight; // Calcular a altura restante após redimensionar o painel
-            int newHeightPerPanel = remainingHeight / otherPanels.Count; // Calcular a nova altura para cada painel
+            // Calcular a altura combinada atual dos outros painéis
+            int totalCurrentHeightOthers = otherPanels.Sum(p => p.Height);
 
-            // Verificar se a nova altura de cada painel é menor que a altura mínima
-            if (newHeightPerPanel < minHeightPerPanel)
+            // Ajustar proporcionalmente a altura dos outros painéis se houver excesso de altura
+            if (totalCurrentHeightOthers > remainingHeight)
             {
-                newHeightPerPanel = minHeightPerPanel; // Definir a altura mínima
-                int aux = newHeightPerPanel * otherPanels.Count; // Altura total ocupada pelos outros painéis
-                resizedPanel.Height = totalHeight - aux; // Ajustar a altura do painel redimensionado
-            }
-            else
-            {
-                resizedPanel.Height = newHeight; // Definir a nova altura do painel redimensionado
+                int excessHeight = totalCurrentHeightOthers - remainingHeight; // Altura em excesso
+                int reductionPerPanel = excessHeight / otherPanels.Count; // Redução média por painel
+                int remainingReduction = excessHeight % otherPanels.Count; // Resto para ajuste fino
+
+                foreach (Panel panel in otherPanels)
+                {
+                    // Ajustar altura de cada painel, garantindo o mínimo permitido
+                    int adjustedHeight = panel.Height - reductionPerPanel;
+
+                    if (remainingReduction > 0)
+                    {
+                        adjustedHeight--; // Distribuir o ajuste adicional
+                        remainingReduction--;
+                    }
+
+                    // Garantir que a altura do painel não seja inferior ao mínimo
+                    panel.Height = Math.Max(adjustedHeight, minHeightPerPanel);
+                }
             }
 
-            // Ajustar a altura dos outros painéis
-            foreach (Panel panel in otherPanels)
+            // Garantir que todos os painéis respeitem o tamanho mínimo
+            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
             {
-                panel.Height = newHeightPerPanel;
+                if (panel.Height < minHeightPerPanel)
+                {
+                    panel.Height = minHeightPerPanel; // Ajustar para o mínimo permitido
+                }
             }
 
-            // Garantir que a soma das alturas seja igual à altura total
+            // Recalcular a altura total e verificar a diferença
             int currentTotalHeight = painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
+            int difference = totalHeight - currentTotalHeight;
 
-            if (currentTotalHeight != totalHeight)
+            // Redistribuir a diferença respeitando o mínimo permitido
+            if (difference != 0)
             {
-                int difference = totalHeight - currentTotalHeight;
                 int adjustmentPerPanel = difference / painelExames.Controls.Count;
 
-                // Ajustar a altura de cada painel
                 foreach (Panel panel in painelExames.Controls.OfType<Panel>())
                 {
-                    panel.Height += adjustmentPerPanel;
+                    int adjustedHeight = panel.Height + adjustmentPerPanel;
+
+                    // Garantir que o ajuste não faça o painel ficar abaixo do mínimo
+                    if (adjustedHeight < minHeightPerPanel)
+                    {
+                        adjustedHeight = minHeightPerPanel;
+                    }
+
+                    panel.Height = adjustedHeight;
                 }
 
-                // Caso ainda haja uma diferença devido a arredondamento
+                // Ajuste final caso ainda haja diferença devido ao arredondamento
                 int finalAdjustment = totalHeight - painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
                 if (finalAdjustment != 0)
                 {
-                    painelExames.Controls.OfType<Panel>().Last().Height += finalAdjustment;
+                    foreach (var panel in painelExames.Controls.OfType<Panel>())
+                    {
+                        int allowedIncrease = finalAdjustment > 0 ? 1 : -1;
+
+                        // Garantir que o ajuste final não ultrapasse o mínimo permitido
+                        if (panel.Height + allowedIncrease >= minHeightPerPanel)
+                        {
+                            panel.Height += allowedIncrease;
+                            finalAdjustment -= allowedIncrease;
+                        }
+
+                        if (finalAdjustment == 0)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
-
-            // Reposicionar todos os painéis
-            int currentY = 0; // Variável para acompanhar a posição Y atual
-            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            int indiot = 0;
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
             {
-                panel.Top = currentY; // Atualizar a posição vertical do painel
-                currentY += panel.Height; // Incrementar a posição vertical para o próximo painel
+                int topPn = pn.Top;
+                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                int meioPn = pn.Height;
+                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                indiot++;
             }
+
+            // Reposicionar todos os painéis para garantir o alinhamento correto
+            //int currentY = 0;
+            //foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            //{
+            //    panel.Top = currentY;
+            //    currentY += panel.Height;
+            //}
         }
 
         private void UpdatePanelHeightInDataTable()
@@ -946,6 +1019,34 @@ namespace PlotagemOpenGL
                 }
             }
         }
+        private void MesmaAlturaCanais_Click(object sender, EventArgs e)
+        {
+            int normalSize = painelExames.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+            int lastTop = 0;
+
+            foreach(Panel pn in painelExames.Controls)
+            {
+                pn.Top = lastTop;
+                pn.Height = normalSize;
+                lastTop += normalSize;
+            }
+
+            int indiot = 0;
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+            {
+                int topPn = pn.Top;
+                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                int meioPn = pn.Height;
+                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                indiot++;
+            }
+            UpdatePanelHeightInDataTable();
+            AjustarFonteDosLabels();
+
+            TelaClearAndReload();
+        }
 
         private void AjustarBotoesMinusEPlus()
         {
@@ -978,7 +1079,7 @@ namespace PlotagemOpenGL
                 tagCodCanal = (int)panel.Tag;
                 // Define a posição do ButtonForm em relação ao painel
                 Point location = panel.PointToScreen(Point.Empty); // Posição do painel na tela
-                buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y - 10), new Size(25 , 50));
+                buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y + (panel.Height / 2) - 25), new Size(25, 50)); ;
             }
         }
 
@@ -1063,6 +1164,17 @@ namespace PlotagemOpenGL
                 panel.Top = y;
                 y = panel.Bottom + spacing;
             }
+            int indiot = 0;
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+            {
+                int topPn = pn.Top;
+                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                int meioPn = pn.Height;
+                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                indiot++;
+            }
+
         }
         private void UpdateDataTableRow(Panel panel)
         {
@@ -1084,7 +1196,7 @@ namespace PlotagemOpenGL
                 newRow.ItemArray = rowToMove.ItemArray.Clone() as object[];
 
                 double auxIndex = painelExames.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
-                int newRowIndex = (int)Math.Max(0, Math.Min(GlobVar.tbl_MontagemSelecionada.Rows.Count - 1, panel.Top / (double)auxIndex));
+                int newRowIndex = (int)Math.Max(0, Math.Min(GlobVar.tbl_MontagemSelecionada.Rows.Count, panel.Top / (double)auxIndex));
 
                 GlobVar.tbl_MontagemSelecionada.Rows.Remove(rowToMove);
 
@@ -3372,6 +3484,37 @@ namespace PlotagemOpenGL
             catch { }
 
         }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            timer1.Start();
+
+            ContextMenuStrip menu = sender as ContextMenuStrip;
+            if (menu != null)
+            {
+                Control sourceControl = menu.SourceControl;
+                if (sourceControl is Panel panel)
+                {
+
+                    clickedPanel = panel;
+                    UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
+                    UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
+                    UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+                    // Verifica se o Panel tem um Label dentro dele
+                    foreach (Control control in panel.Controls)
+                    {
+                        if (control is Label label)
+                        {
+                            if (label.Name.StartsWith("label"))
+                            {
+                                selectedLabelValue = label.Text;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void CorDeFundo_Click(object sender, EventArgs e)
         {
             try
@@ -3585,35 +3728,6 @@ namespace PlotagemOpenGL
 
             }
             catch { }
-        }
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
-            timer1.Start();
-
-            ContextMenuStrip menu = sender as ContextMenuStrip;
-            if (menu != null)
-            {
-                Control sourceControl = menu.SourceControl;
-                if (sourceControl is Panel panel)
-                {
-
-                    clickedPanel = panel;
-                    UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
-                    UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
-                    UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
-                    // Verifica se o Panel tem um Label dentro dele
-                    foreach (Control control in panel.Controls)
-                    {
-                        if (control is Label label)
-                        {
-                            if (label.Name.StartsWith("label"))
-                            {
-                                selectedLabelValue = label.Text;
-                            }
-                        }
-                    }
-                }
-            }
         }
         private void UpdateSelected(object sender)
         {
