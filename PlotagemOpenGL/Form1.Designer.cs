@@ -1,4 +1,5 @@
 ﻿using Accord.IO;
+using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.FormComentario;
 using System;
 using System.Text.RegularExpressions;
@@ -77,12 +78,15 @@ namespace PlotagemOpenGL
             Legenda = new ToolStripMenuItem();
             AltoScala = new ToolStripMenuItem();
             Amplitude = new ToolStripMenuItem();
+            Filtos = new ToolStripMenuItem();
             OcultarCanal = new ToolStripMenuItem();
+            InverteSinal = new ToolStripMenuItem();
             // -- MenuEEG Adicionais
             MostrarFaixaDeAmpli = new ToolStripMenuItem();
             AlterarRef = new ToolStripMenuItem();
             // -- Menu Setas Adicionais
             MostrarSetas = new ToolStripMenuItem();
+            Configurar = new ToolStripMenuItem();
             // -- Menu Numeros Adicionais
             GraficoENumero = new ToolStripMenuItem();
             ApenasNumero = new ToolStripMenuItem();
@@ -547,7 +551,6 @@ namespace PlotagemOpenGL
             // 
             // MesmaAlturaCanais
             // 
-            MesmaAlturaCanais.CheckOnClick = true;
             MesmaAlturaCanais.Name = "MesmaAlturaCanais";
             MesmaAlturaCanais.Size = new System.Drawing.Size(148, 26);
             MesmaAlturaCanais.Text = "Mesma Altura para todos Canais";
@@ -555,10 +558,10 @@ namespace PlotagemOpenGL
             // 
             // ReeshowAllCanal
             // 
-            ReeshowAllCanal.CheckOnClick = true;
             ReeshowAllCanal.Name = "ReeshowAllCanal";
             ReeshowAllCanal.Size = new System.Drawing.Size(148, 26);
             ReeshowAllCanal.Text = "Reexibir todos canais";
+            ReeshowAllCanal.Click += MostrarTodosCanais_Click;
             // 
             // LinhaZeroCanais
             // 
@@ -647,8 +650,19 @@ namespace PlotagemOpenGL
             // 
             CanalCor.Name = "CanalCor";
             CanalCor.Size = new System.Drawing.Size(148, 26);
-            CanalCor.Text = "Canal Cor";
-
+            CanalCor.Text = "Cor";
+            //
+            // Configurar
+            //
+            Configurar.Name = "Configurar";
+            Configurar.Size = new System.Drawing.Size(148, 26);
+            Configurar.Text = "Configurar";
+            //
+            // InverteSinal
+            //
+            InverteSinal.Name = "InverteSinal";
+            InverteSinal.Size = new System.Drawing.Size(148, 26);
+            InverteSinal.Text = "Inverte Sinal";
             // 
             // Legenda
             // 
@@ -676,6 +690,7 @@ namespace PlotagemOpenGL
             OcultarCanal.Name = "OcultarCanal";
             OcultarCanal.Size = new System.Drawing.Size(148, 26);
             OcultarCanal.Text = "Ocultar Canal";
+            OcultarCanal.Click += OcultarCanal_Click;
 
             // 
             // MostrarFaixaDeAmpli
@@ -699,6 +714,7 @@ namespace PlotagemOpenGL
             MostrarSetas.Name = "MostrarSetas";
             MostrarSetas.Size = new System.Drawing.Size(148, 26);
             MostrarSetas.Text = "Mostrar Setas";
+            MostrarSetas.Click += MostrarSetas_Click;
 
             // 
             // GraficoENumero
@@ -715,6 +731,7 @@ namespace PlotagemOpenGL
             ApenasNumero.Name = "ApenasNumero";
             ApenasNumero.Size = new System.Drawing.Size(148, 26);
             ApenasNumero.Text = "Apenas Número";
+            ApenasNumero.Click += ApenasNumero_Click;
 
             // 
             // LimiteSuperior
@@ -729,6 +746,12 @@ namespace PlotagemOpenGL
             LimiteInferior.Name = "LimiteInferior";
             LimiteInferior.Size = new System.Drawing.Size(148, 26);
             LimiteInferior.Text = "Limite Inferior";
+            //
+            // Filtos
+            //
+            Filtos.Name = "Filtos";
+            Filtos.Size = new System.Drawing.Size(178, 24);
+            Filtos.Text = "Filtos";
             // 
             // LowPassFilterGl
             // 
@@ -2603,9 +2626,11 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem LowPassFilter;
         public static ToolStripMenuItem HighPassFilter;
         // -- MenuNormais
+        public static ToolStripMenuItem Filtos;
         public static ToolStripMenuItem Descricao;
         public static ToolStripMenuItem CanalCor;
         public static ToolStripMenuItem Legenda;
+        public static ToolStripMenuItem InverteSinal;
         public static ToolStripMenuItem AltoScala;
         public static ToolStripMenuItem Amplitude;
         public static ToolStripMenuItem OcultarCanal;
@@ -2613,6 +2638,7 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem MostrarFaixaDeAmpli;
         public static ToolStripMenuItem AlterarRef;
         //  -- Menu Setas Adicionais
+        public static ToolStripMenuItem Configurar;
         public static ToolStripMenuItem MostrarSetas;
         // -- Menu Numeros Adicionais
         public static ToolStripMenuItem GraficoENumero;

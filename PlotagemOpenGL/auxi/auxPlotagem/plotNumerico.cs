@@ -27,7 +27,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)
+                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
 
                         int h = GlobVar.indice;
@@ -90,7 +90,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 if (GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 67)
                                 {
                                     gl.End();
-                                    int y = 0;
+                                    int y = -7000;
 
                                     int codCanal1 = GlobVar.codSelected[i];
                                     int locaux;
@@ -149,7 +149,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)
+                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
 
                         int h = GlobVar.indice;
@@ -172,7 +172,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
                                     gl.Begin(OpenGL.GL_2D);
 
-                                    int y = 0;
+                                    int y = -7000;
                                     int codCanal1 = GlobVar.codSelected[i];
                                     int locaux;
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)

@@ -227,34 +227,6 @@ namespace PlotagemOpenGL
 
             GlobVar.FundoColor = new int[] { 255, 255, 255, 255};
             openglControl1.Focus();
-            GlobVar.colors = new Vector3[]
-            {
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(175 / 255.0f, 238 / 255.0f, 238 / 255.0f),
-                new Vector3(152 / 255.0f, 251 / 255.0f, 152 / 255.0f),
-                new Vector3(224 / 255.0f, 255 / 255.0f, 255 / 255.0f),
-                new Vector3(147 / 255.0f, 112 / 255.0f, 219 / 255.0f),
-                new Vector3(216 / 255.0f, 191 / 255.0f, 216 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f),
-                new Vector3(230 / 255.0f, 230 / 255.0f, 250 / 255.0f)
-            };
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
             GlobVar.sizePainelExams.X = painelExames.Width;
@@ -297,6 +269,7 @@ namespace PlotagemOpenGL
                     {
                         if(lable is Label)
                         {
+                            lable.MouseEnter += panel_MouseEnter;
                             lable.MouseDown += Panel_MouseDown;
                             lable.MouseMove += Panel_MouseMove;
                             lable.MouseUp += Panel_MouseUp;
@@ -1073,9 +1046,19 @@ namespace PlotagemOpenGL
         private void panel_MouseEnter(object sender, EventArgs e)
         {
             timer1.Start();
-            Panel panel = sender as Panel;
+            Panel panel;
+            Control clickedControl = sender as Control;
+
+            if (clickedControl is Label lb)
+            {
+                panel = lb.Parent as Panel;
+            }else
+            {
+                panel = sender as Panel;
+            }
             if (panel != null && buttonForm != null)
             {
+                panelOn = panel;
                 tagCodCanal = (int)panel.Tag;
                 // Define a posição do ButtonForm em relação ao painel
                 Point location = panel.PointToScreen(Point.Empty); // Posição do painel na tela
@@ -1270,8 +1253,12 @@ namespace PlotagemOpenGL
                 plotagem.Margem(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
                 plotagem.Traco(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
                 plotagem.DesenhaGrafico(alturaTela, GlobVar.tbl_MontagemSelecionada.Rows.Count);
-
+                 
+                AjustarFonteDosLabels();
+                RepositionPanels();
+                ReorderGrafSelectedCodSelectedAndScale();
                 TelaClearAndReload();
+
 
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
@@ -3385,6 +3372,9 @@ namespace PlotagemOpenGL
         }
 
         private Panel clickedPanel;
+        private Panel panelOn;
+        // Estrutura para armazenar o painel e sua posição original
+        private List<(Panel panel, int originalIndex)> hiddenPanels = new List<(Panel panel, int originalIndex)>();
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
@@ -3419,6 +3409,334 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+        }
+
+        private void AdjustPanelsAfterResizeWithHiddenPanels(Panel resizedPanel)
+        {
+            int totalHeight = painelExames.ClientSize.Height; // Altura total do contêiner pai
+            int minHeightPerPanel = 20; // Altura mínima permitida para cada painel
+            int newHeight = resizedPanel.Height; // Nova altura desejada do painel redimensionado
+
+            // Garantir que o painel redimensionado não seja menor que o mínimo permitido
+            if (newHeight < minHeightPerPanel)
+            {
+                newHeight = minHeightPerPanel;
+            }
+
+            // Definir a nova altura do painel redimensionado
+            resizedPanel.Height = newHeight;
+
+            // Filtrar apenas os painéis visíveis
+            List<Panel> visiblePanels = painelExames.Controls.OfType<Panel>()
+                                             .Where(p => p.Visible)
+                                             .ToList();
+
+            int remainingHeight = totalHeight - visiblePanels.Sum(p => p == resizedPanel ? newHeight : p.Height); // Altura restante após o redimensionamento
+
+            // Calcular a altura combinada atual dos outros painéis visíveis, excluindo o painel redimensionado
+            List<Panel> otherPanels = visiblePanels.Where(p => p != resizedPanel).ToList();
+            int totalCurrentHeightOthers = otherPanels.Sum(p => p.Height);
+
+            // Ajustar proporcionalmente a altura dos outros painéis se houver excesso de altura
+            if (totalCurrentHeightOthers > remainingHeight)
+            {
+                int excessHeight = totalCurrentHeightOthers - remainingHeight; // Altura em excesso
+                int reductionPerPanel = excessHeight / otherPanels.Count; // Redução média por painel
+                int remainingReduction = excessHeight % otherPanels.Count; // Resto para ajuste fino
+
+                foreach (Panel panel in otherPanels)
+                {
+                    // Ajustar altura de cada painel, garantindo o mínimo permitido
+                    int adjustedHeight = panel.Height - reductionPerPanel;
+
+                    if (remainingReduction > 0)
+                    {
+                        adjustedHeight--; // Distribuir o ajuste adicional
+                        remainingReduction--;
+                    }
+
+                    // Garantir que a altura do painel não seja inferior ao mínimo
+                    panel.Height = Math.Max(adjustedHeight, minHeightPerPanel);
+                }
+            }
+
+            // Garantir que todos os painéis respeitem o tamanho mínimo
+            foreach (Panel panel in visiblePanels)
+            {
+                if (panel.Height < minHeightPerPanel)
+                {
+                    panel.Height = minHeightPerPanel; // Ajustar para o mínimo permitido
+                }
+            }
+
+            // Recalcular a altura total e verificar a diferença
+            int currentTotalHeight = visiblePanels.Sum(p => p.Height);
+            int difference = totalHeight - currentTotalHeight;
+
+            // Redistribuir a diferença respeitando o mínimo permitido
+            if (difference != 0)
+            {
+                int adjustmentPerPanel = difference / visiblePanels.Count;
+
+                foreach (Panel panel in visiblePanels)
+                {
+                    int adjustedHeight = panel.Height + adjustmentPerPanel;
+
+                    // Garantir que o ajuste não faça o painel ficar abaixo do mínimo
+                    if (adjustedHeight < minHeightPerPanel)
+                    {
+                        adjustedHeight = minHeightPerPanel;
+                    }
+
+                    panel.Height = adjustedHeight;
+                }
+
+                // Ajuste final caso ainda haja diferença devido ao arredondamento
+                int finalAdjustment = totalHeight - visiblePanels.Sum(p => p.Height);
+                if (finalAdjustment != 0)
+                {
+                    foreach (var panel in visiblePanels)
+                    {
+                        int allowedIncrease = finalAdjustment > 0 ? 1 : -1;
+
+                        // Garantir que o ajuste final não ultrapasse o mínimo permitido
+                        if (panel.Height + allowedIncrease >= minHeightPerPanel)
+                        {
+                            panel.Height += allowedIncrease;
+                            finalAdjustment -= allowedIncrease;
+                        }
+
+                        if (finalAdjustment == 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Atualizar a posição dos painéis visíveis
+            int currentY = 0;
+            foreach (Panel panel in visiblePanels)
+            {
+                panel.Top = currentY;
+                currentY += panel.Height;
+            }
+
+            // Atualiza os valores de localização para GlobVar.desenhoLoc
+            int index = 0;
+            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            {
+                if (panel.Visible)
+                {
+                    GlobVar.desenhoLoc[index] = panel.Top + (panel.Height / 2);
+                    index++;
+                }
+            }
+        }
+
+        private void OcultarCanal_Click(object sender, EventArgs e)
+        {
+            if (panelOn != null)
+            {
+                // Salva o índice original antes de ocultar
+                int originalIndex = painelExames.Controls.GetChildIndex(panelOn);
+                hiddenPanels.Add((panelOn, originalIndex));
+
+                // Remove o painel do controle e o oculta
+                painelExames.Controls.Remove(panelOn);
+                panelOn.Visible = false;
+                // Reajusta os painéis restantes
+                AdjustPanelsAfterResizeWithHiddenPanels(panelOn);
+                AjustarFonteDosLabels();
+                RepositionPanels();
+                TelaClearAndReload();
+            }
+        }
+        private void AdjustPanelsAfterShowAll()
+        {
+            int totalHeight = painelExames.ClientSize.Height; // Altura total disponível do contêiner
+            int minHeightPerPanel = 20; // Altura mínima permitida para cada painel
+
+            // Filtrar todos os painéis visíveis após reexibir
+            List<Panel> visiblePanels = painelExames.Controls.OfType<Panel>()
+                                             .Where(p => p.Visible)
+                                             .ToList();
+
+            // Calcular a altura combinada atual dos painéis visíveis
+            int totalCurrentHeight = visiblePanels.Sum(p => p.Height);
+
+            // Verificar se é necessário ajustar as alturas para se ajustar ao contêiner
+            if (totalCurrentHeight < totalHeight)
+            {
+                // Redistribuir a diferença de altura igualmente entre os painéis
+                int extraHeight = totalHeight - totalCurrentHeight;
+                int adjustmentPerPanel = extraHeight / visiblePanels.Count;
+                int remainingAdjustment = extraHeight % visiblePanels.Count;
+
+                foreach (Panel panel in visiblePanels)
+                {
+                    // Ajusta a altura de cada painel
+                    panel.Height += adjustmentPerPanel;
+
+                    // Ajusta o painel adicional se houver resto
+                    if (remainingAdjustment > 0)
+                    {
+                        panel.Height++;
+                        remainingAdjustment--;
+                    }
+                }
+            }
+            else if (totalCurrentHeight > totalHeight)
+            {
+                // Caso o total das alturas dos painéis seja maior que a altura disponível
+                int excessHeight = totalCurrentHeight - totalHeight;
+                int reductionPerPanel = excessHeight / visiblePanels.Count;
+                int remainingReduction = excessHeight % visiblePanels.Count;
+
+                foreach (Panel panel in visiblePanels)
+                {
+                    // Ajustar altura de cada painel, garantindo o mínimo permitido
+                    int adjustedHeight = panel.Height - reductionPerPanel;
+
+                    if (remainingReduction > 0)
+                    {
+                        adjustedHeight--; // Distribuir o ajuste adicional
+                        remainingReduction--;
+                    }
+
+                    // Garantir que a altura do painel não seja inferior ao mínimo
+                    panel.Height = Math.Max(adjustedHeight, minHeightPerPanel);
+                }
+            }
+
+            // Garantir que todos os painéis respeitem o tamanho mínimo
+            foreach (Panel panel in visiblePanels)
+            {
+                if (panel.Height < minHeightPerPanel)
+                {
+                    panel.Height = minHeightPerPanel; // Ajustar para o mínimo permitido
+                }
+            }
+
+            // Recalcular a altura total e verificar a diferença
+            int currentTotalHeight = visiblePanels.Sum(p => p.Height);
+            int difference = totalHeight - currentTotalHeight;
+
+            // Redistribuir a diferença, se houver
+            if (difference != 0)
+            {
+                int adjustmentPerPanel = difference / visiblePanels.Count;
+
+                foreach (Panel panel in visiblePanels)
+                {
+                    int adjustedHeight = panel.Height + adjustmentPerPanel;
+
+                    // Garantir que o ajuste não faça o painel ficar abaixo do mínimo
+                    panel.Height = Math.Max(adjustedHeight, minHeightPerPanel);
+                }
+
+                // Ajuste final caso ainda haja diferença devido ao arredondamento
+                int finalAdjustment = totalHeight - visiblePanels.Sum(p => p.Height);
+                if (finalAdjustment != 0)
+                {
+                    foreach (var panel in visiblePanels)
+                    {
+                        int allowedIncrease = finalAdjustment > 0 ? 1 : -1;
+
+                        // Garantir que o ajuste final não ultrapasse o mínimo permitido
+                        if (panel.Height + allowedIncrease >= minHeightPerPanel)
+                        {
+                            panel.Height += allowedIncrease;
+                            finalAdjustment -= allowedIncrease;
+                        }
+
+                        if (finalAdjustment == 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Atualizar a posição dos painéis visíveis
+            int currentY = 0;
+            foreach (Panel panel in visiblePanels)
+            {
+                panel.Top = currentY;
+                currentY += panel.Height;
+            }
+
+            // Atualiza os valores de localização para GlobVar.desenhoLoc
+            int index = 0;
+            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            {
+                if (panel.Visible)
+                {
+                    GlobVar.desenhoLoc[index] = panel.Top + (panel.Height / 2);
+                    index++;
+                }
+            }
+        }
+
+        private void MostrarTodosCanais_Click(object sender, EventArgs e)
+        {
+            // Ordena os painéis ocultos pela posição original
+            var sortedHiddenPanels = hiddenPanels.OrderBy(p => p.originalIndex).ToList();
+
+            foreach (var (panel, originalIndex) in sortedHiddenPanels)
+            {
+                // Reinsere o painel na posição original
+                painelExames.Controls.Add(panel);
+                painelExames.Controls.SetChildIndex(panel, originalIndex);
+                panel.Visible = true;
+            }
+
+            // Limpa a lista de ocultos após re-adicionar
+            hiddenPanels.Clear();
+            AdjustPanelsAfterShowAll();
+            // Reajusta os painéis visíveis
+            RepositionPanels();
+            AjustarFonteDosLabels();
+            TelaClearAndReload();
+        }
+        private void ApenasNumero_Click(object sender, EventArgs e)
+        {
+            // Inverte o estado do checkbox
+            //ApenasNumero.Checked = !ApenasNumero.Checked;
+
+            // Encontra a linha correspondente no DataTable com base no CodCanal1
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            // Verifica se a linha foi encontrada
+            if (rowNumerico != null)
+            {
+                // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
+                rowNumerico["InverteSinal"] = ApenasNumero.Checked;
+            }
+
+            // Recarrega a tela após a atualização
+            TelaClearAndReload();
+        }
+        private void MostrarSetas_Click(object sender, EventArgs e)
+        {
+            // Inverte o estado do checkbox
+            //ApenasNumero.Checked = !ApenasNumero.Checked;
+
+            // Encontra a linha correspondente no DataTable com base no CodCanal1
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            // Verifica se a linha foi encontrada
+            if (rowNumerico != null)
+            {
+                // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
+                rowNumerico["InverteSinal"] = MostrarSetas.Checked;
+            }
+
+            // Recarrega a tela após a atualização
+            TelaClearAndReload();
+
         }
 
         //Menuzinho para mudar os eventos ou mudar na tela
@@ -3490,16 +3808,79 @@ namespace PlotagemOpenGL
             timer1.Start();
 
             ContextMenuStrip menu = sender as ContextMenuStrip;
+
             if (menu != null)
             {
                 Control sourceControl = menu.SourceControl;
+
+                if(sourceControl is Label lb) 
+                {
+                    sourceControl = lb.Parent as Panel;
+                }
                 if (sourceControl is Panel panel)
                 {
 
-                    clickedPanel = panel;
-                    UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
-                    UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
-                    UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+                    var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                            .Where(row => row.Field<int>("CodCanal") == tagCodCanal).CopyToDataTable();
+                    int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+
+                    contextMenuStrip1.Items.Clear();
+
+                    if(TipoCanal == 12)
+                    {
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] {Descricao, CanalCor, Legenda, Configurar, MostrarSetas, Amplitude, Filtos, OcultarCanal });
+
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == tagCodCanal).CopyToDataTable();
+                        if ((bool)rowNumerico.Rows[0]["InverteSinal"])
+                        {
+                            MostrarSetas.Checked = true;
+                        }
+
+                        Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter});
+                        clickedPanel = panel;
+                        UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+
+
+
+                    }
+                    else if(TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
+                        || TipoCanal == 15 || TipoCanal == 30)
+                    {
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, GraficoENumero, ApenasNumero, LimiteSuperior, LimiteInferior, OcultarCanal });
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == tagCodCanal).CopyToDataTable() ;
+                        if ((bool)rowNumerico.Rows[0]["InverteSinal"])
+                        {
+                            ApenasNumero.Checked = true;
+                        }
+
+                    }
+                    else if(TipoCanal == 1)
+                    {
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, InverteSinal, AltoScala, Amplitude, Filtos, OcultarCanal, AlterarRef, MostrarFaixaDeAmpli});
+                        Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter });
+                        clickedPanel = panel;
+                        UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+
+                    }
+                    else
+                    {
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, InverteSinal, AltoScala, Amplitude, Filtos, OcultarCanal});
+                        Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter });
+                        clickedPanel = panel;
+                        UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
+                        UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+
+
+                    }
+
+
+
+
                     // Verifica se o Panel tem um Label dentro dele
                     foreach (Control control in panel.Controls)
                     {
