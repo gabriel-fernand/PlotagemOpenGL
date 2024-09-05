@@ -432,7 +432,7 @@ namespace PlotagemOpenGL.auxi
         }
         public static float Ampli(string codTipo)
         {
-            float output = 0;
+            float output = 1;
             try
             {
                 float g_amp_eeg = 1.4f;

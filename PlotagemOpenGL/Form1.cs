@@ -3828,21 +3828,13 @@ namespace PlotagemOpenGL
 
                     if(TipoCanal == 12)
                     {
-                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] {Descricao, CanalCor, Legenda, Configurar, MostrarSetas, Amplitude, Filtos, OcultarCanal });
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] {Descricao, CanalCor, Legenda, Configurar, MostrarSetas, OcultarCanal });
 
                         var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == tagCodCanal).CopyToDataTable();
                         if ((bool)rowNumerico.Rows[0]["InverteSinal"])
                         {
                             MostrarSetas.Checked = true;
                         }
-
-                        Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter});
-                        clickedPanel = panel;
-                        UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
-                        UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
-                        UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
-
-
 
                     }
                     else if(TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
