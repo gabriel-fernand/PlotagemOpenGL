@@ -654,9 +654,11 @@ namespace PlotagemOpenGL
             //
             // Configurar
             //
+            Configurar.CheckOnClick = true;
             Configurar.Name = "Configurar";
             Configurar.Size = new System.Drawing.Size(148, 26);
             Configurar.Text = "Configurar";
+            Configurar.Click += Configurar_Click;
             //
             // InverteSinal
             //
@@ -673,9 +675,9 @@ namespace PlotagemOpenGL
             // 
             // AltoScala
             // 
-            AltoScala.Name = "AltoScala";
+            AltoScala.Name = "AutoScala";
             AltoScala.Size = new System.Drawing.Size(148, 26);
-            AltoScala.Text = "Alto Scala";
+            AltoScala.Text = "Auto Scala";
 
             // 
             // Amplitude
@@ -723,6 +725,7 @@ namespace PlotagemOpenGL
             GraficoENumero.Name = "GraficoENumero";
             GraficoENumero.Size = new System.Drawing.Size(148, 26);
             GraficoENumero.Text = "Gráfico e Número";
+            GraficoENumero.Click += GraficoENumero_Click;
 
             // 
             // ApenasNumero
@@ -2604,7 +2607,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
 
 
         #endregion

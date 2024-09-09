@@ -35,6 +35,7 @@ using System.Windows.Media;
 using ClassesBDNano;
 using PlotagemOpenGL.auxi.FormComentario;
 using Accord.Statistics.Moving;
+using MathNet.Numerics.Distributions;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -277,7 +278,6 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-
             toolTip1.SetToolTip(openglControl1, "Teste");
             Play_OpenGl();
             AjustarFonteDosLabels();
@@ -654,6 +654,7 @@ namespace PlotagemOpenGL
                 movingPanel = clickedControl as Panel;
             }
 
+
             if (!mouseIsDown)
             {
                 // Verifica se o mouse está na borda inferior ou superior do painel ao clicar
@@ -972,22 +973,98 @@ namespace PlotagemOpenGL
             // Iterar sobre cada Panel no painelExames
             foreach (Panel pn in painelExames.Controls.OfType<Panel>())
             {
-                // Calcula um tamanho de fonte proporcional à altura do Panel
-                int novaFonteTamanho = Math.Max(minFontSize, Math.Min(maxFontSize, pn.Height / 3)); // Dividido por 3 como fator de ajuste
-                int novaFonteScala = Math.Max(3, Math.Min(8, pn.Height / 4));
-                int TopLoc = pn.Height / 2 - (novaFonteTamanho);
-                // Iterar sobre cada Label dentro do Panel
-                foreach (Label lb in pn.Controls.OfType<Label>())
+                var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodCanal") == Convert.ToInt32(pn.Tag)).CopyToDataTable();
+                int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+                if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
+                    || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12)
                 {
-                    if(lb.Tag == pn.Tag){//Para diferenciar o Panel de Titulo do Label de scala
-                        // Ajustar o tamanho da fonte do Label
-                        lb.Top = TopLoc;
-                        lb.Font = new Font(lb.Font.FontFamily, novaFonteTamanho, lb.Font.Style);
-                    }
-                    else
+                    // Calcula um tamanho de fonte proporcional à altura do Panel
+                    int novaFonteTamanho = Math.Max(minFontSize, Math.Min(maxFontSize, pn.Height / 3)); // Dividido por 3 como fator de ajuste
+                    int novaFonteScala = Math.Max(4, Math.Min(6, pn.Height / 4));
+                    int TopLoc = pn.Height / 2 - (novaFonteTamanho);
+                    // Iterar sobre cada Label dentro do Panel
+                    foreach (Label lb in pn.Controls.OfType<Label>())
                     {
-                        lb.Top = pn.Height / 2 - novaFonteScala;
-                        lb.Font = new Font(lb.Font.FontFamily, novaFonteScala, lb.Font.Style);
+
+                        if (lb.Tag.Equals("min"))
+                        {
+                            Point minLoc = new Point(0, 0);
+
+                            minLoc.X = pn.Width - 30;
+                            minLoc.Y = pn.Height - 15;
+
+                            lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                        }
+                        else if (lb.Tag.Equals("max"))
+                        {
+                            Point maxLoc = new Point(0, 0);
+
+                            maxLoc.X = pn.Width - 30;
+                            maxLoc.Y = 1;
+
+                            lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                        }
+                        else if (lb.Tag == pn.Tag)
+                        {//Para diferenciar o Panel de Titulo do Label de scala
+                         // Ajustar o tamanho da fonte do Label
+                            lb.Top = TopLoc;
+                            lb.Font = new Font(lb.Font.FontFamily, novaFonteTamanho, lb.Font.Style);
+                        }
+                        else if (lb.Tag.Equals("setas"))
+                        {
+                            // Definindo os parâmetros para o ajuste das setas
+                            int alturaTotal = pn.Height; // Altura total do painel
+                            int qtdSetas = 4; // Número total de setas (Cima, Direita, Esquerda, Baixo)
+                            int alturaLabel = alturaTotal / (qtdSetas + 1); // Altura disponível para cada label de seta com espaçamento
+                            int espacoEntreSetas = (alturaTotal - (qtdSetas * alturaLabel)) / (qtdSetas + 1); // Espaçamento entre as setas
+
+                            // Definindo o tamanho da fonte com base na altura disponível
+                            int tamanhoFonte = Math.Max(4, Math.Min(alturaLabel / 3, 14));
+
+                            // Ajuste das posições baseado no texto do Label
+                            switch (lb.Text)
+                            {
+                                case "ã": // Seta para cima
+                                    lb.Location = new System.Drawing.Point(pn.Width - 35, espacoEntreSetas);
+                                    break;
+                                case "á": // Seta para direita
+                                    lb.Location = new System.Drawing.Point(pn.Width - 35, espacoEntreSetas + alturaLabel + espacoEntreSetas);
+                                    break;
+                                case "â": // Seta para esquerda
+                                    lb.Location = new System.Drawing.Point(pn.Width - 35, espacoEntreSetas + 2 * (alturaLabel + espacoEntreSetas));
+                                    break;
+                                case "ä": // Seta para baixo
+                                    lb.Location = new System.Drawing.Point(pn.Width - 35, espacoEntreSetas + 3 * (alturaLabel + espacoEntreSetas));
+                                    break;
+                            }
+
+                            // Ajuste da fonte para as setas com o tamanho calculado
+                            lb.Font = new Font("Wingdings 3", tamanhoFonte, lb.Font.Style);
+                        }
+                    }
+
+                }
+                else
+                {
+                    // Calcula um tamanho de fonte proporcional à altura do Panel
+                    int novaFonteTamanho = Math.Max(minFontSize, Math.Min(maxFontSize, pn.Height / 3)); // Dividido por 3 como fator de ajuste
+                    int novaFonteScala = Math.Max(3, Math.Min(8, pn.Height / 4));
+                    int TopLoc = pn.Height / 2 - (novaFonteTamanho);
+                    // Iterar sobre cada Label dentro do Panel
+                    foreach (Label lb in pn.Controls.OfType<Label>())
+                    {
+                        if (lb.Tag == pn.Tag)
+                        {//Para diferenciar o Panel de Titulo do Label de scala
+                         // Ajustar o tamanho da fonte do Label
+                            lb.Top = TopLoc;
+                            lb.Font = new Font(lb.Font.FontFamily, novaFonteTamanho, lb.Font.Style);
+                        }
+                        else
+                        {
+                            lb.Top = pn.Height / 2 - novaFonteScala;
+                            lb.Font = new Font(lb.Font.FontFamily, novaFonteScala, lb.Font.Style);
+                        }
                     }
                 }
             }
@@ -1056,13 +1133,26 @@ namespace PlotagemOpenGL
             {
                 panel = sender as Panel;
             }
+
             if (panel != null && buttonForm != null)
             {
                 panelOn = panel;
                 tagCodCanal = (int)panel.Tag;
-                // Define a posição do ButtonForm em relação ao painel
-                Point location = panel.PointToScreen(Point.Empty); // Posição do painel na tela
-                buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y + (panel.Height / 2) - 25), new Size(25, 50)); ;
+                var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
+                                                        .Where(row => row.Field<int>("CodCanal") == tagCodCanal).CopyToDataTable();
+                int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+                if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
+                        || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12)
+                {
+                    buttonForm.HideOverlay();
+                }
+                else
+                {
+                    // Define a posição do ButtonForm em relação ao painel
+                    Point location = panel.PointToScreen(Point.Empty); // Posição do painel na tela
+                    buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y + (panel.Height / 2) - 25), new Size(25, 50));
+
+                }
             }
         }
 
@@ -3713,8 +3803,57 @@ namespace PlotagemOpenGL
             {
                 // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
                 rowNumerico["InverteSinal"] = ApenasNumero.Checked;
+                rowNumerico["EliminaFreqInf"] = DBNull.Value;
             }
+            foreach(Panel pn in painelExames.Controls)
+            {
+                if((int)pn.Tag == tagCodCanal)
+                {
+                    if (!ApenasNumero.Checked || rowNumerico["EliminaFreqInf"] != DBNull.Value)
+                    {
+                        foreach(Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Show();
 
+
+                                Point minLoc = new Point(0, 0);
+
+                                minLoc.X = pn.Width - 30;
+                                minLoc.Y = pn.Height - 15;
+
+                                lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                            }
+                            else if (lb.Tag.Equals("max"))
+                            {
+                                lb.Show();
+                                Point maxLoc = new Point(0, 0);
+
+                                maxLoc.X = pn.Width - 30;
+                                maxLoc.Y = 1;
+
+                                lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Hide();
+                            }
+                            else if (lb.Tag.Equals("max"))
+                            {
+                                lb.Hide();
+                            }
+                        }
+
+                    }
+                }
+            }
             // Recarrega a tela após a atualização
             TelaClearAndReload();
         }
@@ -3732,9 +3871,126 @@ namespace PlotagemOpenGL
             {
                 // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
                 rowNumerico["InverteSinal"] = MostrarSetas.Checked;
+                rowNumerico["EliminaFreqInf"] = DBNull.Value;
             }
 
             // Recarrega a tela após a atualização
+            TelaClearAndReload();
+
+        }
+        private void Configurar_Click(object sender, EventArgs e)
+        {
+            // Encontra a linha correspondente no DataTable com base no CodCanal1
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            // Verifica se a linha foi encontrada
+            if (Configurar.Checked)
+            {
+                if(rowNumerico != null)
+                {
+                    // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
+                    rowNumerico["EliminaFreqInf"] = 1;
+                    rowNumerico["InverteSinal"] = false;
+                }
+            }
+            else
+            {
+                // Verifica se a linha foi encontrada
+                if (rowNumerico != null)
+                {
+                    // Atualiza o campo "EliminaFreqInf" com base no estado atual do checkbox
+                    rowNumerico["EliminaFreqInf"] = DBNull.Value;
+                    rowNumerico["InverteSinal"] = true;
+                }
+
+            }
+
+            // Recarrega a tela após a atualização
+            TelaClearAndReload();
+
+        }
+
+        private void GraficoENumero_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                    .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            if (GraficoENumero.Checked)
+            {
+                // Verifica se a linha foi encontrada
+                if (rowNumerico != null)
+                {
+                    // Atualiza o campo "EliminaFreqInf" com base no estado atual do checkbox
+                    rowNumerico["EliminaFreqInf"] = 1;
+                    rowNumerico["InverteSinal"] = false;
+
+                }
+
+            }
+            else
+            {
+                // Verifica se a linha foi encontrada
+                if (rowNumerico != null)
+                {
+                    // Atualiza o campo "EliminaFreqInf" com base no estado atual do checkbox
+                    rowNumerico["EliminaFreqInf"] = DBNull.Value;
+                    rowNumerico["InverteSinal"] = true;
+                }
+
+            }
+
+            foreach (Panel pn in painelExames.Controls)
+            {
+                if ((int)pn.Tag == tagCodCanal)
+                {
+
+                    if (!ApenasNumero.Checked || rowNumerico["EliminaFreqInf"] != DBNull.Value)
+                    {
+                        foreach (Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Show();
+
+
+                                Point minLoc = new Point(0, 0);
+
+                                minLoc.X = pn.Width - 30;
+                                minLoc.Y = pn.Height - 15;
+
+                                lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                            }
+                            else if (lb.Tag.Equals("max"))
+                            {
+                                lb.Show();
+                                Point maxLoc = new Point(0, 0);
+
+                                maxLoc.X = pn.Width - 30;
+                                maxLoc.Y = 1;
+
+                                lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Hide();
+                            }
+                            else if (lb.Tag.Equals("max"))
+                            {
+                                lb.Hide();
+                            }
+                        }
+
+                    }
+                }
+            }
+
             TelaClearAndReload();
 
         }
@@ -3830,10 +4086,30 @@ namespace PlotagemOpenGL
                     {
                         contextMenuStrip1.Items.AddRange(new ToolStripItem[] {Descricao, CanalCor, Legenda, Configurar, MostrarSetas, OcultarCanal });
 
-                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == tagCodCanal).CopyToDataTable();
-                        if ((bool)rowNumerico.Rows[0]["InverteSinal"])
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                            .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+                        // Verifica se a linha foi encontrada
+                        if (rowNumerico != null)
                         {
-                            MostrarSetas.Checked = true;
+                            if (rowNumerico["EliminaFreqInf"] != DBNull.Value)
+                            {
+                                Configurar.Checked = true;
+                            }
+                            else
+                            {
+                                Configurar.Checked = false;
+                            }
+
+                            // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
+                            if ((bool)rowNumerico["InverteSinal"])
+                            {
+                                MostrarSetas.Checked = true;
+                            }
+                            else
+                            {
+                                MostrarSetas.Checked = false;
+                            }
                         }
 
                     }
@@ -3841,10 +4117,30 @@ namespace PlotagemOpenGL
                         || TipoCanal == 15 || TipoCanal == 30)
                     {
                         contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, GraficoENumero, ApenasNumero, LimiteSuperior, LimiteInferior, OcultarCanal });
-                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable().Where(row => row.Field<int>("CodCanal1") == tagCodCanal).CopyToDataTable() ;
-                        if ((bool)rowNumerico.Rows[0]["InverteSinal"])
-                        {
-                            ApenasNumero.Checked = true;
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                            .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+                        // Verifica se a linha foi encontrada
+                        if (rowNumerico != null)
+                        {                    
+                            if(rowNumerico["EliminaFreqInf"] != DBNull.Value)
+                            {
+                                GraficoENumero.Checked = true;
+                            }
+                            else
+                            {
+                                GraficoENumero.Checked = false;
+                            }
+
+                            // Atualiza o campo "InverteSinal" com base no estado atual do checkbox
+                            if ((bool)rowNumerico["InverteSinal"])
+                            {
+                                ApenasNumero.Checked = true;
+                            }
+                            else
+                            {
+                                ApenasNumero.Checked = false;
+                            }
                         }
 
                     }

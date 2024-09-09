@@ -35,11 +35,75 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
-                    if ((((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"]) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14)))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
+                        if(!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value) && GlobVar.codSelected[i] == 14)
+                        {
+                            int loc = -7000;
 
+                            int codCanal1 = GlobVar.codSelected[i];
+                            int locaux;
+                            int areaMaxima = 0;
+                            int areaMinima = 0;
+                            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                            {
+                                int tagCod = (int)pn.Tag;
+                                if (tagCod == codCanal1)
+                                {
+                                    int topPn = pn.Top;
+                                    int aux = Math.Abs((pn.Top + pn.Height) - Tela_Plotagem.painelExames.Height);
+                                    areaMaxima = pn.Height;
+                                    loc = aux;// - (int)meioPn;
+                                }
+                            }
+
+                            if (!GlobVar.codCanal.Contains(codCanal1))
+                            {
+                                // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
+                                continue;
+                            }
+
+                            int index = GlobVar.codCanal.IndexOf(codCanal1);
+
+                            if (GlobVar.txPorCanal[index] != 512)
+                            {
+                                verTx = true;
+                                ponteiroDesenho = 512 / GlobVar.txPorCanal[index];
+                                h = GlobVar.indice / ponteiroDesenho;
+                            }
+                            gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
+                            for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
+                            {
+                                //if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                                //else
+                                //{
+                                if (verTx)
+                                {
+                                    //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                                    //else
+                                    int valormatriz = verTx ? GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+
+                                    // Valores mínimo e máximo possíveis para valormatriz (ajuste conforme necessário)
+                                    int minVal = -16887 - 2110; // Exemplo: ajuste conforme os limites reais dos dados
+                                    int maxVal = 21502 + 2110;  // Exemplo: ajuste conforme os limites reais dos dados
+
+                                    // Normaliza valormatriz dentro dos limites de areaMinima e areaMaxima
+                                    valormatriz = NormalizeValue(valormatriz, minVal, maxVal, areaMinima, areaMaxima);
+
+                                    gl.Vertex(j, (valormatriz + loc));
+                                    h++; //aqui tem plotar 3 graficos diferentes
+                                    j += ponteiroDesenho - 1;
+                                    //}
+                                }
+                                else
+                                {
+                                    gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] + loc)); //aqui tem plotar 3 graficos diferentes
+                                }
+                                //}
+                            }
+                        }
                     }
-                    else if(((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"]) && (GlobVar.codSelected[i] == 14)))
+                    else if(((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 14)))
                     {
                         int loc = -7000;
 
@@ -105,7 +169,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
 
                     }
-                    else if (((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"]) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66)))
+                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66))
                     {
                         int loc = -7000;
 
@@ -175,6 +239,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             //}
                         }
                     }
+                    else if (GlobVar.codSelected[i] == 14)
+                    {
+                        continue;
+                    }
                     else
                     {
                         int loc = -7000;
@@ -232,6 +300,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             //}
                         }
                     }
+                    des--;
                     des--;
                     gl.End();
                 }

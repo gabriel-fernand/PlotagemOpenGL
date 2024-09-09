@@ -27,7 +27,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
 
                         int h = GlobVar.indice;
@@ -116,12 +116,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         g += 8;
                                     }
                                     me = aux;
-
                                     txtEmTela = $" {me} ";
                                     float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
                                     x += (int)writeX;
-                                    gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", 18, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
-                                    gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", 20, txtEmTela);
+                                    gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", 14, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                    gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", 19, txtEmTela);
 
                                     h++; //aqui tem plotar 3 graficos diferentes                                
                                     j += 7;
@@ -149,7 +148,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 14))
                     {
 
                         int h = GlobVar.indice;
@@ -226,6 +225,64 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             }
                         }
                         gl.Flush();
+                    }
+                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 14))
+                    {
+                        int h = GlobVar.indice;
+                        float[] color = new float[3];
+
+                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
+                        string txtEmTela = $"";
+                        float espacoEntreNumeros = GlobVar.sizeOpenGl.X / (GlobVar.maximaNumero - GlobVar.indiceNumero);
+
+                        for (int j = GlobVar.indiceNumero; j < GlobVar.maximaNumero; j++)
+                        {
+                            int x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
+
+                            if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
+                            else
+                            {
+                                if (GlobVar.codSelected[i] == 14)
+                                {
+                                    gl.End();
+                                    x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
+                                    gl.Begin(OpenGL.GL_2D);
+
+                                    int y = -7000;
+                                    int codCanal1 = GlobVar.codSelected[i];
+                                    int locaux;
+                                    foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                                    {
+                                        int tagCod = (int)pn.Tag;
+                                        if (tagCod == codCanal1)
+                                        {
+                                            int topPn = pn.Top;
+                                            int auxloc = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                                            double meioPn = pn.Height / 2;
+                                            y = auxloc - (int)meioPn;
+                                        }
+                                    }
+
+                                    int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+
+                                    txtEmTela = $"{posi}";
+
+                                    //txtEmTela = "ã";
+                                    float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
+                                    x += (int)writeX;
+                                    y -= 5;
+                                    gl.DrawText(0, 0, color[0], color[1], color[2], "Arial Narrow", 14, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                    gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", 19, txtEmTela);
+                                    //gl.DrawText3D("Wingdings 3", x, y, 0.0f,txtEmTela);
+                                    h++; //aqui tem plotar 3 graficos diferentes                                
+                                    j += 7;
+                                    gl.End();
+                                    gl.Flush();
+                                }
+                            }
+                        }
+
                     }
                     des--;
                 }
