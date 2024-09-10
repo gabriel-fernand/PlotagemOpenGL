@@ -994,7 +994,7 @@ namespace PlotagemOpenGL
                             minLoc.X = pn.Width - 30;
                             minLoc.Y = pn.Height - 15;
 
-                            lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                            lb.Location = new Point(minLoc.X, minLoc.Y);
                         }
                         else if (lb.Tag.Equals("max"))
                         {
@@ -1003,7 +1003,7 @@ namespace PlotagemOpenGL
                             maxLoc.X = pn.Width - 30;
                             maxLoc.Y = 1;
 
-                            lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                            lb.Location = new Point(maxLoc.X, maxLoc.Y);
                         }
                         else if (lb.Tag == pn.Tag)
                         {//Para diferenciar o Panel de Titulo do Label de scala
@@ -1649,7 +1649,9 @@ namespace PlotagemOpenGL
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotComentatios.DesenhaComentario(gl);
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            
             //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
@@ -3873,6 +3875,38 @@ namespace PlotagemOpenGL
                 rowNumerico["InverteSinal"] = MostrarSetas.Checked;
                 rowNumerico["EliminaFreqInf"] = DBNull.Value;
             }
+            if (MostrarSetas.Checked)
+            {
+                foreach(Panel pn in painelExames.Controls)
+                {
+                    if((int)pn.Tag == tagCodCanal)
+                    {
+                        foreach(Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("setas"))
+                            {
+                                lb.Hide();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (Panel pn in painelExames.Controls)
+                {
+                    if ((int)pn.Tag == tagCodCanal)
+                    {
+                        foreach (Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("setas"))
+                            {
+                                lb.Show();
+                            }
+                        }
+                    }
+                }
+            }
 
             // Recarrega a tela após a atualização
             TelaClearAndReload();
@@ -3936,6 +3970,20 @@ namespace PlotagemOpenGL
                     // Atualiza o campo "EliminaFreqInf" com base no estado atual do checkbox
                     rowNumerico["EliminaFreqInf"] = DBNull.Value;
                     rowNumerico["InverteSinal"] = true;
+                    foreach (Panel pn in painelExames.Controls)
+                    {
+                        foreach (Label lb in pn.Controls.OfType<Label>())
+                        {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Hide();
+                            }
+                            else if (lb.Tag.Equals("max"))
+                            {
+                                lb.Hide();
+                            }
+                        }
+                    }
                 }
 
             }
@@ -3944,7 +3992,7 @@ namespace PlotagemOpenGL
             {
                 if ((int)pn.Tag == tagCodCanal)
                 {
-
+                    
                     if (!ApenasNumero.Checked || rowNumerico["EliminaFreqInf"] != DBNull.Value)
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())

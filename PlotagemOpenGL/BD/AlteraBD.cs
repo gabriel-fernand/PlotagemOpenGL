@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Markup;
 using ClassesBDNano;
+using PlotagemOpenGL.auxi.auxPlotagem;
 
 namespace PlotagemOpenGL.BD
 {

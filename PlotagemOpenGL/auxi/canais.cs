@@ -200,6 +200,7 @@ namespace PlotagemOpenGL.auxi
                         if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
                                 || TipoCanal == 15 || TipoCanal == 30)
                         {
+                            scala.Location = new Point(-500, 0);
                             panel.Controls.Remove(scala);
 
                             Point maxLoc = new Point(0, 0);
@@ -218,6 +219,7 @@ namespace PlotagemOpenGL.auxi
                             maxima.Font = new Font(maxima.Font.FontFamily, 6, maxima.Font.Style);
                             maxima.Tag = "max";
                             maxima.Hide();
+                            maxima.BringToFront();
 
                             Label minima = new Label();
                             minima.Name = "Minima";
@@ -226,12 +228,14 @@ namespace PlotagemOpenGL.auxi
                             minima.Font = new Font(minima.Font.FontFamily, 6, minima.Font.Style);
                             minima.Tag = "min";
                             minima.Hide();
-
+                            minima.BringToFront();
                             panel.Controls.Add(maxima);
                             panel.Controls.Add(minima);
                         }
                         if (TipoCanal == 12)
                         {
+                            scala.Location = new Point(-500, 0);
+
                             // Remove o label existente que exibia todas as setas juntas
                             panel.Controls.Remove(scala);
 
@@ -262,7 +266,8 @@ namespace PlotagemOpenGL.auxi
                                     Location = new Point(posicaoX, posicaoY),
                                     Tag = $"setas"
                                 };
-
+                                setaLabel.BringToFront();
+                                setaLabel.Hide();
                                 // Adiciona o label ao painel
                                 panel.Controls.Add(setaLabel);
 

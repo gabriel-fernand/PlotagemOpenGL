@@ -63,6 +63,20 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     gl.End();
                     gl.Flush();
 
+                    int writeX = 0;
+                    int writeY = 0;
+                    plotEventos.ConvertToScreenCoordinates(xLoc, yLoc, out writeX, out writeY);
+                    writeX += 4;
+
+
+                    gl.Begin(OpenGL.GL_2D);
+                    gl.DrawText(writeX, (int)yLoc - 15, 0.0f, 0.0f, 0.0f, "Calibri Negrito", 13, "");
+                    gl.DrawText(writeX, (int)yLoc - 15, 0.0f, 0.0f, 0.0f, "Calibri Negrito", 15, comentario);
+
+                    gl.End();
+                    gl.Flush();
+
+
                 }
             }
             catch { }

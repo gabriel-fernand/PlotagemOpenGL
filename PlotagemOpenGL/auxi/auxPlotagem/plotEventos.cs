@@ -248,7 +248,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int minSat = (int)row["MenorSat"];
                         string posi = row["Posicao"].ToString();
 
-                        AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                        AlteraBD.GravaEvento(seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
                     }
 
                     // Se necessário, aceite as alterações na tabela
@@ -266,7 +266,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
 
 
-        private static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
+        public static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
         {
             var gl = Tela_Plotagem.openglControl1.OpenGL;
 
@@ -774,17 +774,36 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         color = plotGrafico.ObterComponentesRGB(rgbDex);
                         colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
 
-                        int YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
                         string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
+
+
+                        int YAdjusted = 0;
+
+                        int locaux;
+                        int somaTamanho = 0;
+                        foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                        {
+                            int tagCod = (int)pn.Tag;
+                            if (tagCod == codCanal1First)
+                            {
+                                int topPn = pn.Top;
+                                int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                                double meioPn = pn.Height / 2;
+                                somaTamanho = (int)meioPn;
+                                YAdjusted = aux - 15;// - (int)meioPn;
+                            }
+                        }
+
 
                         gl.Begin(OpenGL.GL_2D);
                         int writeX = 0;
-                        int writeY = (int)GlobVar.EndY[YAdjusted] - 10;
+                        int writeY = 0;
                         ConvertToScreenCoordinates(inicio, 0, out writeX, out writeY);
                         writeX += 4;
-                        writeY = (int)GlobVar.EndY[YAdjusted] - 15;
-                        gl.DrawText(writeX, writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, "");
-                        gl.DrawText(writeX, writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 10, tipoCanal);
+                        writeY = YAdjusted;
+                        gl.DrawText(writeX + 1 , writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 13, "");
+                        gl.DrawText(writeX + 1, writeY, 0.0f, 0.0f, 0.0f, "Arial Narrow", 15, tipoCanal);
 
                         gl.End();
                         gl.Flush();
@@ -820,8 +839,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         for (int i = 0; i < tipoCanal.Length; i++)
                         {
                             string a = Convert.ToString(tipoCanal[i]);
-                            gl.DrawText((int)writeX, (int)currentY, 0, 0, 0, "Arial Narrow", 18, a);
-                            gl.DrawText((int)writeX, (int)currentY, 0, 0, 0, "Arial Narrow", 18, a);
+                            if (a.Equals("I") || a.Equals("i")) a = " I";
+                            gl.DrawText((int)writeX - 4, (int)currentY - 15, 0, 0, 0, "Arial Narrow", 17, "");
+                            gl.DrawText((int)writeX - 4, (int)currentY - 15, 0, 0, 0, "Arial Narrow", 19, a);
                             currentY -= verticalSpacing; // Move para a próxima linha verticalmente
                         }
                         gl.End();
@@ -930,6 +950,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     eventos.Columns.Add("CodCanal1", typeof(int));
                     eventos.Columns.Add("Inicio", typeof(int));
                     eventos.Columns.Add("Duracao", typeof(int));
+                    eventos.Columns.Add("MenorSat", typeof(int));
+                    eventos.Columns.Add("Posicao", typeof(string));
                 }
                 int auxLoc = inicio / GlobVar.namos;
 
@@ -941,10 +963,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 int numPagTermino = finalBCB / GlobVar.namos;
                 string numPag = $"{numPagInicio} -- {numPagTermino}";
                 // Obter o próximo valor de Seq
-                int seq = eventos.Rows.Count > 0 ? eventos.AsEnumerable().Max(row => row.Field<int>("Seq")) + 1 : 1;
+                int seq = plotComentatios.AtualizarProxSeqEvento();
+
+                minSaturacao(numPagInicio, numPagTermino);
+                int minSat = GlobVar.minSat.Min();
+                string posi = Posicao(numPagInicio, numPagTermino);
+
                 // Adicionar dados ao DataTable
-                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB);
-                AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino);
+                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB, minSat, posi);
+                AlteraBD.GravaEvento(seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi);
 
                 // Exportar DataTable para Excel
                 string excelFilePath = @"C:\Teste\Teste";

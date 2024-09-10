@@ -160,7 +160,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 int ind = 0;
                 for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
                 {
-                    gl.Color(0.0f, 0.0f, 0.0f); // Define a cor das linhas (preto)
+                    gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
 
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, 0);
@@ -176,6 +176,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 float mili200seg = 102.4f;
                 for (float i = GlobVar.indice; i < GlobVar.maximaVect;)
                 {
+                    gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(i, 0);
                     gl.Vertex(i, GlobVar.sizeOpenGl.Y);
@@ -195,7 +197,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     double meioPn = pn.Height / 2;
                     locZero = auxZero - (int)meioPn;
-                    gl.Color(127, 125, 125);
+                    gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+
                     gl.Begin(OpenGL.GL_LINE_STRIP);
                     gl.Vertex(GlobVar.indice, locZero);
                     gl.Vertex(GlobVar.maximaVect, locZero);
