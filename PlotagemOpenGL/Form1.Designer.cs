@@ -89,6 +89,7 @@ namespace PlotagemOpenGL
             Configurar = new ToolStripMenuItem();
             // -- Menu Numeros Adicionais
             GraficoENumero = new ToolStripMenuItem();
+            HorizontalOuVertical = new ToolStripMenuItem();
             ApenasNumero = new ToolStripMenuItem();
             LimiteSuperior = new ToolStripMenuItem();
             LimiteInferior = new ToolStripMenuItem();
@@ -726,6 +727,14 @@ namespace PlotagemOpenGL
             GraficoENumero.Size = new System.Drawing.Size(148, 26);
             GraficoENumero.Text = "Gráfico e Número";
             GraficoENumero.Click += GraficoENumero_Click;
+
+            // 
+            // HorizontalOuVertical
+            // 
+            HorizontalOuVertical.Name = "HorizontalOuVertical";
+            HorizontalOuVertical.Size = new System.Drawing.Size(148, 26);
+            HorizontalOuVertical.Text = "";
+            HorizontalOuVertical.Click += HorizontalOuVertical_Click;
 
             // 
             // ApenasNumero
@@ -2644,6 +2653,7 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem MostrarSetas;
         // -- Menu Numeros Adicionais
         public static ToolStripMenuItem GraficoENumero;
+        public static ToolStripMenuItem HorizontalOuVertical;
         public static ToolStripMenuItem ApenasNumero;
         public static ToolStripMenuItem LimiteSuperior;
         public static ToolStripMenuItem LimiteInferior;

@@ -68,6 +68,12 @@ namespace PlotagemOpenGL.auxi
         public static int XSize;
         public static int YSize;
 
+        public static int PosCima;
+        public static int PosDireita;
+        public static int PosEsquerda;
+        public static int PosBaixo;
+        public static int PosIncremento;
+
         public static Connection cnn_dbExame = new Connection();
         public static Connection cnn_dbConfig = new Connection();
 
@@ -89,6 +95,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_CadTipoCanal = new DataTable();
         public static DataTable tbl_CadEvento = new DataTable();
         public static DataTable tbl_Comentarios = new DataTable();
+        public static DataTable tbl_DadosExame = new DataTable();
 
 
         public static string tipoExame;

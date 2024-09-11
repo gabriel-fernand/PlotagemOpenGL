@@ -49,6 +49,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     gl.End();
                                     int y = -7000;
 
+                                    bool HorizontalOuVertical = (bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["AutoEscala"];
+
                                     int codCanal1 = GlobVar.codSelected[i];
                                     int locaux;
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
@@ -84,7 +86,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     //}
                                     float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
                                     x += (int)writeX;
-                                    if (GlobVar.segundos >= 60)
+                                    if (HorizontalOuVertical) // if(GlobVar.segundos >= 60)
                                     {
                                         int yTop = y + 5;
                                         int yBot = y - 5;
@@ -106,18 +108,47 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                             bot = txtEmTela.Substring(2, 1); // último caractere
                                         }
 
-                                        // Desenhar o texto no topo
-                                        gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
-                                        gl.DrawText(x, yTop, color[0], color[1], color[2], "Calibri", fontsize, top);
+                                        if(GlobVar.segundos >= 60)
+                                        {
+                                            // Desenhar o texto no topo
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yTop, color[0], color[1], color[2], "Calibri", fontsize, top);
 
-                                        // Desenhar o texto no rodapé
-                                        gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
-                                        gl.DrawText(x, yBot, color[0], color[1], color[2], "Calibri", fontsize, bot);
+                                            // Desenhar o texto no rodapé
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yBot, color[0], color[1], color[2], "Calibri", fontsize, bot);
+                                        }
+                                        else
+                                        {
+                                            yTop = y + 7;
+                                            yBot = y - 8;
+
+                                            meh = 14;
+                                            fontsize = 19;
+
+                                            // Desenhar o texto no topo
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yTop, color[0], color[1], color[2], "Calibri", fontsize, top);
+
+                                            // Desenhar o texto no rodapé
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yBot, color[0], color[1], color[2], "Calibri", fontsize, bot);
+                                        }
                                     }
                                     else
                                     {
-                                        gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", meh, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
-                                        gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", fontsize, txtEmTela);
+                                        if(GlobVar.segundos >= 60)
+                                        {
+                                            meh = 6;
+                                            fontsize = 12;
+                                            gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", meh, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                            gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", fontsize, txtEmTela);
+                                        }
+                                        else
+                                        {
+                                            gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", meh, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                            gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", fontsize, txtEmTela);
+                                        }
                                     }
                                     h++; //aqui tem plotar 3 graficos diferentes                                
                                     j += 7;
@@ -141,8 +172,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static void PlotSetas(int qtdGraf, OpenGL gl, float[] desenhoLoc)
         {
             try{
-            int des = qtdGraf - 1;
-
+                int des = qtdGraf - 1;
+                ValoresPosicoes();
                 for (int i = 0; i < qtdGraf; i++)
                 {
                     if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 14))
@@ -186,20 +217,27 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     }
 
                                     int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                                    int[] aloa = new int[8];
+                                    int aoba = 0;
+                                    for(int ao  = j; aoba < 8; ao++)
+                                    {
+                                        aloa[aoba] = GlobVar.matrizCanal[GlobVar.grafSelected[i], ao];
+                                        aoba++;
+                                    }
 
-                                    if (posi <= (21502 - 2110) && posi >= (21502 + 2110)) // CIMA
+                                    if (posi >= (GlobVar.PosCima - GlobVar.PosIncremento) && posi <= (GlobVar.PosCima + GlobVar.PosIncremento)) // CIMA
                                     {
                                         txtEmTela = "ã";
                                     }
-                                    else if (posi <= (-4070 - 2110) && posi >= (-4070 + 2110)) // DIREITA
+                                    else if (posi >= (GlobVar.PosDireita - GlobVar.PosIncremento) && posi <= (GlobVar.PosDireita + GlobVar.PosIncremento)) // DIREITA
                                     {
                                         txtEmTela = "á";
                                     }
-                                    else if (posi <= (-16887 - 2110) && posi >= (-16887 + 2110)) //BAIXO
+                                    else if (posi >= (GlobVar.PosBaixo - GlobVar.PosIncremento) && posi <= (GlobVar.PosBaixo + GlobVar.PosIncremento)) //BAIXO
                                     {
                                         txtEmTela = "ä";
                                     }
-                                    else if (posi <= (-14031 - 2110) && posi >= (-14031 + 2110)) // ESQUERDA
+                                    else if (posi >= (GlobVar.PosEsquerda - GlobVar.PosIncremento) && posi <= (GlobVar.PosEsquerda + GlobVar.PosIncremento)) // ESQUERDA
                                     {
                                         txtEmTela = "â";
                                     }
@@ -288,6 +326,59 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             catch { }
         }
 
+        public static void ValoresPosicoes()
+        {
+            if(GlobVar.tbl_DadosExame != null)
+            {
+                if(GlobVar.tbl_DadosExame.Rows[0]["SensorPosCima"] != null)
+                {
+                    GlobVar.PosCima = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["SensorPosCima"]);
+                }
+                else
+                {
+                    GlobVar.PosCima = 21502;
+                }
+                if(GlobVar.tbl_DadosExame.Rows[0]["SensorPosDireita"] != null)
+                {
+                    GlobVar.PosDireita = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["SensorPosDireita"]);
+                }
+                else
+                {
+                    GlobVar.PosDireita = -4070;
+                }
+                if(GlobVar.tbl_DadosExame.Rows[0]["SensorPosEsquerda"] != null)
+                {
+                    GlobVar.PosEsquerda = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["SensorPosEsquerda"]);
+                }
+                else
+                {
+                    GlobVar.PosEsquerda = -14031;
+                }
+                if(GlobVar.tbl_DadosExame.Rows[0]["SensorPosBaixo"] != null)
+                {
+                    GlobVar.PosBaixo = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["SensorPosBaixo"]);
+                }
+                else
+                {
+                    GlobVar.PosBaixo = -16887;
+                }
+                if (GlobVar.tbl_DadosExame.Rows[0]["SensorPosIncremento"] != null){
+                    GlobVar.PosIncremento = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["SensorPosIncremento"]);
+                }
+                else
+                {
+                    GlobVar.PosIncremento = 2110;
+                }
+            }
+            else
+            {
+                GlobVar.PosCima = 21502;
+                GlobVar.PosDireita = -4070;
+                GlobVar.PosEsquerda = -14031;
+                GlobVar.PosBaixo = -16887;
+                GlobVar.PosIncremento = 2110;
+            }
+        }
     }
 
 }

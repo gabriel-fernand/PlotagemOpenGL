@@ -151,8 +151,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 int valormatriz = verTx ? GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
 
                                 // Valores mínimo e máximo possíveis para valormatriz (ajuste conforme necessário)
-                                int minVal = -16887 - 2110; // Exemplo: ajuste conforme os limites reais dos dados
-                                int maxVal = 21502 + 2110;  // Exemplo: ajuste conforme os limites reais dos dados
+                                int minVal = GlobVar.PosBaixo - GlobVar.PosIncremento; // Exemplo: ajuste conforme os limites reais dos dados
+                                int maxVal = GlobVar.PosCima + GlobVar.PosIncremento;  // Exemplo: ajuste conforme os limites reais dos dados
 
                                 // Normaliza valormatriz dentro dos limites de areaMinima e areaMaxima
                                 valormatriz = NormalizeValue(valormatriz, minVal, maxVal, areaMinima, areaMaxima);

@@ -3340,6 +3340,25 @@ namespace PlotagemOpenGL
             GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
 
+            if(GlobVar.segundos >= 60){
+                foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    if (Convert.ToInt16(rw["CodCanal1"]) == 67 || Convert.ToInt16(rw["CodCanal1"]) == 66)
+                    {
+                        rw["AutoEscala"] = true;
+                    }
+                }
+            }
+            else
+            {
+                foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    if (Convert.ToInt16(rw["CodCanal1"]) == 67 || Convert.ToInt16(rw["CodCanal1"]) == 66)
+                    {
+                        rw["AutoEscala"] = false;
+                    }
+                }
+            }
             UpdateInicioTela();
 
             TelaClearAndReload();
@@ -4042,6 +4061,25 @@ namespace PlotagemOpenGL
             TelaClearAndReload();
 
         }
+        private void HorizontalOuVertical_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                    .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+            if (rowNumerico != null)
+            {
+                if ((bool)rowNumerico["AutoEscala"])
+                {
+                    rowNumerico["AutoEscala"] = false;
+                }
+                else
+                {
+                    rowNumerico["AutoEscala"] = true;
+                }
+            }
+            TelaClearAndReload();
+
+        }
+
 
         //Menuzinho para mudar os eventos ou mudar na tela
         private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
@@ -4164,7 +4202,7 @@ namespace PlotagemOpenGL
                     else if(TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
                         || TipoCanal == 15 || TipoCanal == 30)
                     {
-                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, GraficoENumero, ApenasNumero, LimiteSuperior, LimiteInferior, OcultarCanal });
+                        contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, HorizontalOuVertical, GraficoENumero, ApenasNumero, LimiteSuperior, LimiteInferior, OcultarCanal });
                         var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
                                             .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
 
@@ -4188,6 +4226,15 @@ namespace PlotagemOpenGL
                             else
                             {
                                 ApenasNumero.Checked = false;
+                            }
+
+                            if ((bool)rowNumerico["AutoEscala"])
+                            {
+                                HorizontalOuVertical.Text = "Alterar para Vertical";
+                            }
+                            else
+                            {
+                                HorizontalOuVertical.Text = "Alterar para Horizontal";
                             }
                         }
 

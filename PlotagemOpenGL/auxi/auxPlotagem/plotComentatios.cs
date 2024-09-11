@@ -14,6 +14,7 @@ using ADODB;
 using PlotagemOpenGL.BD;
 using System.Drawing;
 using System.Data.Odbc;
+using System.Collections.Generic;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -26,7 +27,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         static float[] color = new float[3];
 
 
-        public static void DesenhaComentario(OpenGL gl)//(int qtdGraf, OpenGL gl, int Xinicial, int Yinicial)
+        public static void DesenhaComentario(OpenGL gl)
         {
             try
             {
@@ -49,13 +50,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int pagLoc = pag * GlobVar.namos;
 
                     xLoc = pagLoc + Xi;
-                    //yLoc = Tela_Plotagem.openglControl1.Height;// - Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
-                    //yLoc = Math.Abs(Yi - Tela_Plotagem.openglControl1.Height);
 
+                    // Desenha o quadrado de fundo
                     gl.Begin(OpenGL.GL_QUADS);
-                    gl.PointSize(3.0f); // Define o tamanho dos pontos
                     gl.Color(color[0], color[1], color[2], 0.44f);
-                    //gl.ColorMask(3, 6, 7, alpha);
                     gl.Vertex(xLoc, yLoc, -1.8f);
                     gl.Vertex(xLoc + XSize, yLoc, -1.8f);
                     gl.Vertex(xLoc + XSize, yLoc - YSize, -1.8f);
@@ -63,24 +61,76 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     gl.End();
                     gl.Flush();
 
+
+
+                    int writeXSize = 0;
+                    int sotaqy = 0;
+                    plotEventos.ConvertToScreenCoordinates(xLoc + XSize, yLoc, out writeXSize, out sotaqy);
+
                     int writeX = 0;
                     int writeY = 0;
                     plotEventos.ConvertToScreenCoordinates(xLoc, yLoc, out writeX, out writeY);
+
+                    writeXSize = Math.Abs(writeXSize - writeX);
                     writeX += 4;
 
+                    // Quebra o texto em linhas que cabem dentro do quadrado
+                    List<string> linhas = QuebraTexto(comentario, writeXSize, gl, "Calibri Negrito", 15);
 
-                    gl.Begin(OpenGL.GL_2D);
-                    gl.DrawText(writeX, (int)yLoc - 15, 0.0f, 0.0f, 0.0f, "Calibri Negrito", 13, "");
-                    gl.DrawText(writeX, (int)yLoc - 15, 0.0f, 0.0f, 0.0f, "Calibri Negrito", 15, comentario);
-
-                    gl.End();
-                    gl.Flush();
-
-
+                    // Desenha cada linha de texto dentro do quadrado
+                    int alturaLinha = 15; // Ajuste conforme necessário
+                    for (int j = 0; j < linhas.Count; j++)
+                    {
+                        gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 13, "");
+                        gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 15, linhas[j]);
+                    }
                 }
             }
-            catch { }
+            catch
+            {
+                // Trate o erro conforme necessário
+            }
         }
+
+        // Função para quebrar o texto em linhas que caibam no quadrado
+        private static List<string> QuebraTexto(string texto, int larguraMaxima, OpenGL gl, string fonte, int tamanhoFonte)
+        {
+            List<string> linhas = new List<string>();
+            string[] palavras = texto.Split(' ');
+            string linhaAtual = "";
+
+            foreach (string palavra in palavras)
+            {
+                // Testa a largura da linha atual com a próxima palavra
+                string linhaTeste = string.IsNullOrEmpty(linhaAtual) ? palavra : linhaAtual + " " + palavra;
+
+                // Ajuste o cálculo da largura do texto, experimente ajustar o fator multiplicador
+                float larguraTexto = linhaTeste.Length * tamanhoFonte * 0.6f; // Ajuste o fator conforme necessário
+
+                if (larguraTexto > larguraMaxima)
+                {
+                    // Adiciona a linha atual e começa uma nova
+                    if (!string.IsNullOrEmpty(linhaAtual))
+                    {
+                        linhas.Add(linhaAtual);
+                    }
+                    linhaAtual = palavra;
+                }
+                else
+                {
+                    linhaAtual = linhaTeste;
+                }
+            }
+
+            // Adiciona a última linha, se houver
+            if (!string.IsNullOrEmpty(linhaAtual))
+            {
+                linhas.Add(linhaAtual);
+            }
+
+            return linhas;
+        }
+
         public static int AtualizarProxSeqEvento()
         {
 
