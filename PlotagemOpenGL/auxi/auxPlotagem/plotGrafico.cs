@@ -52,6 +52,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 {
                                     int topPn = pn.Top;
                                     int aux = Math.Abs((pn.Top + pn.Height) - Tela_Plotagem.painelExames.Height);
+                                    areaMinima = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);                                   
                                     areaMaxima = pn.Height;
                                     loc = aux;// - (int)meioPn;
                                 }
@@ -87,8 +88,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     int minVal = -16887 - 2110; // Exemplo: ajuste conforme os limites reais dos dados
                                     int maxVal = 21502 + 2110;  // Exemplo: ajuste conforme os limites reais dos dados
 
-                                    // Normaliza valormatriz dentro dos limites de areaMinima e areaMaxima
-                                    valormatriz = NormalizeValue(valormatriz, minVal, maxVal, areaMinima, areaMaxima);
+                                    // Normaliza valormatriz usando os quatro valores de referência e ajustando na área de desenho
+                                    valormatriz = NormalizeValue(valormatriz, GlobVar.PosCima, GlobVar.PosBaixo, GlobVar.PosEsquerda, GlobVar.PosDireita, areaMinima, areaMaxima);
 
                                     gl.Vertex(j, (valormatriz + loc));
                                     h++; //aqui tem plotar 3 graficos diferentes
@@ -155,7 +156,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 int maxVal = GlobVar.PosCima + GlobVar.PosIncremento;  // Exemplo: ajuste conforme os limites reais dos dados
 
                                 // Normaliza valormatriz dentro dos limites de areaMinima e areaMaxima
-                                valormatriz = NormalizeValue(valormatriz, minVal, maxVal, areaMinima, areaMaxima);
+                                //valormatriz = NormalizeValue(valormatriz, minVal, maxVal, areaMinima, areaMaxima);
+
+                                // Chamada ajustada da função de normalização
+                                valormatriz = NormalizeValue(valormatriz, GlobVar.PosCima, GlobVar.PosBaixo, GlobVar.PosEsquerda, GlobVar.PosDireita, areaMinima, areaMaxima);
 
                                 gl.Vertex(j, (valormatriz + loc));
                                 h++; //aqui tem plotar 3 graficos diferentes
@@ -343,9 +347,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             // Retornar os componentes RGB como um array de floats
             return colorRGB;
         }
-        private static int NormalizeValue(int value, int minVal, int maxVal, int areaMin, int areaMax)
+        private static int NormalizeValue(int value, int posCima, int posBaixo, int posEsquerda, int posDireita, int areaMin, int areaMax)
         {
-            // Verifica se os limites são válidos
+            // Calcular os limites de normalização com base nos quatro valores
+            int minVal = Math.Min(Math.Min(posCima, posBaixo), Math.Min(posEsquerda, posDireita));
+            int maxVal = Math.Max(Math.Max(posCima, posBaixo), Math.Max(posEsquerda, posDireita));
+
+            // Verifica se os limites são válidos para evitar divisão por zero
             if (maxVal == minVal)
             {
                 return areaMin; // Evita divisão por zero
@@ -357,6 +365,5 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             // Converte para inteiro e retorna
             return (int)Math.Round(normalized);
         }
-
     }
 }

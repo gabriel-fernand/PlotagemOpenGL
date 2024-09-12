@@ -1118,7 +1118,7 @@ namespace PlotagemOpenGL
                 }
             }
         }
-        int tagCodCanal;
+        public static int tagCodCanal;
         // Evento de mouse enter para mostrar o ButtonForm
         private void panel_MouseEnter(object sender, EventArgs e)
         {
@@ -3360,7 +3360,6 @@ namespace PlotagemOpenGL
                 }
             }
             UpdateInicioTela();
-
             TelaClearAndReload();
         }
 
@@ -3810,6 +3809,19 @@ namespace PlotagemOpenGL
             AjustarFonteDosLabels();
             TelaClearAndReload();
         }
+
+        private void Descricao_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                PlotagemOpenGL.FormesMenuPanels.InformaçõesDoCanal Info = new PlotagemOpenGL.FormesMenuPanels.InformaçõesDoCanal();
+                buttonForm.HideOverlay();
+                Info.ShowDialog();                
+            }
+            catch { }
+
+        }
+
         private void ApenasNumero_Click(object sender, EventArgs e)
         {
             // Inverte o estado do checkbox
@@ -4284,7 +4296,7 @@ namespace PlotagemOpenGL
             try
             {
                 PlotagemOpenGL.auxi.FormColorRGB.Colors insert = new PlotagemOpenGL.auxi.FormColorRGB.Colors();
-                insert.Show();
+                insert.ShowDialog();
             }
             catch { }
 

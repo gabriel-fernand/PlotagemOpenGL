@@ -645,6 +645,7 @@ namespace PlotagemOpenGL
             Descricao.Name = "Descricao";
             Descricao.Size = new System.Drawing.Size(148, 26);
             Descricao.Text = "Descrição";
+            Descricao.Click += Descricao_Click;
 
             // 
             // CanalCor
@@ -2616,6 +2617,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
 
         #endregion

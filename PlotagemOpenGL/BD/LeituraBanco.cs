@@ -25,7 +25,7 @@ public class LeituraBanco
             connectionDatBd.Open();
             //MessageBox.Show("Conexão bem-sucedida!");
 
-            string queryConfig = "SELECT * FROM tbl_CadEvento";
+            string queryConfig = "SELECT * FROM tbl_CadCanal";
             string query = "SELECT * FROM tbl_Eventos";
             string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
             string queryTbl_Montagem = "SELECT * FROM tbl_Montagem";
@@ -74,7 +74,7 @@ public class LeituraBanco
             adapterTbl_DadosExame.Fill(GlobVar.tbl_DadosExame);
             adapterTbl_Comentarios.Fill(GlobVar.tbl_Comentarios);
             adapterTipoExame.Fill(sele);
-            adapterConfig.Fill(GlobVar.codEventos);
+            adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapter.Fill(GlobVar.eventos);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
             adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
