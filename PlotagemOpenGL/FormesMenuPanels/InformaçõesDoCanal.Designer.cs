@@ -1,4 +1,5 @@
 ﻿using MetroFramework.Forms;
+using PlotagemOpenGL.auxi;
 namespace PlotagemOpenGL.FormesMenuPanels
 {
     partial class InformaçõesDoCanal
@@ -48,6 +49,14 @@ namespace PlotagemOpenGL.FormesMenuPanels
             PassaAlta = new System.Windows.Forms.Label();
             PassaBaixa = new System.Windows.Forms.Label();
             Display = new System.Windows.Forms.GroupBox();
+            NumerosPosi = new System.Windows.Forms.GroupBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            Gráfico = new System.Windows.Forms.RadioButton();
+            Números = new System.Windows.Forms.RadioButton();
+            GraficoeNumeros = new System.Windows.Forms.RadioButton();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            Vertical = new System.Windows.Forms.RadioButton();
+            Horizontal = new System.Windows.Forms.RadioButton();
             Posicao = new System.Windows.Forms.GroupBox();
             Configurar = new System.Windows.Forms.RadioButton();
             GráficoSetas = new System.Windows.Forms.RadioButton();
@@ -57,12 +66,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Referencia = new System.Windows.Forms.Label();
             AutoEscala = new System.Windows.Forms.CheckBox();
             InverteSinal = new System.Windows.Forms.CheckBox();
-            NumerosPosi = new System.Windows.Forms.GroupBox();
-            Vertical = new System.Windows.Forms.RadioButton();
-            GraficoeNumeros = new System.Windows.Forms.RadioButton();
-            Horizontal = new System.Windows.Forms.RadioButton();
-            Números = new System.Windows.Forms.RadioButton();
-            Gráfico = new System.Windows.Forms.RadioButton();
             comboAmplitude = new System.Windows.Forms.ComboBox();
             textLegenda = new System.Windows.Forms.TextBox();
             Cor = new System.Windows.Forms.GroupBox();
@@ -89,9 +92,11 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Canal.SuspendLayout();
             Filtros.SuspendLayout();
             Display.SuspendLayout();
+            NumerosPosi.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBox1.SuspendLayout();
             Posicao.SuspendLayout();
             Grafico.SuspendLayout();
-            NumerosPosi.SuspendLayout();
             Cor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarB).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBarG).BeginInit();
@@ -123,44 +128,44 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // textAmostragem
             // 
             textAmostragem.BackColor = System.Drawing.Color.GhostWhite;
+            textAmostragem.HideSelection = false;
             textAmostragem.Location = new System.Drawing.Point(138, 136);
             textAmostragem.Name = "textAmostragem";
             textAmostragem.ReadOnly = true;
-            textAmostragem.TabStop = false;
-            textAmostragem.WordWrap = false;
-            textAmostragem.HideSelection = false;
             textAmostragem.Size = new System.Drawing.Size(191, 25);
             textAmostragem.TabIndex = 5;
-            textAmostragem.MouseEnter += textBox1_Enter;
+            textAmostragem.TabStop = false;
+            textAmostragem.WordWrap = false;
             textAmostragem.MouseDown += textBox1_MouseDown;
+            textAmostragem.MouseEnter += textBox1_Enter;
             // 
             // textTipoDeCanal
             // 
             textTipoDeCanal.BackColor = System.Drawing.Color.GhostWhite;
+            textTipoDeCanal.HideSelection = false;
             textTipoDeCanal.Location = new System.Drawing.Point(138, 84);
             textTipoDeCanal.Name = "textTipoDeCanal";
             textTipoDeCanal.ReadOnly = true;
-            textTipoDeCanal.TabStop = false;
-            textTipoDeCanal.WordWrap = false;
-            textTipoDeCanal.HideSelection = false;
             textTipoDeCanal.Size = new System.Drawing.Size(191, 25);
             textTipoDeCanal.TabIndex = 4;
-            textTipoDeCanal.MouseEnter += textBox1_Enter;
+            textTipoDeCanal.TabStop = false;
+            textTipoDeCanal.WordWrap = false;
             textTipoDeCanal.MouseDown += textBox1_MouseDown;
+            textTipoDeCanal.MouseEnter += textBox1_Enter;
             // 
             // textNome
             // 
             textNome.BackColor = System.Drawing.Color.GhostWhite;
+            textNome.HideSelection = false;
             textNome.Location = new System.Drawing.Point(138, 35);
             textNome.Name = "textNome";
             textNome.ReadOnly = true;
-            textNome.TabStop = false;
-            textNome.WordWrap = false;
-            textNome.HideSelection = false;
             textNome.Size = new System.Drawing.Size(191, 25);
             textNome.TabIndex = 3;
-            textNome.MouseEnter += textBox1_Enter;
+            textNome.TabStop = false;
+            textNome.WordWrap = false;
             textNome.MouseDown += textBox1_MouseDown;
+            textNome.MouseEnter += textBox1_Enter;
             // 
             // Amostragem
             // 
@@ -238,26 +243,32 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // comboNotch
             // 
             comboNotch.FormattingEnabled = true;
+            comboNotch.Items.AddRange(new object[] { 50, 60 });
             comboNotch.Location = new System.Drawing.Point(138, 119);
             comboNotch.Name = "comboNotch";
             comboNotch.Size = new System.Drawing.Size(119, 25);
-            comboNotch.TabIndex = 9;
+            comboNotch.TabIndex = 0;
+            comboNotch.TabStop = false;
             // 
             // comboPassaAlta
             // 
             comboPassaAlta.FormattingEnabled = true;
+            comboPassaAlta.Items.AddRange(new object[] { 75, 65, 40, 10, 7, 5, 3, 1, 0.5D, 0.3D, 0.1D });
             comboPassaAlta.Location = new System.Drawing.Point(138, 80);
             comboPassaAlta.Name = "comboPassaAlta";
             comboPassaAlta.Size = new System.Drawing.Size(119, 25);
-            comboPassaAlta.TabIndex = 8;
+            comboPassaAlta.TabIndex = 0;
+            comboPassaAlta.TabStop = false;
             // 
             // comboPassaBaixa
             // 
             comboPassaBaixa.FormattingEnabled = true;
+            comboPassaBaixa.Items.AddRange(new object[] { 100, 70, 60, 50, 40, 35, 30, 20, 15, 10, 5, 3 });
             comboPassaBaixa.Location = new System.Drawing.Point(138, 41);
             comboPassaBaixa.Name = "comboPassaBaixa";
             comboPassaBaixa.Size = new System.Drawing.Size(119, 25);
-            comboPassaBaixa.TabIndex = 7;
+            comboPassaBaixa.TabIndex = 0;
+            comboPassaBaixa.TabStop = false;
             // 
             // Notch
             // 
@@ -288,9 +299,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // 
             // Display
             // 
+            Display.Controls.Add(NumerosPosi);
             Display.Controls.Add(Posicao);
             Display.Controls.Add(Grafico);
-            Display.Controls.Add(NumerosPosi);
             Display.Controls.Add(comboAmplitude);
             Display.Controls.Add(textLegenda);
             Display.Controls.Add(Cor);
@@ -304,6 +315,97 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Display.TabIndex = 2;
             Display.TabStop = false;
             Display.Text = "Display";
+            // 
+            // NumerosPosi
+            // 
+            NumerosPosi.Controls.Add(groupBox2);
+            NumerosPosi.Controls.Add(groupBox1);
+            NumerosPosi.Location = new System.Drawing.Point(17, 110);
+            NumerosPosi.Name = "NumerosPosi";
+            NumerosPosi.Size = new System.Drawing.Size(321, 113);
+            NumerosPosi.TabIndex = 10;
+            NumerosPosi.TabStop = false;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(Gráfico);
+            groupBox2.Controls.Add(Números);
+            groupBox2.Controls.Add(GraficoeNumeros);
+            groupBox2.Location = new System.Drawing.Point(9, 13);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(162, 94);
+            groupBox2.TabIndex = 11;
+            groupBox2.TabStop = false;
+            // 
+            // Gráfico
+            // 
+            Gráfico.AutoSize = true;
+            Gráfico.Font = new System.Drawing.Font("Arial", 7F);
+            Gráfico.Location = new System.Drawing.Point(12, 14);
+            Gráfico.Name = "Gráfico";
+            Gráfico.Size = new System.Drawing.Size(67, 19);
+            Gráfico.TabIndex = 7;
+            Gráfico.TabStop = true;
+            Gráfico.Text = "Gráfico";
+            Gráfico.UseVisualStyleBackColor = true;
+            // 
+            // Números
+            // 
+            Números.AutoSize = true;
+            Números.Font = new System.Drawing.Font("Arial", 7F);
+            Números.Location = new System.Drawing.Point(12, 44);
+            Números.Name = "Números";
+            Números.Size = new System.Drawing.Size(80, 19);
+            Números.TabIndex = 8;
+            Números.TabStop = true;
+            Números.Text = "Números";
+            Números.UseVisualStyleBackColor = true;
+            // 
+            // GraficoeNumeros
+            // 
+            GraficoeNumeros.AutoSize = true;
+            GraficoeNumeros.Font = new System.Drawing.Font("Arial", 7F);
+            GraficoeNumeros.Location = new System.Drawing.Point(12, 73);
+            GraficoeNumeros.Name = "GraficoeNumeros";
+            GraficoeNumeros.Size = new System.Drawing.Size(132, 19);
+            GraficoeNumeros.TabIndex = 9;
+            GraficoeNumeros.TabStop = true;
+            GraficoeNumeros.Text = "Gráfico e Números";
+            GraficoeNumeros.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(Vertical);
+            groupBox1.Controls.Add(Horizontal);
+            groupBox1.Location = new System.Drawing.Point(183, 13);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(118, 94);
+            groupBox1.TabIndex = 10;
+            groupBox1.TabStop = false;
+            // 
+            // Vertical
+            // 
+            Vertical.AutoSize = true;
+            Vertical.Font = new System.Drawing.Font("Arial", 7F);
+            Vertical.Location = new System.Drawing.Point(11, 14);
+            Vertical.Name = "Vertical";
+            Vertical.Size = new System.Drawing.Size(67, 19);
+            Vertical.TabIndex = 9;
+            Vertical.TabStop = true;
+            Vertical.Text = "Vertical";
+            Vertical.UseVisualStyleBackColor = true;
+            // 
+            // Horizontal
+            // 
+            Horizontal.AutoSize = true;
+            Horizontal.Font = new System.Drawing.Font("Arial", 7F);
+            Horizontal.Location = new System.Drawing.Point(11, 39);
+            Horizontal.Name = "Horizontal";
+            Horizontal.Size = new System.Drawing.Size(83, 19);
+            Horizontal.TabIndex = 8;
+            Horizontal.TabStop = true;
+            Horizontal.Text = "Horizontal";
+            Horizontal.UseVisualStyleBackColor = true;
             // 
             // Posicao
             // 
@@ -401,79 +503,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
             InverteSinal.Text = "Inverte Sinal";
             InverteSinal.UseVisualStyleBackColor = true;
             // 
-            // NumerosPosi
-            // 
-            NumerosPosi.Controls.Add(Vertical);
-            NumerosPosi.Controls.Add(GraficoeNumeros);
-            NumerosPosi.Controls.Add(Horizontal);
-            NumerosPosi.Controls.Add(Números);
-            NumerosPosi.Controls.Add(Gráfico);
-            NumerosPosi.Location = new System.Drawing.Point(17, 110);
-            NumerosPosi.Name = "NumerosPosi";
-            NumerosPosi.Size = new System.Drawing.Size(321, 113);
-            NumerosPosi.TabIndex = 10;
-            NumerosPosi.TabStop = false;
-            // 
-            // Vertical
-            // 
-            Vertical.AutoSize = true;
-            Vertical.Font = new System.Drawing.Font("Arial", 7F);
-            Vertical.Location = new System.Drawing.Point(183, 26);
-            Vertical.Name = "Vertical";
-            Vertical.Size = new System.Drawing.Size(67, 19);
-            Vertical.TabIndex = 9;
-            Vertical.TabStop = true;
-            Vertical.Text = "Vertical";
-            Vertical.UseVisualStyleBackColor = true;
-            // 
-            // GraficoeNumeros
-            // 
-            GraficoeNumeros.AutoSize = true;
-            GraficoeNumeros.Font = new System.Drawing.Font("Arial", 7F);
-            GraficoeNumeros.Location = new System.Drawing.Point(9, 85);
-            GraficoeNumeros.Name = "GraficoeNumeros";
-            GraficoeNumeros.Size = new System.Drawing.Size(132, 19);
-            GraficoeNumeros.TabIndex = 9;
-            GraficoeNumeros.TabStop = true;
-            GraficoeNumeros.Text = "Gráfico e Números";
-            GraficoeNumeros.UseVisualStyleBackColor = true;
-            // 
-            // Horizontal
-            // 
-            Horizontal.AutoSize = true;
-            Horizontal.Font = new System.Drawing.Font("Arial", 7F);
-            Horizontal.Location = new System.Drawing.Point(183, 51);
-            Horizontal.Name = "Horizontal";
-            Horizontal.Size = new System.Drawing.Size(83, 19);
-            Horizontal.TabIndex = 8;
-            Horizontal.TabStop = true;
-            Horizontal.Text = "Horizontal";
-            Horizontal.UseVisualStyleBackColor = true;
-            // 
-            // Números
-            // 
-            Números.AutoSize = true;
-            Números.Font = new System.Drawing.Font("Arial", 7F);
-            Números.Location = new System.Drawing.Point(9, 56);
-            Números.Name = "Números";
-            Números.Size = new System.Drawing.Size(80, 19);
-            Números.TabIndex = 8;
-            Números.TabStop = true;
-            Números.Text = "Números";
-            Números.UseVisualStyleBackColor = true;
-            // 
-            // Gráfico
-            // 
-            Gráfico.AutoSize = true;
-            Gráfico.Font = new System.Drawing.Font("Arial", 7F);
-            Gráfico.Location = new System.Drawing.Point(9, 26);
-            Gráfico.Name = "Gráfico";
-            Gráfico.Size = new System.Drawing.Size(67, 19);
-            Gráfico.TabIndex = 7;
-            Gráfico.TabStop = true;
-            Gráfico.Text = "Gráfico";
-            Gráfico.UseVisualStyleBackColor = true;
-            // 
             // comboAmplitude
             // 
             comboAmplitude.FormattingEnabled = true;
@@ -481,6 +510,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             comboAmplitude.Name = "comboAmplitude";
             comboAmplitude.Size = new System.Drawing.Size(98, 25);
             comboAmplitude.TabIndex = 6;
+            comboAmplitude.TabStop = false;
             // 
             // textLegenda
             // 
@@ -488,6 +518,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             textLegenda.Name = "textLegenda";
             textLegenda.Size = new System.Drawing.Size(211, 25);
             textLegenda.TabIndex = 5;
+            textLegenda.TabStop = false;
             // 
             // Cor
             // 
@@ -607,16 +638,20 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // numericUpDownLmInf
             // 
             numericUpDownLmInf.Location = new System.Drawing.Point(26, 106);
+            numericUpDownLmInf.Maximum = new decimal(new int[] { 160, 0, 0, 0 });
             numericUpDownLmInf.Name = "numericUpDownLmInf";
             numericUpDownLmInf.Size = new System.Drawing.Size(57, 25);
             numericUpDownLmInf.TabIndex = 6;
+            numericUpDownLmInf.TabStop = false;
             // 
             // numericUpDownLmSup
             // 
             numericUpDownLmSup.Location = new System.Drawing.Point(26, 53);
+            numericUpDownLmSup.Maximum = new decimal(new int[] { 200, 0, 0, 0 });
             numericUpDownLmSup.Name = "numericUpDownLmSup";
             numericUpDownLmSup.Size = new System.Drawing.Size(57, 25);
             numericUpDownLmSup.TabIndex = 5;
+            numericUpDownLmSup.TabStop = false;
             // 
             // LimiteInferior
             // 
@@ -705,12 +740,15 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Filtros.PerformLayout();
             Display.ResumeLayout(false);
             Display.PerformLayout();
+            NumerosPosi.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             Posicao.ResumeLayout(false);
             Posicao.PerformLayout();
             Grafico.ResumeLayout(false);
             Grafico.PerformLayout();
-            NumerosPosi.ResumeLayout(false);
-            NumerosPosi.PerformLayout();
             Cor.ResumeLayout(false);
             Cor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarB).EndInit();
@@ -727,6 +765,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         }
 
         #endregion
+
         public static System.Windows.Forms.GroupBox Canal;
         public static System.Windows.Forms.Label Amostragem;
         public static System.Windows.Forms.Label TipoDeCanal;
@@ -783,5 +822,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         public static System.Windows.Forms.RadioButton MostrarSetas;
         public static System.Windows.Forms.ComboBox boxReferencia;
         public static System.Windows.Forms.Label Referencia;
+        public static System.Windows.Forms.GroupBox groupBox1;
+        public static System.Windows.Forms.GroupBox groupBox2;
     }
 }

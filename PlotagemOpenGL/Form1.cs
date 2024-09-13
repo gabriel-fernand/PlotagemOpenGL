@@ -3060,7 +3060,6 @@ namespace PlotagemOpenGL
                 //UpdateSelected(sender);
                 
                 //timer1.Start();
-                int alturaTela = (int)openglControl1.Height;
 
                 int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
                 int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
