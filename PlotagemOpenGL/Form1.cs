@@ -36,6 +36,8 @@ using ClassesBDNano;
 using PlotagemOpenGL.auxi.FormComentario;
 using Accord.Statistics.Moving;
 using MathNet.Numerics.Distributions;
+using PlotagemOpenGL.auxi.FormLegenda;
+using PlotagemOpenGL.FormesMenuPanels.InferiorSuperior;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -243,12 +245,11 @@ namespace PlotagemOpenGL
             GlobVar.locBut.X = plusLb1.Location.X;
             GlobVar.locScale.X = scalaLb1.Location.X;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
-
+            GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             load();
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
-            GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             velocidadeScroll.SelectedIndex = 0;
             stopwatch = new Stopwatch();
             this.MouseUp += Form1_MouseUp;
@@ -466,6 +467,31 @@ namespace PlotagemOpenGL
                 }
             }
             int auxxx = GlobVar.maximaVect - GlobVar.indice;
+
+            // Supondo que GlobVar.Amplitude seja um array de strings
+            // Adiciona os itens de GlobVar.Amplitude ao DropDownItems
+            Amplitude.DropDownItems.AddRange(Array.ConvertAll(GlobVar.Amplitude, item =>
+            {
+                // Formata o valor float com duas casas decimais
+                string formattedItem = item.ToString();
+
+                // Cria o ToolStripMenuItem
+                ToolStripMenuItem menuItem = new ToolStripMenuItem
+                {
+                    Name = formattedItem,
+                    Text = formattedItem,
+                    Size = new System.Drawing.Size(148, 26) // Ajuste o tamanho conforme necessário
+                };
+                menuItem.Click += AmpliMenus_Click;
+                // Ação de clique para o menuItem
+                menuItem.Click += (sender, e) =>
+                {
+
+                };
+
+                return menuItem;
+            }));
+
             UpdateFilterStates();
         }
 
@@ -3820,6 +3846,95 @@ namespace PlotagemOpenGL
             catch { }
 
         }
+        private void Amplitude_DropDownOpening(object sender, EventArgs e)
+        {
+            // Captura o valor da variável ampli
+            float ampli = Convert.ToSingle(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+
+            // Itera pelos itens no DropDown
+            foreach (ToolStripItem item in Amplitude.DropDownItems)
+            {
+                // Verifica se o item é um ToolStripMenuItem
+                if (item is ToolStripMenuItem menuItem)
+                {
+                    // Converte o texto do item para float e compara com ampli
+                    if (float.TryParse(menuItem.Text, out float itemValue) && itemValue == ampli)
+                    {
+                        // Marca o item se corresponder ao valor de ampli
+                        menuItem.Checked = true;
+                    }
+                    else
+                    {
+                        // Desmarca os itens que não correspondem
+                        menuItem.Checked = false;
+                    }
+                }
+            }
+        }
+
+        private void Legenda_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                LegendaInput legInput = new LegendaInput();
+                buttonForm.HideOverlay();
+                legInput.ShowDialog();
+            }
+            catch { }
+        }
+        private void LimiteSuperior_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LimiteSuperior lmSup = new LimiteSuperior();
+                buttonForm.HideOverlay();
+                lmSup.ShowDialog();
+            }
+            catch { }
+        }
+
+        private void LimiteInferior_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LimiteInferior lmInf = new LimiteInferior();
+                buttonForm.HideOverlay();
+                lmInf.ShowDialog();
+            }
+            catch { }
+        }
+
+
+
+
+        private void AmpliMenus_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+            int newAmpli = Convert.ToInt32(clickedItem.Text);
+
+            GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
+            float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+
+            GlobVar.scale[index] = scala;
+
+            foreach (Panel pn in painelExames.Controls)
+            {
+                if ((int)pn.Tag == tagCodCanal)
+                {
+                    foreach (Label lb in pn.Controls.OfType<Label>())
+                    {
+                        if (lb.Tag.Equals("scala"))
+                        {
+                            lb.Text = $"{newAmpli} μV";
+                        }
+                    }
+                }
+            }
+
+
+            TelaClearAndReload();
+        }
 
         private void ApenasNumero_Click(object sender, EventArgs e)
         {
@@ -5363,7 +5478,7 @@ namespace PlotagemOpenGL
             }
         }
 
-        int index = 0;
+        public static int index = 0;
         private void timerClick_Tick(object sender, EventArgs e)
         {
             if (isDrawing)

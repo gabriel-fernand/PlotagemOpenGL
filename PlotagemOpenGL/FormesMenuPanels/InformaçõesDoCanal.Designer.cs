@@ -249,6 +249,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             comboNotch.Size = new System.Drawing.Size(119, 25);
             comboNotch.TabIndex = 0;
             comboNotch.TabStop = false;
+            //comboNotch.TabIndexChanged += ComboNotch_TabIndexChanged;
+            comboNotch.TextChanged += ComboNotch_TabIndexChanged;
             // 
             // comboPassaAlta
             // 
@@ -259,6 +261,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             comboPassaAlta.Size = new System.Drawing.Size(119, 25);
             comboPassaAlta.TabIndex = 0;
             comboPassaAlta.TabStop = false;
+            //comboPassaAlta.TabIndexChanged += ComboPassaAlta_TabIndexChanged;
+            comboPassaAlta.TextChanged += ComboPassaAlta_TabIndexChanged;
             // 
             // comboPassaBaixa
             // 
@@ -269,6 +273,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             comboPassaBaixa.Size = new System.Drawing.Size(119, 25);
             comboPassaBaixa.TabIndex = 0;
             comboPassaBaixa.TabStop = false;
+            //comboPassaBaixa.TabIndexChanged += ComboPassaBaixa_TabIndexChanged;
+            comboPassaBaixa.TextChanged += ComboPassaBaixa_TabIndexChanged;
             // 
             // Notch
             // 
@@ -762,7 +768,16 @@ namespace PlotagemOpenGL.FormesMenuPanels
             ((System.ComponentModel.ISupportInitialize)numericUpDownLmInf).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownLmSup).EndInit();
             ResumeLayout(false);
+
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.PerformLayout();
         }
+
+
+
 
         #endregion
 

@@ -673,6 +673,7 @@ namespace PlotagemOpenGL
             Legenda.Name = "Legenda";
             Legenda.Size = new System.Drawing.Size(148, 26);
             Legenda.Text = "Legenda";
+            Legenda.Click += Legenda_Click;
 
             // 
             // AltoScala
@@ -687,7 +688,7 @@ namespace PlotagemOpenGL
             Amplitude.Name = "Amplitude";
             Amplitude.Size = new System.Drawing.Size(148, 26);
             Amplitude.Text = "Amplitude";
-
+            Amplitude.DropDownOpening += Amplitude_DropDownOpening;
             // 
             // OcultarCanal
             // 
@@ -752,6 +753,7 @@ namespace PlotagemOpenGL
             LimiteSuperior.Name = "LimiteSuperior";
             LimiteSuperior.Size = new System.Drawing.Size(148, 26);
             LimiteSuperior.Text = "Limite Superior";
+            LimiteSuperior.Click += LimiteSuperior_Click;
 
             // 
             // LimiteInferior
@@ -759,6 +761,7 @@ namespace PlotagemOpenGL
             LimiteInferior.Name = "LimiteInferior";
             LimiteInferior.Size = new System.Drawing.Size(148, 26);
             LimiteInferior.Text = "Limite Inferior";
+            LimiteInferior.Click += LimiteInferior_Click;
             //
             // Filtos
             //
@@ -2617,8 +2620,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
-
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
