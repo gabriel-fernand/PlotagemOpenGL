@@ -1,5 +1,6 @@
 ﻿using Accord.Math;
 using SharpGL;
+using SharpGL.SceneGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int ponteiroDesenho = 0;
                     int h = 0;
                     float[] color = new float[3];
+                    bool faixaAmplitude = false;
+                    if (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)
+                    {
+                        faixaAmplitude = true;
+                    }
+                    int top = 0;
+                    int butt = 0;
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
@@ -250,6 +258,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     }
                     else
                     {
+                        int inverteSinal = 1;
+                        if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"])
+                        {
+                            inverteSinal = -1;
+                        }
                         int loc = -7000;
 
                         int codCanal1 = GlobVar.codSelected[i];
@@ -261,10 +274,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             {
                                 int topPn = pn.Top;
                                 int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
-
+                                top = aux;
+                                butt = aux - pn.Height;
                                 double meioPn = pn.Height / 2;
                                 loc = aux - (int)meioPn;
                             }
+                        }
+                        double scala = GlobVar.scale[i];
+                        if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["AutoEscala"])
+                        {
+                            scala = verificaAutoEscala(i, butt, top, loc);
                         }
 
 
@@ -293,14 +312,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                 //else
                                 //{
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] / GlobVar.scale[i]) + loc);
+                                gl.Vertex(j, ((GlobVar.matrizCanal[GlobVar.grafSelected[i], h] / scala * inverteSinal) + loc) ) ;
                                 h++; //aqui tem plotar 3 graficos diferentes
                                 j += ponteiroDesenho - 1;
                                 //}
                             }
                             else
                             {
-                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] / GlobVar.scale[i]) + loc); //aqui tem plotar 3 graficos diferentes
+                                gl.Vertex(j, (GlobVar.matrizCanal[GlobVar.grafSelected[i], j] / scala * inverteSinal) + loc); //aqui tem plotar 3 graficos diferentes
                             }
                             //}
                         }
@@ -308,10 +327,73 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     des--;
                     des--;
                     gl.End();
+                    if (faixaAmplitude)
+                    {
+                        gl.Begin(OpenGL.GL_LINE_LOOP);
+                        gl.PointSize(10.0f); // Define o tamanho dos pontos
+                        gl.Color(255, 0, 0, 1f);
+                        //gl.ColorMask(3, 6, 7, alpha);
+                        gl.Vertex(GlobVar.indice, butt, -1.8f);
+                        gl.Vertex(GlobVar.maximaVect, butt, -1.8f);
+                        gl.Vertex(GlobVar.maximaVect, top, -1.8f);
+                        gl.Vertex(GlobVar.indice, top, -1.8f);
+                        gl.End();
+                        gl.Flush();
+                    }
                 }
             }
             catch { }
         }
+
+        public static double verificaAutoEscala(int indice, int areaMin, int areaMaxima, int loc)
+        {
+            float scala = 0;
+            bool verTx = false;
+            int ponteiroDesenho = 0;
+            int h = 0;
+
+            // Verifica se o valor txPorCanal não é 512 e ajusta a variável verTx
+            if (GlobVar.txPorCanal[indice] != 512)
+            {
+                verTx = true;
+                ponteiroDesenho = 512 / GlobVar.txPorCanal[indice];
+                h = GlobVar.indice / ponteiroDesenho;
+            }
+
+            // Loop pelas amplitudes para encontrar a melhor escala
+            for (int ampli = 0; ampli < GlobVar.Amplitude.Length; ampli++)
+            {
+                // Calcula a escala atual
+                scala = (float)(GlobVar.Amplitude[ampli]) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(indice));
+
+                bool escalaValida = true; // Flag para verificar se todos os valores estão dentro dos limites
+
+                // Itera sobre os valores da matriz
+                for (int j = 0; j < GlobVar.matrizCompleta.GetLength(1); j++)
+                {
+                    float value = 0;
+
+                    value = (GlobVar.matrizCanal[GlobVar.grafSelected[indice], j] / scala) + loc;
+
+                    // Se o valor está fora dos limites, a escala é inválida
+                    if (value < areaMin || value > areaMaxima)
+                    {
+                        escalaValida = false;
+                        break; // Não precisa continuar verificando se um valor já está fora dos limites
+                    }
+                }
+
+                // Se todos os valores estão dentro dos limites, retorna a escala encontrada
+                if (escalaValida)
+                {
+                    return scala;
+                }
+            }
+
+            // Se nenhuma escala válida for encontrada, retorna um valor padrão ou a última escala
+            return scala;
+        }
+
         public static void TracejadoLinhaZero(OpenGL gl, int qtdGraf)
         {
             for (int i = 0; i < qtdGraf; i++)

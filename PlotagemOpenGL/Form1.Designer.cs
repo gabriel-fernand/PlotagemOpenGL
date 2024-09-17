@@ -664,9 +664,11 @@ namespace PlotagemOpenGL
             //
             // InverteSinal
             //
+            InverteSinal.CheckOnClick = true;
             InverteSinal.Name = "InverteSinal";
             InverteSinal.Size = new System.Drawing.Size(148, 26);
             InverteSinal.Text = "Inverte Sinal";
+            InverteSinal.Click += InverteSinal_Click;
             // 
             // Legenda
             // 
@@ -678,6 +680,8 @@ namespace PlotagemOpenGL
             // 
             // AltoScala
             // 
+            AltoScala.CheckOnClick = true;
+            AltoScala.Click += AltoScala_Click;
             AltoScala.Name = "AutoScala";
             AltoScala.Size = new System.Drawing.Size(148, 26);
             AltoScala.Text = "Auto Scala";
@@ -704,6 +708,7 @@ namespace PlotagemOpenGL
             MostrarFaixaDeAmpli.Name = "MostrarFaixaDeAmpli";
             MostrarFaixaDeAmpli.Size = new System.Drawing.Size(148, 26);
             MostrarFaixaDeAmpli.Text = "Mostrar Faixa de Amplitude";
+            MostrarFaixaDeAmpli.Click += MostrarFaixaDeAmpli_Click;
 
             // 
             // AlterarRef
@@ -2620,6 +2625,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;

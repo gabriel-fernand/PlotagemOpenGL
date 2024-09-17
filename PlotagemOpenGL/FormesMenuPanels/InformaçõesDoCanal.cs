@@ -13,7 +13,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 {
     public partial class InformaçõesDoCanal : Form
     {
-        public static int tagCodCanal = Tela_Plotagem.tagCodCanal;
+        public static int tagCodCanal;
         public static DataRow dt;
         public static int tipo;
         public InformaçõesDoCanal()
@@ -133,6 +133,15 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())
                         {
+                            if (lb.Tag.Equals("min"))
+                            {
+                                lb.Text = dt["LimiteInferior"].ToString();
+                            }
+                            if (lb.Tag.Equals("max"))
+                            {
+                                lb.Text = dt["LimiteSuperior"].ToString();
+                            }
+
                             if (lb.Tag.Equals("scala"))
                             {
                                 lb.Text = $"{comboAmplitude.SelectedItem} μV";
@@ -321,6 +330,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
         public static void LoadComponentes()
         {
+            tagCodCanal = Tela_Plotagem.tagCodCanal;
             if (GlobVar.Amplitude != null)
             {
                 // Converte o vetor de inteiros para um array de objetos e adiciona ao ComboBox

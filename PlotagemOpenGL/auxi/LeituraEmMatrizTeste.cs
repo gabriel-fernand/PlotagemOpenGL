@@ -474,6 +474,36 @@ namespace PlotagemOpenGL.auxi
             catch { }
             return output;
         }
+
+        public static void referencias()
+        {
+            // Usa um HashSet para garantir que os valores sejam únicos
+            HashSet<int> referenciasUnicas = new HashSet<int>();
+
+            // Itera pelas linhas do DataTable
+            for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+            {
+                // Converte o valor da coluna "CodCanal2" para int
+                int valor = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal2"]);
+
+                // Apenas adiciona valores que não sejam -1
+                if (valor != -1)
+                {
+                    referenciasUnicas.Add(valor);
+                }
+            }
+
+            // Converte o HashSet para um array e armazena em GlobVar.canaisReferencia
+            GlobVar.canaisReferencia = referenciasUnicas.ToArray();
+            GlobVar.nomeReferencia = new string[GlobVar.canaisReferencia.Length];
+
+            for(int i = 0; i < GlobVar.nomeReferencia.Length ; i++)
+            {
+                var row = GlobVar.tbl_CadCanal.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodCanal") == GlobVar.canaisReferencia[i]);
+                GlobVar.nomeReferencia[i] = row["NomeCanal"].ToString();
+            }
+
+        }
     }
 }
 

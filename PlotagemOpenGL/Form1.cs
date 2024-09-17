@@ -213,6 +213,7 @@ namespace PlotagemOpenGL
             LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
 
             LeituraEmMatrizTeste.LeituraDat();
+            LeituraEmMatrizTeste.referencias();
             SetStyle(ControlStyles.DoubleBuffer, true);
             rectangleLoad();
             this.Resize += Tela_Plotagem_Resiz;
@@ -3871,6 +3872,54 @@ namespace PlotagemOpenGL
                 }
             }
         }
+        private void AltoScala_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                    .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+            if (AltoScala.Checked)
+            {
+                rowNumerico["AutoEscala"] = true;
+            }
+            else
+            {
+                rowNumerico["AutoEscala"] = false;
+            }
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+            TelaClearAndReload();
+        }
+
+        private void InverteSinal_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+            if (InverteSinal.Checked)
+            {
+                rowNumerico["InverteSinal"] = true;
+            }
+            else
+            {
+                rowNumerico["InverteSinal"] = false;
+            }
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+            TelaClearAndReload();
+        }
+
+        private void MostrarFaixaDeAmpli_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+            if (MostrarFaixaDeAmpli.Checked)
+            {
+                rowNumerico["EliminaFreqInf"] = 1;
+            }
+            else
+            {
+                rowNumerico["EliminaFreqInf"] = DBNull.Value;
+            }
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+            TelaClearAndReload();
+
+        }
 
         private void Legenda_Click(object sender, EventArgs e)
         {
@@ -4369,6 +4418,32 @@ namespace PlotagemOpenGL
                     {
                         contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, InverteSinal, AltoScala, Amplitude, Filtos, OcultarCanal, AlterarRef, MostrarFaixaDeAmpli});
                         Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter });
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                            .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+                        if ((bool)rowNumerico["AutoEscala"])
+                        {
+                            AltoScala.Checked = true;
+                        }
+                        else
+                        {
+                            AltoScala.Checked = false;
+                        }
+                        if (rowNumerico["EliminaFreqInf"] != DBNull.Value)
+                        {
+                            MostrarFaixaDeAmpli.Checked = true;
+                        }
+                        else
+                        {
+                            MostrarFaixaDeAmpli.Checked = false;
+                        }
+                        if ((bool)rowNumerico["InverteSinal"])
+                        {
+                            InverteSinal.Checked = true;
+                        }
+                        else
+                        {
+                            InverteSinal.Checked = false;
+                        }
                         clickedPanel = panel;
                         UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
                         UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
@@ -4379,6 +4454,25 @@ namespace PlotagemOpenGL
                     {
                         contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, InverteSinal, AltoScala, Amplitude, Filtos, OcultarCanal});
                         Filtos.DropDownItems.AddRange(new ToolStripItem[] { LowPassFilterGl, HighPassFilterGl, NotchPassFilter });
+
+                        var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                            .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+                        if ((bool)rowNumerico["AutoEscala"])
+                        {
+                            AltoScala.Checked = true;
+                        }
+                        else
+                        {
+                            AltoScala.Checked = false;
+                        }
+                        if ((bool)rowNumerico["InverteSinal"])
+                        {
+                            InverteSinal.Checked = true;
+                        }
+                        else
+                        {
+                            InverteSinal.Checked = false;
+                        }
                         clickedPanel = panel;
                         UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
                         UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
@@ -5575,7 +5669,7 @@ namespace PlotagemOpenGL
             GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
             Stringao.Text = $"X: {musezin.X}Y: {musezin.Y} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
-                $"| CodCanal: {GlobVar.CodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
+                $"| CodCanal: {tagCodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
                 $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";
         }

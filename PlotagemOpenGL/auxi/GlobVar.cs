@@ -97,7 +97,8 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_Comentarios = new DataTable();
         public static DataTable tbl_DadosExame = new DataTable();
 
-
+        public static int[] canaisReferencia;
+        public static string[] nomeReferencia;
         public static string tipoExame;
 
         public static int lastcall;

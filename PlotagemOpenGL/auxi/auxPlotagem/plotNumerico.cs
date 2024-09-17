@@ -216,7 +216,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         }
                                     }
 
-                                    int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                                    int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * -1;
                                     int[] aloa = new int[8];
                                     int aoba = 0;
                                     for(int ao  = j; aoba < 8; ao++)
