@@ -4061,12 +4061,12 @@ namespace PlotagemOpenGL
             if(minhasCores.ShowDialog() == DialogResult.OK)
             {
                 c = minhasCores.Color;
-            }
-            int cor = c.R | (c.G << 8) | (c.B << 16);
-            rowNumerico["Cor"] = cor;
+                int cor = c.R | (c.G << 8) | (c.B << 16);
+                rowNumerico["Cor"] = cor;
 
-            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
-            TelaClearAndReload();
+                GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+                TelaClearAndReload();
+            }
         }
 
 

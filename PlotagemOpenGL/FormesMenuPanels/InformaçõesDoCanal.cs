@@ -6,8 +6,11 @@ using System.Windows.Forms;
 using Accord.Math; 
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
+using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.Filtros;
 using SharpGL.SceneGraph;
+using Cyotek.Windows.Forms;
+
 
 namespace PlotagemOpenGL.FormesMenuPanels
 {
@@ -30,6 +33,23 @@ namespace PlotagemOpenGL.FormesMenuPanels
             comboPassaAlta.TextChanged += ComboPassaAlta_TabIndexChanged;
             comboPassaBaixa.TextChanged += ComboPassaBaixa_TabIndexChanged;
             boxReferencia.TextChanged += BoxReferencia_TabIndexChanged;
+            Color.Click += Color_Click;
+        }
+
+        private void Color_Click(object sender, EventArgs e)
+        {
+            Color c = System.Drawing.Color.Black;
+            ColorPickerDialog minhasCores = new ColorPickerDialog();
+            if (minhasCores.ShowDialog() == DialogResult.OK)
+            {
+                c = minhasCores.Color;
+                int cor = c.R | (c.G << 8) | (c.B << 16);
+                trackBarR.Value = c.R;
+                trackBarG.Value = c.G;
+                trackBarB.Value = c.B;
+                dt["Cor"] = cor;
+                UpdateButtonColor();
+            }
         }
 
         private void Confirmar_Click(object sender, EventArgs e)
