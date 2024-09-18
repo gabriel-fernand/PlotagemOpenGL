@@ -2971,8 +2971,6 @@ namespace PlotagemOpenGL
             {
             }
         }
-
-
         private void OpenglControl1_MouseHover(object sender, EventArgs e)
         {
             try
@@ -2985,7 +2983,6 @@ namespace PlotagemOpenGL
             }
             catch { }
         }
-
         private void UpdateLoc(string canal = null)
         {
             if (timer2.Enabled) {
@@ -2993,7 +2990,6 @@ namespace PlotagemOpenGL
             }
 
         }
-
         public static void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
         {
             var gl = openglControl1.OpenGL;
@@ -3020,7 +3016,6 @@ namespace PlotagemOpenGL
             openGLX = (float)objX;
             openGLY = (float)objY;
         }
-
         private void plusAll_Click(object sender, EventArgs e)
         {
             try
@@ -4069,9 +4064,6 @@ namespace PlotagemOpenGL
             }
         }
 
-
-
-
         private void Legenda_Click(object sender, EventArgs e)
         {
 
@@ -4104,9 +4096,6 @@ namespace PlotagemOpenGL
             }
             catch { }
         }
-
-
-
 
         private void AmpliMenus_Click(object sender, EventArgs e)
         {
@@ -4405,7 +4394,6 @@ namespace PlotagemOpenGL
             TelaClearAndReload();
 
         }
-
 
         //Menuzinho para mudar os eventos ou mudar na tela
         private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
@@ -5024,7 +5012,6 @@ namespace PlotagemOpenGL
 
             }
         }
-
 
         private string selectedLabelValue;
         private bool ContainsFilter(Dictionary<Panel, Dictionary<string, bool>> panelFilterStates, string filterName)

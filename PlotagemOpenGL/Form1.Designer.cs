@@ -54,45 +54,6 @@ namespace PlotagemOpenGL
             contextMenuStripOpenGl = new ContextMenuStrip(components);
             BomDia = new ToolStripMenuItem();
             BoaNoite = new ToolStripMenuItem();
-            InicioCPAP = new ToolStripMenuItem();
-            InserirCom = new ToolStripMenuItem();
-            ExcluirComentario = new ToolStripMenuItem();
-            EditarComentario = new ToolStripMenuItem();
-            CorDeFundo = new ToolStripMenuItem();
-            Linha1Seg = new ToolStripMenuItem();
-            MesmaAlturaCanais = new ToolStripMenuItem();
-            ReeshowAllCanal = new ToolStripMenuItem();
-            LinhaZeroCanais = new ToolStripMenuItem();
-            MostarAmplitudes = new ToolStripMenuItem();
-            Epoca30Seg = new ToolStripMenuItem();
-            Regua = new ToolStripMenuItem();
-            Pontilhado200Mili = new ToolStripMenuItem();
-            BomDiaExclui = new ToolStripMenuItem();
-            BoaNoiteExclui = new ToolStripMenuItem();
-            InicioCPAPExclui = new ToolStripMenuItem();
-            ExcluirBdBnCpap = new ToolStripMenuItem();
-            Excluir = new ToolStripMenuItem();
-            // -- MenuNormais
-            Descricao = new ToolStripMenuItem();
-            CanalCor = new ToolStripMenuItem();
-            Legenda = new ToolStripMenuItem();
-            AltoScala = new ToolStripMenuItem();
-            Amplitude = new ToolStripMenuItem();
-            Filtos = new ToolStripMenuItem();
-            OcultarCanal = new ToolStripMenuItem();
-            InverteSinal = new ToolStripMenuItem();
-            // -- MenuEEG Adicionais
-            MostrarFaixaDeAmpli = new ToolStripMenuItem();
-            AlterarRef = new ToolStripMenuItem();
-            // -- Menu Setas Adicionais
-            MostrarSetas = new ToolStripMenuItem();
-            Configurar = new ToolStripMenuItem();
-            // -- Menu Numeros Adicionais
-            GraficoENumero = new ToolStripMenuItem();
-            HorizontalOuVertical = new ToolStripMenuItem();
-            ApenasNumero = new ToolStripMenuItem();
-            LimiteSuperior = new ToolStripMenuItem();
-            LimiteInferior = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             LowPassFilterGl = new ToolStripMenuItem();
             NenhumLowGl = new ToolStripMenuItem();
@@ -119,6 +80,41 @@ namespace PlotagemOpenGL
             hertz03Gl = new ToolStripMenuItem();
             hertz01Gl = new ToolStripMenuItem();
             OutroHighGl = new ToolStripMenuItem();
+            InicioCPAP = new ToolStripMenuItem();
+            InserirCom = new ToolStripMenuItem();
+            ExcluirComentario = new ToolStripMenuItem();
+            EditarComentario = new ToolStripMenuItem();
+            CorDeFundo = new ToolStripMenuItem();
+            Linha1Seg = new ToolStripMenuItem();
+            MesmaAlturaCanais = new ToolStripMenuItem();
+            ReeshowAllCanal = new ToolStripMenuItem();
+            LinhaZeroCanais = new ToolStripMenuItem();
+            MostarAmplitudes = new ToolStripMenuItem();
+            Epoca30Seg = new ToolStripMenuItem();
+            Regua = new ToolStripMenuItem();
+            Pontilhado200Mili = new ToolStripMenuItem();
+            BomDiaExclui = new ToolStripMenuItem();
+            BoaNoiteExclui = new ToolStripMenuItem();
+            InicioCPAPExclui = new ToolStripMenuItem();
+            ExcluirBdBnCpap = new ToolStripMenuItem();
+            Excluir = new ToolStripMenuItem();
+            Descricao = new ToolStripMenuItem();
+            CanalCor = new ToolStripMenuItem();
+            Legenda = new ToolStripMenuItem();
+            AltoScala = new ToolStripMenuItem();
+            Amplitude = new ToolStripMenuItem();
+            Filtos = new ToolStripMenuItem();
+            OcultarCanal = new ToolStripMenuItem();
+            InverteSinal = new ToolStripMenuItem();
+            MostrarFaixaDeAmpli = new ToolStripMenuItem();
+            AlterarRef = new ToolStripMenuItem();
+            MostrarSetas = new ToolStripMenuItem();
+            Configurar = new ToolStripMenuItem();
+            GraficoENumero = new ToolStripMenuItem();
+            HorizontalOuVertical = new ToolStripMenuItem();
+            ApenasNumero = new ToolStripMenuItem();
+            LimiteSuperior = new ToolStripMenuItem();
+            LimiteInferior = new ToolStripMenuItem();
             contextMenuStrip1 = new ContextMenuStrip(components);
             LowPassFilter = new ToolStripMenuItem();
             NenhumLow = new ToolStripMenuItem();
@@ -262,9 +258,8 @@ namespace PlotagemOpenGL
             plusLb23 = new Button();
             scalaLb23 = new Label();
             painelTelaGl = new Panel();
-            painelComando = new Panel();
             Stringao = new Label();
-            MouseLoc = new TextBox();
+            painelComando = new Panel();
             playSelect = new Button();
             minusAll = new Button();
             plusAll = new Button();
@@ -308,9 +303,9 @@ namespace PlotagemOpenGL
             // 
             // hScrollBar1
             // 
-            hScrollBar1.Location = new System.Drawing.Point(5, 1);
+            hScrollBar1.Location = new System.Drawing.Point(-1, 0);
             hScrollBar1.Name = "hScrollBar1";
-            hScrollBar1.Size = new System.Drawing.Size(992, 31);
+            hScrollBar1.Size = new System.Drawing.Size(1005, 24);
             hScrollBar1.TabIndex = 0;
             hScrollBar1.Scroll += hScrollBar1_Scroll;
             hScrollBar1.KeyDown += TelaPlotagem_KeyDown;
@@ -322,7 +317,7 @@ namespace PlotagemOpenGL
             ptsEmTela.Location = new System.Drawing.Point(5, 4);
             ptsEmTela.Name = "ptsEmTela";
             ptsEmTela.ReadOnly = true;
-            ptsEmTela.Size = new System.Drawing.Size(81, 25);
+            ptsEmTela.Size = new System.Drawing.Size(63, 25);
             ptsEmTela.TabIndex = 2;
             ptsEmTela.Text = "ptsEmTela";
             ptsEmTela.TextAlign = HorizontalAlignment.Center;
@@ -330,10 +325,10 @@ namespace PlotagemOpenGL
             // inicioTela
             // 
             inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            inicioTela.Location = new System.Drawing.Point(100, 4);
+            inicioTela.Location = new System.Drawing.Point(74, 4);
             inicioTela.Name = "inicioTela";
             inicioTela.ReadOnly = true;
-            inicioTela.Size = new System.Drawing.Size(72, 25);
+            inicioTela.Size = new System.Drawing.Size(56, 25);
             inicioTela.TabIndex = 3;
             inicioTela.Text = "00-00-00";
             inicioTela.TextAlign = HorizontalAlignment.Center;
@@ -341,10 +336,10 @@ namespace PlotagemOpenGL
             // fimTela
             // 
             fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            fimTela.Location = new System.Drawing.Point(178, 4);
+            fimTela.Location = new System.Drawing.Point(136, 4);
             fimTela.Name = "fimTela";
             fimTela.ReadOnly = true;
-            fimTela.Size = new System.Drawing.Size(72, 25);
+            fimTela.Size = new System.Drawing.Size(59, 25);
             fimTela.TabIndex = 4;
             fimTela.Text = "99-99-99";
             fimTela.TextAlign = HorizontalAlignment.Center;
@@ -358,7 +353,7 @@ namespace PlotagemOpenGL
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
             tempoEmTela.Items.AddRange(new object[] { "1 seg", "2 seg", "4 seg", "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
-            tempoEmTela.Location = new System.Drawing.Point(256, 4);
+            tempoEmTela.Location = new System.Drawing.Point(663, 4);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
             tempoEmTela.TabIndex = 5;
@@ -372,7 +367,7 @@ namespace PlotagemOpenGL
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.IntegralHeight = false;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
-            velocidadeScroll.Location = new System.Drawing.Point(327, 4);
+            velocidadeScroll.Location = new System.Drawing.Point(734, 4);
             velocidadeScroll.Name = "velocidadeScroll";
             velocidadeScroll.Size = new System.Drawing.Size(63, 28);
             velocidadeScroll.TabIndex = 7;
@@ -385,9 +380,9 @@ namespace PlotagemOpenGL
             MontagemBox.FormattingEnabled = true;
             MontagemBox.IntegralHeight = false;
             MontagemBox.Items.AddRange(new object[] { "Series" });
-            MontagemBox.Location = new System.Drawing.Point(535, 4);
+            MontagemBox.Location = new System.Drawing.Point(464, 4);
             MontagemBox.Name = "MontagemBox";
-            MontagemBox.Size = new System.Drawing.Size(340, 28);
+            MontagemBox.Size = new System.Drawing.Size(193, 28);
             MontagemBox.TabIndex = 8;
             MontagemBox.SelectedIndexChanged += MontagemBox_SelectedIndexChanged;
             // 
@@ -443,7 +438,7 @@ namespace PlotagemOpenGL
             // 
             // Play
             // 
-            Play.Location = new System.Drawing.Point(488, 4);
+            Play.Location = new System.Drawing.Point(191, 35);
             Play.Name = "Play";
             Play.Size = new System.Drawing.Size(41, 29);
             Play.TabIndex = 49;
@@ -455,326 +450,49 @@ namespace PlotagemOpenGL
             // 
             openglControl1.ContextMenuStrip = contextMenuStripOpenGl;
             openglControl1.DrawFPS = false;
-            openglControl1.Location = new System.Drawing.Point(122, 81);
+            openglControl1.Location = new System.Drawing.Point(94, 81);
             openglControl1.Margin = new Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.Size = new System.Drawing.Size(879, 597);
+            openglControl1.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
+            openglControl1.Size = new System.Drawing.Size(907, 597);
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
             openglControl1.KeyUp += TelaPlotagem_KeyUp;
             openglControl1.MouseDown += OpenGLControl_MouseDown;
-            openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseHover += OpenglControl1_MouseHover;
             openglControl1.MouseMove += OpenGLControl_MouseMove;
+            openglControl1.MouseUp += OpenGLControl_MouseUp;
             openglControl1.MouseWheel += OpenglControl1_MouseWheel;
-            //openglControl1.Controls.Add(FlowLayoutPanel);
-            //openglControl1.ControlAdded += 
             // 
             // contextMenuStripOpenGl
             // 
             contextMenuStripOpenGl.ImageScalingSize = new System.Drawing.Size(20, 20);
             contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] { BomDia, BoaNoite, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
             contextMenuStripOpenGl.Name = "contextMenuStripOpenGl";
-            contextMenuStripOpenGl.Size = new System.Drawing.Size(179, 116);
+            contextMenuStripOpenGl.Size = new System.Drawing.Size(179, 106);
             contextMenuStripOpenGl.Opening += ContextMenuStripOpenGl_Opening;
-            // 
-            // EWxcluir Evento
-            // 
-            Excluir.Name = "Excluir";
-            Excluir.Size = new System.Drawing.Size(100, 27);
-            Excluir.Text = "Excluir";
-            Excluir.Click += DeletEventClick;
             // 
             // BomDia
             // 
             BomDia.Name = "BomDia";
-            BomDia.Size = new System.Drawing.Size(100, 27);
+            BomDia.Size = new System.Drawing.Size(178, 24);
             BomDia.Text = "Bom Dia";
             BomDia.Click += BomDiaCpapBoaNoite_Click;
             // 
             // BoaNoite
             // 
             BoaNoite.Name = "BoaNoite";
-            BoaNoite.Size = new System.Drawing.Size(100, 27);
+            BoaNoite.Size = new System.Drawing.Size(178, 24);
             BoaNoite.Text = "Boa Noite";
             BoaNoite.Click += BomDiaCpapBoaNoite_Click;
-            // 
-            // InicioCPAP
-            // 
-            InicioCPAP.Name = "InícioCPAP";
-            InicioCPAP.Size = new System.Drawing.Size(100, 27);
-            InicioCPAP.Text = "Início CPAP";
-            InicioCPAP.Click += BomDiaCpapBoaNoite_Click;
-            // 
-            // InserirComentario
-            // 
-            InserirCom.Name = "InserirCom";
-            InserirCom.Size = new System.Drawing.Size(100, 27);
-            InserirCom.Text = "Inserir Comentário";
-            InserirCom.Click += InserirCom_Click;
-            // 
-            // Excluir Comentario
-            // 
-            ExcluirComentario.Name = "ExcluirComentario";
-            ExcluirComentario.Size = new System.Drawing.Size(100, 27);
-            ExcluirComentario.Text = "Excluir";
-            ExcluirComentario.Click += DeletCommentClick;
-            // 
-            // Editar Comentario
-            // 
-            EditarComentario.Name = "EditarComentario";
-            EditarComentario.Size = new System.Drawing.Size(100, 27);
-            EditarComentario.Text = "Editar";
-            EditarComentario.Click += EditarComentarioClick;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
-            // 
-            // CorDeFundo
-            // 
-            CorDeFundo.Name = "CorDeFundo";
-            CorDeFundo.Size = new System.Drawing.Size(148, 26);
-            CorDeFundo.Text = "Cor De Fundo";
-            CorDeFundo.Click += CorDeFundo_Click;
-            // 
-            // Linha1Seg
-            // 
-            Linha1Seg.CheckOnClick = true;
-            Linha1Seg.Name = "Linha1Seg";
-            Linha1Seg.Size = new System.Drawing.Size(148, 26);
-            Linha1Seg.Text = "Pontilhado de 1 Segundo";
-            Linha1Seg.Click += Regua_Click;
-            // 
-            // MesmaAlturaCanais
-            // 
-            MesmaAlturaCanais.Name = "MesmaAlturaCanais";
-            MesmaAlturaCanais.Size = new System.Drawing.Size(148, 26);
-            MesmaAlturaCanais.Text = "Mesma Altura para todos Canais";
-            MesmaAlturaCanais.Click += MesmaAlturaCanais_Click;
-            // 
-            // ReeshowAllCanal
-            // 
-            ReeshowAllCanal.Name = "ReeshowAllCanal";
-            ReeshowAllCanal.Size = new System.Drawing.Size(148, 26);
-            ReeshowAllCanal.Text = "Reexibir todos canais";
-            ReeshowAllCanal.Click += MostrarTodosCanais_Click;
-            // 
-            // LinhaZeroCanais
-            // 
-            LinhaZeroCanais.CheckOnClick = true;
-            LinhaZeroCanais.Name = "LinhaZeroCanais";
-            LinhaZeroCanais.Size = new System.Drawing.Size(148, 26);
-            LinhaZeroCanais.Text = "Pontilhado das amplitudes";
-            LinhaZeroCanais.Click += Regua_Click;
-            // 
-            // MostarAmplitudes
-            // 
-            MostarAmplitudes.CheckOnClick = true;
-            MostarAmplitudes.Checked = true;
-            MostarAmplitudes.Name = "MostarAmplitudes";
-            MostarAmplitudes.Size = new System.Drawing.Size(148, 26);
-            MostarAmplitudes.Text = "Mostar Amplitudes";
-            MostarAmplitudes.Click += MostarAmplitudes_Click;
-            // 
-            // Epoca30Seg
-            // 
-            Epoca30Seg.Name = "Epoca30Seg";
-            Epoca30Seg.Size = new System.Drawing.Size(148, 26);
-            Epoca30Seg.Text = "Época de 30 segundos";
-            Epoca30Seg.Click += Epoca30Seg_Click;
-            // 
-            // Regua
-            // 
-            Regua.CheckOnClick = true;
-            Regua.Checked = true;
-            Regua.Name = "Regua";
-            Regua.Size = new System.Drawing.Size(148, 26);
-            Regua.Text = "Regua";
-            Regua.Click += Regua_Click;
-            // 
-            // Pontilhado200Mili
-            // 
-            Pontilhado200Mili.CheckOnClick = true;
-            Pontilhado200Mili.Name = "Pontilhado200Mili";
-            Pontilhado200Mili.Size = new System.Drawing.Size(148, 26);
-            Pontilhado200Mili.Text = "Pontilhado de 200 Milisegundos";
-            Pontilhado200Mili.Click += Regua_Click;
-            // 
-            // NenhumLowGl
-            // 
-            NenhumLowGl.CheckOnClick = true;
-            NenhumLowGl.Name = "NenhumLowGl";
-            NenhumLowGl.Size = new System.Drawing.Size(148, 26);
-            NenhumLowGl.Text = "Nenhum";
-            //
-            //ExcluirBdBnCpap
-            //
-            ExcluirBdBnCpap.DropDownItems.AddRange(new ToolStripItem[] { BomDiaExclui, BoaNoiteExclui, InicioCPAPExclui} );
-            ExcluirBdBnCpap.Name = "Excluir";
-            ExcluirBdBnCpap.Size = new System.Drawing.Size(178, 24);
-            ExcluirBdBnCpap.Text = "Excluir";
-            // 
-            // BomDiaExclui
-            // 
-            BomDiaExclui.Name = "BomDiaExclui";
-            BomDiaExclui.Size = new System.Drawing.Size(100, 27);
-            BomDiaExclui.Text = "Excluir Bom Dia";
-            BomDiaExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
-            // 
-            // BoaNoiteExclui
-            // 
-            BoaNoiteExclui.Name = "BoaNoiteExclui";
-            BoaNoiteExclui.Size = new System.Drawing.Size(100, 27);
-            BoaNoiteExclui.Text = "Excluir Boa Noite";
-            BoaNoiteExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
-            // 
-            // InicioCPAPExclui
-            // 
-            InicioCPAPExclui.Name = "InicioCPAPExclui";
-            InicioCPAPExclui.Size = new System.Drawing.Size(100, 27);
-            InicioCPAPExclui.Text = "Excluir Inicio CPAP";
-            InicioCPAPExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
-            // 
-            // Descricao
-            // 
-            Descricao.Name = "Descricao";
-            Descricao.Size = new System.Drawing.Size(148, 26);
-            Descricao.Text = "Descrição";
-            Descricao.Click += Descricao_Click;
-
-            // 
-            // CanalCor
-            // 
-            CanalCor.Name = "CanalCor";
-            CanalCor.Size = new System.Drawing.Size(148, 26);
-            CanalCor.Text = "Cor";
-            CanalCor.Click += CanalCor_Click;
-            //
-            // Configurar
-            //
-            Configurar.CheckOnClick = true;
-            Configurar.Name = "Configurar";
-            Configurar.Size = new System.Drawing.Size(148, 26);
-            Configurar.Text = "Configurar";
-            Configurar.Click += Configurar_Click;
-            //
-            // InverteSinal
-            //
-            InverteSinal.CheckOnClick = true;
-            InverteSinal.Name = "InverteSinal";
-            InverteSinal.Size = new System.Drawing.Size(148, 26);
-            InverteSinal.Text = "Inverte Sinal";
-            InverteSinal.Click += InverteSinal_Click;
-            // 
-            // Legenda
-            // 
-            Legenda.Name = "Legenda";
-            Legenda.Size = new System.Drawing.Size(148, 26);
-            Legenda.Text = "Legenda";
-            Legenda.Click += Legenda_Click;
-
-            // 
-            // AltoScala
-            // 
-            AltoScala.CheckOnClick = true;
-            AltoScala.Click += AltoScala_Click;
-            AltoScala.Name = "AutoScala";
-            AltoScala.Size = new System.Drawing.Size(148, 26);
-            AltoScala.Text = "Auto Scala";
-
-            // 
-            // Amplitude
-            // 
-            Amplitude.Name = "Amplitude";
-            Amplitude.Size = new System.Drawing.Size(148, 26);
-            Amplitude.Text = "Amplitude";
-            Amplitude.DropDownOpening += Amplitude_DropDownOpening;
-            // 
-            // OcultarCanal
-            // 
-            OcultarCanal.Name = "OcultarCanal";
-            OcultarCanal.Size = new System.Drawing.Size(148, 26);
-            OcultarCanal.Text = "Ocultar Canal";
-            OcultarCanal.Click += OcultarCanal_Click;
-
-            // 
-            // MostrarFaixaDeAmpli
-            // 
-            MostrarFaixaDeAmpli.CheckOnClick = true;
-            MostrarFaixaDeAmpli.Name = "MostrarFaixaDeAmpli";
-            MostrarFaixaDeAmpli.Size = new System.Drawing.Size(148, 26);
-            MostrarFaixaDeAmpli.Text = "Mostrar Faixa de Amplitude";
-            MostrarFaixaDeAmpli.Click += MostrarFaixaDeAmpli_Click;
-
-            // 
-            // AlterarRef
-            // 
-            AlterarRef.Name = "AlterarRef";
-            AlterarRef.Size = new System.Drawing.Size(148, 26);
-            AlterarRef.Text = "Alterar Referência";
-            AlterarRef.Click += AlterarRef_Click;
-
-            // 
-            // MostrarSetas
-            // 
-            MostrarSetas.CheckOnClick = true;
-            MostrarSetas.Name = "MostrarSetas";
-            MostrarSetas.Size = new System.Drawing.Size(148, 26);
-            MostrarSetas.Text = "Mostrar Setas";
-            MostrarSetas.Click += MostrarSetas_Click;
-
-            // 
-            // GraficoENumero
-            // 
-            GraficoENumero.CheckOnClick = true;
-            GraficoENumero.Name = "GraficoENumero";
-            GraficoENumero.Size = new System.Drawing.Size(148, 26);
-            GraficoENumero.Text = "Gráfico e Número";
-            GraficoENumero.Click += GraficoENumero_Click;
-
-            // 
-            // HorizontalOuVertical
-            // 
-            HorizontalOuVertical.Name = "HorizontalOuVertical";
-            HorizontalOuVertical.Size = new System.Drawing.Size(148, 26);
-            HorizontalOuVertical.Text = "";
-            HorizontalOuVertical.Click += HorizontalOuVertical_Click;
-
-            // 
-            // ApenasNumero
-            // 
-            ApenasNumero.CheckOnClick = true;
-            ApenasNumero.Name = "ApenasNumero";
-            ApenasNumero.Size = new System.Drawing.Size(148, 26);
-            ApenasNumero.Text = "Apenas Número";
-            ApenasNumero.Click += ApenasNumero_Click;
-
-            // 
-            // LimiteSuperior
-            // 
-            LimiteSuperior.Name = "LimiteSuperior";
-            LimiteSuperior.Size = new System.Drawing.Size(148, 26);
-            LimiteSuperior.Text = "Limite Superior";
-            LimiteSuperior.Click += LimiteSuperior_Click;
-
-            // 
-            // LimiteInferior
-            // 
-            LimiteInferior.Name = "LimiteInferior";
-            LimiteInferior.Size = new System.Drawing.Size(148, 26);
-            LimiteInferior.Text = "Limite Inferior";
-            LimiteInferior.Click += LimiteInferior_Click;
-            //
-            // Filtos
-            //
-            Filtos.Name = "Filtos";
-            Filtos.Size = new System.Drawing.Size(178, 24);
-            Filtos.Text = "Filtos";
             // 
             // LowPassFilterGl
             // 
@@ -950,6 +668,265 @@ namespace PlotagemOpenGL
             OutroHighGl.Name = "OutroHighGl";
             OutroHighGl.Size = new System.Drawing.Size(148, 26);
             OutroHighGl.Text = "Outro";
+            // 
+            // InicioCPAP
+            // 
+            InicioCPAP.Name = "InicioCPAP";
+            InicioCPAP.Size = new System.Drawing.Size(100, 27);
+            InicioCPAP.Text = "Início CPAP";
+            InicioCPAP.Click += BomDiaCpapBoaNoite_Click;
+            // 
+            // InserirCom
+            // 
+            InserirCom.Name = "InserirCom";
+            InserirCom.Size = new System.Drawing.Size(100, 27);
+            InserirCom.Text = "Inserir Comentário";
+            InserirCom.Click += InserirCom_Click;
+            // 
+            // ExcluirComentario
+            // 
+            ExcluirComentario.Name = "ExcluirComentario";
+            ExcluirComentario.Size = new System.Drawing.Size(100, 27);
+            ExcluirComentario.Text = "Excluir";
+            ExcluirComentario.Click += DeletCommentClick;
+            // 
+            // EditarComentario
+            // 
+            EditarComentario.Name = "EditarComentario";
+            EditarComentario.Size = new System.Drawing.Size(100, 27);
+            EditarComentario.Text = "Editar";
+            EditarComentario.Click += EditarComentarioClick;
+            // 
+            // CorDeFundo
+            // 
+            CorDeFundo.Name = "CorDeFundo";
+            CorDeFundo.Size = new System.Drawing.Size(148, 26);
+            CorDeFundo.Text = "Cor De Fundo";
+            CorDeFundo.Click += CorDeFundo_Click;
+            // 
+            // Linha1Seg
+            // 
+            Linha1Seg.CheckOnClick = true;
+            Linha1Seg.Name = "Linha1Seg";
+            Linha1Seg.Size = new System.Drawing.Size(148, 26);
+            Linha1Seg.Text = "Pontilhado de 1 Segundo";
+            Linha1Seg.Click += Regua_Click;
+            // 
+            // MesmaAlturaCanais
+            // 
+            MesmaAlturaCanais.Name = "MesmaAlturaCanais";
+            MesmaAlturaCanais.Size = new System.Drawing.Size(148, 26);
+            MesmaAlturaCanais.Text = "Mesma Altura para todos Canais";
+            MesmaAlturaCanais.Click += MesmaAlturaCanais_Click;
+            // 
+            // ReeshowAllCanal
+            // 
+            ReeshowAllCanal.Name = "ReeshowAllCanal";
+            ReeshowAllCanal.Size = new System.Drawing.Size(148, 26);
+            ReeshowAllCanal.Text = "Reexibir todos canais";
+            ReeshowAllCanal.Click += MostrarTodosCanais_Click;
+            // 
+            // LinhaZeroCanais
+            // 
+            LinhaZeroCanais.CheckOnClick = true;
+            LinhaZeroCanais.Name = "LinhaZeroCanais";
+            LinhaZeroCanais.Size = new System.Drawing.Size(148, 26);
+            LinhaZeroCanais.Text = "Pontilhado das amplitudes";
+            LinhaZeroCanais.Click += Regua_Click;
+            // 
+            // MostarAmplitudes
+            // 
+            MostarAmplitudes.Checked = true;
+            MostarAmplitudes.CheckOnClick = true;
+            MostarAmplitudes.CheckState = CheckState.Checked;
+            MostarAmplitudes.Name = "MostarAmplitudes";
+            MostarAmplitudes.Size = new System.Drawing.Size(148, 26);
+            MostarAmplitudes.Text = "Mostar Amplitudes";
+            MostarAmplitudes.Click += MostarAmplitudes_Click;
+            // 
+            // Epoca30Seg
+            // 
+            Epoca30Seg.Name = "Epoca30Seg";
+            Epoca30Seg.Size = new System.Drawing.Size(148, 26);
+            Epoca30Seg.Text = "Época de 30 segundos";
+            Epoca30Seg.Click += Epoca30Seg_Click;
+            // 
+            // Regua
+            // 
+            Regua.Checked = true;
+            Regua.CheckOnClick = true;
+            Regua.CheckState = CheckState.Checked;
+            Regua.Name = "Regua";
+            Regua.Size = new System.Drawing.Size(148, 26);
+            Regua.Text = "Regua";
+            Regua.Click += Regua_Click;
+            // 
+            // Pontilhado200Mili
+            // 
+            Pontilhado200Mili.CheckOnClick = true;
+            Pontilhado200Mili.Name = "Pontilhado200Mili";
+            Pontilhado200Mili.Size = new System.Drawing.Size(148, 26);
+            Pontilhado200Mili.Text = "Pontilhado de 200 Milisegundos";
+            Pontilhado200Mili.Click += Regua_Click;
+            // 
+            // BomDiaExclui
+            // 
+            BomDiaExclui.Name = "BomDiaExclui";
+            BomDiaExclui.Size = new System.Drawing.Size(213, 26);
+            BomDiaExclui.Text = "Excluir Bom Dia";
+            BomDiaExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // BoaNoiteExclui
+            // 
+            BoaNoiteExclui.Name = "BoaNoiteExclui";
+            BoaNoiteExclui.Size = new System.Drawing.Size(213, 26);
+            BoaNoiteExclui.Text = "Excluir Boa Noite";
+            BoaNoiteExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // InicioCPAPExclui
+            // 
+            InicioCPAPExclui.Name = "InicioCPAPExclui";
+            InicioCPAPExclui.Size = new System.Drawing.Size(213, 26);
+            InicioCPAPExclui.Text = "Excluir Inicio CPAP";
+            InicioCPAPExclui.Click += ExcluiBomDiaCpapBoaNoite_Click;
+            // 
+            // ExcluirBdBnCpap
+            // 
+            ExcluirBdBnCpap.DropDownItems.AddRange(new ToolStripItem[] { BomDiaExclui, BoaNoiteExclui, InicioCPAPExclui });
+            ExcluirBdBnCpap.Name = "ExcluirBdBnCpap";
+            ExcluirBdBnCpap.Size = new System.Drawing.Size(178, 24);
+            ExcluirBdBnCpap.Text = "Excluir";
+            // 
+            // Excluir
+            // 
+            Excluir.Name = "Excluir";
+            Excluir.Size = new System.Drawing.Size(100, 27);
+            Excluir.Text = "Excluir";
+            Excluir.Click += DeletEventClick;
+            // 
+            // Descricao
+            // 
+            Descricao.Name = "Descricao";
+            Descricao.Size = new System.Drawing.Size(148, 26);
+            Descricao.Text = "Descrição";
+            Descricao.Click += Descricao_Click;
+            // 
+            // CanalCor
+            // 
+            CanalCor.Name = "CanalCor";
+            CanalCor.Size = new System.Drawing.Size(148, 26);
+            CanalCor.Text = "Cor";
+            CanalCor.Click += CanalCor_Click;
+            // 
+            // Legenda
+            // 
+            Legenda.Name = "Legenda";
+            Legenda.Size = new System.Drawing.Size(148, 26);
+            Legenda.Text = "Legenda";
+            Legenda.Click += Legenda_Click;
+            // 
+            // AltoScala
+            // 
+            AltoScala.CheckOnClick = true;
+            AltoScala.Name = "AltoScala";
+            AltoScala.Size = new System.Drawing.Size(148, 26);
+            AltoScala.Text = "Auto Scala";
+            AltoScala.Click += AltoScala_Click;
+            // 
+            // Amplitude
+            // 
+            Amplitude.Name = "Amplitude";
+            Amplitude.Size = new System.Drawing.Size(148, 26);
+            Amplitude.Text = "Amplitude";
+            Amplitude.DropDownOpening += Amplitude_DropDownOpening;
+            // 
+            // Filtos
+            // 
+            Filtos.Name = "Filtos";
+            Filtos.Size = new System.Drawing.Size(178, 24);
+            Filtos.Text = "Filtos";
+            // 
+            // OcultarCanal
+            // 
+            OcultarCanal.Name = "OcultarCanal";
+            OcultarCanal.Size = new System.Drawing.Size(148, 26);
+            OcultarCanal.Text = "Ocultar Canal";
+            OcultarCanal.Click += OcultarCanal_Click;
+            // 
+            // InverteSinal
+            // 
+            InverteSinal.CheckOnClick = true;
+            InverteSinal.Name = "InverteSinal";
+            InverteSinal.Size = new System.Drawing.Size(148, 26);
+            InverteSinal.Text = "Inverte Sinal";
+            InverteSinal.Click += InverteSinal_Click;
+            // 
+            // MostrarFaixaDeAmpli
+            // 
+            MostrarFaixaDeAmpli.CheckOnClick = true;
+            MostrarFaixaDeAmpli.Name = "MostrarFaixaDeAmpli";
+            MostrarFaixaDeAmpli.Size = new System.Drawing.Size(148, 26);
+            MostrarFaixaDeAmpli.Text = "Mostrar Faixa de Amplitude";
+            MostrarFaixaDeAmpli.Click += MostrarFaixaDeAmpli_Click;
+            // 
+            // AlterarRef
+            // 
+            AlterarRef.Name = "AlterarRef";
+            AlterarRef.Size = new System.Drawing.Size(148, 26);
+            AlterarRef.Text = "Alterar Referência";
+            AlterarRef.Click += AlterarRef_Click;
+            // 
+            // MostrarSetas
+            // 
+            MostrarSetas.CheckOnClick = true;
+            MostrarSetas.Name = "MostrarSetas";
+            MostrarSetas.Size = new System.Drawing.Size(148, 26);
+            MostrarSetas.Text = "Mostrar Setas";
+            MostrarSetas.Click += MostrarSetas_Click;
+            // 
+            // Configurar
+            // 
+            Configurar.CheckOnClick = true;
+            Configurar.Name = "Configurar";
+            Configurar.Size = new System.Drawing.Size(148, 26);
+            Configurar.Text = "Configurar";
+            Configurar.Click += Configurar_Click;
+            // 
+            // GraficoENumero
+            // 
+            GraficoENumero.CheckOnClick = true;
+            GraficoENumero.Name = "GraficoENumero";
+            GraficoENumero.Size = new System.Drawing.Size(148, 26);
+            GraficoENumero.Text = "Gráfico e Número";
+            GraficoENumero.Click += GraficoENumero_Click;
+            // 
+            // HorizontalOuVertical
+            // 
+            HorizontalOuVertical.Name = "HorizontalOuVertical";
+            HorizontalOuVertical.Size = new System.Drawing.Size(148, 26);
+            HorizontalOuVertical.Click += HorizontalOuVertical_Click;
+            // 
+            // ApenasNumero
+            // 
+            ApenasNumero.CheckOnClick = true;
+            ApenasNumero.Name = "ApenasNumero";
+            ApenasNumero.Size = new System.Drawing.Size(148, 26);
+            ApenasNumero.Text = "Apenas Número";
+            ApenasNumero.Click += ApenasNumero_Click;
+            // 
+            // LimiteSuperior
+            // 
+            LimiteSuperior.Name = "LimiteSuperior";
+            LimiteSuperior.Size = new System.Drawing.Size(148, 26);
+            LimiteSuperior.Text = "Limite Superior";
+            LimiteSuperior.Click += LimiteSuperior_Click;
+            // 
+            // LimiteInferior
+            // 
+            LimiteInferior.Name = "LimiteInferior";
+            LimiteInferior.Size = new System.Drawing.Size(148, 26);
+            LimiteInferior.Text = "Limite Inferior";
+            LimiteInferior.Click += LimiteInferior_Click;
             // 
             // contextMenuStrip1
             // 
@@ -1226,7 +1203,7 @@ namespace PlotagemOpenGL
             painelExames.Controls.Add(panel23);
             painelExames.Location = new System.Drawing.Point(2, 79);
             painelExames.Name = "painelExames";
-            painelExames.Size = new System.Drawing.Size(117, 599);
+            painelExames.Size = new System.Drawing.Size(91, 599);
             painelExames.TabIndex = 51;
             painelExames.MouseUp += Form1_MouseUp;
             // 
@@ -1239,13 +1216,13 @@ namespace PlotagemOpenGL
             panel1.Controls.Add(scalaLb1);
             panel1.Location = new System.Drawing.Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(117, 25);
+            panel1.Size = new System.Drawing.Size(92, 25);
             panel1.TabIndex = 78;
             // 
             // minusLb1
             // 
             minusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb1.Location = new System.Drawing.Point(85, 10);
+            minusLb1.Location = new System.Drawing.Point(59, 10);
             minusLb1.Name = "minusLb1";
             minusLb1.Size = new System.Drawing.Size(22, 18);
             minusLb1.TabIndex = 15;
@@ -1257,7 +1234,7 @@ namespace PlotagemOpenGL
             // plusLb1
             // 
             plusLb1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb1.Location = new System.Drawing.Point(85, -3);
+            plusLb1.Location = new System.Drawing.Point(59, -3);
             plusLb1.Name = "plusLb1";
             plusLb1.Size = new System.Drawing.Size(22, 18);
             plusLb1.TabIndex = 14;
@@ -1270,7 +1247,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb1.AutoSize = true;
             scalaLb1.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb1.Location = new System.Drawing.Point(87, 0);
+            scalaLb1.Location = new System.Drawing.Point(61, 0);
             scalaLb1.Name = "scalaLb1";
             scalaLb1.Size = new System.Drawing.Size(29, 20);
             scalaLb1.TabIndex = 16;
@@ -1285,13 +1262,13 @@ namespace PlotagemOpenGL
             panel2.Controls.Add(scalaLb2);
             panel2.Location = new System.Drawing.Point(0, 26);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(117, 25);
+            panel2.Size = new System.Drawing.Size(91, 25);
             panel2.TabIndex = 79;
             // 
             // minusLb2
             // 
             minusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb2.Location = new System.Drawing.Point(85, 10);
+            minusLb2.Location = new System.Drawing.Point(59, 8);
             minusLb2.Name = "minusLb2";
             minusLb2.Size = new System.Drawing.Size(22, 18);
             minusLb2.TabIndex = 17;
@@ -1302,7 +1279,7 @@ namespace PlotagemOpenGL
             // plusLb2
             // 
             plusLb2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb2.Location = new System.Drawing.Point(85, -3);
+            plusLb2.Location = new System.Drawing.Point(59, -5);
             plusLb2.Name = "plusLb2";
             plusLb2.Size = new System.Drawing.Size(22, 18);
             plusLb2.TabIndex = 16;
@@ -1314,7 +1291,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb2.AutoSize = true;
             scalaLb2.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb2.Location = new System.Drawing.Point(87, 0);
+            scalaLb2.Location = new System.Drawing.Point(61, -2);
             scalaLb2.Name = "scalaLb2";
             scalaLb2.Size = new System.Drawing.Size(29, 20);
             scalaLb2.TabIndex = 17;
@@ -1329,13 +1306,13 @@ namespace PlotagemOpenGL
             panel3.Controls.Add(label3);
             panel3.Location = new System.Drawing.Point(0, 52);
             panel3.Name = "panel3";
-            panel3.Size = new System.Drawing.Size(117, 25);
+            panel3.Size = new System.Drawing.Size(91, 25);
             panel3.TabIndex = 80;
             // 
             // minusLb3
             // 
             minusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb3.Location = new System.Drawing.Point(85, 10);
+            minusLb3.Location = new System.Drawing.Point(59, 6);
             minusLb3.Name = "minusLb3";
             minusLb3.Size = new System.Drawing.Size(22, 18);
             minusLb3.TabIndex = 19;
@@ -1346,7 +1323,7 @@ namespace PlotagemOpenGL
             // plusLb3
             // 
             plusLb3.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb3.Location = new System.Drawing.Point(85, -3);
+            plusLb3.Location = new System.Drawing.Point(59, -7);
             plusLb3.Name = "plusLb3";
             plusLb3.Size = new System.Drawing.Size(22, 18);
             plusLb3.TabIndex = 18;
@@ -1358,7 +1335,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb3.AutoSize = true;
             scalaLb3.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb3.Location = new System.Drawing.Point(87, 0);
+            scalaLb3.Location = new System.Drawing.Point(61, -4);
             scalaLb3.Name = "scalaLb3";
             scalaLb3.Size = new System.Drawing.Size(29, 20);
             scalaLb3.TabIndex = 18;
@@ -1373,13 +1350,13 @@ namespace PlotagemOpenGL
             panel4.Controls.Add(label4);
             panel4.Location = new System.Drawing.Point(0, 78);
             panel4.Name = "panel4";
-            panel4.Size = new System.Drawing.Size(117, 25);
+            panel4.Size = new System.Drawing.Size(91, 25);
             panel4.TabIndex = 80;
             // 
             // minusLb4
             // 
             minusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb4.Location = new System.Drawing.Point(85, 10);
+            minusLb4.Location = new System.Drawing.Point(58, 10);
             minusLb4.Name = "minusLb4";
             minusLb4.Size = new System.Drawing.Size(22, 18);
             minusLb4.TabIndex = 21;
@@ -1390,7 +1367,7 @@ namespace PlotagemOpenGL
             // plusLb4
             // 
             plusLb4.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb4.Location = new System.Drawing.Point(85, -3);
+            plusLb4.Location = new System.Drawing.Point(58, -3);
             plusLb4.Name = "plusLb4";
             plusLb4.Size = new System.Drawing.Size(22, 18);
             plusLb4.TabIndex = 20;
@@ -1402,7 +1379,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb4.AutoSize = true;
             scalaLb4.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb4.Location = new System.Drawing.Point(87, 0);
+            scalaLb4.Location = new System.Drawing.Point(60, 0);
             scalaLb4.Name = "scalaLb4";
             scalaLb4.Size = new System.Drawing.Size(29, 20);
             scalaLb4.TabIndex = 20;
@@ -1417,13 +1394,13 @@ namespace PlotagemOpenGL
             panel5.Controls.Add(scalaLb5);
             panel5.Location = new System.Drawing.Point(0, 104);
             panel5.Name = "panel5";
-            panel5.Size = new System.Drawing.Size(117, 25);
+            panel5.Size = new System.Drawing.Size(91, 25);
             panel5.TabIndex = 80;
             // 
             // minusLb5
             // 
             minusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            minusLb5.Location = new System.Drawing.Point(85, 10);
+            minusLb5.Location = new System.Drawing.Point(58, 8);
             minusLb5.Name = "minusLb5";
             minusLb5.Size = new System.Drawing.Size(22, 18);
             minusLb5.TabIndex = 23;
@@ -1434,7 +1411,7 @@ namespace PlotagemOpenGL
             // plusLb5
             // 
             plusLb5.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            plusLb5.Location = new System.Drawing.Point(85, -3);
+            plusLb5.Location = new System.Drawing.Point(58, -5);
             plusLb5.Name = "plusLb5";
             plusLb5.Size = new System.Drawing.Size(22, 18);
             plusLb5.TabIndex = 22;
@@ -1446,7 +1423,7 @@ namespace PlotagemOpenGL
             // 
             scalaLb5.AutoSize = true;
             scalaLb5.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            scalaLb5.Location = new System.Drawing.Point(87, 0);
+            scalaLb5.Location = new System.Drawing.Point(60, -2);
             scalaLb5.Name = "scalaLb5";
             scalaLb5.Size = new System.Drawing.Size(29, 20);
             scalaLb5.TabIndex = 22;
@@ -1461,7 +1438,7 @@ namespace PlotagemOpenGL
             panel6.Controls.Add(scalaLb6);
             panel6.Location = new System.Drawing.Point(0, 130);
             panel6.Name = "panel6";
-            panel6.Size = new System.Drawing.Size(117, 25);
+            panel6.Size = new System.Drawing.Size(91, 25);
             panel6.TabIndex = 80;
             // 
             // minusLb6
@@ -1517,7 +1494,7 @@ namespace PlotagemOpenGL
             panel7.Controls.Add(scalaLb7);
             panel7.Location = new System.Drawing.Point(0, 156);
             panel7.Name = "panel7";
-            panel7.Size = new System.Drawing.Size(117, 25);
+            panel7.Size = new System.Drawing.Size(91, 25);
             panel7.TabIndex = 80;
             // 
             // plusLb7
@@ -1571,7 +1548,7 @@ namespace PlotagemOpenGL
             panel8.Controls.Add(scalaLb8);
             panel8.Location = new System.Drawing.Point(0, 182);
             panel8.Name = "panel8";
-            panel8.Size = new System.Drawing.Size(117, 25);
+            panel8.Size = new System.Drawing.Size(91, 25);
             panel8.TabIndex = 80;
             // 
             // minusLb8
@@ -1625,7 +1602,7 @@ namespace PlotagemOpenGL
             panel9.Controls.Add(scalaLb9);
             panel9.Location = new System.Drawing.Point(0, 208);
             panel9.Name = "panel9";
-            panel9.Size = new System.Drawing.Size(117, 25);
+            panel9.Size = new System.Drawing.Size(91, 25);
             panel9.TabIndex = 80;
             // 
             // minusLb9
@@ -1679,7 +1656,7 @@ namespace PlotagemOpenGL
             panel10.Controls.Add(scalaLb10);
             panel10.Location = new System.Drawing.Point(0, 234);
             panel10.Name = "panel10";
-            panel10.Size = new System.Drawing.Size(117, 25);
+            panel10.Size = new System.Drawing.Size(91, 25);
             panel10.TabIndex = 80;
             // 
             // minusLb10
@@ -1733,7 +1710,7 @@ namespace PlotagemOpenGL
             panel11.Controls.Add(scalaLb11);
             panel11.Location = new System.Drawing.Point(0, 260);
             panel11.Name = "panel11";
-            panel11.Size = new System.Drawing.Size(117, 25);
+            panel11.Size = new System.Drawing.Size(91, 25);
             panel11.TabIndex = 80;
             // 
             // minusLb11
@@ -1789,7 +1766,7 @@ namespace PlotagemOpenGL
             panel12.Controls.Add(scalaLb12);
             panel12.Location = new System.Drawing.Point(0, 286);
             panel12.Name = "panel12";
-            panel12.Size = new System.Drawing.Size(117, 25);
+            panel12.Size = new System.Drawing.Size(91, 25);
             panel12.TabIndex = 80;
             // 
             // plusLb12
@@ -1843,7 +1820,7 @@ namespace PlotagemOpenGL
             panel13.Controls.Add(scalaLb13);
             panel13.Location = new System.Drawing.Point(0, 312);
             panel13.Name = "panel13";
-            panel13.Size = new System.Drawing.Size(117, 25);
+            panel13.Size = new System.Drawing.Size(91, 25);
             panel13.TabIndex = 80;
             // 
             // minusLb13
@@ -1897,7 +1874,7 @@ namespace PlotagemOpenGL
             panel14.Controls.Add(scalaLb14);
             panel14.Location = new System.Drawing.Point(0, 338);
             panel14.Name = "panel14";
-            panel14.Size = new System.Drawing.Size(117, 25);
+            panel14.Size = new System.Drawing.Size(91, 25);
             panel14.TabIndex = 80;
             // 
             // minusLb14
@@ -1951,7 +1928,7 @@ namespace PlotagemOpenGL
             panel15.Controls.Add(scalaLb15);
             panel15.Location = new System.Drawing.Point(0, 363);
             panel15.Name = "panel15";
-            panel15.Size = new System.Drawing.Size(117, 25);
+            panel15.Size = new System.Drawing.Size(91, 25);
             panel15.TabIndex = 80;
             // 
             // minusLb15
@@ -2005,7 +1982,7 @@ namespace PlotagemOpenGL
             panel16.Controls.Add(scalaLb16);
             panel16.Location = new System.Drawing.Point(0, 390);
             panel16.Name = "panel16";
-            panel16.Size = new System.Drawing.Size(117, 25);
+            panel16.Size = new System.Drawing.Size(91, 25);
             panel16.TabIndex = 80;
             // 
             // minusLb16
@@ -2061,7 +2038,7 @@ namespace PlotagemOpenGL
             panel17.Controls.Add(scalaLb17);
             panel17.Location = new System.Drawing.Point(0, 416);
             panel17.Name = "panel17";
-            panel17.Size = new System.Drawing.Size(117, 25);
+            panel17.Size = new System.Drawing.Size(91, 25);
             panel17.TabIndex = 80;
             // 
             // plusLb17
@@ -2115,7 +2092,7 @@ namespace PlotagemOpenGL
             panel18.Controls.Add(scalaLb18);
             panel18.Location = new System.Drawing.Point(0, 442);
             panel18.Name = "panel18";
-            panel18.Size = new System.Drawing.Size(117, 25);
+            panel18.Size = new System.Drawing.Size(91, 25);
             panel18.TabIndex = 81;
             // 
             // minusLb18
@@ -2169,7 +2146,7 @@ namespace PlotagemOpenGL
             panel19.Controls.Add(scalaLb19);
             panel19.Location = new System.Drawing.Point(0, 468);
             panel19.Name = "panel19";
-            panel19.Size = new System.Drawing.Size(117, 25);
+            panel19.Size = new System.Drawing.Size(91, 25);
             panel19.TabIndex = 82;
             // 
             // minusLb19
@@ -2223,7 +2200,7 @@ namespace PlotagemOpenGL
             panel20.Controls.Add(scalaLb20);
             panel20.Location = new System.Drawing.Point(0, 494);
             panel20.Name = "panel20";
-            panel20.Size = new System.Drawing.Size(117, 25);
+            panel20.Size = new System.Drawing.Size(91, 25);
             panel20.TabIndex = 82;
             // 
             // minusLb20
@@ -2277,7 +2254,7 @@ namespace PlotagemOpenGL
             panel21.Controls.Add(scalaLb21);
             panel21.Location = new System.Drawing.Point(0, 520);
             panel21.Name = "panel21";
-            panel21.Size = new System.Drawing.Size(117, 25);
+            panel21.Size = new System.Drawing.Size(91, 25);
             panel21.TabIndex = 82;
             // 
             // minusLb21
@@ -2331,7 +2308,7 @@ namespace PlotagemOpenGL
             panel22.Controls.Add(scalaLb22);
             panel22.Location = new System.Drawing.Point(0, 546);
             panel22.Name = "panel22";
-            panel22.Size = new System.Drawing.Size(117, 25);
+            panel22.Size = new System.Drawing.Size(91, 25);
             panel22.TabIndex = 82;
             // 
             // minusLb22
@@ -2385,7 +2362,7 @@ namespace PlotagemOpenGL
             panel23.Controls.Add(scalaLb23);
             panel23.Location = new System.Drawing.Point(0, 572);
             panel23.Name = "panel23";
-            panel23.Size = new System.Drawing.Size(117, 25);
+            panel23.Size = new System.Drawing.Size(91, 25);
             panel23.TabIndex = 82;
             // 
             // minusLb23
@@ -2432,20 +2409,28 @@ namespace PlotagemOpenGL
             // 
             // painelTelaGl
             // 
-            painelTelaGl.AutoSize = true;
             painelTelaGl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            painelTelaGl.BorderStyle = BorderStyle.FixedSingle;
+            painelTelaGl.Controls.Add(Stringao);
             painelTelaGl.Controls.Add(hScrollBar1);
             painelTelaGl.Dock = DockStyle.Bottom;
-            painelTelaGl.Location = new System.Drawing.Point(0, 689);
+            painelTelaGl.Location = new System.Drawing.Point(0, 686);
             painelTelaGl.Margin = new Padding(0);
             painelTelaGl.Name = "painelTelaGl";
-            painelTelaGl.Size = new System.Drawing.Size(1005, 32);
+            painelTelaGl.Size = new System.Drawing.Size(1005, 50);
             painelTelaGl.TabIndex = 52;
+            // 
+            // Stringao
+            // 
+            Stringao.AutoSize = true;
+            Stringao.Location = new System.Drawing.Point(4, 24);
+            Stringao.Name = "Stringao";
+            Stringao.Size = new System.Drawing.Size(65, 20);
+            Stringao.TabIndex = 59;
+            Stringao.Text = "Stringao";
             // 
             // painelComando
             // 
-            painelComando.Controls.Add(Stringao);
-            painelComando.Controls.Add(MouseLoc);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
@@ -2457,32 +2442,10 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(tempoEmTela);
             painelComando.Controls.Add(MontagemBox);
             painelComando.Controls.Add(velocidadeScroll);
-            painelComando.Location = new System.Drawing.Point(0, 2);
+            painelComando.Location = new System.Drawing.Point(0, 11);
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(997, 65);
             painelComando.TabIndex = 53;
-            // 
-            // Stringao
-            // 
-            Stringao.AutoSize = true;
-            Stringao.Location = new System.Drawing.Point(100, 38);
-            Stringao.Name = "Stringao";
-            Stringao.Size = new System.Drawing.Size(65, 20);
-            Stringao.TabIndex = 59;
-            Stringao.Text = "Stringao";
-            // 
-            // MouseLoc
-            // 
-            MouseLoc.Anchor = AnchorStyles.None;
-            MouseLoc.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            MouseLoc.Location = new System.Drawing.Point(881, 35);
-            MouseLoc.Name = "MouseLoc";
-            MouseLoc.ReadOnly = true;
-            MouseLoc.Size = new System.Drawing.Size(110, 25);
-            MouseLoc.TabIndex = 58;
-            MouseLoc.Text = "Loc";
-            MouseLoc.TextAlign = HorizontalAlignment.Center;
-            MouseLoc.TextChanged += textBox1_TextChanged;
             // 
             // playSelect
             // 
@@ -2516,7 +2479,7 @@ namespace PlotagemOpenGL
             // 
             // qtdGraficos
             // 
-            qtdGraficos.Location = new System.Drawing.Point(396, 4);
+            qtdGraficos.Location = new System.Drawing.Point(99, 35);
             qtdGraficos.Name = "qtdGraficos";
             qtdGraficos.Size = new System.Drawing.Size(86, 27);
             qtdGraficos.TabIndex = 50;
@@ -2529,20 +2492,10 @@ namespace PlotagemOpenGL
             toolTip1.IsBalloon = true;
             toolTip1.ReshowDelay = 1;
             // 
-            // timerClick
-            // 
-            timerClick.Interval = 1;
-            timerClick.Tick += timerClick_Tick;
-            // 
             // timer1
             // 
             timer1.Interval = 20;
             timer1.Tick += timer1_Tick;
-            // 
-            // timerComment
-            // 
-            timerComment.Interval = 33;
-            timerComment.Tick += timerComment_Tick;
             // 
             // timer2
             // 
@@ -2554,11 +2507,21 @@ namespace PlotagemOpenGL
             timer3.Interval = 1;
             timer3.Tick += timer3_Tick;
             // 
+            // timerClick
+            // 
+            timerClick.Interval = 1;
+            timerClick.Tick += timerClick_Tick;
+            // 
+            // timerComment
+            // 
+            timerComment.Interval = 33;
+            timerComment.Tick += timerComment_Tick;
+            // 
             // Tela_Plotagem
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1005, 721);
+            ClientSize = new System.Drawing.Size(1005, 736);
             Controls.Add(painelExames);
             Controls.Add(painelTelaGl);
             Controls.Add(openglControl1);
@@ -2572,7 +2535,6 @@ namespace PlotagemOpenGL
             ResizeBegin += Tela_Plotagem_ResizeBegin;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
             contextMenuStripOpenGl.ResumeLayout(false);
-            contextMenuStripOpenGl.PerformLayout();
             contextMenuStrip1.ResumeLayout(false);
             painelExames.ResumeLayout(false);
             panel1.ResumeLayout(false);
@@ -2622,256 +2584,251 @@ namespace PlotagemOpenGL
             panel23.ResumeLayout(false);
             panel23.PerformLayout();
             painelTelaGl.ResumeLayout(false);
+            painelTelaGl.PerformLayout();
             painelComando.ResumeLayout(false);
             painelComando.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
         public static ToolStripItem item2ToolStripMenuItem;
         public static ToolStripItem item3ToolStripMenuItem;
-        public static ToolStripMenuItem Excluir;
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
-        public static ToolTip toolTip1;
-        public static Timer timer1;
-        public static Timer timer2;
-        public static Timer timer3;
-        public static Timer timerClick;
-        public static Timer timerComment;
-        public static ContextMenuStrip contextMenuStripOpenGl;
-        public static ToolStripMenuItem OutroLow;
-        public static ToolStripMenuItem LowPassFilter;
-        public static ToolStripMenuItem HighPassFilter;
-        // -- MenuNormais
-        public static ToolStripMenuItem Filtos;
-        public static ToolStripMenuItem Descricao;
-        public static ToolStripMenuItem CanalCor;
-        public static ToolStripMenuItem Legenda;
-        public static ToolStripMenuItem InverteSinal;
-        public static ToolStripMenuItem AltoScala;
-        public static ToolStripMenuItem Amplitude;
-        public static ToolStripMenuItem OcultarCanal;
-        // -- MenuEEG Adicionais
-        public static ToolStripMenuItem MostrarFaixaDeAmpli;
-        public static ToolStripMenuItem AlterarRef;
-        //  -- Menu Setas Adicionais
-        public static ToolStripMenuItem Configurar;
-        public static ToolStripMenuItem MostrarSetas;
-        // -- Menu Numeros Adicionais
-        public static ToolStripMenuItem GraficoENumero;
-        public static ToolStripMenuItem HorizontalOuVertical;
-        public static ToolStripMenuItem ApenasNumero;
-        public static ToolStripMenuItem LimiteSuperior;
-        public static ToolStripMenuItem LimiteInferior;
-
-        public static ContextMenuStrip contextMenuStrip1;
-        public static Button playSelect;
-        public static Label scalaLb1;
-        public static Panel panel23;
-        public static Panel panel22;
-        public static Panel panel21;
-        public static Panel panel20;
-        public static Panel panel19;
-        public static Panel panel18;
-        public static Panel panel17;
-        public static Panel panel16;
-        public static Panel panel15;
-        public static Panel panel14;
-        public static Panel panel13;
-        public static Panel panel12;
-        public static Panel panel11;
-        public static Panel panel10;
-        public static Panel panel9;
-        public static Panel panel8;
-        public static Panel panel7;
-        public static Panel panel6;
-        public static Panel panel5;
-        public static Panel panel4;
-        public static Panel panel2;
-        public static Panel panel3;
-        public static Panel panel1;
-        public static Button plusAll;
-        public static Button minusAll;
-        public static HScrollBar hScrollBar1;
-        public static TextBox ptsEmTela;
-        public static TextBox inicioTela;
-        public static TextBox fimTela;
-        public static ComboBox tempoEmTela;
-        public static ComboBox velocidadeScroll;
-        public static ComboBox MontagemBox;
-        public static Button Play;
-        public static Panel painelExames;
-        public static Panel painelTelaGl;
-        public static Panel painelComando;
-        public static TextBox qtdGraficos;
-        public static SharpGL.OpenGLControl openglControl1;
-        public static Label label1;
-        public static Label label2;
-        public static Label label4;
-        public static Label label3;
-        public static Label label5;
-        public static Button minusLb5;
-        public static Button plusLb5;
-        public static Button minusLb4;
-        public static Button plusLb4;
-        public static Button minusLb3;
-        public static Button plusLb3;
-        public static Button minusLb2;
-        public static Button plusLb2;
-        public static Button minusLb1;
-        public static Button plusLb1;
-        public static Button minusLb10;
-        public static Button plusLb10;
-        public static Button minusLb9;
-        public static Button plusLb9;
-        public static Button minusLb8;
-        public static Button plusLb8;
-        public static Button plusLb7;
-        public static Button minusLb7;
-        public static Button minusLb6;
-        public static Button plusLb6;
-        public static Label label6;
-        public static Label label7;
-        public static Label label8;
-        public static Label label9;
-        public static Label label10;
-        public static Button minusLb23;
-        public static Button plusLb23;
-        public static Button minusLb22;
-        public static Button plusLb22;
-        public static Button minusLb21;
-        public static Button plusLb21;
-        public static Label label21;
-        public static Label label22;
-        public static Label label23;
-        public static Button minusLb20;
-        public static Button plusLb20;
-        public static Button minusLb19;
-        public static Button plusLb19;
-        public static Button minusLb18;
-        public static Button plusLb18;
-        public static Button plusLb17;
-        public static Button minusLb17;
-        public static Button minusLb16;
-        public static Button plusLb16;
-        public static Label label16;
-        public static Label label17;
-        public static Label label18;
-        public static Label label19;
-        public static Label label20;
-        public static Button minusLb15;
-        public static Button plusLb15;
-        public static Button minusLb14;
-        public static Button plusLb14;
-        public static Button minusLb13;
-        public static Button plusLb13;
-        public static Button plusLb12;
-        public static Button minusLb12;
-        public static Button minusLb11;
-        public static Button plusLb11;
-        public static Label label11;
-        public static Label label12;
-        public static Label label13;
-        public static Label label14;
-        public static Label label15;
-        public static Label scalaLb2;
-        public static Label scalaLb3;
-        public static Label scalaLb4;
-        public static Label scalaLb5;
-        public static Label scalaLb6;
-        public static Label scalaLb7;
-        public static Label scalaLb8;
-        public static Label scalaLb9;
-        public static Label scalaLb10;
-        public static Label scalaLb11;
-        public static Label scalaLb12;
-        public static Label scalaLb13;
-        public static Label scalaLb14;
-        public static Label scalaLb15;
-        public static Label scalaLb16;
-        public static Label scalaLb17;
-        public static Label scalaLb18;
-        public static Label scalaLb19;
-        public static Label scalaLb20;
-        public static Label scalaLb21;
-        public static Label scalaLb22;
-        public static Label scalaLb23;
-        public static ToolStripMenuItem NenhumLow;
-        public static ToolStripMenuItem hertz70;
-        public static ToolStripMenuItem hertz50;
-        public static ToolStripMenuItem hertz40;
-        public static ToolStripMenuItem hertz35;
-        public static ToolStripMenuItem hertz30;
-        public static ToolStripMenuItem hertz25;
-        public static ToolStripMenuItem hertz20;
-        public static ToolStripMenuItem hertz15;
-        public static ToolStripMenuItem hertz10;
-        public static ToolStripMenuItem hertz5;
-        public static ToolStripMenuItem NenhumHigh;
-        public static ToolStripMenuItem hertz10H;
-        public static ToolStripMenuItem hertz7;
-        public static ToolStripMenuItem hertz5H;
-        public static ToolStripMenuItem hertz3;
-        public static ToolStripMenuItem hertz1;
-        public static ToolStripMenuItem hertz07;
-        public static ToolStripMenuItem hertz05;
-        public static ToolStripMenuItem hertz03;
-        public static ToolStripMenuItem hertz01;
-        public static ToolStripMenuItem outroHigh;
-        public static ToolStripMenuItem BomDia;
-        public static ToolStripMenuItem BoaNoite;
-        public static ToolStripMenuItem InicioCPAP;
-        public static ToolStripMenuItem BomDiaExclui;
-        public static ToolStripMenuItem BoaNoiteExclui;
-        public static ToolStripMenuItem InicioCPAPExclui;
-        public static ToolStripMenuItem InserirCom;
-        public static ToolStripMenuItem ExcluirComentario;
-        public static ToolStripMenuItem EditarComentario;
-        public static ToolStripMenuItem CorDeFundo;
-        public static ToolStripMenuItem Linha1Seg;
-        public static ToolStripMenuItem MesmaAlturaCanais;
-        public static ToolStripMenuItem ReeshowAllCanal;
-        public static ToolStripMenuItem LinhaZeroCanais;
-        public static ToolStripMenuItem MostarAmplitudes;
-        public static ToolStripMenuItem Epoca30Seg;
-        public static ToolStripMenuItem Regua;
-        public static ToolStripMenuItem Pontilhado200Mili;
-        public static ToolStripSeparator toolStripSeparator1;
-        public static ToolStripMenuItem ExcluirBdBnCpap;
-        public static ToolStripMenuItem LowPassFilterGl;
-        public static ToolStripMenuItem NenhumLowGl;
-        public static ToolStripMenuItem hertz70Gl;
-        public static ToolStripMenuItem hertz50Gl;
-        public static ToolStripMenuItem hertz40Gl;
-        public static ToolStripMenuItem hertz35Gl;
-        public static ToolStripMenuItem hertz30Gl;
-        public static ToolStripMenuItem hertz25Gl;
-        public static ToolStripMenuItem hertz20Gl;
-        public static ToolStripMenuItem hertz15Gl;
-        public static ToolStripMenuItem hertz10Gl;
-        public static ToolStripMenuItem hertz5Gl;
-        public static ToolStripMenuItem OutroLowGl;
-        public static ToolStripMenuItem HighPassFilterGl;
-        public static ToolStripMenuItem NenhumHighGl;
-        public static ToolStripMenuItem hertz10HGl;
-        public static ToolStripMenuItem hertz7Gl;
-        public static ToolStripMenuItem hertz5HGl;
-        public static ToolStripMenuItem hertz3Gl;
-        public static ToolStripMenuItem hertz1Gl;
-        public static ToolStripMenuItem hertz07Gl;
-        public static ToolStripMenuItem hertz05Gl;
-        public static ToolStripMenuItem hertz03Gl;
-        public static ToolStripMenuItem hertz01Gl;
-        public static ToolStripMenuItem OutroHighGl;
-        public static ToolStripMenuItem NenhumNotch;
-        public static ToolStripMenuItem hertz60N;
-        public static ToolStripMenuItem OutroNotch;
-        public static ToolStripMenuItem hertz50N;
-        public static ToolStripMenuItem NotchPassFilter;
-        public static Label Stringao;
+        public ToolStripMenuItem Excluir;
+        public ToolTip toolTip1;
+        public Timer timer1;
+        public Timer timer2;
+        public Timer timer3;
+        public Timer timerClick;
+        public Timer timerComment;
+        public ContextMenuStrip contextMenuStripOpenGl;
+        public ToolStripMenuItem OutroLow;
+        public ToolStripMenuItem LowPassFilter;
+        public ToolStripMenuItem HighPassFilter;
+        public ToolStripMenuItem Filtos;
+        public ToolStripMenuItem Descricao;
+        public ToolStripMenuItem CanalCor;
+        public ToolStripMenuItem Legenda;
+        public ToolStripMenuItem InverteSinal;
+        public ToolStripMenuItem AltoScala;
+        public ToolStripMenuItem Amplitude;
+        public ToolStripMenuItem OcultarCanal;
+        public ToolStripMenuItem MostrarFaixaDeAmpli;
+        public ToolStripMenuItem AlterarRef;
+        public ToolStripMenuItem Configurar;
+        public ToolStripMenuItem MostrarSetas;
+        public ToolStripMenuItem GraficoENumero;
+        public ToolStripMenuItem HorizontalOuVertical;
+        public ToolStripMenuItem ApenasNumero;
+        public ToolStripMenuItem LimiteSuperior;
+        public ToolStripMenuItem LimiteInferior;
+        public ContextMenuStrip contextMenuStrip1;
+        public Button playSelect;
+        public Label scalaLb1;
+        public Panel panel23;
+        public Panel panel22;
+        public Panel panel21;
+        public Panel panel20;
+        public Panel panel19;
+        public Panel panel18;
+        public Panel panel17;
+        public Panel panel16;
+        public Panel panel15;
+        public Panel panel14;
+        public Panel panel13;
+        public Panel panel12;
+        public Panel panel11;
+        public Panel panel10;
+        public Panel panel9;
+        public Panel panel8;
+        public Panel panel7;
+        public Panel panel6;
+        public Panel panel5;
+        public Panel panel4;
+        public Panel panel2;
+        public Panel panel3;
+        public Panel panel1;
+        public Button plusAll;
+        public Button minusAll;
+        public HScrollBar hScrollBar1;
+        public TextBox ptsEmTela;
+        public TextBox inicioTela;
+        public TextBox fimTela;
+        public ComboBox tempoEmTela;
+        public ComboBox velocidadeScroll;
+        public ComboBox MontagemBox;
+        public Button Play;
+        public Panel painelExames;
+        public Panel painelTelaGl;
+        public Panel painelComando;
+        public TextBox qtdGraficos;
+        public SharpGL.OpenGLControl openglControl1;
+        public Label label1;
+        public Label label2;
+        public Label label4;
+        public Label label3;
+        public Label label5;
+        public Button minusLb5;
+        public Button plusLb5;
+        public Button minusLb4;
+        public Button plusLb4;
+        public Button minusLb3;
+        public Button plusLb3;
+        public Button minusLb2;
+        public Button plusLb2;
+        public Button minusLb1;
+        public Button plusLb1;
+        public Button minusLb10;
+        public Button plusLb10;
+        public Button minusLb9;
+        public Button plusLb9;
+        public Button minusLb8;
+        public Button plusLb8;
+        public Button plusLb7;
+        public Button minusLb7;
+        public Button minusLb6;
+        public Button plusLb6;
+        public Label label6;
+        public Label label7;
+        public Label label8;
+        public Label label9;
+        public Label label10;
+        public Button minusLb23;
+        public Button plusLb23;
+        public Button minusLb22;
+        public Button plusLb22;
+        public Button minusLb21;
+        public Button plusLb21;
+        public Label label21;
+        public Label label22;
+        public Label label23;
+        public Button minusLb20;
+        public Button plusLb20;
+        public Button minusLb19;
+        public Button plusLb19;
+        public Button minusLb18;
+        public Button plusLb18;
+        public Button plusLb17;
+        public Button minusLb17;
+        public Button minusLb16;
+        public Button plusLb16;
+        public Label label16;
+        public Label label17;
+        public Label label18;
+        public Label label19;
+        public Label label20;
+        public Button minusLb15;
+        public Button plusLb15;
+        public Button minusLb14;
+        public Button plusLb14;
+        public Button minusLb13;
+        public Button plusLb13;
+        public Button plusLb12;
+        public Button minusLb12;
+        public Button minusLb11;
+        public Button plusLb11;
+        public Label label11;
+        public Label label12;
+        public Label label13;
+        public Label label14;
+        public Label label15;
+        public Label scalaLb2;
+        public Label scalaLb3;
+        public Label scalaLb4;
+        public Label scalaLb5;
+        public Label scalaLb6;
+        public Label scalaLb7;
+        public Label scalaLb8;
+        public Label scalaLb9;
+        public Label scalaLb10;
+        public Label scalaLb11;
+        public Label scalaLb12;
+        public Label scalaLb13;
+        public Label scalaLb14;
+        public Label scalaLb15;
+        public Label scalaLb16;
+        public Label scalaLb17;
+        public Label scalaLb18;
+        public Label scalaLb19;
+        public Label scalaLb20;
+        public Label scalaLb21;
+        public Label scalaLb22;
+        public Label scalaLb23;
+        public ToolStripMenuItem NenhumLow;
+        public ToolStripMenuItem hertz70;
+        public ToolStripMenuItem hertz50;
+        public ToolStripMenuItem hertz40;
+        public ToolStripMenuItem hertz35;
+        public ToolStripMenuItem hertz30;
+        public ToolStripMenuItem hertz25;
+        public ToolStripMenuItem hertz20;
+        public ToolStripMenuItem hertz15;
+        public ToolStripMenuItem hertz10;
+        public ToolStripMenuItem hertz5;
+        public ToolStripMenuItem NenhumHigh;
+        public ToolStripMenuItem hertz10H;
+        public ToolStripMenuItem hertz7;
+        public ToolStripMenuItem hertz5H;
+        public ToolStripMenuItem hertz3;
+        public ToolStripMenuItem hertz1;
+        public ToolStripMenuItem hertz07;
+        public ToolStripMenuItem hertz05;
+        public ToolStripMenuItem hertz03;
+        public ToolStripMenuItem hertz01;
+        public ToolStripMenuItem outroHigh;
+        public ToolStripMenuItem BomDia;
+        public ToolStripMenuItem BoaNoite;
+        public ToolStripMenuItem InicioCPAP;
+        public ToolStripMenuItem BomDiaExclui;
+        public ToolStripMenuItem BoaNoiteExclui;
+        public ToolStripMenuItem InicioCPAPExclui;
+        public ToolStripMenuItem InserirCom;
+        public ToolStripMenuItem ExcluirComentario;
+        public ToolStripMenuItem EditarComentario;
+        public ToolStripMenuItem CorDeFundo;
+        public ToolStripMenuItem Linha1Seg;
+        public ToolStripMenuItem MesmaAlturaCanais;
+        public ToolStripMenuItem ReeshowAllCanal;
+        public ToolStripMenuItem LinhaZeroCanais;
+        public ToolStripMenuItem MostarAmplitudes;
+        public ToolStripMenuItem Epoca30Seg;
+        public ToolStripMenuItem Regua;
+        public ToolStripMenuItem Pontilhado200Mili;
+        public ToolStripSeparator toolStripSeparator1;
+        public ToolStripMenuItem ExcluirBdBnCpap;
+        public ToolStripMenuItem LowPassFilterGl;
+        public ToolStripMenuItem NenhumLowGl;
+        public ToolStripMenuItem hertz70Gl;
+        public ToolStripMenuItem hertz50Gl;
+        public ToolStripMenuItem hertz40Gl;
+        public ToolStripMenuItem hertz35Gl;
+        public ToolStripMenuItem hertz30Gl;
+        public ToolStripMenuItem hertz25Gl;
+        public ToolStripMenuItem hertz20Gl;
+        public ToolStripMenuItem hertz15Gl;
+        public ToolStripMenuItem hertz10Gl;
+        public ToolStripMenuItem hertz5Gl;
+        public ToolStripMenuItem OutroLowGl;
+        public ToolStripMenuItem HighPassFilterGl;
+        public ToolStripMenuItem NenhumHighGl;
+        public ToolStripMenuItem hertz10HGl;
+        public ToolStripMenuItem hertz7Gl;
+        public ToolStripMenuItem hertz5HGl;
+        public ToolStripMenuItem hertz3Gl;
+        public ToolStripMenuItem hertz1Gl;
+        public ToolStripMenuItem hertz07Gl;
+        public ToolStripMenuItem hertz05Gl;
+        public ToolStripMenuItem hertz03Gl;
+        public ToolStripMenuItem hertz01Gl;
+        public ToolStripMenuItem OutroHighGl;
+        public ToolStripMenuItem NenhumNotch;
+        public ToolStripMenuItem hertz60N;
+        public ToolStripMenuItem OutroNotch;
+        public ToolStripMenuItem hertz50N;
+        public ToolStripMenuItem NotchPassFilter;
+        public Label Stringao;
     }
 }
