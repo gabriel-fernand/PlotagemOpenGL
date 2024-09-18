@@ -23,6 +23,7 @@
     <PackageReference Include="Accord.Audio" Version="3.8.2-alpha" />
     <PackageReference Include="Accord.Math" Version="3.8.2-alpha" />
     <PackageReference Include="Accord.Statistics" Version="3.8.2-alpha" />
+    <PackageReference Include="Cyotek.Windows.Forms.ColorPicker" Version="2.0.0-beta.7" />
     <PackageReference Include="DSP" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageReference Include="MathNet.Filtering" Version="0.7.0" />

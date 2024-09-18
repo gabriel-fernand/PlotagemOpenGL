@@ -38,6 +38,8 @@ using Accord.Statistics.Moving;
 using MathNet.Numerics.Distributions;
 using PlotagemOpenGL.auxi.FormLegenda;
 using PlotagemOpenGL.FormesMenuPanels.InferiorSuperior;
+using PlotagemOpenGL.FormesMenuPanels;
+using Cyotek.Windows.Forms;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -3921,6 +3923,155 @@ namespace PlotagemOpenGL
 
         }
 
+        private void AlterarRef_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                    .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            // Supondo que rowNumerico seja uma DataRow atual
+            // Obter o valor atual de CodCanal2
+            int codCanalAtual = Convert.ToInt32(rowNumerico["CodCanal2"]);
+
+            // Encontrar o índice do valor atual em canaisReferencia
+            int indexAtual = Array.IndexOf(GlobVar.canaisReferencia, codCanalAtual);
+
+            // Se encontrar o valor, mover para o próximo índice
+            int proximoIndex;
+            if (indexAtual != -1)
+            {
+                // Ir para o próximo valor, e se for o último, volta para o primeiro
+                proximoIndex = (indexAtual + 1) % GlobVar.canaisReferencia.Length;
+            }
+            else
+            {
+                // Se o valor atual não estiver no vetor, use o primeiro
+                proximoIndex = 0;
+            }
+
+            // Atualizar CodCanal2 com o novo valor
+            rowNumerico["CodCanal2"] = GlobVar.canaisReferencia[proximoIndex];
+
+
+            // Atualizar matrizCanal com o novo valor de CodCanal2
+            int codCanal1 = Convert.ToInt32(rowNumerico["CodCanal1"]);
+            int novoCodCanal2 = Convert.ToInt32(rowNumerico["CodCanal2"]);
+
+            // Chamar o método para atualizar a matriz com o novo valor de CodCanal2
+            GlobVar.matrizCanal.SetRow<short>(
+                GlobVar.codSelected.IndexOf(codCanal1),
+                LeituraEmMatrizTeste.SetReferencia(codCanal1, novoCodCanal2));
+
+            var cadCanal = GlobVar.tbl_CadCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == Tela_Plotagem.tagCodCanal).CopyToDataTable();
+            var cadCanal2 = GlobVar.tbl_CadCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == Convert.ToInt16(rowNumerico["CodCanal2"])).CopyToDataTable();
+            string newLegenda = $"{cadCanal.Rows[0]["NomeCanal"]} - {cadCanal2.Rows[0]["NomeCanal"]}";
+            rowNumerico["Legenda"] = newLegenda;
+
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+            if (rowNumerico["PassaBaixa"] != DBNull.Value || rowNumerico["PassaAlta"] != DBNull.Value || rowNumerico["Notch"] != DBNull.Value)
+            {
+                float hertzSelectHigh = 0;
+                float hertzSelect = 0;
+                bool isAnyFilterSelectedHigh;
+
+                if (rowNumerico["PassaAlta"] != DBNull.Value)
+                {
+                    hertzSelectHigh = (float)rowNumerico["PassaAlta"];
+                } //Verifica se tem algum filtro aplicado de HighPass
+
+                if (hertzSelectHigh == 0)
+                {
+                    int selec = GlobVar.grafSelected.IndexOf(Tela_Plotagem.index);
+                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+
+                    if (rowNumerico["PassaBaixa"] == DBNull.Value)
+                    {
+
+                    }
+                    else
+                    {
+                        hertzSelect = Convert.ToInt16(rowNumerico["PassaBaixa"]);
+                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])),
+                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+                    }
+                }
+                else
+                {
+                    int selec = GlobVar.grafSelected.IndexOf(Tela_Plotagem.index);
+                    filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
+                    if (rowNumerico["PassaBaixa"] == DBNull.Value)
+                    {
+                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])),
+                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+
+                    }
+                    else
+                    {
+                        hertzSelect = Convert.ToInt16(rowNumerico["PassaBaixa"]);
+                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])),
+                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+
+                    }
+
+                }
+                if (rowNumerico["Notch"] != DBNull.Value)
+                {
+                    float NotchHertz = Convert.ToInt16(rowNumerico["Notch"]);
+                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])),
+                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))),
+                        (float)NotchHertz,
+                        10,
+                        GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+                }
+
+            }
+
+            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+            {
+                if ((int)pn.Tag == tagCodCanal)
+                {
+                    foreach (Label lb in pn.Controls.OfType<Label>())
+                    {
+                        if (lb.Tag is int intTag)
+                        {
+                            if (intTag == tagCodCanal)
+                            {
+                                lb.Text = newLegenda;
+                            }
+                        }
+                        else if (lb.Tag is string strTag)
+                        {
+                            if (int.TryParse(strTag, out int stringTagAsInt) && stringTagAsInt == tagCodCanal)
+                            {
+                                lb.Text = newLegenda;
+                            }
+                        }
+                    }
+                }
+            }
+            TelaClearAndReload();
+        }
+        private void CanalCor_Click(object sender, EventArgs e)
+        {
+            var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                        .FirstOrDefault(row => row.Field<int>("CodCanal1") == tagCodCanal);
+
+            Color c = Color.Black;
+            buttonForm.HideOverlay();
+            ColorPickerDialog minhasCores = new ColorPickerDialog();
+            if(minhasCores.ShowDialog() == DialogResult.OK)
+            {
+                c = minhasCores.Color;
+            }
+            int cor = c.R | (c.G << 8) | (c.B << 16);
+            rowNumerico["Cor"] = cor;
+
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+            TelaClearAndReload();
+        }
+
+
+
+
         private void Legenda_Click(object sender, EventArgs e)
         {
 
@@ -4319,7 +4470,42 @@ namespace PlotagemOpenGL
             catch { }
 
         }
+        public static void alterarRefText(DataRow rowNumerico)
+        {
+            // Obtém o valor atual de CodCanal2
+            int codCanalAtual = Convert.ToInt32(rowNumerico["CodCanal2"]);
 
+            // Encontra o índice do valor atual no vetor de referências
+            int indexAtual = Array.IndexOf(GlobVar.canaisReferencia, codCanalAtual);
+
+            // Se o valor atual estiver no vetor, pegamos o próximo (alternado)
+            int proximoIndex;
+
+            // Se o valor atual estiver no vetor, alterna para o próximo valor
+            if (indexAtual != -1)
+            {
+                // Se o valor atual for o último, volta para o primeiro. Caso contrário, vai para o próximo
+                proximoIndex = (indexAtual + 1) % GlobVar.canaisReferencia.Length;
+            }
+            else
+            {
+                // Se o valor atual não estiver no vetor, começa com o primeiro valor do vetor
+                proximoIndex = 0;
+            }
+
+            // Obtém o próximo valor de referência
+            int proximoValorReferencia = GlobVar.canaisReferencia[proximoIndex];
+
+            // Procura o nome do canal correspondente ao próximo valor de referência
+            var cadCanal2 = GlobVar.tbl_CadCanal.AsEnumerable()
+                .FirstOrDefault(row => row.Field<int>("CodCanal") == proximoValorReferencia);
+
+            // Atualiza o texto do botão AlterarRef com o nome do próximo canal de referência
+            if (cadCanal2 != null)
+            {
+                AlterarRef.Text = $"Alterar Ref. para: {cadCanal2["NomeCanal"]}";
+            }
+        }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             timer1.Start();
@@ -4444,6 +4630,9 @@ namespace PlotagemOpenGL
                         {
                             InverteSinal.Checked = false;
                         }
+
+                        alterarRefText(rowNumerico);
+
                         clickedPanel = panel;
                         UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
                         UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);

@@ -653,6 +653,7 @@ namespace PlotagemOpenGL
             CanalCor.Name = "CanalCor";
             CanalCor.Size = new System.Drawing.Size(148, 26);
             CanalCor.Text = "Cor";
+            CanalCor.Click += CanalCor_Click;
             //
             // Configurar
             //
@@ -716,6 +717,7 @@ namespace PlotagemOpenGL
             AlterarRef.Name = "AlterarRef";
             AlterarRef.Size = new System.Drawing.Size(148, 26);
             AlterarRef.Text = "Alterar Referência";
+            AlterarRef.Click += AlterarRef_Click;
 
             // 
             // MostrarSetas
@@ -2625,7 +2627,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
