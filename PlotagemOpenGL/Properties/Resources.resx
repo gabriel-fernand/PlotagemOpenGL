@@ -117,4 +117,80 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="10848865" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\10848865.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AvancarOTempoEmTela" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\AvancarOTempoEmTela.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AvancarRetroceder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\AvancarRetroceder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CopiarTelaEmArquivo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\CopiarTelaEmArquivo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Coracao" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\Coracao.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Despertar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\Despertar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EventoEmClick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\EventoEmClick.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HideEyes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\HideEyes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HideIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\HideIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImprimeExame" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ImprimeExame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImprimeLaudo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ImprimeLaudo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImprimePagina" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ImprimePagina.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImprimePagSelecionada" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ImprimePagSelecionada.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImprimiTela" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ImprimiTela.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MedirAmplitude" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\MedirAmplitude.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MenorSaturacao" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\MenorSaturacao.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MinimoEvento" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\MinimoEvento.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pernaEvento" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\pernaEvento.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pouse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\Pouse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProfileHomem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ProfileHomem.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProfileMulher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ProfileMulher.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProximoAnteriorComentario" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\ProximoAnteriorComentario.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pulmao" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\Pulmao.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RetrocederOTempoEmTela" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\RetrocederOTempoEmTela.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Ronco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Incones\Icones\Ronco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

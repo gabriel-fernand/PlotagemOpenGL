@@ -2985,10 +2985,12 @@ namespace PlotagemOpenGL
         }
         private void UpdateLoc(string canal = null)
         {
-            if (timer2.Enabled) {
-                MouseLoc.Text = $"{stopwatch.Elapsed.TotalSeconds} seconds"; 
+            try{
+                if (timer2.Enabled) {
+                    MouseLoc.Text = $"{stopwatch.Elapsed.TotalSeconds} seconds";
+                }
             }
-
+            catch { }
         }
         public static void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
         {
