@@ -56,6 +56,16 @@ namespace PlotagemOpenGL
         {
 
         }
+
+        private void painelComando_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 
