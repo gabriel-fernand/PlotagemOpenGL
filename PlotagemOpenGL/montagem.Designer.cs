@@ -244,8 +244,9 @@ namespace PlotagemOpenGL
             button8.BackColor = System.Drawing.Color.Ivory;
             button8.BackgroundImage = (System.Drawing.Image)resources.GetObject("button8.BackgroundImage");
             button8.BackgroundImageLayout = ImageLayout.Stretch;
+            button8.FlatStyle = FlatStyle.Flat;
             button8.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button8.Location = new System.Drawing.Point(213, 3);
+            button8.Location = new System.Drawing.Point(217, 3);
             button8.Name = "button8";
             button8.Size = new System.Drawing.Size(43, 39);
             button8.TabIndex = 62;
@@ -256,8 +257,9 @@ namespace PlotagemOpenGL
             button9.BackColor = System.Drawing.Color.Ivory;
             button9.BackgroundImage = (System.Drawing.Image)resources.GetObject("button9.BackgroundImage");
             button9.BackgroundImageLayout = ImageLayout.Stretch;
+            button9.FlatStyle = FlatStyle.Flat;
             button9.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button9.Location = new System.Drawing.Point(171, 3);
+            button9.Location = new System.Drawing.Point(174, 3);
             button9.Name = "button9";
             button9.Size = new System.Drawing.Size(43, 39);
             button9.TabIndex = 63;
@@ -268,8 +270,9 @@ namespace PlotagemOpenGL
             button10.BackColor = System.Drawing.Color.Ivory;
             button10.BackgroundImage = (System.Drawing.Image)resources.GetObject("button10.BackgroundImage");
             button10.BackgroundImageLayout = ImageLayout.Stretch;
+            button10.FlatStyle = FlatStyle.Flat;
             button10.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button10.Location = new System.Drawing.Point(129, 3);
+            button10.Location = new System.Drawing.Point(132, 3);
             button10.Name = "button10";
             button10.Size = new System.Drawing.Size(43, 39);
             button10.TabIndex = 64;
@@ -280,8 +283,9 @@ namespace PlotagemOpenGL
             button11.BackColor = System.Drawing.Color.Ivory;
             button11.BackgroundImage = (System.Drawing.Image)resources.GetObject("button11.BackgroundImage");
             button11.BackgroundImageLayout = ImageLayout.Stretch;
+            button11.FlatStyle = FlatStyle.Flat;
             button11.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button11.Location = new System.Drawing.Point(87, 3);
+            button11.Location = new System.Drawing.Point(90, 3);
             button11.Name = "button11";
             button11.Size = new System.Drawing.Size(43, 39);
             button11.TabIndex = 65;
@@ -292,8 +296,9 @@ namespace PlotagemOpenGL
             button12.BackColor = System.Drawing.Color.Ivory;
             button12.BackgroundImage = (System.Drawing.Image)resources.GetObject("button12.BackgroundImage");
             button12.BackgroundImageLayout = ImageLayout.Stretch;
+            button12.FlatStyle = FlatStyle.Flat;
             button12.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button12.Location = new System.Drawing.Point(46, 3);
+            button12.Location = new System.Drawing.Point(47, 3);
             button12.Name = "button12";
             button12.Size = new System.Drawing.Size(43, 39);
             button12.TabIndex = 2;
@@ -304,8 +309,9 @@ namespace PlotagemOpenGL
             button13.BackColor = System.Drawing.Color.Ivory;
             button13.BackgroundImage = (System.Drawing.Image)resources.GetObject("button13.BackgroundImage");
             button13.BackgroundImageLayout = ImageLayout.Stretch;
+            button13.FlatStyle = FlatStyle.Flat;
             button13.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button13.Location = new System.Drawing.Point(262, 3);
+            button13.Location = new System.Drawing.Point(267, 3);
             button13.Name = "button13";
             button13.Size = new System.Drawing.Size(43, 39);
             button13.TabIndex = 1;
@@ -316,6 +322,7 @@ namespace PlotagemOpenGL
             button14.BackColor = System.Drawing.Color.Ivory;
             button14.BackgroundImage = (System.Drawing.Image)resources.GetObject("button14.BackgroundImage");
             button14.BackgroundImageLayout = ImageLayout.Stretch;
+            button14.FlatStyle = FlatStyle.Flat;
             button14.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             button14.Location = new System.Drawing.Point(3, 3);
             button14.Name = "button14";
