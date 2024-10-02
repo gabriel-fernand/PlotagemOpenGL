@@ -38,6 +38,7 @@ public class LeituraBanco
             string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
             string queryTbl_Comentarios = "SELECT * FROM tbl_Comentarios";
             string queryTbl_DadosExame = "SELECT * FROM tbl_DadosExame";
+            string queryTbl_Paginas = "SELECT * FROM tbl_Paginas em ";
 
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -54,6 +55,7 @@ public class LeituraBanco
             using var commandTipoExame = new OdbcCommand(quaryTipoExame, connectionDatBd);
             using var commandTbl_Comentarios = new OdbcCommand(queryTbl_Comentarios, connectionDatBd);
             using var commandTbl_DadosExame = new OdbcCommand(queryTbl_DadosExame, connectionDatBd);
+            using var commandTbl_Paginas = new OdbcCommand(queryTbl_Paginas, connectionDatBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -69,8 +71,10 @@ public class LeituraBanco
             using var adapterTipoExame = new OdbcDataAdapter(commandTipoExame);
             using var adapterTbl_Comentarios = new OdbcDataAdapter(commandTbl_Comentarios);
             using var adapterTbl_DadosExame = new OdbcDataAdapter(commandTbl_DadosExame);
+            using var adapterTbl_Paginas = new OdbcDataAdapter(commandTbl_Paginas);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_Paginas.Fill(GlobVar.tbl_Paginas);
             adapterTbl_DadosExame.Fill(GlobVar.tbl_DadosExame);
             adapterTbl_Comentarios.Fill(GlobVar.tbl_Comentarios);
             adapterTipoExame.Fill(sele);

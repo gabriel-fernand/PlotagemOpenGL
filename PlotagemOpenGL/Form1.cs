@@ -40,6 +40,8 @@ using PlotagemOpenGL.auxi.FormLegenda;
 using PlotagemOpenGL.FormesMenuPanels.InferiorSuperior;
 using PlotagemOpenGL.FormesMenuPanels;
 using Cyotek.Windows.Forms;
+using System.Windows.Navigation;
+using Image = System.Drawing.Image;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -170,6 +172,7 @@ namespace PlotagemOpenGL
         private Dictionary<Panel, Dictionary<string, bool>> panelLowFilterStates = new Dictionary<Panel, Dictionary<string, bool>>();
         private Dictionary<Panel, Dictionary<string, bool>> panelHighFilterStates = new Dictionary<Panel, Dictionary<string, bool>>();
         private Dictionary<Panel, Dictionary<string, bool>> panelNotchFilterStates = new Dictionary<Panel, Dictionary<string, bool>>();
+        public static System.ComponentModel.ComponentResourceManager resources;
 
 
         public static Point? prevPosition = null;
@@ -249,6 +252,7 @@ namespace PlotagemOpenGL
             GlobVar.locScale.X = scalaLb1.Location.X;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
             GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
+            resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
             load();
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -289,6 +293,7 @@ namespace PlotagemOpenGL
             InicializarButtonForm();
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
+
         }
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
@@ -409,6 +414,35 @@ namespace PlotagemOpenGL
         }
         private void load()
         {
+
+            //Verificar depois o que e feito para abrir na ultima pagina aberta
+            //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            int pagina = paginaCoerente / GlobVar.segundos;
+            string telaPagText = "000";
+            if (pagina >= 10)
+            {
+                pagina++;
+                telaPagText = $"0{pagina}";
+            }
+            else if (pagina >= 100)
+            {
+                pagina++;
+                telaPagText = $"{pagina}";
+            }
+            else
+            {
+                pagina++;
+                telaPagText = $"00{pagina}";
+            }
+            ptsEmTela.Text = $"{telaPagText}";
+
+            timerAvanca.Tick += TimerAvanca_Tick;
+            timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
+            timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
+            timerRetrocede.Tick += TimerRetrocede_Tick;
+
+
             MontagemBox.Items.Clear();
             foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
             {
@@ -497,6 +531,7 @@ namespace PlotagemOpenGL
 
             UpdateFilterStates();
         }
+
 
         private void UpdateFilterStates()
         {
@@ -1125,6 +1160,8 @@ namespace PlotagemOpenGL
             AjustarFonteDosLabels();
 
             TelaClearAndReload();
+            UpdateInicioTela();
+
         }
 
         private void AjustarBotoesMinusEPlus()
@@ -2112,6 +2149,8 @@ namespace PlotagemOpenGL
                             if (!isTelaClearAndReloadExecuted)
                             {
                                 TelaClearAndReload();
+                                UpdateInicioTela();
+
                                 isTelaClearAndReloadExecuted = true;
                             }
                         }
@@ -2738,7 +2777,7 @@ namespace PlotagemOpenGL
                         isDrawingRectangle = false;
 
                         if (!crtlAtivo){
-                            UpdateLoc();
+                            //UpdateLoc();
                             isDrawingRectangle = false;
                             isDrawing = false;
 
@@ -2784,8 +2823,9 @@ namespace PlotagemOpenGL
                         {
                             isDrawing = false;
                             TelaClearAndReload();
-
-                        }else
+                            UpdateInicioTela();
+                        }
+                        else
                         {
                             float outX = 0 ;
                             isDrawing = false;
@@ -2800,8 +2840,8 @@ namespace PlotagemOpenGL
                             }
                             lastMousePosition = e.Location;
                             TelaClearAndReload();
+                            UpdateInicioTela();
                             timerClick.Stop();
-
                         }
                     }
                     else if (isThereAComment)
@@ -2811,6 +2851,8 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
+
                         timerClick.Stop();
                     }
                     else if (isThereAXSartComment)
@@ -2820,6 +2862,8 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
+
                         timerComment.Stop();
                     }
                     else if (isThereAXEndComment)
@@ -2829,6 +2873,8 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
+
                         timerComment.Stop();
                     }
                     else if (isThereAYStartComment)
@@ -2838,6 +2884,8 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
+
                         timerComment.Stop();
                     }
                     else if (isThereAYEndComment)
@@ -2847,6 +2895,7 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
                         timerComment.Stop();
                     }
 
@@ -2857,6 +2906,7 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
                         timerComment.Stop();
                     }
                     else if (isThereX0Y1Comment)
@@ -2866,6 +2916,7 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
                         timerComment.Stop();
                     }
                     else if (isThereX1Y0Comment)
@@ -2875,6 +2926,7 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
                         timerComment.Stop();
                     }
                     else if (isThereX1Y1Comment)
@@ -2884,6 +2936,7 @@ namespace PlotagemOpenGL
                         plotComentatios.UpdateComment(e.X, e.Y);
                         lastMousePosition = e.Location;
                         TelaClearAndReload();
+                        UpdateInicioTela();
                         timerComment.Stop();
                     }
 
@@ -2894,6 +2947,7 @@ namespace PlotagemOpenGL
                         {
                             isDrawing = false;
                             TelaClearAndReload();
+                            UpdateInicioTela();
 
                         }
                         else
@@ -2947,6 +3001,8 @@ namespace PlotagemOpenGL
                             }
                             timerClick.Stop();
                             TelaClearAndReload();
+                            UpdateInicioTela();
+
                         }
                     }
                 }
@@ -3246,6 +3302,40 @@ namespace PlotagemOpenGL
 
                             }
                         break;
+
+                        case Keys.NumPad0:
+                            Marcar0.PerformClick();
+                            break;
+                        case Keys.D0:
+                            Marcar0.PerformClick();
+                            break;
+                        case Keys.NumPad1:
+                            Marcar1.PerformClick();
+                            break;
+                        case Keys.D1:
+                            Marcar1.PerformClick();
+                            break;
+                        case Keys.NumPad2:
+                            Marcar2.PerformClick();
+                            break;
+                        case Keys.D2:
+                            Marcar2.PerformClick();
+                            break;
+                        case Keys.NumPad3:
+                            Marcar3.PerformClick();
+                            break;
+                        case Keys.D3:
+                            Marcar3.PerformClick();
+                            break;
+                        case Keys.NumPad5:
+                            MarcarR.PerformClick();
+                            break;
+                        case Keys.D5:
+                            MarcarR.PerformClick();
+                            break;
+                        case Keys.R:
+                            MarcarR.PerformClick();
+                            break;
                     }
                 }
                 int alturaTela = (int)openglControl1.Height;
@@ -3365,12 +3455,13 @@ namespace PlotagemOpenGL
             GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
 
+            /*
             if(GlobVar.segundos >= 60){
                 foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
                     if (Convert.ToInt16(rw["CodCanal1"]) == 67 || Convert.ToInt16(rw["CodCanal1"]) == 66)
                     {
-                        rw["AutoEscala"] = true;
+                        rw["AutoEscala"] = false;
                     }
                 }
             }
@@ -3383,7 +3474,8 @@ namespace PlotagemOpenGL
                         rw["AutoEscala"] = false;
                     }
                 }
-            }
+            }*/
+
             UpdateInicioTela();
             TelaClearAndReload();
         }
@@ -3413,25 +3505,53 @@ namespace PlotagemOpenGL
 
         public void UpdateInicioTela()
         {
-            int inicio = GlobVar.inicioTela;
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            int inicio = (GlobVar.indice / GlobVar.namos);
             TimeSpan tempo = TimeSpan.FromSeconds(inicio);
             string horasI = tempo.Hours.ToString().PadLeft(2, '0');
             string minutosI = tempo.Minutes.ToString().PadLeft(2, '0');
             string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
+            //FimTela e aonde esta mostrando o tempo em que o exame esta mostrando
+            fimTela.Text = $"{horasI}:{minutosI}:{segundosI}";
 
-            inicioTela.Text = $"{horasI}:{minutosI}:{segundosI}";
+            if (GlobVar.segundos != 30)
+            {
+                    PainelMarca.Enabled = false;
+            }
+            else
+            {
+                if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
+                {
+                    PainelMarca.Enabled = false;
+                }
+                else
+                {
+                    PainelMarca.Enabled = true;
+                }
+            }
 
-            int final = GlobVar.finalTela;
-            TimeSpan tempoF = TimeSpan.FromSeconds(final);
-
-            string horasF = tempoF.Hours.ToString().PadLeft(2, '0');
-            string minutosF = tempoF.Minutes.ToString().PadLeft(2, '0');
-            string segundosF = tempoF.Seconds.ToString().PadLeft(2, '0');
-            fimTela.Text = $"{horasF}:{minutosF}:{segundosF}";
-
-            string ptEmTela = Convert.ToString(GlobVar.tmpEmTela);
-            ptsEmTela.Text = ptEmTela;
-
+            //inicioTela vai ser o que vai mostrar a hora em que o aquele momento que esta na tela aconteceu
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            string horario = row["Horario"].ToString();
+            inicioTela.Text = $"{horario.Substring(11)}";
+            
+            //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
+            int pagina = paginaCoerente / GlobVar.segundos;
+            string telaPagText = "000";
+            if(pagina >= 10)
+            {
+                telaPagText = $"0{pagina}";
+            }
+            else if(pagina >= 100)
+            {
+                telaPagText = $"{pagina}";
+            }
+            else
+            {
+                telaPagText = $"00{pagina}";
+            }
+            ptsEmTela.Text = $"{telaPagText}";
+            
             int indexLabel = 0;
             for (int i = 1; i <= GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
@@ -3446,11 +3566,706 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+
+            int estagioatual = Convert.ToInt16(row["Estagio"]);
+
+            if (estagioatual == 0)
+            {
+                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual0);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            else if (estagioatual == 1)
+            {
+                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual1);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            else if (estagioatual == 2)
+            {
+                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual2);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            else if (estagioatual == 3)
+            {
+                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual3);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            else if (estagioatual == 5)
+            {
+                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtualR);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            atualizaButAntProx();
         }
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        public static void atualizaButAntProx()
+        {
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+
+            // Função auxiliar para definir a imagem correta com base no valor do "Estagio"
+            string GetImageByEstagio(int? estagio)
+            {
+                switch (estagio)
+                {
+                    case 0: return GlobVar.diretorioEstagioAnteriorProximo0;
+                    case 1: return GlobVar.diretorioEstagioAnteriorProximo1;
+                    case 2: return GlobVar.diretorioEstagioAnteriorProximo2;
+                    case 3: return GlobVar.diretorioEstagioAnteriorProximo3;
+                    case 5: return GlobVar.diretorioEstagioAnteriorProximoR;
+                    default: return GlobVar.diretorioEstagioAnteriorProximoNada; // Caso o valor seja nulo ou não mapeado, usar a imagem "Nada"
+                }
+            }
+
+            // Atualizar imagens dos botões "Anteriores"
+            for (int i = 1; i <= 4; i++)
+            {
+                var indexAnterior = rowIndex - 30 * i;
+                if (indexAnterior >= 0) // Verifica se o índice é válido
+                {
+                    var rowAnterior = GlobVar.tbl_Paginas.Rows[indexAnterior];
+                    int estagioAnterior = Convert.ToInt32(rowAnterior["Estagio"]);
+                    string imagePathAnterior = GetImageByEstagio(estagioAnterior);
+
+                    // Definir imagem nos botões anteriores
+                    switch (i)
+                    {
+                        case 1: UmaAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
+                        case 2: DuasAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
+                        case 3: TresAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
+                        case 4: QuatroAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
+                    }
+                }
+                else
+                {
+                    // Se o índice for inválido (fora do range), usa a imagem "Nada"
+                    switch (i)
+                    {
+                        case 1: UmaAnterior.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 2: DuasAnterior.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 3: TresAnterior.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 4: QuatroAnterior.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                    }
+                }
+            }
+
+            // Atualizar imagens dos botões "Próximos"
+            for (int i = 1; i <= 4; i++)
+            {
+                var indexProximo = rowIndex + 30 * i;
+                if (indexProximo < GlobVar.tbl_Paginas.Rows.Count) // Verifica se o índice é válido
+                {
+                    var rowProxima = GlobVar.tbl_Paginas.Rows[indexProximo];
+                    int estagioProximo = Convert.ToInt32(rowProxima["Estagio"]);
+                    string imagePathProxima = GetImageByEstagio(estagioProximo);
+
+                    // Definir imagem nos botões próximos
+                    switch (i)
+                    {
+                        case 1: UmaProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
+                        case 2: DuasProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
+                        case 3: TresProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
+                        case 4: QuatroProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
+                    }
+                }
+                else
+                {
+                    // Se o índice for inválido (fora do range), usa a imagem "Nada"
+                    switch (i)
+                    {
+                        case 1: UmaProxima.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 2: DuasProxima.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 3: TresProxima.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                        case 4: QuatroProxima.BackgroundImage = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada); break;
+                    }
+                }
+            }
+        }
+        private void Marcar_Click(object sender, EventArgs e)
+        {
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+
+                Button botao = sender as Button;
+                int newEstagio = Convert.ToInt32(botao.Tag);
+                int paginaCoerente = GlobVar.indice / GlobVar.namos;
+                var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+
+                // Verifica se o índice da linha foi encontrado
+                if (rowIndex >= 0)
+                {
+                    // Definir o limite para não exceder o total de linhas
+                    int totalRows = GlobVar.tbl_Paginas.Rows.Count;
+                    int limite = Math.Min(rowIndex + 30, totalRows); // Garante que não ultrapasse o número de linhas
+
+                    // Altera o valor da linha encontrada e das próximas 29
+                    for (int i = rowIndex; i < limite; i++)
+                    {
+                        GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
+                    }
+                }
+
+                camera.X += GlobVar.saltoTelas;
+                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas;
+
+                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico;
+                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico;
+
+                GlobVar.maximaVect += (int)GlobVar.saltoTelas;
+                GlobVar.indice += (int)GlobVar.saltoTelas;
+
+                GlobVar.inicioTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
+                GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
+                UpdateInicioTela();
+                TelaClearAndReload();
+
+            }
+        }
+
+        private void UmaProxima_Click(object sender, EventArgs e)
+        {
+            Button botao = sender as Button;
+            int escolha = Convert.ToInt32(botao.Tag);
+
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                camera.X += GlobVar.saltoTelas * escolha;
+                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)escolha;
+
+                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
+                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
+
+                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)escolha;
+                GlobVar.indice += (int)GlobVar.saltoTelas * (int)escolha;
+
+                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
+                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
+                UpdateInicioTela();
+                TelaClearAndReload();
+
+            }
+        }
+        private void UmaAnterior_Click(object sender, EventArgs e)
+        {
+            Button botao = sender as Button;
+            int escolha = Convert.ToInt32(botao.Tag);
+
+            if (GlobVar.indice > 0)
+            {
+                camera.X -= GlobVar.saltoTelas * escolha;
+                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)escolha;
+
+                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
+                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
+                if (GlobVar.indiceNumero < 0)
+                {
+                    GlobVar.indiceNumero = 0;
+                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                }
+
+                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)escolha;
+                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)escolha;
+
+                if (GlobVar.indice < 0)
+                {
+                    GlobVar.indice = 0;
+                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                    camera.X = 0;
+                }
+
+                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
+                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
+                if (GlobVar.inicioTela < 0)
+                {
+                    GlobVar.inicioTela = 0;
+                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                }
+                int alturaTela = (int)openglControl1.Height;
+                //gl.Translate(camera.X, 0, 1);
+                TelaClearAndReload();
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Refresh();
+                UpdateInicioTela();
+            }
+        }
+        // Quando o ComboBox abre, destacar o item selecionado
+        private void TempoTimerAndar_DropDown(object sender, EventArgs e)
+        {
+            ComboBox comboBox = sender as ComboBox;
+
+            if (comboBox != null && comboBox.SelectedIndex >= 0)
+            {
+                // Destaca o item que está atualmente selecionado
+                comboBox.SelectedItem = comboBox.Items[comboBox.SelectedIndex];
+            }
+        }
+        private void TempoTimerAndar_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Verifica qual item foi selecionado no ComboBox
+            switch (TempoTimerAndar.SelectedIndex)
+            {
+                case 0: // "0.00x"
+                    timerAndarRetroceder = 0;  // Timer parado ou sem efeito
+                    break;
+                case 1: // "0.10x"
+                    timerAndarRetroceder = 100;  // 100 ms
+                    break;
+                case 2: // "0.25x"
+                    timerAndarRetroceder = 250;  // 250 ms
+                    break;
+                case 3: // "0.50x"
+                    timerAndarRetroceder = 500;  // 500 ms
+                    break;
+                case 4: // "1.00x"
+                    timerAndarRetroceder = 1000;  // 1000 ms (1 segundo)
+                    break;
+                case 5: // "2.00x"
+                    timerAndarRetroceder = 2000;  // 2000 ms (2 segundos)
+                    break;
+                default:
+                    timerAndarRetroceder = 0;  // Caso nenhum seja selecionado, por padrão, 0 ms
+                    break;
+            }
+        }
+        private void TimerRetrocede_Tick(object sender, EventArgs e)
+        {
+            if (GlobVar.indice > 0)
+            {
+                camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                if (GlobVar.indiceNumero < 0)
+                {
+                    GlobVar.indiceNumero = 0;
+                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                }
+
+                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                if (GlobVar.indice < 0)
+                {
+                    GlobVar.indice = 0;
+                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                    camera.X = 0;
+                }
+
+                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                if (GlobVar.inicioTela < 0)
+                {
+                    GlobVar.inicioTela = 0;
+                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                }
+                UpdateInicioTela();
+                TelaClearAndReload();
+
+            }
+        }
+
+        private void TimerVoltaUmaPag_Tick(object sender, EventArgs e)
         {
 
         }
+
+        private void TimerAndaUmaPag_Tick(object sender, EventArgs e)
+        {
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                int AndarUmSegundo = GlobVar.namos * 1;
+                int AndaUmSegundoNumerico = GlobVar.numeroAmos * 1;
+                camera.X += AndarUmSegundo * GlobVar.SPEED;
+                if (camera.X > 0) hScrollBar1.Value += AndarUmSegundo * (int)GlobVar.SPEED;
+
+                GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+
+                GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
+                GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
+
+                GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+        }
+
+        private void TimerAvanca_Tick(object sender, EventArgs e)
+        {
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                UpdateInicioTela();
+                TelaClearAndReload();
+
+            }
+        }
+
+        Button botaoSelecionado;
+        int timerAndarRetroceder;
+
+        private void Avanca_Click(object sender, EventArgs e)
+        {
+            if (botaoSelecionado != null)
+            {
+                DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+            }
+            botaoSelecionado = sender as Button;
+
+            // Ao clicar, altera a cor de fundo para indicar que está selecionado
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if(btn.BackColor == Color.OrangeRed)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(227, 68, 0);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    if(timerAndarRetroceder == 0)
+                    {
+                        if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                        {
+                            camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                            GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            UpdateInicioTela();
+                            TelaClearAndReload();
+                        }
+                    }
+                    else
+                    {
+                        timerAvanca.Interval = timerAndarRetroceder;
+                        timerAvanca.Start();
+                    }
+                }
+                else
+                {
+                    DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+                    timerAvanca.Stop();
+                }
+            }
+        }
+        private void Retrocede_Click(object sender, EventArgs e)
+        {
+            if (botaoSelecionado != null)
+            {
+                DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+            }
+            botaoSelecionado = sender as Button;
+
+            // Ao clicar, altera a cor de fundo para indicar que está selecionado
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.OrangeRed)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(227, 68, 0);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+
+                    if (timerAndarRetroceder == 0)
+                    {
+                        if (GlobVar.indice > 0)
+                        {
+                            camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            if (GlobVar.indiceNumero < 0)
+                            {
+                                GlobVar.indiceNumero = 0;
+                                GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                            }
+
+                            GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            if (GlobVar.indice < 0)
+                            {
+                                GlobVar.indice = 0;
+                                GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                                camera.X = 0;
+                            }
+
+                            GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                            if (GlobVar.inicioTela < 0)
+                            {
+                                GlobVar.inicioTela = 0;
+                                GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                            }
+                            UpdateInicioTela();
+                            TelaClearAndReload();
+                        }
+                    }
+                    else
+                    {
+                        timerRetrocede.Interval = timerAndarRetroceder;
+                        timerRetrocede.Start();
+                    }
+                }
+                else
+                {
+                    DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+                    timerRetrocede.Stop();
+                }
+            }
+        }
+
+        private void VoltaUmaPag_Click(object sender, EventArgs e)
+        {
+            if (botaoSelecionado != null)
+            {
+                DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+            }
+            botaoSelecionado = sender as Button;
+
+            // Ao clicar, altera a cor de fundo para indicar que está selecionado
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.OrangeRed)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(227, 68, 0);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    if (timerAndarRetroceder == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        timerVoltaUmaPag.Interval = timerAndarRetroceder;
+                        timerVoltaUmaPag.Start();
+                    }
+                }
+                else
+                {
+                    DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+                    timerVoltaUmaPag.Stop();
+
+                }
+            }
+        }
+
+        private void AndaUmaPag_Click(object sender, EventArgs e)
+        {
+            if (botaoSelecionado != null)
+            {
+                DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+            }
+            botaoSelecionado = sender as Button;
+
+            // Ao clicar, altera a cor de fundo para indicar que está selecionado
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.OrangeRed)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(227, 68, 0);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    if (timerAndarRetroceder == 0)
+                    {
+                        if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                        {
+                            int AndarUmSegundo = GlobVar.namos * 1;
+                            int AndaUmSegundoNumerico = GlobVar.numeroAmos * 1;
+                            camera.X += AndarUmSegundo * GlobVar.SPEED;
+                            if (camera.X > 0) hScrollBar1.Value += AndarUmSegundo * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+
+                            GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
+                            GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
+
+                            GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                            UpdateInicioTela();
+                            TelaClearAndReload();
+
+                        }
+                    }
+                    else
+                    {
+                        timerAndaUmaPag.Interval = timerAndarRetroceder;
+                        timerAndaUmaPag.Start();
+                    }
+                }
+                else
+                {
+                    DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+                    timerAndaUmaPag.Stop();
+
+                }
+            }
+        }
+        private void Pausa_Click(object sender, EventArgs e)
+        {
+            if (botaoSelecionado != null)
+            {
+                DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+            }
+            botaoSelecionado = sender as Button;
+
+            // Ao clicar, altera a cor de fundo para indicar que está selecionado
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.OrangeRed)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(227, 68, 0);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+
+                    timerAvanca.Stop();
+                    timerRetrocede.Stop();
+                    timerVoltaUmaPag.Start();
+                    timerAndaUmaPag.Stop();
+
+                }
+                else
+                {
+                    DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
+                }
+            }
+        }
+
+
+        // Caso queira "desmarcar" o botão ao clicar fora dele ou em outro botão
+        private void DesmarcarBotao(Button btn)
+        {
+            // Restaurar a cor original do botão
+            btn.BackColor = Color.OrangeRed;  // Cor original
+            btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.Black;
+        }
+
+        // Evento para garantir que apenas números sejam inseridos
+        private void PtsEmTela_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Obtém a última linha da tabela
+            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+
+            // Se houver uma última linha, define o valor máximo possível baseado no campo "NumPag"
+            int maximoPossivel = lastRow != null ? Convert.ToInt32(lastRow["NumPag"]) : 0;
+
+            // Converte esse valor para o número de dígitos permitidos
+            int maxLength = maximoPossivel.ToString().Length;
+
+            // Verifica se a tecla pressionada não é um número ou backspace
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                // Cancela a entrada se não for um número ou backspace
+                e.Handled = true;
+            }
+
+            // Verifica se o número de caracteres excedeu o limite definido por maxLength
+            if (ptsEmTela.Text.Length >= maxLength && !char.IsControl(e.KeyChar))
+            {
+                // Cancela a entrada se o limite de caracteres for atingido
+                e.Handled = true;
+            }
+        }
+        private void PtsEmTela_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                int pagina = Convert.ToInt16(ptsEmTela.Text);
+                var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+
+                int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
+
+                if (pagina < 0) { pagina = 0; }
+                if (pagina > (maximoPossivel / 30)) { pagina = maximoPossivel / 30; }
+
+                string telaPagText = "000";
+                if (pagina >= 100)
+                {
+                    telaPagText = $"{pagina}";
+                }
+                else if (pagina >= 10)
+                {
+                    telaPagText = $"0{pagina}";
+                }
+                else
+                {
+                    if(pagina < 0) { pagina = 0; }
+                    telaPagText = $"00{pagina}";
+                }
+                ptsEmTela.Text = $"{telaPagText}";
+
+                int newloc = pagina * 30;
+
+                camera.X = newloc * GlobVar.namos;
+
+                GlobVar.indice = newloc * GlobVar.namos;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                int alturaTela = (int)openglControl1.Height;
+                //gl.Translate(camera.X, 0, 1);
+                TelaClearAndReload();
+                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Refresh();
+                UpdateInicioTela();
+            }
+        }
+
+
         private void Tela_Plotagem_ResizeBegin(object sender, EventArgs e)
         {
 
@@ -5805,6 +6620,7 @@ namespace PlotagemOpenGL
             openglControl1.Update();
 
             TelaClearAndReload();
+            UpdateInicioTela();
 
             if ((isThereAXSartComment || isThereAXEndComment || isThereAYStartComment || isThereAYEndComment || isThereX0Y0Comment || isThereX0Y1Comment || isThereX1Y0Comment || isThereX1Y1Comment))
             {
@@ -5846,7 +6662,7 @@ namespace PlotagemOpenGL
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
             GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
-            Stringao.Text = $"X: {musezin.X}Y: {musezin.Y} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
+            Stringao.Text = $"Timer {timerAndarRetroceder} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
                 $"| CodCanal: {tagCodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
                 $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";

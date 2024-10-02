@@ -9,6 +9,7 @@ using ClassesBDNano;
 using System.Data;
 using System.Data.Odbc;
 using Connection = ADODB.Connection;
+using System.IO;
 
 
 
@@ -33,6 +34,19 @@ namespace PlotagemOpenGL.auxi
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
         public static int[] FundoColor;
+
+        public static string diretorioEstagioAtual0 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN0Select.png";
+        public static string diretorioEstagioAtual1 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN1Select.png";
+        public static string diretorioEstagioAtual2 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN2Select.png";
+        public static string diretorioEstagioAtual3 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN3Select.png";
+        public static string diretorioEstagioAtualR = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoNRSelect.png";
+
+        public static string diretorioEstagioAnteriorProximoNada = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoNVazio.png";
+        public static string diretorioEstagioAnteriorProximo0 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN0.png";
+        public static string diretorioEstagioAnteriorProximo1 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN1.png";
+        public static string diretorioEstagioAnteriorProximo2 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN2.png";
+        public static string diretorioEstagioAnteriorProximo3 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN3.png";
+        public static string diretorioEstagioAnteriorProximoR = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoNR.png";
 
         //Variaveis para mexer nos eventos
         public static bool drawBordenInAnEvent;
@@ -96,6 +110,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_CadEvento = new DataTable();
         public static DataTable tbl_Comentarios = new DataTable();
         public static DataTable tbl_DadosExame = new DataTable();
+        public static DataTable tbl_Paginas = new DataTable();
 
         public static int[] canaisReferencia;
         public static string[] nomeReferencia;
