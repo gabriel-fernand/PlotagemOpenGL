@@ -2613,6 +2613,7 @@ namespace PlotagemOpenGL
             MarcaDAguia.Size = new System.Drawing.Size(47, 47);
             MarcaDAguia.TabIndex = 67;
             MarcaDAguia.UseVisualStyleBackColor = false;
+            MarcaDAguia.Click += MarcaDAguia_Click;
             // 
             // QuatroProxima
             // 
@@ -2844,6 +2845,8 @@ namespace PlotagemOpenGL
             Proximo3.Size = new System.Drawing.Size(47, 47);
             Proximo3.TabIndex = 76;
             Proximo3.UseVisualStyleBackColor = false;
+            Proximo3.Tag = 3;
+            Proximo3.Click += Proximo_Click;
             // 
             // Anterior3
             // 
@@ -2856,6 +2859,8 @@ namespace PlotagemOpenGL
             Anterior3.Size = new System.Drawing.Size(47, 47);
             Anterior3.TabIndex = 77;
             Anterior3.UseVisualStyleBackColor = false;
+            Anterior3.Tag = 3;
+            Anterior3.Click += Anterior_Click;
             // 
             // ProximoDif
             // 
@@ -2868,6 +2873,7 @@ namespace PlotagemOpenGL
             ProximoDif.Size = new System.Drawing.Size(47, 47);
             ProximoDif.TabIndex = 70;
             ProximoDif.UseVisualStyleBackColor = false;
+            ProximoDif.Click += ProximoDif_Click;
             // 
             // AnteriorDif
             // 
@@ -2880,6 +2886,7 @@ namespace PlotagemOpenGL
             AnteriorDif.Size = new System.Drawing.Size(47, 47);
             AnteriorDif.TabIndex = 71;
             AnteriorDif.UseVisualStyleBackColor = false;
+            AnteriorDif.Click += AnteriorDif_Click;
             // 
             // ProximoR
             // 
@@ -2892,6 +2899,8 @@ namespace PlotagemOpenGL
             ProximoR.Size = new System.Drawing.Size(47, 47);
             ProximoR.TabIndex = 67;
             ProximoR.UseVisualStyleBackColor = false;
+            ProximoR.Tag = 5;
+            ProximoR.Click += Proximo_Click;
             // 
             // AnteriorR
             // 
@@ -2904,6 +2913,8 @@ namespace PlotagemOpenGL
             AnteriorR.Size = new System.Drawing.Size(47, 47);
             AnteriorR.TabIndex = 66;
             AnteriorR.UseVisualStyleBackColor = false;
+            AnteriorR.Tag = 5;
+            AnteriorR.Click += Anterior_Click;
             // 
             // Proximo2
             // 
@@ -2916,6 +2927,8 @@ namespace PlotagemOpenGL
             Proximo2.Size = new System.Drawing.Size(47, 47);
             Proximo2.TabIndex = 62;
             Proximo2.UseVisualStyleBackColor = false;
+            Proximo2.Tag = 2;
+            Proximo2.Click += Proximo_Click;
             // 
             // Anterior2
             // 
@@ -2928,6 +2941,8 @@ namespace PlotagemOpenGL
             Anterior2.Size = new System.Drawing.Size(47, 47);
             Anterior2.TabIndex = 63;
             Anterior2.UseVisualStyleBackColor = false;
+            Anterior2.Tag = 2;
+            Anterior2.Click += Anterior_Click;
             // 
             // Proximo1
             // 
@@ -2940,6 +2955,8 @@ namespace PlotagemOpenGL
             Proximo1.Size = new System.Drawing.Size(47, 47);
             Proximo1.TabIndex = 64;
             Proximo1.UseVisualStyleBackColor = false;
+            Proximo1.Tag = 1;
+            Proximo1.Click += Proximo_Click;
             // 
             // Anterior1
             // 
@@ -2952,6 +2969,8 @@ namespace PlotagemOpenGL
             Anterior1.Size = new System.Drawing.Size(47, 47);
             Anterior1.TabIndex = 65;
             Anterior1.UseVisualStyleBackColor = false;
+            Anterior1.Tag = 1;
+            Anterior1.Click += Anterior_Click;
             // 
             // Proximo0
             // 
@@ -2964,6 +2983,8 @@ namespace PlotagemOpenGL
             Proximo0.Size = new System.Drawing.Size(47, 47);
             Proximo0.TabIndex = 2;
             Proximo0.UseVisualStyleBackColor = false;
+            Proximo0.Tag = 0;
+            Proximo0.Click += Proximo_Click;
             // 
             // OcultaPA
             // 
@@ -2988,6 +3009,8 @@ namespace PlotagemOpenGL
             Anterior0.Size = new System.Drawing.Size(47, 47);
             Anterior0.TabIndex = 0;
             Anterior0.UseVisualStyleBackColor = false;
+            Anterior0.Tag = 0;
+            Anterior0.Click += Anterior_Click;
             // 
             // PainelAvRet
             // 
@@ -3696,6 +3719,7 @@ namespace PlotagemOpenGL
             PainelPerfil.ResumeLayout(false);
             ResumeLayout(false);
         }
+
 
 
         #endregion

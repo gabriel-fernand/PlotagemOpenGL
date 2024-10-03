@@ -1,10 +1,16 @@
 ﻿using SharpGL;
 using SharpGL.SceneGraph.Assets;
+using SharpGL.WPF;
 using System;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
+using UnityEngine;
+using Color = System.Windows.Media.Color;
+using Font = System.Drawing.Font;
+using Graphics = System.Drawing.Graphics;
 
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
@@ -155,6 +161,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.End();
             }*/
 
+
             if (Tela_Plotagem.Linha1Seg.Checked)
             {
                 int ind = 0;
@@ -206,6 +213,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
 
             }
+
             //Faz o desenho da regua com base no tamanho da tela
             if (Tela_Plotagem.Regua.Checked){
                 int ind = 0;
@@ -276,6 +284,86 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             //plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
 
+            if (Tela_Plotagem.MarcaDAguaAtiva)
+            {
+                int tempoEmTela = GlobVar.segundos / 30;
+                //Marca apenas uma vez
+                if(tempoEmTela == 1)
+                {
+                    string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+
+                    // Calcular o tamanho da fonte com base em 80% da altura da tela
+                    float tamanhoFonte = alturaTela * 0.8f;
+
+                    // Aqui você pode ajustar manualmente o fator para centralizar o texto
+                    // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
+                    int posX = larguraTela / 2 - (int)(larguraTela * 0.1);  // Ajuste para centralizar horizontalmente
+                    int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
+                    Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
+                    // Primeira chamada para preparar o OpenGL para o texto
+                    gl.DrawText(0, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
+
+                    // Segunda chamada para realmente desenhar o texto
+                    gl.DrawText(posX, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+
+                    // Finalizar a renderização do OpenGL
+                    gl.End();
+                    gl.Flush();
+                }
+                else
+                {                
+                    Tela_Plotagem.retornaOsValoresDosOutrosEstagios();
+                    string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+
+                    // Calcular o tamanho da fonte com base em 80% da altura da tela
+                    float tamanhoFonte =(tempoEmTela == 2) ? alturaTela * 0.8f : (tempoEmTela > 2 && tempoEmTela <= 4) ? alturaTela * 0.6f : alturaTela * 0.4f; 
+
+                    for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
+                    {
+                        gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, 0);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y);
+                        gl.End();
+
+                        i += GlobVar.namos * 30;
+                    }
+                    int lasPosiX;
+                    // Distribuir as instâncias horizontalmente
+                    for (int i = 0; i < tempoEmTela; i++)
+                    {
+                        texto = Tela_Plotagem.estagios[i];
+                        Font font = new Font("Arial Narrow", tamanhoFonte);
+
+                        SizeF tamanhoTxt;
+                        using (Graphics g = Tela_Plotagem.openglControl1.CreateGraphics())
+                        {
+                            // Agora você pode usar o contexto gráfico `g`
+                            tamanhoTxt = g.MeasureString(texto, font);
+
+                        }
+                        // Aqui, distribui o X uniformemente pela largura da tela
+                        int posX = ((larguraTela / tempoEmTela) * i) + ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2) )) / 2 ;  // Distribuir na largura da tela
+
+                        // Ajuste o Y para manter o texto na mesma linha
+                        int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);
+
+                        // Primeira chamada para preparar o OpenGL para o texto
+                        gl.DrawText(0, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, "");
+
+                        // Segunda chamada para realmente desenhar o texto
+                        gl.DrawText(posX, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+                    }
+
+                    gl.End();
+                    gl.Flush();
+                }
+            }
 
             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, desenhoLoc);
 

@@ -234,7 +234,7 @@ namespace PlotagemOpenGL
             UpdateStyles();
             qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
 
-            GlobVar.FundoColor = new int[] { 255, 255, 255, 255};
+            GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
             openglControl1.Focus();
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
@@ -276,7 +276,7 @@ namespace PlotagemOpenGL
                     panel.Click += Panel_Click;
                     foreach (Control lable in panel.Controls)
                     {
-                        if(lable is Label)
+                        if (lable is Label)
                         {
                             lable.MouseEnter += panel_MouseEnter;
                             lable.MouseDown += Panel_MouseDown;
@@ -687,7 +687,7 @@ namespace PlotagemOpenGL
                     mouseDownLocation = e.Location;
 
                     overlayForm.Show();
-                }else{
+                } else {
 
                     mouseDownLocation = e.Location;
                     initialPanelY = movingPanel.Top;
@@ -818,7 +818,7 @@ namespace PlotagemOpenGL
                 else if (isOnBottomBorder)
                 {
                     movingPanel.Height = overlayForm.TempRect.Height;
-                    if(movingPanel.Height < 20)
+                    if (movingPanel.Height < 20)
                     {
                         movingPanel.Height = 20;
                     }
@@ -1139,7 +1139,7 @@ namespace PlotagemOpenGL
 
             int lastTop = 0;
 
-            foreach(Panel pn in painelExames.Controls)
+            foreach (Panel pn in painelExames.Controls)
             {
                 pn.Top = lastTop;
                 pn.Height = normalSize;
@@ -1166,7 +1166,7 @@ namespace PlotagemOpenGL
 
         private void AjustarBotoesMinusEPlus()
         {
-            foreach(Panel pn in painelExames.Controls)
+            foreach (Panel pn in painelExames.Controls)
             {
 
                 int newHeight = Math.Clamp(pn.Height / 2, 10, 20);
@@ -1177,7 +1177,7 @@ namespace PlotagemOpenGL
                     if (bt.Tag.Equals("+"))
                     {
                         bt.Top = (pn.Height / 2) - (newHeight);
-                    }else if (bt.Tag.Equals("-"))
+                    } else if (bt.Tag.Equals("-"))
                     {
                         bt.Top = (pn.Height / 2);
                     }
@@ -1195,7 +1195,7 @@ namespace PlotagemOpenGL
             if (clickedControl is Label lb)
             {
                 panel = lb.Parent as Panel;
-            }else
+            } else
             {
                 panel = sender as Panel;
             }
@@ -1400,7 +1400,7 @@ namespace PlotagemOpenGL
                 canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.RealocButton();
                 canais.PainelLb_Resize();
-                canais.reloc(); 
+                canais.reloc();
 
 
                 gl = openglControl1.OpenGL;
@@ -1409,7 +1409,7 @@ namespace PlotagemOpenGL
                 plotagem.Margem(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
                 plotagem.Traco(GlobVar.tbl_MontagemSelecionada.Rows.Count, alturaTela);
                 plotagem.DesenhaGrafico(alturaTela, GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                 
+
                 AjustarFonteDosLabels();
                 RepositionPanels();
                 ReorderGrafSelectedCodSelectedAndScale();
@@ -1645,7 +1645,7 @@ namespace PlotagemOpenGL
 
                 plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                 plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-                                
+
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
@@ -1665,44 +1665,6 @@ namespace PlotagemOpenGL
         // Variável para rastrear o painel anterior
         private Panel previousPanel = null;
 
-        // Evento para mostrar o botão quando o mouse estiver sobre ele
-        private void Panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            Panel panel = sender as Panel;
-            if (panel != null)
-            {
-                foreach (Control control in panel.Controls)
-                {
-                    if (control is Button button)
-                    {
-                        if (button.ClientRectangle.Contains(button.PointToClient(Cursor.Position)))
-                        {
-                            button.Show();
-                        }
-                        else
-                        {
-                            button.Hide();
-                        }
-                    }
-                }
-            }
-        }
-
-        // Evento para esconder os botões quando o mouse sai do painel
-        private void Panel_MouseLeave(object sender, EventArgs e)
-        {
-            Panel panel = sender as Panel;
-            if (panel != null)
-            {
-                foreach (Control control in panel.Controls)
-                {
-                    if (control is Button button)
-                    {
-                        button.Hide();
-                    }
-                }
-            }
-        }
 
         //Metodo que faz a plotagem, e a replotagem quando precisa
         public static void TelaClearAndReload()
@@ -1717,7 +1679,7 @@ namespace PlotagemOpenGL
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            
+
             //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
@@ -1891,14 +1853,14 @@ namespace PlotagemOpenGL
                     // Armazena o cursor original e marca que o mouse está pressionado
                     originalCursor = this.Cursor;
                     isMouseDown = true;
-                                        
+
                     if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         timer2.Start();
                         isDrawing = true;
                         isDrawingRectangle = true;
                         ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
-                        if(!crtlAtivo){
+                        if (!crtlAtivo) {
                             GlobVar.endX = (int)Plotagem.startX;
                             GlobVar.endY = (int)Plotagem.startY;
                             GlobVar.startX = (int)Plotagem.startX;
@@ -2056,8 +2018,8 @@ namespace PlotagemOpenGL
                             plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             //TelaClearAndReload();
                         }
-                        else{
-                            float aux; 
+                        else {
+                            float aux;
                             timer2.Start();
 
 
@@ -2159,7 +2121,7 @@ namespace PlotagemOpenGL
                         {
                             timerClick.Start();
                             isTelaClearAndReloadExecuted = false;
-                            if(crtlAtivo)
+                            if (crtlAtivo)
                             {
                                 if (e.X >= openglControl1.Size.Width)
                                 {
@@ -2181,22 +2143,22 @@ namespace PlotagemOpenGL
                                 }
 
                             }
-                            else{
-                            if (GlobVar.endX >= GlobVar.startX)
-                            {
-                                if(e.X <= musezin.X)
+                            else {
+                                if (GlobVar.endX >= GlobVar.startX)
                                 {
-                                    GlobVar.endX = (int)endX;
-                                    //TelaClearAndReload();
+                                    if (e.X <= musezin.X)
+                                    {
+                                        GlobVar.endX = (int)endX;
+                                        //TelaClearAndReload();
+                                    }
+                                    else
+                                    {
+                                        GlobVar.endX = (int)endX;
+                                    }
                                 }
-                                else
-                                {
-                                    GlobVar.endX = (int)endX;
-                                }
-                            }
                                 if (e.X >= openglControl1.Size.Width)
                                 {
-                                    
+
                                     camera.X += GlobVar.namos;
                                     if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
 
@@ -2217,7 +2179,7 @@ namespace PlotagemOpenGL
                             //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
                     }
-                    else if(!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2250,7 +2212,7 @@ namespace PlotagemOpenGL
                                 // Atualizar a posição inicial do mouse para a nova posição
                                 initialMousePosition.X = (int)outX;
                                 initialMousePosition.Y = (int)outY;
-                            }  
+                            }
                             // Atualizar a última posição do mouse
                             lastMousePosition.X = e.X;
                             lastMousePosition.Y = e.Y;
@@ -2258,7 +2220,8 @@ namespace PlotagemOpenGL
                         }
                     }
 
-/* x Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* x Inixio */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2292,7 +2255,8 @@ namespace PlotagemOpenGL
 
                         }
                     }
-/* x Fim */         else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* x Fim */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2325,7 +2289,8 @@ namespace PlotagemOpenGL
                         }
 
                     }
-/* y Inixio */      else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* y Inixio */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2354,7 +2319,7 @@ namespace PlotagemOpenGL
                                 GlobVar.Yi += (int)ddeltaY;
                                 GlobVar.XiYi.Y += (int)deltaY;
                                 GlobVar.YSize = AuYsize - GlobVar.Yi;
-                                if(GlobVar.YSize < 30)
+                                if (GlobVar.YSize < 30)
                                 {
                                     GlobVar.YSize = 30;
                                 }
@@ -2365,7 +2330,8 @@ namespace PlotagemOpenGL
                         }
 
                     }
-/* y Fim */         else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* y Fim */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2402,7 +2368,8 @@ namespace PlotagemOpenGL
 
                     }
 
-/* X0 - Y0 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* X0 - Y0 */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2455,7 +2422,8 @@ namespace PlotagemOpenGL
                         }
 
                     }
-/* X0 - Y1 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* X0 - Y1 */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2505,7 +2473,8 @@ namespace PlotagemOpenGL
                         }
 
                     }
-/* X1 - Y0 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && isThereX1Y0Comment && !isThereX1Y1Comment))
+                    /* X1 - Y0 */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && isThereX1Y0Comment && !isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2554,7 +2523,8 @@ namespace PlotagemOpenGL
                             lastMousePosition.X = e.X;
                         }
                     }
-/* X1 - Y1 */       else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment))
+                    /* X1 - Y1 */
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment))
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2650,12 +2620,12 @@ namespace PlotagemOpenGL
                         if (!isMouseDown)
                         {
                             this.Cursor = Cursors.SizeWE;
-                                                        openglControl1.DoRender();
+                            openglControl1.DoRender();
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
                             toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
 
                         }
-                        
+
 
                         if (isDrawing)
                         {
@@ -2720,7 +2690,7 @@ namespace PlotagemOpenGL
                                         endEvent.X = GlobVar.durEventoMove;
 
                                     }
-                                    else if(e.X >= lastMousePosition.X)
+                                    else if (e.X >= lastMousePosition.X)
                                     {
 
                                         endEvent.Y = GlobVar.durEventoMove;
@@ -2776,7 +2746,7 @@ namespace PlotagemOpenGL
                         isDrawing = false;
                         isDrawingRectangle = false;
 
-                        if (!crtlAtivo){
+                        if (!crtlAtivo) {
                             //UpdateLoc();
                             isDrawingRectangle = false;
                             isDrawing = false;
@@ -2784,7 +2754,7 @@ namespace PlotagemOpenGL
                             ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
                             GlobVar.endX = (int)Plotagem.endX;
 
-                            if(GlobVar.startX == GlobVar.endX)
+                            if (GlobVar.startX == GlobVar.endX)
                             {
                                 GlobVar.startX = null;
                                 isDrawing = false;
@@ -2827,7 +2797,7 @@ namespace PlotagemOpenGL
                         }
                         else
                         {
-                            float outX = 0 ;
+                            float outX = 0;
                             isDrawing = false;
                             ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
 
@@ -2941,7 +2911,7 @@ namespace PlotagemOpenGL
                     }
 
                     else if (this.isAnStartEvent || this.isAnEndEvent)
-                            {
+                    {
 
                         if (crtlAtivo)
                         {
@@ -2963,14 +2933,14 @@ namespace PlotagemOpenGL
 
                                     int LimiteAux = Math.Abs(GlobVar.durEventoMove - GlobVar.iniEventoMove);
 
-                                    if(LimiteAux < GlobVar.MinimumValueEvent)
+                                    if (LimiteAux < GlobVar.MinimumValueEvent)
                                     {
                                         GlobVar.durEventoMove = GlobVar.iniEventoMove + GlobVar.MinimumValueEvent;
                                     }
 
                                     if (GlobVar.iniEventoMove > GlobVar.durEventoMove)
                                     {
-                                        plotEventos.UpdateEvent(GlobVar.durEventoMove, GlobVar.iniEventoMove,  GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
+                                        plotEventos.UpdateEvent(GlobVar.durEventoMove, GlobVar.iniEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                                     }
                                     else
                                     {
@@ -3031,7 +3001,7 @@ namespace PlotagemOpenGL
         {
             try
             {
-                if(this.Cursor == Cursors.SizeAll)
+                if (this.Cursor == Cursors.SizeAll)
                 {
                     //toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
                     //toolTip1.Show(GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%", openglControl1, lastMousePosition.X, lastMousePosition.Y);
@@ -3041,7 +3011,7 @@ namespace PlotagemOpenGL
         }
         private void UpdateLoc(string canal = null)
         {
-            try{
+            try {
                 if (timer2.Enabled) {
                     MouseLoc.Text = $"{stopwatch.Elapsed.TotalSeconds} seconds";
                 }
@@ -3080,7 +3050,7 @@ namespace PlotagemOpenGL
             {
                 int alturaTela = (int)openglControl1.Height;
 
-                for(int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
                     int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]);
                     int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
@@ -3140,7 +3110,7 @@ namespace PlotagemOpenGL
             try
             {
                 //UpdateSelected(sender);
-                
+
                 //timer1.Start();
 
                 int ampli = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
@@ -3203,13 +3173,13 @@ namespace PlotagemOpenGL
 
                 if (isAnEvent || isAnEndEvent || isAnStartEvent)
                 {
-                    if(e.KeyValue == 46)
+                    if (e.KeyValue == 46)
                     {
                         plotEventos.DeleteEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                     }
-                    else{
-                    var rowteclaRapida = GlobVar.tbl_CadEvento.AsEnumerable()
-                                                                .Where(row => row.Field<int>("TeclaRapida") == e.KeyValue);
+                    else {
+                        var rowteclaRapida = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                                    .Where(row => row.Field<int>("TeclaRapida") == e.KeyValue);
                         if (rowteclaRapida.Any())
                         {
                             var tableTeclaRapida = rowteclaRapida.CopyToDataTable();
@@ -3230,7 +3200,7 @@ namespace PlotagemOpenGL
                     {
                         crtlAtivo = true;
                     }
-                    if(e.KeyValue == 37)
+                    if (e.KeyValue == 37)
                     {
                         this.Close();
                     }
@@ -3301,7 +3271,7 @@ namespace PlotagemOpenGL
                                 //TelaClearAndReload();
 
                             }
-                        break;
+                            break;
 
                         case Keys.NumPad0:
                             Marcar0.PerformClick();
@@ -3354,7 +3324,7 @@ namespace PlotagemOpenGL
         {
             try
             {
-                if(e != null)
+                if (e != null)
                 {
                     if (isAnEvent || isAnEndEvent || isAnStartEvent)
                     {
@@ -3374,7 +3344,7 @@ namespace PlotagemOpenGL
                                     GlobVar.EventHasChange = false;
                                 }
                             }
-}
+                        }
                     }
 
                     if (e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
@@ -3438,7 +3408,7 @@ namespace PlotagemOpenGL
             }
 
 
-            GlobVar.tmpEmTela =(GlobVar.namos * GlobVar.segundos);
+            GlobVar.tmpEmTela = (GlobVar.namos * GlobVar.segundos);
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
 
             GlobVar.inicioTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
@@ -3448,7 +3418,7 @@ namespace PlotagemOpenGL
             //}
             GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos + (int)GlobVar.inicioTela;
 
-            GlobVar.tmpEmTelaNumerico =(GlobVar.namosNumerico * GlobVar.segundos);
+            GlobVar.tmpEmTelaNumerico = (GlobVar.namosNumerico * GlobVar.segundos);
             GlobVar.finalTelaNumerico = (int)GlobVar.tmpEmTelaNumerico / (int)GlobVar.namosNumerico;
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
 
@@ -3502,6 +3472,43 @@ namespace PlotagemOpenGL
                     break;
             }
         }
+        public static bool MarcaDAguaAtiva = false;
+        private void MarcaDAguia_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.Lime)
+                {
+                    btn.BackColor = Color.FromArgb(50, 147, 50);  // Cor para indicar seleção
+
+                    // Alterar a cor do texto, se necessário
+                    btn.ForeColor = Color.White;
+
+                    // Alterar o estilo da borda, se necessário
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    MarcaDAguaAtiva = true;
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+
+                }
+                else
+                {
+                    // Restaurar a cor original do botão
+                    btn.BackColor = Color.Lime;  // Cor original
+                    btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+                    btn.FlatAppearance.BorderSize = 1;
+                    btn.FlatAppearance.BorderColor = Color.Black;
+                    MarcaDAguaAtiva = false;
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+
+                }
+
+            }
+
+        }
 
         public void UpdateInicioTela()
         {
@@ -3516,7 +3523,7 @@ namespace PlotagemOpenGL
 
             if (GlobVar.segundos != 30)
             {
-                    PainelMarca.Enabled = false;
+                PainelMarca.Enabled = false;
             }
             else
             {
@@ -3534,15 +3541,15 @@ namespace PlotagemOpenGL
             var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
             string horario = row["Horario"].ToString();
             inicioTela.Text = $"{horario.Substring(11)}";
-            
+
             //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
             int pagina = paginaCoerente / GlobVar.segundos;
             string telaPagText = "000";
-            if(pagina >= 10)
+            if (pagina >= 10)
             {
                 telaPagText = $"0{pagina}";
             }
-            else if(pagina >= 100)
+            else if (pagina >= 100)
             {
                 telaPagText = $"{pagina}";
             }
@@ -3551,7 +3558,7 @@ namespace PlotagemOpenGL
                 telaPagText = $"00{pagina}";
             }
             ptsEmTela.Text = $"{telaPagText}";
-            
+
             int indexLabel = 0;
             for (int i = 1; i <= GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
@@ -3571,30 +3578,146 @@ namespace PlotagemOpenGL
 
             if (estagioatual == 0)
             {
+                estagioatutxt = "0";
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual0);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             else if (estagioatual == 1)
             {
+                estagioatutxt = "1";
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual1);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             else if (estagioatual == 2)
             {
+                estagioatutxt = "2";
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual2);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             else if (estagioatual == 3)
             {
+                estagioatutxt = "3";
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual3);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             else if (estagioatual == 5)
             {
+                estagioatutxt = "R";
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtualR);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             atualizaButAntProx();
+        }
+        public static string estagioatutxt = "";
+        public static string estagioatutxt1 = "";
+        public static string estagioatutxt2 = "";
+        public static string estagioatutxt3 = "";
+        public static string estagioatutxt4 = "";
+        public static string estagioatutxt5 = "";
+        public static string estagioatutxt6 = "";
+        public static string estagioatutxt7 = "";
+        public static string[] estagios = new string[8]
+        {
+                estagioatutxt,
+                estagioatutxt1,
+                estagioatutxt2,
+                estagioatutxt3,
+                estagioatutxt4,
+                estagioatutxt5,
+                estagioatutxt6,
+                estagioatutxt7
+        };
+        public static void retornaOsValoresDosOutrosEstagios()
+        {
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            for (int i = 1; i <= 8; i++)
+            {
+                var indexProximo = rowIndex + 30 * i;
+                if (indexProximo < GlobVar.tbl_Paginas.Rows.Count) // Verifica se o índice é válido
+                {
+                    var rowProxima = GlobVar.tbl_Paginas.Rows[indexProximo];
+                    int estagioProximo = Convert.ToInt32(rowProxima["Estagio"]);
+                    string est = "";
+                    if(estagioProximo == 5)
+                    {
+                        est = "R";
+                    }
+                    else
+                    {
+                        est = $"{estagioProximo}";
+                    }
+                    switch (i)
+                    {
+                        case 1:
+                            estagioatutxt = $"{est}";
+                            break;
+                        case 2:
+                            estagioatutxt1 = $"{est}";
+                            break;
+                        case 3:
+                            estagioatutxt2 = $"{est}";
+                            break;
+                        case 4:
+                            estagioatutxt3 = $"{est}";
+                            break;
+                        case 5:
+                            estagioatutxt4 = $"{est}";
+                            break;
+                        case 6:
+                            estagioatutxt5 = $"{est}";
+                            break;
+                        case 7:
+                            estagioatutxt6 = $"{est}";
+                            break;
+                        case 8:
+                            estagioatutxt7 = $"{est}";
+                            break;
+                    }
+                    estagios = new string[]
+                    {
+                            estagioatutxt,
+                            estagioatutxt1,
+                            estagioatutxt2,
+                            estagioatutxt3,
+                            estagioatutxt4,
+                            estagioatutxt5,
+                            estagioatutxt6,
+                            estagioatutxt7
+                    };
+
+                }
+                else
+                {
+                    switch (i)
+                    {
+                        case 1:
+                            estagioatutxt = "";
+                            break;
+                        case 2:
+                            estagioatutxt1 = "";
+                            break;
+                        case 3:
+                            estagioatutxt2 = "";
+                            break;
+                        case 4:
+                            estagioatutxt3 = "";
+                            break;
+                        case 5:
+                            estagioatutxt4 = "";
+                            break;
+                        case 6:
+                            estagioatutxt5 = "";
+                            break;
+                        case 7:
+                            estagioatutxt6 = "";
+                            break;
+                        case 8:
+                            estagioatutxt7 = "";
+                            break;
+                    }
+                }
+            }
         }
         public static void atualizaButAntProx()
         {
@@ -3719,11 +3842,208 @@ namespace PlotagemOpenGL
 
             }
         }
+        private void Proximo_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int proximoEstagio = (int)btn.Tag;
+
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            int startNovoEstagio = estagioAtual;
+
+            int indexDifEstagio = 0;
+
+            for (int i = rowIndex; i < GlobVar.tbl_Paginas.Rows.Count; i += 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) != estagioAtual)
+                {
+                    indexDifEstagio = GlobVar.tbl_Paginas.Rows.IndexOf(rowsfuturas);
+                    break;
+                }
+            }
+
+            for (int i = indexDifEstagio; i < GlobVar.tbl_Paginas.Rows.Count; i += 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) == proximoEstagio)
+                {
+                    startNovoEstagio = Convert.ToInt32(rowsfuturas["NumPag"]);
+                    break;
+                }
+            }
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+
+                int NovaLoc = GlobVar.namos * startNovoEstagio;
+                int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
+
+                camera.X = NovaLoc;
+                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                camera.X = NovaLoc;
+
+                GlobVar.indice = NovaLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = NovaLocNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+
+        }
+        private void ProximoDif_Click(object sender, EventArgs e)
+        {
+
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            int startNovoEstagio = estagioAtual;
+
+            for (int i = rowIndex; i < GlobVar.tbl_Paginas.Rows.Count; i += 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) != estagioAtual)
+                {
+                    startNovoEstagio = Convert.ToInt32(rowsfuturas["NumPag"]);
+                    break;
+                }
+            }
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+
+                int NovaLoc = GlobVar.namos * startNovoEstagio;
+                int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
+
+                camera.X = NovaLoc;
+                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                camera.X = NovaLoc;
+
+                GlobVar.indice = NovaLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = NovaLocNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+        }
+        private void Anterior_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int proximoEstagio = (int)btn.Tag;
+
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            int startNovoEstagio = estagioAtual;
+
+            int indexDifEstagio = 0;
+
+            // Procurar pelo estágio diferente no sentido inverso
+            for (int i = rowIndex; i >= 0; i -= 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) != estagioAtual)
+                {
+                    indexDifEstagio = GlobVar.tbl_Paginas.Rows.IndexOf(rowsfuturas);
+                    break;
+                }
+            }
+
+            // Procurar pelo estágio anterior no sentido inverso
+            for (int i = indexDifEstagio; i >= 0; i -= 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) == proximoEstagio)
+                {
+                    startNovoEstagio = Convert.ToInt32(rowsfuturas["NumPag"]);
+                    break;
+                }
+            }
+
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                int NovaLoc = GlobVar.namos * startNovoEstagio;
+                int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
+
+                camera.X = NovaLoc;
+                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                camera.X = NovaLoc;
+
+                GlobVar.indice = NovaLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = NovaLocNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+        }
+        private void AnteriorDif_Click(object sender, EventArgs e)
+        {
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            int startNovoEstagio = estagioAtual;
+
+            // Procurar pelo estágio diferente no sentido inverso
+            for (int i = rowIndex; i >= 0; i -= 30)
+            {
+                var rowsfuturas = GlobVar.tbl_Paginas.Rows[i];
+
+                if (Convert.ToInt32(rowsfuturas["Estagio"]) != estagioAtual)
+                {
+                    startNovoEstagio = Convert.ToInt32(rowsfuturas["NumPag"]);
+                    break;
+                }
+            }
+
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                int NovaLoc = GlobVar.namos * startNovoEstagio;
+                int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
+
+                camera.X = NovaLoc;
+                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                camera.X = NovaLoc;
+
+                GlobVar.indice = NovaLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = NovaLocNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+        }
 
         private void UmaProxima_Click(object sender, EventArgs e)
         {
             Button botao = sender as Button;
             int escolha = Convert.ToInt32(botao.Tag);
+
+            int inicio = (GlobVar.indice / GlobVar.namos);
+            TimeSpan tempo = TimeSpan.FromSeconds(inicio);
+            string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
 
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
@@ -3740,13 +4060,41 @@ namespace PlotagemOpenGL
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
                 UpdateInicioTela();
                 TelaClearAndReload();
+            }
+            if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
+            {
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
 
+                    int vezesAndar = (Convert.ToInt16(segundosI) > 30) ? Math.Abs(30 - (Convert.ToInt16(segundosI) - 30)) : 30 - Convert.ToInt16(segundosI);
+
+                    int AndarUmSegundo = GlobVar.namos * vezesAndar;
+                    int AndaUmSegundoNumerico = GlobVar.numeroAmos * vezesAndar;
+
+                    camera.X += AndarUmSegundo * escolha;
+                    if (camera.X > 0) hScrollBar1.Value += (int)AndarUmSegundo;
+
+                    GlobVar.indiceNumero += (int)AndaUmSegundoNumerico;
+                    GlobVar.maximaNumero += (int)AndaUmSegundoNumerico;
+
+                    GlobVar.maximaVect += (int)AndarUmSegundo;
+                    GlobVar.indice += (int)AndarUmSegundo;
+
+                    GlobVar.inicioTela += ((int)AndarUmSegundo) / GlobVar.namos;
+                    GlobVar.finalTela += ((int)AndarUmSegundo) / GlobVar.namos;
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
             }
         }
         private void UmaAnterior_Click(object sender, EventArgs e)
         {
             Button botao = sender as Button;
             int escolha = Convert.ToInt32(botao.Tag);
+
+            int inicio = (GlobVar.indice / GlobVar.namos);
+            TimeSpan tempo = TimeSpan.FromSeconds(inicio);
+            string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
 
             if (GlobVar.indice > 0)
             {
@@ -3778,13 +4126,47 @@ namespace PlotagemOpenGL
                     GlobVar.inicioTela = 0;
                     GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
                 }
-                int alturaTela = (int)openglControl1.Height;
-                //gl.Translate(camera.X, 0, 1);
+
                 TelaClearAndReload();
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
             }
+            if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
+            {
+                if (GlobVar.indice > 0)
+                {
+                    int vezesAndar = (Convert.ToInt16(segundosI) > 30) ? Math.Abs((Convert.ToInt16(segundosI) - 30)) : Convert.ToInt16(segundosI);
+
+                    int VoltaUmSegundo = GlobVar.namos * vezesAndar;
+                    int VoltaUmSegundoNumerico = GlobVar.numeroAmos * vezesAndar;
+
+                    camera.X -= VoltaUmSegundo;
+                    if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo;
+
+                    GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico ;
+                    GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico;
+                    if (GlobVar.indiceNumero < 0)
+                    {
+                        GlobVar.indiceNumero = 0;
+                        GlobVar.maximaNumero = VoltaUmSegundoNumerico;
+                    }
+
+                    GlobVar.maximaVect -= (int)VoltaUmSegundo;
+                    GlobVar.indice -= (int)VoltaUmSegundo;
+
+                    if (GlobVar.indice < 0)
+                    {
+                        GlobVar.indice = 0;
+                        GlobVar.maximaVect = (int)VoltaUmSegundo;
+                        camera.X = 0;
+                    }
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+
+            }
+
         }
         // Quando o ComboBox abre, destacar o item selecionado
         private void TempoTimerAndar_DropDown(object sender, EventArgs e)
@@ -3865,6 +4247,42 @@ namespace PlotagemOpenGL
 
         private void TimerVoltaUmaPag_Tick(object sender, EventArgs e)
         {
+            if (GlobVar.indice > 0)
+            {
+                int VoltaUmSegundo = GlobVar.namos * 1;
+                int VoltaUmSegundoNumerico = GlobVar.numeroAmos * 1;
+
+                camera.X -= VoltaUmSegundo * GlobVar.SPEED;
+                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+
+                GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
+                GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
+                if (GlobVar.indiceNumero < 0)
+                {
+                    GlobVar.indiceNumero = 0;
+                    GlobVar.maximaNumero = VoltaUmSegundoNumerico;
+                }
+
+                GlobVar.maximaVect -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+                GlobVar.indice -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+
+                if (GlobVar.indice < 0)
+                {
+                    GlobVar.indice = 0;
+                    GlobVar.maximaVect = (int)VoltaUmSegundo;
+                    camera.X = 0;
+                }
+
+                GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                if (GlobVar.inicioTela < 0)
+                {
+                    GlobVar.inicioTela = 0;
+                    GlobVar.finalTela = (int)VoltaUmSegundo / (int)GlobVar.namos;
+                }
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
 
         }
 
@@ -3922,6 +4340,10 @@ namespace PlotagemOpenGL
             }
             botaoSelecionado = sender as Button;
 
+            timerRetrocede.Stop();
+            timerVoltaUmaPag.Stop();
+            timerAndaUmaPag.Stop();
+
             // Ao clicar, altera a cor de fundo para indicar que está selecionado
             Button btn = sender as Button;
             if (btn != null)
@@ -3976,6 +4398,10 @@ namespace PlotagemOpenGL
                 DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
             }
             botaoSelecionado = sender as Button;
+
+            timerAvanca.Stop();
+            timerVoltaUmaPag.Stop();
+            timerAndaUmaPag.Stop();
 
             // Ao clicar, altera a cor de fundo para indicar que está selecionado
             Button btn = sender as Button;
@@ -4051,6 +4477,10 @@ namespace PlotagemOpenGL
             }
             botaoSelecionado = sender as Button;
 
+            timerAvanca.Stop();
+            timerRetrocede.Stop();
+            timerAndaUmaPag.Stop();
+
             // Ao clicar, altera a cor de fundo para indicar que está selecionado
             Button btn = sender as Button;
             if (btn != null)
@@ -4068,7 +4498,42 @@ namespace PlotagemOpenGL
                     btn.FlatAppearance.BorderColor = Color.DarkGreen;
                     if (timerAndarRetroceder == 0)
                     {
+                        if (GlobVar.indice > 0)
+                        {
+                            int VoltaUmSegundo = GlobVar.namos * 1;
+                            int VoltaUmSegundoNumerico = GlobVar.numeroAmos * 1;
 
+                            camera.X -= VoltaUmSegundo * GlobVar.SPEED;
+                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+
+                            GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
+                            GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
+                            if (GlobVar.indiceNumero < 0)
+                            {
+                                GlobVar.indiceNumero = 0;
+                                GlobVar.maximaNumero = VoltaUmSegundoNumerico;
+                            }
+
+                            GlobVar.maximaVect -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+                            GlobVar.indice -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
+
+                            if (GlobVar.indice < 0)
+                            {
+                                GlobVar.indice = 0;
+                                GlobVar.maximaVect = (int)VoltaUmSegundo;
+                                camera.X = 0;
+                            }
+
+                            GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                            GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
+                            if (GlobVar.inicioTela < 0)
+                            {
+                                GlobVar.inicioTela = 0;
+                                GlobVar.finalTela = (int)VoltaUmSegundo / (int)GlobVar.namos;
+                            }
+                            UpdateInicioTela();
+                            TelaClearAndReload();
+                        }
                     }
                     else
                     {
@@ -4092,6 +4557,10 @@ namespace PlotagemOpenGL
                 DesmarcarBotao(botaoSelecionado);  // Desmarcar o botão anterior
             }
             botaoSelecionado = sender as Button;
+
+            timerAvanca.Stop();
+            timerRetrocede.Stop();
+            timerVoltaUmaPag.Stop();
 
             // Ao clicar, altera a cor de fundo para indicar que está selecionado
             Button btn = sender as Button;
@@ -4170,7 +4639,7 @@ namespace PlotagemOpenGL
 
                     timerAvanca.Stop();
                     timerRetrocede.Stop();
-                    timerVoltaUmaPag.Start();
+                    timerVoltaUmaPag.Stop();
                     timerAndaUmaPag.Stop();
 
                 }
@@ -4255,6 +4724,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                if (camera.X > 0) hScrollBar1.Value = (int)newloc;
 
                 int alturaTela = (int)openglControl1.Height;
                 //gl.Translate(camera.X, 0, 1);
