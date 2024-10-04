@@ -3156,6 +3156,8 @@ namespace PlotagemOpenGL
             Cpap.Size = new System.Drawing.Size(47, 47);
             Cpap.TabIndex = 78;
             Cpap.UseVisualStyleBackColor = false;
+            Cpap.Tag = 50;
+            Cpap.Click += IndoBomDiaBoaNoiteCPAP;
             // 
             // ProximoDes
             // 
@@ -3168,6 +3170,8 @@ namespace PlotagemOpenGL
             ProximoDes.Size = new System.Drawing.Size(47, 47);
             ProximoDes.TabIndex = 76;
             ProximoDes.UseVisualStyleBackColor = false;
+            ProximoDes.Tag = 20;
+            ProximoDes.Click += ProximoEvento_Click;
             // 
             // AnteriorDes
             // 
@@ -3180,6 +3184,8 @@ namespace PlotagemOpenGL
             AnteriorDes.Size = new System.Drawing.Size(47, 47);
             AnteriorDes.TabIndex = 77;
             AnteriorDes.UseVisualStyleBackColor = false;
+            AnteriorDes.Tag = 20;
+            AnteriorDes.Click += UltimoEvento_Click;
             // 
             // Dessatu
             // 
@@ -3192,6 +3198,7 @@ namespace PlotagemOpenGL
             Dessatu.Size = new System.Drawing.Size(47, 47);
             Dessatu.TabIndex = 75;
             Dessatu.UseVisualStyleBackColor = false;
+            Dessatu.Click += MenorSat_Click;
             // 
             // BaNotche
             // 
@@ -3204,6 +3211,8 @@ namespace PlotagemOpenGL
             BaNotche.Size = new System.Drawing.Size(47, 47);
             BaNotche.TabIndex = 72;
             BaNotche.UseVisualStyleBackColor = false;
+            BaNotche.Tag = 19;
+            BaNotche.Click += IndoBomDiaBoaNoiteCPAP;
             // 
             // BaDia
             // 
@@ -3216,6 +3225,8 @@ namespace PlotagemOpenGL
             BaDia.Size = new System.Drawing.Size(47, 47);
             BaDia.TabIndex = 73;
             BaDia.UseVisualStyleBackColor = false;
+            BaDia.Tag = 18;
+            BaDia.Click += IndoBomDiaBoaNoiteCPAP;
             // 
             // ProximoComentario
             // 
@@ -3228,6 +3239,7 @@ namespace PlotagemOpenGL
             ProximoComentario.Size = new System.Drawing.Size(47, 47);
             ProximoComentario.TabIndex = 68;
             ProximoComentario.UseVisualStyleBackColor = false;
+            ProximoComentario.Click += ProximoComentario_Click;
             // 
             // AnteriorComentario
             // 
@@ -3240,6 +3252,7 @@ namespace PlotagemOpenGL
             AnteriorComentario.Size = new System.Drawing.Size(47, 47);
             AnteriorComentario.TabIndex = 69;
             AnteriorComentario.UseVisualStyleBackColor = false;
+            AnteriorComentario.Click += AnteriorComentario_Click;
             // 
             // ProximoRonco
             // 
@@ -3252,6 +3265,8 @@ namespace PlotagemOpenGL
             ProximoRonco.Size = new System.Drawing.Size(47, 47);
             ProximoRonco.TabIndex = 70;
             ProximoRonco.UseVisualStyleBackColor = false;
+            ProximoRonco.Tag = 7;
+            ProximoRonco.Click += ProximoEvento_Click;
             // 
             // AnteriorRonco
             // 
@@ -3264,6 +3279,8 @@ namespace PlotagemOpenGL
             AnteriorRonco.Size = new System.Drawing.Size(47, 47);
             AnteriorRonco.TabIndex = 71;
             AnteriorRonco.UseVisualStyleBackColor = false;
+            AnteriorRonco.Tag = 7;
+            AnteriorRonco.Click += UltimoEvento_Click;
             // 
             // ProximoPerna
             // 
@@ -3276,6 +3293,8 @@ namespace PlotagemOpenGL
             ProximoPerna.Size = new System.Drawing.Size(47, 47);
             ProximoPerna.TabIndex = 67;
             ProximoPerna.UseVisualStyleBackColor = false;
+            ProximoPerna.Tag = 4;
+            ProximoPerna.Click += ProximoEvento_Click;
             // 
             // AnteriorPerna
             // 
@@ -3288,6 +3307,8 @@ namespace PlotagemOpenGL
             AnteriorPerna.Size = new System.Drawing.Size(47, 47);
             AnteriorPerna.TabIndex = 66;
             AnteriorPerna.UseVisualStyleBackColor = false;
+            AnteriorPerna.Tag = 4;
+            AnteriorPerna.Click += UltimoEvento_Click;
             // 
             // ProximoCardio
             // 
@@ -3300,6 +3321,8 @@ namespace PlotagemOpenGL
             ProximoCardio.Size = new System.Drawing.Size(47, 47);
             ProximoCardio.TabIndex = 62;
             ProximoCardio.UseVisualStyleBackColor = false;
+            ProximoCardio.Tag = 2;
+            ProximoCardio.Click += ProximoEvento_Click;
             // 
             // AnteriorCardio
             // 
@@ -3312,6 +3335,8 @@ namespace PlotagemOpenGL
             AnteriorCardio.Size = new System.Drawing.Size(47, 47);
             AnteriorCardio.TabIndex = 63;
             AnteriorCardio.UseVisualStyleBackColor = false;
+            AnteriorCardio.Tag = 2;
+            AnteriorCardio.Click += UltimoEvento_Click;
             // 
             // ProximoAcordar
             // 
@@ -3324,6 +3349,8 @@ namespace PlotagemOpenGL
             ProximoAcordar.Size = new System.Drawing.Size(47, 47);
             ProximoAcordar.TabIndex = 64;
             ProximoAcordar.UseVisualStyleBackColor = false;
+            ProximoAcordar.Tag = 1;
+            ProximoAcordar.Click += ProximoEvento_Click;
             // 
             // AnteriorAcordar
             // 
@@ -3336,6 +3363,8 @@ namespace PlotagemOpenGL
             AnteriorAcordar.Size = new System.Drawing.Size(47, 47);
             AnteriorAcordar.TabIndex = 65;
             AnteriorAcordar.UseVisualStyleBackColor = false;
+            AnteriorAcordar.Tag = 1;
+            AnteriorAcordar.Click += UltimoEvento_Click;
             // 
             // ProximoPulmao
             // 
@@ -3348,6 +3377,8 @@ namespace PlotagemOpenGL
             ProximoPulmao.Size = new System.Drawing.Size(47, 47);
             ProximoPulmao.TabIndex = 2;
             ProximoPulmao.UseVisualStyleBackColor = false;
+            ProximoPulmao.Tag = 8;
+            ProximoPulmao.Click += ProximoEvento_Click;
             // 
             // button20
             // 
@@ -3372,6 +3403,8 @@ namespace PlotagemOpenGL
             AnteriorPulmao.Size = new System.Drawing.Size(47, 47);
             AnteriorPulmao.TabIndex = 0;
             AnteriorPulmao.UseVisualStyleBackColor = false;
+            AnteriorPulmao.Tag = 8;
+            AnteriorPulmao.Click += UltimoEvento_Click;
             // 
             // PainelPrinters
             // 

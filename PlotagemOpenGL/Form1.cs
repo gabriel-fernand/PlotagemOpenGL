@@ -3543,7 +3543,7 @@ namespace PlotagemOpenGL
             inicioTela.Text = $"{horario.Substring(11)}";
 
             //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
-            int pagina = paginaCoerente / GlobVar.segundos;
+            int pagina = paginaCoerente / 30;
             string telaPagText = "000";
             if (pagina >= 10)
             {
@@ -3607,6 +3607,391 @@ namespace PlotagemOpenGL
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
             atualizaButAntProx();
+        }
+
+        bool foiencontradoum = false;
+        int lastfounded;
+        int ultimoTipoCanalProcurado;
+        int pagAndou;
+        private void ProximoEvento_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int TipoProximoEvento = (int)btn.Tag;
+            int pagAtual = GlobVar.indice;
+            int[] codProximosEventos;
+            if (TipoProximoEvento != ultimoTipoCanalProcurado || pagAndou != pagAtual) { foiencontradoum = false; }
+
+            var codigoTipoProximo = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(row => row.Field<int>("CodTipoCanal") == TipoProximoEvento).CopyToDataTable();
+            codProximosEventos = new int[codigoTipoProximo.Rows.Count];
+
+            for (int i = 0; i < codProximosEventos.Length; i++)
+            {
+                codProximosEventos[i] = Convert.ToInt32(codigoTipoProximo.Rows[i]["CodEvento"]);
+            }
+            // Encontra a próxima linha no DataTable GlobVar.eventosUpdate onde a coluna "Inicio" é maior que pagAtual
+            var proximaLinha = GlobVar.eventosUpdate.AsEnumerable()
+                .Where(row => row.Field<int>("Inicio") > pagAtual)  // Primeiro filtro: "Inicio" > pagAtual
+                .Where(row => codProximosEventos.Contains(row.Field<int>("CodEvento")))  // Segundo filtro: "CodEvento" dentro do vetor codProximosEventos
+                .OrderBy(row => row.Field<int>("Inicio"))  // Ordena pelas linhas com menor valor de "Inicio" após o filtro
+                .FirstOrDefault();  // Pega a primeira linha correspondente
+            if (proximaLinha != null)
+            { //Feito para caso ja tenha sido encontrado um evento
+                if (foiencontradoum)
+                {
+                    proximaLinha = GlobVar.eventosUpdate.AsEnumerable()
+                                    .Where(row => row.Field<int>("Inicio") > lastfounded)  // Primeiro filtro: "Inicio" > pagAtual
+                                    .Where(row => codProximosEventos.Contains(row.Field<int>("CodEvento")))  // Segundo filtro: "CodEvento" dentro do vetor codProximosEventos
+                                    .OrderBy(row => row.Field<int>("Inicio"))  // Ordena pelas linhas com menor valor de "Inicio" após o filtro
+                                    .FirstOrDefault();  // Pega a primeira linha correspondente
+                }
+            }
+            if (proximaLinha != null) {
+
+                pagAndou = pagAtual;
+                ultimoTipoCanalProcurado = TipoProximoEvento;
+                foiencontradoum = true;
+                int proxPag = (Convert.ToInt32(proximaLinha[4]) / 512) / GlobVar.segundos;
+                lastfounded = Convert.ToInt32(proximaLinha[4]);
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
+
+                    int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                    int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                    camera.X = NovaLoc;
+                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                    camera.X = NovaLoc;
+
+                    GlobVar.indice = NovaLoc;
+                    GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                    GlobVar.indiceNumero = NovaLocNumerico;
+                    GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+            }
+            else
+            {
+                foiencontradoum = false;
+            }
+
+            int h = 1;
+        }
+
+        bool foiencontradoumUltimo = false;
+        int lastfoundedUltimo;
+        int ultimoTipoCanalProcuradoUltimo;
+        private void UltimoEvento_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int TipoProximoEvento = (int)btn.Tag;
+            int pagAtual = GlobVar.indice;
+            int[] codProximosEventos;
+            if (TipoProximoEvento != ultimoTipoCanalProcuradoUltimo || pagAndou != pagAtual) { foiencontradoumUltimo = false; }
+
+            var codigoTipoProximo = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(row => row.Field<int>("CodTipoCanal") == TipoProximoEvento).CopyToDataTable();
+            codProximosEventos = new int[codigoTipoProximo.Rows.Count];
+
+            for (int i = 0; i < codProximosEventos.Length; i++)
+            {
+                codProximosEventos[i] = Convert.ToInt32(codigoTipoProximo.Rows[i]["CodEvento"]);
+            }
+            // Encontra a próxima linha no DataTable GlobVar.eventosUpdate onde a coluna "Inicio" é maior que pagAtual
+            var proximaLinha = GlobVar.eventosUpdate.AsEnumerable()
+                        .Where(row => row.Field<int>("Inicio") < pagAtual)  // Filtro: "Inicio" < pagAtual
+                        .Where(row => codProximosEventos.Contains(row.Field<int>("CodEvento")))  // Filtro: "CodEvento" dentro do vetor codUltimosEventos
+                        .OrderByDescending(row => row.Field<int>("Inicio"))  // Ordena pelas linhas com maior valor de "Inicio"
+                        .FirstOrDefault();  // Pega a primeira linha correspondente
+            if (proximaLinha != null)
+            { //Feito para caso ja tenha sido encontrado um evento
+                if (foiencontradoumUltimo)
+                {
+                    proximaLinha = GlobVar.eventosUpdate.AsEnumerable()
+                            .Where(row => row.Field<int>("Inicio") < lastfoundedUltimo)  // Filtro: "Inicio" < lastfoundedUltimo
+                            .Where(row => codProximosEventos.Contains(row.Field<int>("CodEvento")))  // Filtro: "CodEvento" dentro do vetor codUltimosEventos
+                            .OrderByDescending(row => row.Field<int>("Inicio"))  // Ordena pelas linhas com maior valor de "Inicio"
+                            .FirstOrDefault();  // Pega a primeira linha correspondente
+                }
+            }
+            if (proximaLinha != null)
+            {
+
+                pagAndou = pagAtual;
+                ultimoTipoCanalProcuradoUltimo = TipoProximoEvento;
+                foiencontradoumUltimo = true;
+                int proxPag = (Convert.ToInt32(proximaLinha[4]) / 512) / GlobVar.segundos;
+                lastfoundedUltimo = Convert.ToInt32(proximaLinha[4]);
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
+
+                    int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                    int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                    camera.X = NovaLoc;
+                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                    camera.X = NovaLoc;
+
+                    GlobVar.indice = NovaLoc;
+                    GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                    GlobVar.indiceNumero = NovaLocNumerico;
+                    GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+            }
+            else
+            {
+                foiencontradoumUltimo = false;
+            }
+
+            int h = 1;
+        }
+
+        private void IndoBomDiaBoaNoiteCPAP(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int TipoProximoEvento = (int)btn.Tag;
+
+            // Encontra a próxima linha no DataTable GlobVar.eventosUpdate onde a coluna "Inicio" é maior que pagAtual
+            var proximaLinha = GlobVar.eventosUpdate.AsEnumerable() // Filtro: "Inicio" < pagAtual
+                        .Where(row => row.Field<int>("CodEvento") == TipoProximoEvento)  // Filtro: "CodEvento" dentro do vetor codUltimosEventos
+                        .FirstOrDefault();  // Pega a primeira linha correspondente
+            if (proximaLinha != null)
+            {
+
+                int proxPag = ((Convert.ToInt32(proximaLinha[4]) / 512) / GlobVar.segundos);
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
+
+                    int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                    int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                    camera.X = NovaLoc;
+                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                    camera.X = NovaLoc;
+
+                    GlobVar.indice = NovaLoc;
+                    GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                    GlobVar.indiceNumero = NovaLocNumerico;
+                    GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+            }
+        }
+
+        bool foiencontradoumComent = false;
+        int lastfoundedComment;
+
+        private void ProximoComentario_Click(object sender, EventArgs e)
+        {
+            int pagAtual = ((GlobVar.indice / 512) / 30) + 30;
+
+            if (pagAndou != pagAtual) { foiencontradoumComent = false; }
+
+            var proximaLinha = GlobVar.tbl_Comentarios.AsEnumerable()
+                    .Where(row => row.Field<int>("NumPag") > pagAtual)  // Primeiro filtro: "Inicio" > pagAtual
+                    .FirstOrDefault();  // Pega a primeira linha correspondente
+            if (proximaLinha != null && foiencontradoumComent)
+            {
+                proximaLinha = GlobVar.tbl_Comentarios.AsEnumerable()
+                    .Where(row => row.Field<int>("NumPag") > lastfoundedComment)  // Primeiro filtro: "Inicio" > lastfoundedComment
+                    .FirstOrDefault();  // Pega a primeira linha correspondente
+            }
+            if (proximaLinha != null)
+            {
+                pagAndou = pagAtual;
+                int proxPag = Convert.ToInt32(proximaLinha[3]) / 30;
+                lastfoundedComment = Convert.ToInt32(proximaLinha[3]);
+                foiencontradoumComent = true;
+
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
+
+                    int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                    int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                    camera.X = NovaLoc;
+                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                    camera.X = NovaLoc;
+
+                    GlobVar.indice = NovaLoc;
+                    GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                    GlobVar.indiceNumero = NovaLocNumerico;
+                    GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+            }
+        }
+
+        bool foiencontradoumComentLast = false;
+        int lastfoundedCommentLast;
+
+        private void AnteriorComentario_Click(object sender, EventArgs e)
+        {
+            int pagAtual = (GlobVar.indice / 512);
+
+            if (pagAndou != pagAtual) { foiencontradoumComentLast = false; }
+
+            var proximaLinha = GlobVar.tbl_Comentarios.AsEnumerable()
+                    .Where(row => row.Field<int>("NumPag") < pagAtual)  // Primeiro filtro: "Inicio" > pagAtual
+                    .FirstOrDefault();  // Pega a primeira linha correspondente
+            if (proximaLinha != null && foiencontradoumComentLast)
+            {
+                proximaLinha = GlobVar.tbl_Comentarios.AsEnumerable()
+                    .Where(row => row.Field<int>("NumPag") < lastfoundedCommentLast)  // Primeiro filtro: "Inicio" > lastfoundedComment
+                    .OrderByDescending(row => row.Field<int>("Seq"))  // Ordena pelas linhas com maior valor de "Inicio"
+                    .FirstOrDefault();  // Pega a primeira linha correspondente
+            }
+            if (proximaLinha != null)
+            {
+                pagAndou = pagAtual;
+                int proxPag = Convert.ToInt32(proximaLinha[3]) / 30;
+                lastfoundedCommentLast = Convert.ToInt32(proximaLinha[3]);
+                foiencontradoumComentLast = true;
+
+                if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                {
+
+                    int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                    int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                    camera.X = NovaLoc;
+                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                    camera.X = NovaLoc;
+
+                    GlobVar.indice = NovaLoc;
+                    GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                    GlobVar.indiceNumero = NovaLocNumerico;
+                    GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                }
+            }
+            else
+            {
+                foiencontradoumComentLast = false;
+            }
+        }
+
+        private void MenorSat_Click(object sender, EventArgs e)
+        {
+            int linhaSaturacao = GlobVar.codSelected.IndexOf(66); // A linha que você quer verificar
+            int menorValor = int.MaxValue; // Inicializa com o maior valor possível
+            int posicaoMenorValor = -1; // Armazena a posição do menor valor
+
+            for (int i = 0; i < GlobVar.matrizCanal.GetLength(1); i += 8)
+            {
+                int valorAtual = GlobVar.matrizCanal[linhaSaturacao, i];
+
+                // Ignorar valores menores que 20
+                if (valorAtual >= GlobVar.DessatuDesconsiderar && valorAtual < menorValor)
+                {
+                    menorValor = valorAtual;
+                    posicaoMenorValor = i;
+                }
+            }
+
+            // Se encontrou um valor mínimo válido
+            if (posicaoMenorValor != -1)
+            {
+                // Exibe uma MessageBox com as opções "Cancelar" e "Trocar valor"
+                DialogResult resultado = (DialogResult)MessageBox.Show(
+                    $"Menor valor encontrado: {menorValor}. Deseja trocar esse valor?",
+                    "Valor Encontrado",
+                    (MessageBoxButton)MessageBoxButtons.YesNoCancel,
+                    (MessageBoxImage)MessageBoxIcon.Question
+                );
+
+                // Se o usuário escolher "Yes", abre uma caixa de diálogo para inserir um valor numérico
+                if (resultado == DialogResult.Yes)
+                {
+                    string input = ShowInputDialog("Digite o novo valor para GlobVar.DessatuDesconsiderar:", GlobVar.DessatuDesconsiderar.ToString());
+
+                    // Verifica se o valor é numérico
+                    if (int.TryParse(input, out int novoValor))
+                    {
+                        // Altera o valor em GlobVar.DessatuDesconsiderar
+                        GlobVar.DessatuDesconsiderar = novoValor;
+
+                        MessageBox.Show($"Valor trocado para {novoValor}.", "Valor trocado", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Por favor, insira um valor numérico válido.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhum valor válido encontrado.", "Aviso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Warning);
+            }
+
+            int proxPag = (posicaoMenorValor / 8) / 30;
+            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            {
+                int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
+                int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
+
+                camera.X = NovaLoc;
+                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
+
+                camera.X = NovaLoc;
+
+                GlobVar.indice = NovaLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+                GlobVar.indiceNumero = NovaLocNumerico;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+            }
+        }
+
+        // Método auxiliar para exibir um input box para o usuário
+        public static string ShowInputDialog(string text, string defaultValue = "")
+        {
+            Form prompt = new Form()
+            {
+                Width = 300,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Novo Valor Minimo",
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label textLabel = new Label() { Left = 10, Top = 20, Text = text };
+            TextBox inputBox = new TextBox() { Left = 10, Top = 50, Width = 250, Text = defaultValue };
+            inputBox.KeyPress += (sender, e) => {
+                // Aceitar apenas números
+                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
+            };
+
+            Button confirmation = new Button() { Text = "Ok", Left = 160, Width = 100, Top = 80, DialogResult = DialogResult.OK };
+            prompt.AcceptButton = confirmation;
+
+            prompt.Controls.Add(textLabel);
+            prompt.Controls.Add(inputBox);
+            prompt.Controls.Add(confirmation);
+            prompt.ShowDialog();
+
+            return inputBox.Text;
         }
         public static string estagioatutxt = "";
         public static string estagioatutxt1 = "";
@@ -5720,15 +6105,15 @@ namespace PlotagemOpenGL
                 else if (isA_BN_CPAP_BD){
                     if (GlobVar.nomeEvento.Equals("Bom dia"))
                     {
-                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BomDiaExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BomDiaExclui});
                     }
                     else if (GlobVar.nomeEvento.Equals("Boa noite"))
                     {
-                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BoaNoiteExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {BoaNoiteExclui });
                     }
                     else if (GlobVar.nomeEvento.Equals("Início CPAP"))
                     {
-                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {InicioCPAPExclui, toolStripSeparator1, LowPassFilterGl, HighPassFilterGl });
+                        contextMenuStripOpenGl.Items.AddRange(new ToolStripItem[] {InicioCPAPExclui });
                     }
 
                 }
@@ -5866,11 +6251,11 @@ namespace PlotagemOpenGL
 
                             if ((bool)rowNumerico["AutoEscala"])
                             {
-                                HorizontalOuVertical.Text = "Alterar para Vertical";
+                                HorizontalOuVertical.Text = "Alterar para Horizontal";
                             }
                             else
                             {
-                                HorizontalOuVertical.Text = "Alterar para Horizontal";
+                                HorizontalOuVertical.Text = "Alterar paraVertical";
                             }
                         }
 
