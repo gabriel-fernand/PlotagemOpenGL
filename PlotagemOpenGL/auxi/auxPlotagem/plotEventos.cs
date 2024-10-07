@@ -725,20 +725,43 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                                                 .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
                     int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
                     color = plotGrafico.ObterComponentesRGB(rgbDex);
-                    int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
 
-                    //gl.Color(0.0f, 0.0f, 0.0f);
+                    //int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
 
-                    gl.Begin(OpenGL.GL_QUADS);
+                    //Localizando o local do click, para saber a posicao comparado ao label
+                    int locInvertida = Math.Abs(GlobVar.startY - Tela_Plotagem.openglControl1.Height);
+
+                    int YAdjusted = 0;
+                    //YAdjusted = EncontrarValorMaisProximo(desenhoLoc, desenhoLoc[GlobVar.codSelected.IndexOf(codCanal1First)]);
+
+                    int locaux;
+                    int somaTamanho = 0;
+                    foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                    {
+                        if(pn.Top <= locInvertida && pn.Bottom >= locInvertida)
+                        {
+                            int topPn = pn.Top;
+                            int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                            double meioPn = pn.Height / 2;
+                            somaTamanho = (int)meioPn;
+                            YAdjusted = aux - (int)meioPn;
+
+                        }
+                    }
+
+                    gl.Begin(OpenGL.GL_LINE_LOOP);
                     gl.PointSize(3.0f); // Define o tamanho dos pontos
-                    gl.Color(color[0], color[1], color[2], 0.44f);
-                    //gl.Color(0, 0, 0);
+                    //gl.Color(color[0], color[1], color[2], 0.44f);
+                    gl.Color(0, 0, 0);
                     //gl.ColorMask(3, 6, 7, alpha);
-                    gl.Vertex((int)GlobVar.startX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-                    gl.Vertex(GlobVar.endX, GlobVar.StartY[YAdjusted] + 5, -1.5f);
-                    gl.Vertex(GlobVar.endX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
-                    gl.Vertex((int)GlobVar.startX, GlobVar.EndY[YAdjusted] - 5, -1.5f);
+                    gl.Vertex((int)GlobVar.startX, YAdjusted + somaTamanho, -1.5f);
+                    gl.Vertex(GlobVar.endX, YAdjusted + somaTamanho, -1.5f);
+                    gl.Vertex(GlobVar.endX, YAdjusted - somaTamanho, -1.5f);
+                    gl.Vertex((int)GlobVar.startX, YAdjusted - somaTamanho, -1.5f);
                     gl.End();
+
+
                     //startX = 0;
                 }
             }
