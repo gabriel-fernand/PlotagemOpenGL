@@ -1808,13 +1808,14 @@ namespace PlotagemOpenGL
                             //UpdateInicioTela();
                         }
                     }
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
+
                     int alturaTela = (int)openglControl1.Height;
                     TelaClearAndReload();
-                    gl.Translate(camera.X, 0, 1);
                     hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                     hScrollBar1.Refresh();
                     UpdateInicioTela();
-                    //Update();
                 }
             }
             catch { }
@@ -2140,6 +2141,9 @@ namespace PlotagemOpenGL
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                     UpdateInicioTela();
+                                    foiencontradoumUltimo = false;
+                                    foiencontradoumUltimo = false;
+
                                 }
 
                             }
@@ -2173,6 +2177,9 @@ namespace PlotagemOpenGL
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                     //UpdateInicioTela();
+                                    foiencontradoumUltimo = false;
+                                    foiencontradoumUltimo = false;
+
                                 }
                             }
                             //openglControl1.Invalidate();
@@ -2674,6 +2681,8 @@ namespace PlotagemOpenGL
                                         GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
                                         gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                         UpdateInicioTela();
+                                        foiencontradoumUltimo = false;
+                                        foiencontradoumUltimo = false;
 
                                         ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
                                         lastMousePosition = e.Location;
@@ -3308,6 +3317,9 @@ namespace PlotagemOpenGL
                             break;
                     }
                 }
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
+
                 int alturaTela = (int)openglControl1.Height;
                 //gl.Translate(camera.X, 0, 1);
                 TelaClearAndReload();
@@ -3389,10 +3401,12 @@ namespace PlotagemOpenGL
                     GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                     GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 }
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 int alturaTela = (int)openglControl1.Height;
                 TelaClearAndReload();
-                gl.Translate(camera.X, 0, 1);
+                //gl.Translate(camera.X, 0, 1);
                 UpdateInicioTela();
             }
             catch { }
@@ -3619,7 +3633,7 @@ namespace PlotagemOpenGL
             int TipoProximoEvento = (int)btn.Tag;
             int pagAtual = GlobVar.indice;
             int[] codProximosEventos;
-            if (TipoProximoEvento != ultimoTipoCanalProcurado || pagAndou != pagAtual) { foiencontradoum = false; }
+            if (TipoProximoEvento != ultimoTipoCanalProcurado) { foiencontradoum = false; }
 
             var codigoTipoProximo = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(row => row.Field<int>("CodTipoCanal") == TipoProximoEvento).CopyToDataTable();
             codProximosEventos = new int[codigoTipoProximo.Rows.Count];
@@ -3668,7 +3682,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-
+                    foiencontradoumUltimo = false;
                     UpdateInicioTela();
                     TelaClearAndReload();
                 }
@@ -3690,7 +3704,7 @@ namespace PlotagemOpenGL
             int TipoProximoEvento = (int)btn.Tag;
             int pagAtual = GlobVar.indice;
             int[] codProximosEventos;
-            if (TipoProximoEvento != ultimoTipoCanalProcuradoUltimo || pagAndou != pagAtual) { foiencontradoumUltimo = false; }
+            if (TipoProximoEvento != ultimoTipoCanalProcuradoUltimo) { foiencontradoumUltimo = false; }
 
             var codigoTipoProximo = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(row => row.Field<int>("CodTipoCanal") == TipoProximoEvento).CopyToDataTable();
             codProximosEventos = new int[codigoTipoProximo.Rows.Count];
@@ -3740,7 +3754,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-
+                    foiencontradoum = false;
                     UpdateInicioTela();
                     TelaClearAndReload();
                 }
@@ -3782,6 +3796,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
 
                     UpdateInicioTela();
                     TelaClearAndReload();
@@ -3830,6 +3846,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
 
                     UpdateInicioTela();
                     TelaClearAndReload();
@@ -3879,6 +3897,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
 
                     UpdateInicioTela();
                     TelaClearAndReload();
@@ -3892,58 +3912,47 @@ namespace PlotagemOpenGL
 
         private void MenorSat_Click(object sender, EventArgs e)
         {
+            var DtDesprezar = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 100).CopyToDataTable();
+            var numsDesprezar = new HashSet<int>(DtDesprezar.AsEnumerable()
+                                                .Select(row => row.Field<int>("NumPag")));
             int linhaSaturacao = GlobVar.codSelected.IndexOf(66); // A linha que você quer verificar
-            int menorValor = int.MaxValue; // Inicializa com o maior valor possível
+            int menorValor = 100; // Inicializa com o maior valor possível
             int posicaoMenorValor = -1; // Armazena a posição do menor valor
 
-            for (int i = 0; i < GlobVar.matrizCanal.GetLength(1); i += 8)
+
+            for (int i = 0; i < GlobVar.matrizCanal.GetLength(1); i += GlobVar.namosNumerico)
             {
                 int valorAtual = GlobVar.matrizCanal[linhaSaturacao, i];
+                int numPagAtual = i / GlobVar.namosNumerico;
 
-                // Ignorar valores menores que 20
-                if (valorAtual >= GlobVar.DessatuDesconsiderar && valorAtual < menorValor)
+                // Verifica se o valor numPagAtual está no HashSet numsDesprezar
+                if (!numsDesprezar.Contains(numPagAtual))
                 {
-                    menorValor = valorAtual;
-                    posicaoMenorValor = i;
+                    // Ignorar valores menores que 20
+                    if (valorAtual >= 20 && valorAtual < menorValor)
+                    {
+                        menorValor = valorAtual;
+                        posicaoMenorValor = i;
+                    }
                 }
             }
-
             // Se encontrou um valor mínimo válido
             if (posicaoMenorValor != -1)
             {
                 // Exibe uma MessageBox com as opções "Cancelar" e "Trocar valor"
                 DialogResult resultado = (DialogResult)MessageBox.Show(
-                    $"Menor valor encontrado: {menorValor}. Deseja trocar esse valor?",
+                    $"Menor valor encontrado: {menorValor}",
                     "Valor Encontrado",
-                    (MessageBoxButton)MessageBoxButtons.YesNoCancel,
+                    (MessageBoxButton)MessageBoxButtons.OK,
                     (MessageBoxImage)MessageBoxIcon.Question
                 );
-
-                // Se o usuário escolher "Yes", abre uma caixa de diálogo para inserir um valor numérico
-                if (resultado == DialogResult.Yes)
-                {
-                    string input = ShowInputDialog("Digite o novo valor para GlobVar.DessatuDesconsiderar:", GlobVar.DessatuDesconsiderar.ToString());
-
-                    // Verifica se o valor é numérico
-                    if (int.TryParse(input, out int novoValor))
-                    {
-                        // Altera o valor em GlobVar.DessatuDesconsiderar
-                        GlobVar.DessatuDesconsiderar = novoValor;
-
-                        MessageBox.Show($"Valor trocado para {novoValor}.", "Valor trocado", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Por favor, insira um valor numérico válido.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
-                    }
-                }
             }
             else
             {
                 MessageBox.Show("Nenhum valor válido encontrado.", "Aviso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Warning);
             }
 
-            int proxPag = (posicaoMenorValor / 8) / 30;
+            int proxPag = (posicaoMenorValor / GlobVar.numeroAmos) / 30;
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
                 int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
@@ -3959,6 +3968,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                foiencontradoum = false;
+                foiencontradoumUltimo = false;
 
                 UpdateInicioTela();
                 TelaClearAndReload();
@@ -3966,33 +3977,6 @@ namespace PlotagemOpenGL
         }
 
         // Método auxiliar para exibir um input box para o usuário
-        public static string ShowInputDialog(string text, string defaultValue = "")
-        {
-            Form prompt = new Form()
-            {
-                Width = 300,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = "Novo Valor Minimo",
-                StartPosition = FormStartPosition.CenterScreen
-            };
-            Label textLabel = new Label() { Left = 10, Top = 20, Text = text };
-            TextBox inputBox = new TextBox() { Left = 10, Top = 50, Width = 250, Text = defaultValue };
-            inputBox.KeyPress += (sender, e) => {
-                // Aceitar apenas números
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
-            };
-
-            Button confirmation = new Button() { Text = "Ok", Left = 160, Width = 100, Top = 80, DialogResult = DialogResult.OK };
-            prompt.AcceptButton = confirmation;
-
-            prompt.Controls.Add(textLabel);
-            prompt.Controls.Add(inputBox);
-            prompt.Controls.Add(confirmation);
-            prompt.ShowDialog();
-
-            return inputBox.Text;
-        }
         public static string estagioatutxt = "";
         public static string estagioatutxt1 = "";
         public static string estagioatutxt2 = "";
@@ -4191,26 +4175,32 @@ namespace PlotagemOpenGL
         {
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
-
                 Button botao = sender as Button;
                 int newEstagio = Convert.ToInt32(botao.Tag);
                 int paginaCoerente = GlobVar.indice / GlobVar.namos;
                 var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
 
-                // Verifica se o índice da linha foi encontrado
                 if (rowIndex >= 0)
                 {
-                    // Definir o limite para não exceder o total de linhas
                     int totalRows = GlobVar.tbl_Paginas.Rows.Count;
-                    int limite = Math.Min(rowIndex + 30, totalRows); // Garante que não ultrapasse o número de linhas
+                    int limite = Math.Min(rowIndex + 30, totalRows);
 
-                    // Altera o valor da linha encontrada e das próximas 29
+                    List<Tuple<int, int>> updates = new List<Tuple<int, int>>();
+
                     for (int i = rowIndex; i < limite; i++)
                     {
                         GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
+
+                        // Adiciona a atualização para a lista
+                        int numPag = GlobVar.tbl_Paginas.Rows[i].Field<int>("NumPag");
+                        updates.Add(new Tuple<int, int>(numPag, newEstagio));
                     }
+
+                    // Agora faz uma chamada ao banco de dados com todas as atualizações de uma vez
+                    BD.AlteraBD.AlteraEstagioDaEpoca(updates);
                 }
 
+                // Resto do código permanece o mesmo
                 camera.X += GlobVar.saltoTelas;
                 if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas;
 
@@ -4224,7 +4214,6 @@ namespace PlotagemOpenGL
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
                 UpdateInicioTela();
                 TelaClearAndReload();
-
             }
         }
         private void Proximo_Click(object sender, EventArgs e)
@@ -4277,6 +4266,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 UpdateInicioTela();
                 TelaClearAndReload();
@@ -4318,6 +4309,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 UpdateInicioTela();
                 TelaClearAndReload();
@@ -4375,6 +4368,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 UpdateInicioTela();
                 TelaClearAndReload();
@@ -4415,6 +4410,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 UpdateInicioTela();
                 TelaClearAndReload();
@@ -4445,6 +4442,8 @@ namespace PlotagemOpenGL
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
                 UpdateInicioTela();
                 TelaClearAndReload();
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
             }
             if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
             {
@@ -4469,6 +4468,9 @@ namespace PlotagemOpenGL
                     GlobVar.finalTela += ((int)AndarUmSegundo) / GlobVar.namos;
                     UpdateInicioTela();
                     TelaClearAndReload();
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
+
                 }
             }
         }
@@ -4511,6 +4513,8 @@ namespace PlotagemOpenGL
                     GlobVar.inicioTela = 0;
                     GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
                 }
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 TelaClearAndReload();
                 hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
@@ -4626,6 +4630,8 @@ namespace PlotagemOpenGL
                 }
                 UpdateInicioTela();
                 TelaClearAndReload();
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
             }
         }
@@ -4667,6 +4673,8 @@ namespace PlotagemOpenGL
                 }
                 UpdateInicioTela();
                 TelaClearAndReload();
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
             }
 
         }
@@ -4690,6 +4698,8 @@ namespace PlotagemOpenGL
                 GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 UpdateInicioTela();
                 TelaClearAndReload();
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
             }
         }
 
@@ -4710,6 +4720,8 @@ namespace PlotagemOpenGL
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 UpdateInicioTela();
                 TelaClearAndReload();
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
             }
         }
@@ -4761,6 +4773,8 @@ namespace PlotagemOpenGL
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             UpdateInicioTela();
                             TelaClearAndReload();
+                            foiencontradoumUltimo = false;
+                            foiencontradoumUltimo = false;
                         }
                     }
                     else
@@ -4838,6 +4852,8 @@ namespace PlotagemOpenGL
                             }
                             UpdateInicioTela();
                             TelaClearAndReload();
+                            foiencontradoumUltimo = false;
+                            foiencontradoumUltimo = false;
                         }
                     }
                     else
@@ -4918,6 +4934,8 @@ namespace PlotagemOpenGL
                             }
                             UpdateInicioTela();
                             TelaClearAndReload();
+                            foiencontradoumUltimo = false;
+                            foiencontradoumUltimo = false;
                         }
                     }
                     else
@@ -4981,6 +4999,8 @@ namespace PlotagemOpenGL
                             GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             UpdateInicioTela();
                             TelaClearAndReload();
+                            foiencontradoumUltimo = false;
+                            foiencontradoumUltimo = false;
 
                         }
                     }
@@ -5110,6 +5130,8 @@ namespace PlotagemOpenGL
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
                 if (camera.X > 0) hScrollBar1.Value = (int)newloc;
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
 
                 int alturaTela = (int)openglControl1.Height;
                 //gl.Translate(camera.X, 0, 1);
@@ -6394,6 +6416,8 @@ namespace PlotagemOpenGL
             GlobVar.maximaNumero = finalPag * GlobVar.namosNumerico;
             camera.X = GlobVar.indice;
             UpdateInicioTela();
+            foiencontradoumUltimo = false;
+            foiencontradoumUltimo = false;
 
             TelaClearAndReload();
 

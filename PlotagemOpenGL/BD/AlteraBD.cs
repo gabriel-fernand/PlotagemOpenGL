@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Markup;
 using ClassesBDNano;
 using PlotagemOpenGL.auxi.auxPlotagem;
+using System.Data.OleDb;
+using System.Collections.Generic;
 
 namespace PlotagemOpenGL.BD
 {
@@ -140,6 +142,16 @@ namespace PlotagemOpenGL.BD
                     // Atualiza o DataTable com as alterações
                     OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
                     adapter.Update(rs);
+
+                    string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+                    using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+                    string query = "SELECT * FROM tbl_Eventos";
+                    using var command = new OdbcCommand(query, connectionDatBd);
+                    using var adapterEventosDtNormal = new OdbcDataAdapter(command);
+                    GlobVar.eventos.Clear();
+                    adapterEventosDtNormal.Fill(GlobVar.eventos);
+                    connectionDatBd.Close();
+
                 }
 
                 return seq_aux;
@@ -261,6 +273,54 @@ namespace PlotagemOpenGL.BD
             {
                 Console.WriteLine($"Erro: {ex.Message}");
                 return -1;
+            }
+        }
+
+        public static void AlteraEstagioDaEpoca(List<Tuple<int, int>> updates)
+        {
+            try
+            {
+                string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+
+                using (OleDbConnection connection = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};"))
+                {
+                    connection.Open();
+
+                    // Inicia uma transação
+                    OleDbTransaction transaction = connection.BeginTransaction();
+
+                    try
+                    {
+                        string sql = "UPDATE tbl_Paginas SET Estagio = @NovoEstagio WHERE NumPag = @NumPag";
+
+                        using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                        {
+                            command.Parameters.Add("@NovoEstagio", OleDbType.Integer);
+                            command.Parameters.Add("@NumPag", OleDbType.Integer);
+
+                            // Executa todas as atualizações em uma transação
+                            foreach (var update in updates)
+                            {
+                                command.Parameters["@NovoEstagio"].Value = update.Item2; // Novo Estagio
+                                command.Parameters["@NumPag"].Value = update.Item1; // NumPag
+                                command.ExecuteNonQuery();
+                            }
+                        }
+
+                        // Confirma a transação
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        // Reverte a transação se algo der errado
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
             }
         }
 

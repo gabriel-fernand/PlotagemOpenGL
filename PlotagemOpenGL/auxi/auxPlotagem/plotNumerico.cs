@@ -68,11 +68,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                                     int aux = 0;
                                     float me = 0;
-                                    for (int g = j; g < j + 8;)
+                                    for (int g = j; g < j + GlobVar.namosNumerico;)
                                     {
                                         //if(GlobVar.matrizCanal[GlobVar.grafSelected[i], g] < 0) { GlobVar.matrizCanal[GlobVar.grafSelected[i], g] *= -1;  }
                                         aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
-                                        g += 8;
+                                        g += GlobVar.namosNumerico;
                                     }
                                     me = aux;
                                     txtEmTela = $" {me} ";
