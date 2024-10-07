@@ -576,7 +576,7 @@ namespace PlotagemOpenGL
             LowPassFilterGl.DropDownItems.AddRange(new ToolStripItem[] { NenhumLowGl, hertz70Gl, hertz50Gl, hertz40Gl, hertz35Gl, hertz30Gl, hertz25Gl, hertz20Gl, hertz15Gl, hertz10Gl, hertz5Gl, OutroLowGl });
             LowPassFilterGl.Name = "LowPassFilterGl";
             LowPassFilterGl.Size = new System.Drawing.Size(178, 24);
-            LowPassFilterGl.Text = "Low Pass Filter";
+            LowPassFilterGl.Text = "Passa Baixa";
             // 
             // NenhumLowGl
             // 
@@ -667,7 +667,7 @@ namespace PlotagemOpenGL
             HighPassFilterGl.DropDownItems.AddRange(new ToolStripItem[] { NenhumHighGl, hertz10HGl, hertz7Gl, hertz5HGl, hertz3Gl, hertz1Gl, hertz07Gl, hertz05Gl, hertz03Gl, hertz01Gl, OutroHighGl });
             HighPassFilterGl.Name = "HighPassFilterGl";
             HighPassFilterGl.Size = new System.Drawing.Size(178, 24);
-            HighPassFilterGl.Text = "High Pass Filter";
+            HighPassFilterGl.Text = "Passa Alta";
             // 
             // NenhumHighGl
             // 
@@ -1018,7 +1018,7 @@ namespace PlotagemOpenGL
             LowPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumLow, hertz70, hertz50, hertz40, hertz35, hertz30, hertz25, hertz20, hertz15, hertz10, hertz5, OutroLow });
             LowPassFilter.Name = "LowPassFilter";
             LowPassFilter.Size = new System.Drawing.Size(186, 24);
-            LowPassFilter.Text = "Low Pass Filter";
+            LowPassFilter.Text = "Passa Baixa";
             LowPassFilter.DropDownOpening += toolTripItemDropDown_OpeningLow;
             // 
             // NenhumLow
@@ -1122,7 +1122,7 @@ namespace PlotagemOpenGL
             HighPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumHigh, hertz10H, hertz7, hertz5H, hertz3, hertz1, hertz07, hertz05, hertz03, hertz01, outroHigh });
             HighPassFilter.Name = "HighPassFilter";
             HighPassFilter.Size = new System.Drawing.Size(186, 24);
-            HighPassFilter.Text = "High Pass Filter";
+            HighPassFilter.Text = "Passa Alta";
             HighPassFilter.DropDownOpening += toolTripItemDropDown_OpeningHigh;
             // 
             // NenhumHigh
@@ -1218,7 +1218,7 @@ namespace PlotagemOpenGL
             NotchPassFilter.DropDownItems.AddRange(new ToolStripItem[] { NenhumNotch, hertz60N, hertz50N, OutroNotch });
             NotchPassFilter.Name = "NotchPassFilter";
             NotchPassFilter.Size = new System.Drawing.Size(186, 24);
-            NotchPassFilter.Text = "Notch Pass Filter";
+            NotchPassFilter.Text = "Notch";
             NotchPassFilter.DropDownOpening += toolTripItemDropDown_OpeningNotch;
             // 
             // NenhumNotch
