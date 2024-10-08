@@ -4045,8 +4045,8 @@ namespace PlotagemOpenGL
         };
         private void Profile_Click(object sender, EventArgs e)
         {
-            // Vamos supor que o código do paciente seja 1
-            int codPaciente = 1;
+            
+            int codPaciente = Convert.ToInt16(GlobVar.tbl_DadosExame.Rows[0]["CodPaciente"]);
 
             ProfileForm profileForm = new ProfileForm(codPaciente);
             profileForm.ShowDialog();
