@@ -726,8 +726,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int rgbDex = Convert.ToInt32(rowInfoEvento.Rows[0]["CorFundo"]);
                     color = plotGrafico.ObterComponentesRGB(rgbDex);
 
-                    //int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLoc, GlobVar.startY);
-
                     //Localizando o local do click, para saber a posicao comparado ao label
                     int locInvertida = Math.Abs(GlobVar.startY - Tela_Plotagem.openglControl1.Height);
 

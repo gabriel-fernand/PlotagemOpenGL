@@ -3541,6 +3541,8 @@ namespace PlotagemOpenGL
             MinimoEvento.Size = new System.Drawing.Size(47, 47);
             MinimoEvento.TabIndex = 63;
             MinimoEvento.UseVisualStyleBackColor = false;
+            MinimoEvento.Tag = 2;
+            MinimoEvento.Click += MinimoEvento_Click;
             // 
             // EventoUmClick
             // 
@@ -3553,6 +3555,8 @@ namespace PlotagemOpenGL
             EventoUmClick.Size = new System.Drawing.Size(47, 47);
             EventoUmClick.TabIndex = 64;
             EventoUmClick.UseVisualStyleBackColor = false;
+            EventoUmClick.Tag = 1;
+            EventoUmClick.Click += EventoUmClick_Click;
             // 
             // AnaliseAutomatica
             // 
@@ -3601,6 +3605,7 @@ namespace PlotagemOpenGL
             Profile.Size = new System.Drawing.Size(47, 47);
             Profile.TabIndex = 0;
             Profile.UseVisualStyleBackColor = false;
+            Profile.Click += Profile_Click;
             // 
             // playSelect
             // 
@@ -3752,7 +3757,6 @@ namespace PlotagemOpenGL
             PainelPerfil.ResumeLayout(false);
             ResumeLayout(false);
         }
-
 
 
         #endregion

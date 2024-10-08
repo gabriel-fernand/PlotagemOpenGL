@@ -2765,28 +2765,74 @@ namespace PlotagemOpenGL
 
                             if (GlobVar.startX == GlobVar.endX)
                             {
-                                GlobVar.startX = null;
+
+                                if (EventoUmClicked)
+                                {
+                                    var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
+
+                                    if (GlobVar.startX != null && GlobVar.lastEvent != null && (rowInfoEvento.Rows[0]["DuracaoEvento"] != DBNull.Value) || Convert.ToInt32(rowInfoEvento.Rows[0]["DuracaoEvento"]) != 0)
+                                    {
+                                        int minimoPossivel = Convert.ToInt32(rowInfoEvento.Rows[0]["DuracaoEvento"]);
+                                        int tamanhoEmTela = minimoPossivel * GlobVar.namos;
+
+                                        GlobVar.endX = (int)GlobVar.startX + tamanhoEmTela;
+
+                                        if (GlobVar.endX != GlobVar.startX)
+                                        {
+                                            if (GlobVar.endX < GlobVar.startX)
+                                            {
+                                                plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, (int)GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                            }
+                                            else
+                                            {
+                                                plotEventos.AdicionarEventoAoDataTable((int)GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        GlobVar.startX = null;
+                                    }
+                                }
+                                else
+                                {
+                                    GlobVar.startX = null;
+                                }
                                 isDrawing = false;
                             }
 
                             if (GlobVar.startX != null)
                             {
                                 int LimiteAux = Math.Abs(GlobVar.endX - (int)GlobVar.startX);
-
-                                if (LimiteAux < GlobVar.MinimumValueEvent)
+                                if (GlobVar.lastEvent != null)
                                 {
-                                    GlobVar.endX = (int)GlobVar.startX + GlobVar.MinimumValueEvent;
-                                }
-
-                                if (GlobVar.endX != GlobVar.startX)
-                                {
-                                    if (GlobVar.endX < GlobVar.startX)
+                                    var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
+                                            .Where(row => row.Field<int>("CodEvento") == GlobVar.lastEvent).CopyToDataTable();
+                                    int minimoPossivel = (rowInfoEvento.Rows[0]["DuracaoEvento"] == DBNull.Value) ? 0 : Convert.ToInt32(rowInfoEvento.Rows[0]["DuracaoEvento"]);
+                                    int LimiteEmMinAux = LimiteAux / GlobVar.namos;
+                                    if(MinEventClicked && LimiteEmMinAux <= minimoPossivel)
                                     {
-                                        plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, (int)GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+
                                     }
                                     else
                                     {
-                                        plotEventos.AdicionarEventoAoDataTable((int)GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                        if (LimiteAux < GlobVar.MinimumValueEvent)
+                                        {
+                                            GlobVar.endX = (int)GlobVar.startX + GlobVar.MinimumValueEvent;
+                                        }
+
+                                        if (GlobVar.endX != GlobVar.startX)
+                                        {
+                                            if (GlobVar.endX < GlobVar.startX)
+                                            {
+                                                plotEventos.AdicionarEventoAoDataTable(GlobVar.endX, (int)GlobVar.startX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                            }
+                                            else
+                                            {
+                                                plotEventos.AdicionarEventoAoDataTable((int)GlobVar.startX, GlobVar.endX, GlobVar.canal, GlobVar.desenhoLoc, GlobVar.startY);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -2794,6 +2840,7 @@ namespace PlotagemOpenGL
 
                             openglControl1.DoRender();
                             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+
                         }
                     }
                     else if (isAnEvent)
@@ -3996,6 +4043,15 @@ namespace PlotagemOpenGL
                 estagioatutxt6,
                 estagioatutxt7
         };
+        private void Profile_Click(object sender, EventArgs e)
+        {
+            // Vamos supor que o código do paciente seja 1
+            int codPaciente = 1;
+
+            ProfileForm profileForm = new ProfileForm(codPaciente);
+            profileForm.ShowDialog();
+        }
+
         public static void retornaOsValoresDosOutrosEstagios()
         {
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
@@ -4725,6 +4781,91 @@ namespace PlotagemOpenGL
 
             }
         }
+        private void DesmarcarBotaoEvents(Button btn)
+        {
+            // Restaurar a cor original do botão
+            btn.BackColor = Color.LightCyan;  // Cor original
+            btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.Black;
+
+            if ((int)btn.Tag == 1)
+            {
+                EventoUmClicked = false;
+            }
+            else
+            {
+                MinEventClicked = false;
+            }
+        }
+
+        Button botaoSelecionadoEventss = null;
+
+        bool EventoUmClicked = false;
+        private void EventoUmClick_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+
+            // Desmarcar o botão anterior
+            if (botaoSelecionadoEventss != null && botaoSelecionadoEventss != btn)
+            {
+                DesmarcarBotaoEvents(botaoSelecionadoEventss);
+            }
+
+            botaoSelecionadoEventss = btn;
+
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.LightCyan)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(133, 219, 219);  // Cor para indicar seleção
+                    btn.ForeColor = Color.White;
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    EventoUmClicked = true;
+                }
+                else
+                {
+                    DesmarcarBotaoEvents(botaoSelecionadoEventss);  // Desmarcar o botão anterior
+                    EventoUmClicked = false;
+                }
+            }
+        }
+
+        bool MinEventClicked = false;
+        private void MinimoEvento_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+
+            // Desmarcar o botão anterior
+            if (botaoSelecionadoEventss != null && botaoSelecionadoEventss != btn)
+            {
+                DesmarcarBotaoEvents(botaoSelecionadoEventss);
+            }
+
+            botaoSelecionadoEventss = btn;
+
+            if (btn != null)
+            {
+                if (btn.BackColor == Color.LightCyan)
+                {
+                    // Alterar a cor de fundo para mostrar o estado "selecionado"
+                    btn.BackColor = Color.FromArgb(133, 219, 219);  // Cor para indicar seleção
+                    btn.ForeColor = Color.White;
+                    btn.FlatAppearance.BorderSize = 2;
+                    btn.FlatAppearance.BorderColor = Color.DarkGreen;
+                    MinEventClicked = true;
+                }
+                else
+                {
+                    DesmarcarBotaoEvents(botaoSelecionadoEventss);  // Desmarcar o botão anterior
+                    MinEventClicked = false;
+                }
+            }
+        }
+
+
 
         Button botaoSelecionado;
         int timerAndarRetroceder;
