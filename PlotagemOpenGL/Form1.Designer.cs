@@ -3455,6 +3455,7 @@ namespace PlotagemOpenGL
             CopiaTela.Size = new System.Drawing.Size(47, 47);
             CopiaTela.TabIndex = 64;
             CopiaTela.UseVisualStyleBackColor = false;
+            CopiaTela.Click += CopiaTela_Click;
             // 
             // ImprimeTela
             // 
@@ -3467,6 +3468,7 @@ namespace PlotagemOpenGL
             ImprimeTela.Size = new System.Drawing.Size(47, 47);
             ImprimeTela.TabIndex = 65;
             ImprimeTela.UseVisualStyleBackColor = false;
+            ImprimeTela.Click += ImprimeTela_Click;
             // 
             // ImprimePagina
             // 

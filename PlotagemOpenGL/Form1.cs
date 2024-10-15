@@ -43,6 +43,8 @@ using Cyotek.Windows.Forms;
 using System.Windows.Navigation;
 using Image = System.Drawing.Image;
 using System.Threading.Tasks;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -3661,7 +3663,7 @@ namespace PlotagemOpenGL
             string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0,10);
             string arquivo = $"{GlobVar.textFile.Substring(32, 12)}";
 
-            this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - aqeuivo: {arquivo}";
+            this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}";
 
 
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
@@ -4143,6 +4145,147 @@ namespace PlotagemOpenGL
 
             UpdateInicioTela();
         }
+
+        private void CopiaTela_Click(object sender, EventArgs e)
+        {
+            // Caminho base para salvar o arquivo
+            string caminhoPasta = @"C:\Users\dev_i\source\repos\Dat";
+
+            // Extrair o nome base do arquivo a partir de GlobVar.textFile
+            string nomeBaseArquivo = GlobVar.textFile.Substring(32, 8);
+
+            // Chamar o método para capturar a tela e salvar como BMP
+            SalvarPrintTela(caminhoPasta, nomeBaseArquivo);
+        }
+
+        private void SalvarPrintTela(string caminhoPasta, string nomeBaseArquivo)
+        {
+            try
+            {
+                // Verificar se o diretório existe, caso contrário, criá-lo
+                if (!Directory.Exists(caminhoPasta))
+                {
+                    Directory.CreateDirectory(caminhoPasta);
+                }
+
+                // Iniciar o sufixo com "_00" e incrementar caso o arquivo já exista
+                int contador = 0;
+                string sufixo = "_tela00";
+                string caminhoCompleto;
+
+                // Loop para encontrar um nome de arquivo disponível
+                do
+                {
+                    sufixo = "_" + contador.ToString("D2"); // Formata o contador como "00", "01", etc.
+                    caminhoCompleto = Path.Combine(caminhoPasta, nomeBaseArquivo + sufixo + ".bmp");
+                    contador++;
+                }
+                while (File.Exists(caminhoCompleto)); // Continua incrementando até encontrar um nome disponível
+
+                // Criar um bitmap com o tamanho do formulário atual
+                Bitmap bmp = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+
+                // Desenhar o conteúdo do formulário no bitmap
+                this.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+
+                // Salvar o bitmap como arquivo BMP no local especificado
+                bmp.Save(caminhoCompleto, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                // Liberar os recursos do bitmap
+                bmp.Dispose();
+
+                // Exibir uma mensagem de confirmação
+                MessageBox.Show("Print da tela salvo com sucesso em " + caminhoCompleto, "Sucesso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                // Exibir uma mensagem de erro caso ocorra algum problema
+                MessageBox.Show("Erro ao salvar o print da tela: " + ex.Message, "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+            }
+        }
+        private void ImprimeTela_Click(object sender, EventArgs e)
+        {
+            // Abrir o diálogo de salvamento
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "PDF File (*.pdf)|*.pdf|Bitmap Image (*.bmp)|*.bmp";
+                saveFileDialog.Title = "Salvar como";
+                saveFileDialog.FileName = "Arquivo";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Capturar a tela em um Bitmap
+                    Bitmap bmp = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+                    this.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+
+                    // Verificar a extensão do arquivo selecionado
+                    string fileExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
+
+                    if (fileExtension == ".pdf")
+                    {
+                        // Salvar como PDF
+                        SalvarComoPDF(saveFileDialog.FileName, bmp);
+                    }
+                    else if (fileExtension == ".bmp")
+                    {
+                        // Salvar como BMP
+                        bmp.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    }
+
+                    // Liberar os recursos do bitmap
+                    bmp.Dispose();
+
+                    MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void SalvarComoPDF(string caminhoArquivo, Bitmap imagem)
+        {
+            // Criar um documento PDF
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "Relatório";
+
+            // Criar uma página no documento com orientação Paisagem
+            PdfPage page = document.AddPage();
+            page.Orientation = PdfSharp.PageOrientation.Landscape;
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            // Títulos com dados do exame
+            string tituloPrincipal = this.Text;
+            string medicoSolicitante = GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != null ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
+            string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+
+            // Desenhar os títulos no PDF
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 16), XBrushes.Black, new XPoint(40, 40));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 70));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 100));
+
+            // Converter a imagem Bitmap para XImage
+            using (MemoryStream stream = new MemoryStream())
+            {
+                imagem.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                XImage xImage = XImage.FromStream(stream);
+
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 160) / xImage.PixelHeight);
+                double width = xImage.PixelWidth * scaleFactor;
+                double height = xImage.PixelHeight * scaleFactor;
+
+                // Desenhar a imagem na página do PDF centralizada
+                double posX = (page.Width - width) / 2;
+                double posY = 140; // margem superior de 140 unidades
+
+                gfx.DrawImage(xImage, posX, posY, width, height);
+            }
+
+            // Salvar o documento PDF
+            document.Save(caminhoArquivo);
+            document.Close();
+        }
+
 
         public static void retornaOsValoresDosOutrosEstagios()
         {
