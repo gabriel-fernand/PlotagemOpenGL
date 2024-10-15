@@ -1,0 +1,171 @@
+Function F_DadosPacienteCabecalho() As String
+Dim Idade      As String
+Dim IdadeAno         As String
+Dim IdadeMes         As String
+Dim IdadeDia         As String
+Dim IdadeAMD         As String
+Dim IdadeAM         As String
+Dim exame      As String
+Dim Pos        As Long
+Dim RetLen     As Integer
+Dim ret        As String
+Dim texto      As String
+Dim campo      As String
+Dim pos1       As Long
+Dim pos2       As Long
+
+   If IsDate(tbl_DadosExame!DataNascimento) Then
+      If CVDate(tbl_DadosExame!DataNascimento) < CVDate(tbl_DadosExame!DataRealizacao) Then
+         Idade = CVDate(tbl_DadosExame!DataNascimento) - 1
+         IdadeAno = Format(Format(CVDate(tbl_DadosExame!DataRealizacao) - CDate(Idade), "yy"), "#0")
+         IdadeMes = Format(Format(CVDate(tbl_DadosExame!DataRealizacao) - CDate(Idade), "mm") - 1, "#0")
+         IdadeDia = Format(Format(CVDate(tbl_DadosExame!DataRealizacao) - CDate(Idade), "dd"), "#0")
+      End If
+      If IdadeAno = "0" Then
+         IdadeAno = ""
+      Else
+         If IdadeAno = "1" Then
+            IdadeAno = "1 " & f_var("Var56292")
+         Else
+            IdadeAno = IdadeAno & " " & f_var("Var56143")
+         End If
+      End If
+      If IdadeMes = "0" Then
+         IdadeMes = ""
+      Else
+         If IdadeMes = "1" Then
+            IdadeMes = "1 " & f_var("Var56201")
+         Else
+            IdadeMes = IdadeMes & " " & f_var("Var56202")
+         End If
+      End If
+      If IdadeDia = "0" Then
+         IdadeDia = ""
+      Else
+         If IdadeDia = "1" Then
+            IdadeDia = "1 " & f_var("Var56300")
+         Else
+            IdadeDia = IdadeDia & " " & f_var("Var56301")
+         End If
+      End If
+
+      IdadeAMD = ""
+      If IdadeAno <> "" And IdadeMes <> "" And IdadeDia <> "" Then
+         IdadeAMD = IdadeAno & ", " & IdadeMes & f_var("Var56160") & IdadeDia
+      Else
+         If IdadeAno <> "" And IdadeMes <> "" Then
+            IdadeAMD = IdadeAno & f_var("Var56160") & IdadeMes
+         ElseIf IdadeAno <> "" And IdadeDia <> "" Then
+            IdadeAMD = IdadeAno & f_var("Var56160") & IdadeDia
+         ElseIf IdadeMes <> "" And IdadeDia <> "" Then
+            IdadeAMD = IdadeMes & f_var("Var56160") & IdadeDia
+         ElseIf IdadeDia <> "" Then
+            IdadeAMD = IdadeDia
+         End If
+      End If
+      
+      IdadeAM = ""
+      If IdadeAno <> "" Then
+         If IdadeMes <> "" Then
+            IdadeAM = IdadeAno & f_var("Var56160") & IdadeMes
+         Else
+            IdadeAM = IdadeAno
+         End If
+      End If
+      
+      Idade = IdadeAno
+   Else
+      Idade = ""
+      IdadeAM = ""
+      IdadeAMD = ""
+      
+      If tbl_DadosExame!IdadeAno > 0 Then
+         Idade = Format(tbl_DadosExame!IdadeAno) & " " & f_var("Var56143")
+         If tbl_DadosExame!IdadeMes > 0 Then
+            If tbl_DadosExame!IdadeMes = 1 Then
+               Idade = Idade & " e 1 " & f_var("Var56201")
+            Else
+               Idade = Idade & f_var("Var56160") & Format(tbl_DadosExame!IdadeMes) & " " & f_var("Var56202")
+            End If
+         End If
+      ElseIf tbl_DadosExame!IdadeMes > 0 Then
+         If tbl_DadosExame!IdadeMes = 1 Then
+            Idade = "1 " & f_var("Var56201")
+         Else
+            Idade = Format(tbl_DadosExame!IdadeMes) & " " & f_var("Var56202")
+         End If
+      Else
+         Idade = ""
+      End If
+   
+      IdadeAM = Idade
+      IdadeAMD = Idade
+   
+   End If
+      
+   If Idade = "" And IdadeAM <> "" Then Idade = IdadeAM
+   If Idade = "" And IdadeAMD <> "" Then Idade = IdadeAMD
+   
+   Pos = InStrRev(g_arq_exame_dados, "\")
+   If Pos > 0 Then exame = Mid(g_arq_exame_dados, Pos + 1) Else exame = g_arq_exame
+   
+   ' CABECALHO_PAGINA_TRACADO
+   ret = Space$(255)
+   RetLen = GetPrivateProfileString("LAUDO", "CABECALHO_PAGINA_TRACADO", "", ret, Len(ret), App.Path & "\Config.Ini")
+   ret = Left$(ret, RetLen)
+   If ret = "" Then
+      F_DadosPacienteCabecalho = tbl_DadosExame!nome & " (" & tbl_DadosExame!Sexo & ") " & Idade & " - " & Format(tbl_DadosExame!Altura, "0.00") & "m" & "  -  " & f_var("Var99003") & ": " & Format(tbl_DadosExame!DataRealizacao, "dd/mm/yyyy") & "  -  arquivo: " & exame
+      txt_Calibracao_NS.Text = F_RetiraExtensao(exame)
+   Else
+      texto = ret
+      pos1 = InStr(texto, "&(")
+      Do While pos1 > 0
+         pos2 = InStr(pos1, texto, ")&")
+         If pos2 > pos1 Then
+            campo = Mid(texto, pos1 + 2, pos2 - pos1 - 2)
+            Select Case UCase(campo)
+               Case "NOME"
+                  texto = Mid(texto, 1, pos1 - 1) & tbl_DadosExame!nome & Mid(texto, pos2 + 2)
+            
+               Case "DATA"
+                  texto = Mid(texto, 1, pos1 - 1) & Format(tbl_DadosExame!DataRealizacao, "dd/mm/yyyy") & Mid(texto, pos2 + 2)
+               
+               Case "ARQUIVO"
+                  texto = Mid(texto, 1, pos1 - 1) & exame & Mid(texto, pos2 + 2)
+               
+               Case "SEXO"
+                  texto = Mid(texto, 1, pos1 - 1) & tbl_DadosExame!Sexo & "" & Mid(texto, pos2 + 2)
+               
+               Case "IDADE"
+                  texto = Mid(texto, 1, pos1 - 1) & Idade & Mid(texto, pos2 + 2)
+               
+               Case "IDADE_AM"
+                  texto = Mid(texto, 1, pos1 - 1) & IdadeAM & Mid(texto, pos2 + 2)
+               
+               Case "IDADE_AMD"
+                  texto = Mid(texto, 1, pos1 - 1) & IdadeAMD & Mid(texto, pos2 + 2)
+               
+               Case "PESO"
+                  texto = Mid(texto, 1, pos1 - 1) & Format(tbl_DadosExame!Peso) & " Kg" & Mid(texto, pos2 + 2)
+               
+               Case "ALTURA"
+                  texto = Mid(texto, 1, pos1 - 1) & Format(tbl_DadosExame!Altura, "0.00") & " m" & Mid(texto, pos2 + 2)
+            
+               Case "IMC"
+                  texto = Mid(texto, 1, pos1 - 1) & Format(tbl_DadosExame!Peso / (tbl_DadosExame!Altura * tbl_DadosExame!Altura), "0.00") & Mid(texto, pos2 + 2)
+            
+               Case "EMAIL"
+                  texto = Mid(texto, 1, pos1 - 1) & tbl_DadosExame!EMail & "" & Mid(texto, pos2 + 2)
+            
+               Case "MEDICO_SOLIC"
+                  texto = Mid(texto, 1, pos1 - 1) & tbl_DadosExame!MedicoSolicitante & "" & Mid(texto, pos2 + 2)
+            
+            End Select
+         End If
+         pos1 = InStr(pos1 + 2, texto, "&(")
+      Loop
+      F_DadosPacienteCabecalho = texto & ""
+   End If
+
+End Function
+

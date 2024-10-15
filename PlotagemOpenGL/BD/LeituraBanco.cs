@@ -38,7 +38,9 @@ public class LeituraBanco
             string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
             string queryTbl_Comentarios = "SELECT * FROM tbl_Comentarios";
             string queryTbl_DadosExame = "SELECT * FROM tbl_DadosExame";
-            string queryTbl_Paginas = "SELECT * FROM tbl_Paginas em ";
+            string queryTbl_Paginas = "SELECT * FROM tbl_Paginas";
+            string queryTbl_ResumoExame = "SELECT * FROM tbl_ResumoExame";
+            string queryTbl_SelImpressao = "SELECT * FROM tbl_SelImpressao";
 
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -56,6 +58,8 @@ public class LeituraBanco
             using var commandTbl_Comentarios = new OdbcCommand(queryTbl_Comentarios, connectionDatBd);
             using var commandTbl_DadosExame = new OdbcCommand(queryTbl_DadosExame, connectionDatBd);
             using var commandTbl_Paginas = new OdbcCommand(queryTbl_Paginas, connectionDatBd);
+            using var commandTbl_ResumoExame = new OdbcCommand(queryTbl_ResumoExame, connectionDatBd);
+            using var commanfTbl_SelImpressao = new OdbcCommand(queryTbl_SelImpressao, connectionDatBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -72,8 +76,12 @@ public class LeituraBanco
             using var adapterTbl_Comentarios = new OdbcDataAdapter(commandTbl_Comentarios);
             using var adapterTbl_DadosExame = new OdbcDataAdapter(commandTbl_DadosExame);
             using var adapterTbl_Paginas = new OdbcDataAdapter(commandTbl_Paginas);
+            using var adapterTbl_ResumoExame = new OdbcDataAdapter(commandTbl_ResumoExame);
+            using var adapterTbl_SelImpressao = new OdbcDataAdapter(commanfTbl_SelImpressao);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_SelImpressao.Fill(GlobVar.tbl_SelImpressao);
+            adapterTbl_ResumoExame.Fill(GlobVar.tbl_ResumoExame);
             adapterTbl_Paginas.Fill(GlobVar.tbl_Paginas);
             adapterTbl_DadosExame.Fill(GlobVar.tbl_DadosExame);
             adapterTbl_Comentarios.Fill(GlobVar.tbl_Comentarios);
@@ -198,6 +206,21 @@ public class LeituraBanco
     {
         GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == CodMont).CopyToDataTable();
 
+        // Certifique-se de que o vetor 'GlobVar.codCanal' e a tabela 'GlobVar.tbl_MontCanal' sejam não nulos
+        if (GlobVar.codCanal != null && GlobVar.codCanal.Length > 0 && GlobVar.tbl_MontCanal != null)
+        {
+            // Filtra as linhas do DataTable 'GlobVar.tbl_MontCanal' onde a coluna 'CodCanal1' possui valores presentes no vetor 'GlobVar.codCanal'
+            var linhasFiltradas = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                .Where(row => GlobVar.codCanal.Contains(row.Field<int>("CodCanal1"))).CopyToDataTable();
+
+            // Atualiza o DataTable 'GlobVar.tbl_MontagemSelecionada' com as linhas filtradas
+            GlobVar.tbl_MontagemSelecionada = linhasFiltradas;
+        }
+        else
+        {
+            // Caso o vetor 'GlobVar.codCanal' esteja vazio ou o DataTable seja nulo, inicializa um DataTable vazio
+            GlobVar.tbl_MontagemSelecionada = new DataTable();
+        }
     }
     public static void AlteraTable()
     {

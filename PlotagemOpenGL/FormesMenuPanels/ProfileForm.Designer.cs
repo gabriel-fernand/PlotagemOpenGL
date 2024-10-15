@@ -60,103 +60,136 @@
             // 
             // txtNome
             // 
-            txtNome.Enabled = false;
+            txtNome.Font = new System.Drawing.Font("Arial", 10.2F);
             txtNome.Location = new System.Drawing.Point(20, 29);
             txtNome.Name = "txtNome";
-            txtNome.Size = new System.Drawing.Size(492, 27);
+            txtNome.ReadOnly = true;
+            txtNome.Size = new System.Drawing.Size(620, 27);
             txtNome.TabIndex = 0;
+            txtNome.TabStop = false;
+            txtNome.KeyPress += txtNome_KeyPress;
             // 
             // txtAltura
             // 
-            txtAltura.Enabled = false;
-            txtAltura.Location = new System.Drawing.Point(20, 80);
+            txtAltura.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtAltura.Location = new System.Drawing.Point(145, 80);
             txtAltura.Name = "txtAltura";
-            txtAltura.Size = new System.Drawing.Size(105, 27);
+            txtAltura.ReadOnly = true;
+            txtAltura.Size = new System.Drawing.Size(83, 27);
             txtAltura.TabIndex = 1;
+            txtAltura.TabStop = false;
+            txtAltura.KeyPress += txtAlturaa_KeyPress;
             // 
             // txtPeso
             // 
-            txtPeso.Enabled = false;
-            txtPeso.Location = new System.Drawing.Point(133, 80);
+            txtPeso.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtPeso.Location = new System.Drawing.Point(232, 80);
             txtPeso.Name = "txtPeso";
-            txtPeso.Size = new System.Drawing.Size(95, 27);
+            txtPeso.ReadOnly = true;
+            txtPeso.Size = new System.Drawing.Size(86, 27);
             txtPeso.TabIndex = 2;
+            txtPeso.TabStop = false;
+            txtPeso.KeyPress += txtPeso_KeyPress;
             // 
             // cmbSexo
             // 
             cmbSexo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cmbSexo.Items.AddRange(new object[] { "Masculino", "Feminino", "Outro" });
-            cmbSexo.Location = new System.Drawing.Point(517, 27);
+            cmbSexo.Enabled = false;
+            cmbSexo.Font = new System.Drawing.Font("Arial", 10.2F);
+            cmbSexo.Location = new System.Drawing.Point(20, 80);
             cmbSexo.Name = "cmbSexo";
-            cmbSexo.Size = new System.Drawing.Size(123, 28);
+            cmbSexo.Size = new System.Drawing.Size(123, 27);
             cmbSexo.TabIndex = 4;
+            cmbSexo.TabStop = false;
             // 
             // dtpDataNascimento
             // 
-            dtpDataNascimento.Location = new System.Drawing.Point(345, 80);
+            dtpDataNascimento.Enabled = false;
+            dtpDataNascimento.Font = new System.Drawing.Font("Arial", 10.2F);
+            dtpDataNascimento.Location = new System.Drawing.Point(324, 80);
             dtpDataNascimento.Name = "dtpDataNascimento";
-            dtpDataNascimento.Size = new System.Drawing.Size(294, 27);
+            dtpDataNascimento.Size = new System.Drawing.Size(316, 27);
             dtpDataNascimento.TabIndex = 3;
+            dtpDataNascimento.TabStop = false;
             // 
             // dtpDataExame
             // 
-            dtpDataExame.Location = new System.Drawing.Point(258, 312);
+            dtpDataExame.Enabled = false;
+            dtpDataExame.Font = new System.Drawing.Font("Arial", 10.2F);
+            dtpDataExame.Location = new System.Drawing.Point(20, 308);
             dtpDataExame.Name = "dtpDataExame";
-            dtpDataExame.Size = new System.Drawing.Size(290, 27);
+            dtpDataExame.Size = new System.Drawing.Size(323, 27);
             dtpDataExame.TabIndex = 5;
+            dtpDataExame.TabStop = false;
             // 
             // txtDuracao
             // 
-            txtDuracao.Enabled = false;
-            txtDuracao.Location = new System.Drawing.Point(140, 312);
+            txtDuracao.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtDuracao.Location = new System.Drawing.Point(475, 308);
             txtDuracao.Name = "txtDuracao";
+            txtDuracao.ReadOnly = true;
             txtDuracao.Size = new System.Drawing.Size(105, 27);
             txtDuracao.TabIndex = 6;
+            txtDuracao.TabStop = false;
             // 
             // txtEmail
             // 
-            txtEmail.Enabled = false;
+            txtEmail.Font = new System.Drawing.Font("Arial", 10.2F);
             txtEmail.Location = new System.Drawing.Point(20, 132);
             txtEmail.Name = "txtEmail";
+            txtEmail.ReadOnly = true;
             txtEmail.Size = new System.Drawing.Size(482, 27);
             txtEmail.TabIndex = 7;
+            txtEmail.TabStop = false;
             // 
             // txtCpf
             // 
-            txtCpf.Enabled = false;
-            txtCpf.Location = new System.Drawing.Point(258, 194);
+            txtCpf.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtCpf.Location = new System.Drawing.Point(234, 187);
             txtCpf.Name = "txtCpf";
+            txtCpf.ReadOnly = true;
             txtCpf.Size = new System.Drawing.Size(200, 27);
             txtCpf.TabIndex = 8;
+            txtCpf.TabStop = false;
+            txtCpf.KeyPress += txtAltura_KeyPress;
             // 
             // txtMedicoSolicitante
             // 
-            txtMedicoSolicitante.Enabled = false;
-            txtMedicoSolicitante.Location = new System.Drawing.Point(20, 249);
+            txtMedicoSolicitante.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtMedicoSolicitante.Location = new System.Drawing.Point(20, 242);
             txtMedicoSolicitante.Name = "txtMedicoSolicitante";
-            txtMedicoSolicitante.Size = new System.Drawing.Size(327, 27);
+            txtMedicoSolicitante.ReadOnly = true;
+            txtMedicoSolicitante.Size = new System.Drawing.Size(482, 27);
             txtMedicoSolicitante.TabIndex = 9;
+            txtMedicoSolicitante.TabStop = false;
+            txtMedicoSolicitante.KeyPress += txtNome_KeyPress;
             // 
             // txtRg
             // 
-            txtRg.Enabled = false;
-            txtRg.Location = new System.Drawing.Point(19, 194);
+            txtRg.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtRg.Location = new System.Drawing.Point(19, 187);
             txtRg.Name = "txtRg";
+            txtRg.ReadOnly = true;
             txtRg.Size = new System.Drawing.Size(200, 27);
             txtRg.TabIndex = 10;
+            txtRg.TabStop = false;
+            txtRg.KeyPress += txtAltura_KeyPress;
             // 
             // txtObservacao
             // 
-            txtObservacao.Enabled = false;
-            txtObservacao.Location = new System.Drawing.Point(20, 427);
+            txtObservacao.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtObservacao.Location = new System.Drawing.Point(20, 420);
             txtObservacao.Multiline = true;
             txtObservacao.Name = "txtObservacao";
+            txtObservacao.ReadOnly = true;
             txtObservacao.Size = new System.Drawing.Size(630, 60);
             txtObservacao.TabIndex = 11;
+            txtObservacao.TabStop = false;
             // 
             // btnAlterar
             // 
-            btnAlterar.Location = new System.Drawing.Point(20, 493);
+            btnAlterar.Font = new System.Drawing.Font("Arial", 10.2F);
+            btnAlterar.Location = new System.Drawing.Point(20, 486);
             btnAlterar.Name = "btnAlterar";
             btnAlterar.Size = new System.Drawing.Size(115, 37);
             btnAlterar.TabIndex = 12;
@@ -165,7 +198,8 @@
             // 
             // btnOk
             // 
-            btnOk.Location = new System.Drawing.Point(535, 493);
+            btnOk.Font = new System.Drawing.Font("Arial", 10.2F);
+            btnOk.Location = new System.Drawing.Point(535, 486);
             btnOk.Name = "btnOk";
             btnOk.Size = new System.Drawing.Size(115, 37);
             btnOk.TabIndex = 13;
@@ -186,7 +220,7 @@
             // 
             DataNascimento.AutoSize = true;
             DataNascimento.Font = new System.Drawing.Font("Arial", 10.2F);
-            DataNascimento.Location = new System.Drawing.Point(346, 59);
+            DataNascimento.Location = new System.Drawing.Point(324, 58);
             DataNascimento.Name = "DataNascimento";
             DataNascimento.Size = new System.Drawing.Size(133, 19);
             DataNascimento.TabIndex = 15;
@@ -196,7 +230,7 @@
             // 
             Sexo.AutoSize = true;
             Sexo.Font = new System.Drawing.Font("Arial", 10.2F);
-            Sexo.Location = new System.Drawing.Point(517, 6);
+            Sexo.Location = new System.Drawing.Point(20, 59);
             Sexo.Name = "Sexo";
             Sexo.Size = new System.Drawing.Size(45, 19);
             Sexo.TabIndex = 16;
@@ -205,8 +239,8 @@
             // Altura
             // 
             Altura.AutoSize = true;
-            Altura.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Altura.Location = new System.Drawing.Point(20, 59);
+            Altura.Font = new System.Drawing.Font("Arial", 10.2F);
+            Altura.Location = new System.Drawing.Point(145, 58);
             Altura.Name = "Altura";
             Altura.Size = new System.Drawing.Size(76, 19);
             Altura.TabIndex = 17;
@@ -215,8 +249,8 @@
             // Peso
             // 
             Peso.AutoSize = true;
-            Peso.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Peso.Location = new System.Drawing.Point(133, 59);
+            Peso.Font = new System.Drawing.Font("Arial", 10.2F);
+            Peso.Location = new System.Drawing.Point(234, 59);
             Peso.Name = "Peso";
             Peso.Size = new System.Drawing.Size(75, 19);
             Peso.TabIndex = 18;
@@ -225,7 +259,7 @@
             // Email
             // 
             Email.AutoSize = true;
-            Email.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            Email.Font = new System.Drawing.Font("Arial", 10.2F);
             Email.Location = new System.Drawing.Point(20, 110);
             Email.Name = "Email";
             Email.Size = new System.Drawing.Size(49, 19);
@@ -235,8 +269,8 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label1.Location = new System.Drawing.Point(258, 290);
+            label1.Font = new System.Drawing.Font("Arial", 10.2F);
+            label1.Location = new System.Drawing.Point(20, 286);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(120, 19);
             label1.TabIndex = 20;
@@ -245,8 +279,8 @@
             // Duracao
             // 
             Duracao.AutoSize = true;
-            Duracao.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Duracao.Location = new System.Drawing.Point(140, 290);
+            Duracao.Font = new System.Drawing.Font("Arial", 10.2F);
+            Duracao.Location = new System.Drawing.Point(475, 286);
             Duracao.Name = "Duracao";
             Duracao.Size = new System.Drawing.Size(72, 19);
             Duracao.TabIndex = 21;
@@ -255,8 +289,8 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label2.Location = new System.Drawing.Point(20, 227);
+            label2.Font = new System.Drawing.Font("Arial", 10.2F);
+            label2.Location = new System.Drawing.Point(20, 220);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(142, 19);
             label2.TabIndex = 22;
@@ -265,8 +299,8 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label3.Location = new System.Drawing.Point(20, 354);
+            label3.Font = new System.Drawing.Font("Arial", 10.2F);
+            label3.Location = new System.Drawing.Point(20, 347);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(188, 19);
             label3.TabIndex = 23;
@@ -275,8 +309,8 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label4.Location = new System.Drawing.Point(234, 354);
+            label4.Font = new System.Drawing.Font("Arial", 10.2F);
+            label4.Location = new System.Drawing.Point(234, 347);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(195, 19);
             label4.TabIndex = 24;
@@ -285,8 +319,8 @@
             // RG
             // 
             RG.AutoSize = true;
-            RG.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            RG.Location = new System.Drawing.Point(19, 172);
+            RG.Font = new System.Drawing.Font("Arial", 10.2F);
+            RG.Location = new System.Drawing.Point(19, 165);
             RG.Name = "RG";
             RG.Size = new System.Drawing.Size(32, 19);
             RG.TabIndex = 25;
@@ -295,8 +329,8 @@
             // CPF
             // 
             CPF.AutoSize = true;
-            CPF.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            CPF.Location = new System.Drawing.Point(258, 172);
+            CPF.Font = new System.Drawing.Font("Arial", 10.2F);
+            CPF.Location = new System.Drawing.Point(234, 165);
             CPF.Name = "CPF";
             CPF.Size = new System.Drawing.Size(42, 19);
             CPF.TabIndex = 26;
@@ -305,8 +339,8 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label5.Location = new System.Drawing.Point(20, 405);
+            label5.Font = new System.Drawing.Font("Arial", 10.2F);
+            label5.Location = new System.Drawing.Point(20, 398);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(96, 19);
             label5.TabIndex = 27;
@@ -314,25 +348,30 @@
             // 
             // PgparaImpressao
             // 
-            PgparaImpressao.Enabled = false;
-            PgparaImpressao.Location = new System.Drawing.Point(20, 376);
+            PgparaImpressao.Font = new System.Drawing.Font("Arial", 10.2F);
+            PgparaImpressao.Location = new System.Drawing.Point(20, 369);
             PgparaImpressao.Name = "PgparaImpressao";
+            PgparaImpressao.ReadOnly = true;
             PgparaImpressao.Size = new System.Drawing.Size(200, 27);
             PgparaImpressao.TabIndex = 28;
+            PgparaImpressao.TabStop = false;
             // 
             // PeriodosDeMapeamento
             // 
-            PeriodosDeMapeamento.Enabled = false;
-            PeriodosDeMapeamento.Location = new System.Drawing.Point(234, 376);
+            PeriodosDeMapeamento.Font = new System.Drawing.Font("Arial", 10.2F);
+            PeriodosDeMapeamento.Location = new System.Drawing.Point(234, 369);
             PeriodosDeMapeamento.Name = "PeriodosDeMapeamento";
+            PeriodosDeMapeamento.ReadOnly = true;
             PeriodosDeMapeamento.Size = new System.Drawing.Size(195, 27);
             PeriodosDeMapeamento.TabIndex = 29;
+            PeriodosDeMapeamento.TabStop = false;
             // 
             // groupBox1
             // 
             groupBox1.Controls.Add(Bebe);
             groupBox1.Controls.Add(Infantil);
             groupBox1.Controls.Add(Adulto);
+            groupBox1.Font = new System.Drawing.Font("Arial", 10.2F);
             groupBox1.Location = new System.Drawing.Point(517, 113);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(123, 133);
@@ -355,7 +394,7 @@
             // 
             Infantil.AutoSize = true;
             Infantil.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Infantil.Location = new System.Drawing.Point(15, 26);
+            Infantil.Location = new System.Drawing.Point(15, 55);
             Infantil.Name = "Infantil";
             Infantil.Size = new System.Drawing.Size(78, 23);
             Infantil.TabIndex = 1;
@@ -367,7 +406,7 @@
             // 
             Adulto.AutoSize = true;
             Adulto.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Adulto.Location = new System.Drawing.Point(15, 55);
+            Adulto.Location = new System.Drawing.Point(15, 26);
             Adulto.Name = "Adulto";
             Adulto.Size = new System.Drawing.Size(75, 23);
             Adulto.TabIndex = 0;
@@ -377,17 +416,19 @@
             // 
             // txtArquivo
             // 
-            txtArquivo.Enabled = false;
-            txtArquivo.Location = new System.Drawing.Point(19, 312);
+            txtArquivo.Font = new System.Drawing.Font("Arial", 10.2F);
+            txtArquivo.Location = new System.Drawing.Point(354, 308);
             txtArquivo.Name = "txtArquivo";
+            txtArquivo.ReadOnly = true;
             txtArquivo.Size = new System.Drawing.Size(105, 27);
             txtArquivo.TabIndex = 31;
+            txtArquivo.TabStop = false;
             // 
             // Arquivo
             // 
             Arquivo.AutoSize = true;
-            Arquivo.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Arquivo.Location = new System.Drawing.Point(19, 290);
+            Arquivo.Font = new System.Drawing.Font("Arial", 10.2F);
+            Arquivo.Location = new System.Drawing.Point(354, 286);
             Arquivo.Name = "Arquivo";
             Arquivo.Size = new System.Drawing.Size(64, 19);
             Arquivo.TabIndex = 32;
@@ -395,7 +436,7 @@
             // 
             // ProfileForm
             // 
-            ClientSize = new System.Drawing.Size(662, 541);
+            ClientSize = new System.Drawing.Size(662, 535);
             Controls.Add(Arquivo);
             Controls.Add(txtArquivo);
             Controls.Add(groupBox1);

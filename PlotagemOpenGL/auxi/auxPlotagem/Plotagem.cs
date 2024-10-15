@@ -91,7 +91,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public void DesenhaGrafico(int altura, int qtdGraf)
         {
             Tela_Plotagem.plotanu = true;
-            Canula = new string[] { "Apneia", "Apneia central", "Hipopneia", "Dessaturacao", "Hera", "Ronco" };
             float loc = Canais.pnSizes[1] / 2;
             float aux = loc;
             float[] desenhoLoc = new float[qtdGraf];
@@ -100,6 +99,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int indiot = 0;
             foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
             {
+                if (Convert.ToInt32(pn.Tag) == -1)
+                {
+                    continue;
+                }
+
                 int topPn = pn.Top;
                 int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
 
@@ -116,17 +120,22 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int olocomeu = Canais.pnSizes.Length - 1;
             for (int i = 0; i < qtdGraf; i++)
             {
+                if (olocomeu == 0)
+                {
+                    continue;
+                }
                 desenhoLoc[i] = aux;
                 aux += Canais.pnSizes[olocomeu] - Canais.pnSizes[olocomeu - 1];
                 olocomeu--;
             }
+            /*
             for (int i = 0; i < GlobVar.StartY.Length; i++)
             {
                 GlobVar.StartY[i] = Canais.pnSizes[i];
                 auxY += locY;
                 GlobVar.EndY[i] = Canais.pnSizes[i + 1];
             }
-
+            */
             // Supondo que GlobVar.FundoColor[3] seja uma instância da struct Color (ou similar) com propriedades R, G, B.
             float red = GlobVar.FundoColor[0] / 255.0f;
             float green = GlobVar.FundoColor[1] / 255.0f;
@@ -424,6 +433,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 if (pn.Top < y && pn.Bottom > y)
                 {
                     int codiguin = (int)pn.Tag;
+                    if (codiguin == -1)
+                    {
+                        continue;
+                    }
 
                     // Encontrar a linha correspondente no DataTable
                     DataRow rowIndex = GlobVar.tbl_MontagemSelecionada.AsEnumerable()

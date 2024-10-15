@@ -148,33 +148,51 @@ namespace PlotagemOpenGL.auxi
         }
         public void quantidadeGraf(int qtdGraf)
         {
-
             pnSizes = new float[qtdGraf + 1];
             float auzpnSize = 0;
             int pnSizeX = (int)GlobVar.sizePainelExams.X;
-            for (int i = 1; i <= 30; i++) //Reloca os panel para fora do form fazendo com eles desaparecam da tela
+
+            // Esconder todos os painéis inicialmente, movendo-os para fora da tela
+            for (int i = 1; i <= 30; i++)
             {
                 FieldInfo field = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
                 if (field != null)
                 {
                     Panel panel = (Panel)field.GetValue(this);
-
                     if (panel != null)
                     {
                         panel.Location = new System.Drawing.Point(-500, 26);
                         panel.Size = new System.Drawing.Size(pnSizeX, (int)pnSize);
+                        panel.Tag = -1;
                     }
                 }
             }
 
             int j = 0;
-            for (int i = 1; i <= qtdGraf; i++) //traz os painel para o form de acordo com a quantidade de graficos plotados
+            for (int i = 1; i <= qtdGraf; i++)
             {
                 FieldInfo labelName = typeof(Tela_Plotagem).GetField($"label{i}", BindingFlags.Static | BindingFlags.Public);
                 FieldInfo field = typeof(Tela_Plotagem).GetField($"panel{i}", BindingFlags.Static | BindingFlags.Public);
                 FieldInfo scale = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
 
-                if (field != null )
+                // Verificar se a linha atual do DataTable existe
+                if (j >= GlobVar.tbl_MontagemSelecionada.Rows.Count)
+                {
+                    // Sai do loop se não houver mais linhas no DataTable
+                    break;
+                }
+
+                // Procurar pelo valor CodCanal1 no vetor GlobVar.codCanal
+                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]));
+
+                // Se não encontrar o canal, pular para o próximo sem alterar os painéis
+                if (canalIndex == -1)
+                {
+                    j++; // Avança para a próxima linha
+                    continue;
+                }
+
+                if (field != null)
                 {
                     Panel panel = (Panel)field.GetValue(this);
                     Label label = (Label)labelName.GetValue(this);
@@ -182,79 +200,59 @@ namespace PlotagemOpenGL.auxi
 
                     if (panel != null || label != null)
                     {
-                        //Faz a verificacao no banco de dados para saber quantos %aquele panel tem, deacordo com o a diferenca dele
+                        // Ajustar o tamanho e localização do painel
                         float ySizeAux = (float)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Altura"]) / 100;
                         pnSize = (int)GlobVar.sizePainelExams.Y * ySizeAux;
                         auzpnSize += pnSize;
                         pnSizes[i] = auzpnSize;
-                        int tag = (int)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["CodCanal1"]); 
+                        int tag = (int)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["CodCanal1"]);
                         panel.Location = new System.Drawing.Point(0, (int)yCanais[j]);
                         panel.Size = new System.Drawing.Size(pnSizeX, (int)pnSize);
                         panel.Tag = tag;
                         label.Text = GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Legenda"].ToString();
                         label.Tag = panel.Tag;
 
+                        // Verificar o tipo de canal para ajustar o comportamento
                         var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
-                                                                .Where(row => row.Field<int>("CodCanal") == tag).CopyToDataTable();
+                                            .Where(row => row.Field<int>("CodCanal") == tag).CopyToDataTable();
                         int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
-                        if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
-                                || TipoCanal == 15 || TipoCanal == 30)
+
+                        if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31 || TipoCanal == 30)
                         {
                             scala.Location = new Point(-500, 0);
                             panel.Controls.Remove(scala);
 
-                            Point maxLoc = new Point(0, 0);
-                            Point minLoc = new Point(0, 0);
-
-                            maxLoc.X = panel.Width - 2;
-                            maxLoc.Y = 1;
-
-                            minLoc.X = panel.Width - 2;
-                            minLoc.Y = panel.Height - 15;
-
+                            // Adicionar labels de máximas e mínimas
                             Label maxima = new Label();
                             maxima.Name = "Maxima";
-                            maxima.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);   
                             maxima.Text = $"{(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["LimiteSuperior"])}";
-                            maxima.Font = new Font(maxima.Font.FontFamily, 6, maxima.Font.Style);
-                            maxima.Tag = "max";
+                            maxima.Font = new Font(maxima.Font.FontFamily, 6);
                             maxima.Hide();
-                            maxima.BringToFront();
 
                             Label minima = new Label();
                             minima.Name = "Minima";
-                            minima.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
                             minima.Text = $"{(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["LimiteInferior"])}";
-                            minima.Font = new Font(minima.Font.FontFamily, 6, minima.Font.Style);
-                            minima.Tag = "min";
+                            minima.Font = new Font(minima.Font.FontFamily, 6);
                             minima.Hide();
-                            minima.BringToFront();
+
                             panel.Controls.Add(maxima);
                             panel.Controls.Add(minima);
                         }
+
                         if (TipoCanal == 12)
                         {
                             scala.Location = new Point(-500, 0);
-
-                            // Remove o label existente que exibia todas as setas juntas
                             panel.Controls.Remove(scala);
 
-                            // Lista dos caracteres correspondentes às setas na fonte Wingdings 3
+                            // Adicionar setas com a fonte Wingdings 3
                             char[] setasChars = { 'ã', 'á', 'â', 'ä' }; // Cima, Direita, Esquerda, Baixo
-
-                            // Define a fonte Wingdings 3
-                            Font fonteSetas = new Font("Wingdings 3", 6, System.Drawing.FontStyle.Regular);
-
-                            // Define as localizações iniciais e espaçamento entre as setas
-                            int espacoEntreSetas = 10; // Espaçamento vertical entre os labels
-                            int larguraLabel = 20; // Largura padrão dos labels
-                            int alturaLabel = 10; // Altura padrão dos labels
-
-                            // Posição inicial para o primeiro label
-                            int posicaoX = panel.Width - larguraLabel - 5; // Ajusta para alinhar à direita do painel
+                            Font fonteSetas = new Font("Wingdings 3", 6);
+                            int espacoEntreSetas = 10;
+                            int larguraLabel = 20;
+                            int alturaLabel = 10;
+                            int posicaoX = panel.Width - larguraLabel - 5;
                             int posicaoY = 0;
 
-                            // Criação dos labels das setas
                             for (int p = 0; p < setasChars.Length; p++)
                             {
                                 Label setaLabel = new Label
@@ -262,22 +260,19 @@ namespace PlotagemOpenGL.auxi
                                     Name = $"seta{p + 1}",
                                     Text = setasChars[p].ToString(),
                                     Font = fonteSetas,
-                                    //Size = new System.Drawing.Size(larguraLabel, alturaLabel),
                                     Location = new Point(posicaoX, posicaoY),
                                     Tag = $"setas"
                                 };
                                 setaLabel.BringToFront();
                                 setaLabel.Hide();
-                                // Adiciona o label ao painel
                                 panel.Controls.Add(setaLabel);
 
-                                // Atualiza a posição Y para o próximo label
                                 posicaoY += alturaLabel + espacoEntreSetas;
                             }
                         }
                         j++;
-                    }                    
-                }                
+                    }
+                }
             }
         }
         public static string UpMouseLoc(float startY, float[] desenhoLoc)

@@ -42,6 +42,7 @@ using PlotagemOpenGL.FormesMenuPanels;
 using Cyotek.Windows.Forms;
 using System.Windows.Navigation;
 using Image = System.Drawing.Image;
+using System.Threading.Tasks;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -52,6 +53,7 @@ namespace PlotagemOpenGL
         public static OpenGL gl;
         public static Plotagem plotagem;
         public static Canais canais;
+        private bool isInitialized = false;
 
         private Stopwatch stopwatch;
 
@@ -264,6 +266,19 @@ namespace PlotagemOpenGL
             painelExames.MouseLeave += panel_MouseLeave;
             painelComando.MouseEnter += panel_MouseLeave;
             openglControl1.MouseEnter += panel_MouseLeave;
+            timerAvanca.Tick += TimerAvanca_Tick;
+            timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
+            timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
+            timerRetrocede.Tick += TimerRetrocede_Tick;
+
+            MontagemBox.Items.Clear();
+            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+            {
+                MontagemBox.Items.Add(row["DescrMontagem"].ToString());
+            }
+            string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+            MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+
             foreach (Control panel in painelExames.Controls)
             {
                 if (panel is Panel)
@@ -293,7 +308,7 @@ namespace PlotagemOpenGL
             InicializarButtonForm();
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
-
+            isInitialized = true;
         }
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
@@ -415,6 +430,7 @@ namespace PlotagemOpenGL
         private void load()
         {
 
+
             //Verificar depois o que e feito para abrir na ultima pagina aberta
             //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
@@ -437,19 +453,8 @@ namespace PlotagemOpenGL
             }
             ptsEmTela.Text = $"{telaPagText}";
 
-            timerAvanca.Tick += TimerAvanca_Tick;
-            timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
-            timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
-            timerRetrocede.Tick += TimerRetrocede_Tick;
 
 
-            MontagemBox.Items.Clear();
-            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
-            {
-                MontagemBox.Items.Add(row["DescrMontagem"].ToString());
-            }
-            string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
-            MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
 
             for (int i = 1; i <= 25; i++)
             {
@@ -878,10 +883,10 @@ namespace PlotagemOpenGL
             resizedPanel.Height = newHeight;
             int remainingHeight = totalHeight - newHeight; // Altura restante após redimensionar o painel
 
-            // Obter a lista de todos os outros painéis, excluindo o painel redimensionado
+            // Filtrar os painéis visíveis (Location.X != -500) e excluir o painel redimensionado
             List<Panel> otherPanels = painelExames.Controls.OfType<Panel>()
-                                                .Where(p => p != resizedPanel)
-                                                .ToList();
+                                            .Where(p => p.Location.X != -500 && p != resizedPanel)
+                                            .ToList();
 
             // Calcular a altura combinada atual dos outros painéis
             int totalCurrentHeightOthers = otherPanels.Sum(p => p.Height);
@@ -909,8 +914,8 @@ namespace PlotagemOpenGL
                 }
             }
 
-            // Garantir que todos os painéis respeitem o tamanho mínimo
-            foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+            // Garantir que todos os painéis visíveis respeitem o tamanho mínimo
+            foreach (Panel panel in otherPanels)
             {
                 if (panel.Height < minHeightPerPanel)
                 {
@@ -918,16 +923,16 @@ namespace PlotagemOpenGL
                 }
             }
 
-            // Recalcular a altura total e verificar a diferença
-            int currentTotalHeight = painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
+            // Recalcular a altura total dos painéis visíveis e verificar a diferença
+            int currentTotalHeight = otherPanels.Sum(p => p.Height) + resizedPanel.Height;
             int difference = totalHeight - currentTotalHeight;
 
             // Redistribuir a diferença respeitando o mínimo permitido
             if (difference != 0)
             {
-                int adjustmentPerPanel = difference / painelExames.Controls.Count;
+                int adjustmentPerPanel = difference / (otherPanels.Count + 1); // Incluindo o painel redimensionado
 
-                foreach (Panel panel in painelExames.Controls.OfType<Panel>())
+                foreach (Panel panel in painelExames.Controls.OfType<Panel>().Where(p => p.Location.X != -500))
                 {
                     int adjustedHeight = panel.Height + adjustmentPerPanel;
 
@@ -941,10 +946,10 @@ namespace PlotagemOpenGL
                 }
 
                 // Ajuste final caso ainda haja diferença devido ao arredondamento
-                int finalAdjustment = totalHeight - painelExames.Controls.OfType<Panel>().Sum(p => p.Height);
+                int finalAdjustment = totalHeight - painelExames.Controls.OfType<Panel>().Where(p => p.Location.X != -500).Sum(p => p.Height);
                 if (finalAdjustment != 0)
                 {
-                    foreach (var panel in painelExames.Controls.OfType<Panel>())
+                    foreach (var panel in painelExames.Controls.OfType<Panel>().Where(p => p.Location.X != -500))
                     {
                         int allowedIncrease = finalAdjustment > 0 ? 1 : -1;
 
@@ -962,24 +967,30 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            int indiot = 0;
-            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+
+            // Atualizar o array `GlobVar.desenhoLoc` com a nova posição dos painéis visíveis
+            int index = 0;
+            foreach (Panel pn in painelExames.Controls.OfType<Panel>().Where(p => p.Location.X != -500))
             {
                 int topPn = pn.Top;
-                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
-
-                int meioPn = pn.Height;
-                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
-                indiot++;
+                int meioPn = pn.Height / 2;
+                GlobVar.desenhoLoc[index] = topPn + meioPn;
+                index++;
             }
 
-            // Reposicionar todos os painéis para garantir o alinhamento correto
-            //int currentY = 0;
-            //foreach (Panel panel in painelExames.Controls.OfType<Panel>())
-            //{
-            //    panel.Top = currentY;
-            //    currentY += panel.Height;
-            //}
+            // Zerar valores restantes no array `GlobVar.desenhoLoc`
+            for (int i = index; i < GlobVar.desenhoLoc.Length; i++)
+            {
+                GlobVar.desenhoLoc[i] = 0;
+            }
+
+            // Reposicionar todos os painéis visíveis para garantir o alinhamento correto
+            int currentY = 0;
+            foreach (Panel panel in painelExames.Controls.OfType<Panel>().Where(p => p.Location.X != -500))
+            {
+                panel.Top = currentY;
+                currentY += panel.Height;
+            }
         }
 
         private void UpdatePanelHeightInDataTable()
@@ -987,9 +998,15 @@ namespace PlotagemOpenGL
             float totalPercentage = 0;
             DataRow lastRow = null;
 
-            // Primeiro, calcule a altura de cada painel como uma porcentagem e garanta que seja limitado a duas casas decimais
+            // Calcula a altura de cada painel como uma porcentagem, mas apenas para os painéis visíveis
             foreach (Panel pn in painelExames.Controls)
             {
+                // Ignorar painéis que estão fora da tela (posição X = -500)
+                if (pn.Location.X == -500)
+                {
+                    continue; // Pula para o próximo painel
+                }
+
                 var codCanal = pn.Tag.ToString();
 
                 foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
@@ -1012,24 +1029,17 @@ namespace PlotagemOpenGL
                 }
             }
 
-            // Verifica se a soma das porcentagens excede 100
-            if (totalPercentage > 100 && lastRow != null)
+            // Se o totalPercentage não somar 100% e houver uma última linha válida, ajuste a última linha para compensar a diferença
+            if (totalPercentage < 100 && lastRow != null)
             {
-                // Ajusta o valor da última linha para que a soma seja 100
-                float excess = totalPercentage - 100;
-                float lastRowValue = (float)lastRow["Altura"];
-                lastRow["Altura"] = (float)Math.Round(lastRowValue - excess, 2);
-            }
-            else if (totalPercentage < 100 && lastRow != null)
-            {
-                // Ajusta o valor da última linha para que a soma seja 100
-                float deficit = 100 - totalPercentage;
-                float lastRowValue = (float)lastRow["Altura"];
-                lastRow["Altura"] = (float)Math.Round(lastRowValue + deficit, 2);
+                float remainingPercentage = 100 - totalPercentage;
+                lastRow["Altura"] = (float)lastRow["Altura"] + remainingPercentage;
             }
         }
         private void AjustarFonteDosLabels()
         {
+
+
             // Definindo os limites de tamanho da fonte
             int minFontSize = 6;
             int maxFontSize = 12;
@@ -1037,6 +1047,10 @@ namespace PlotagemOpenGL
             // Iterar sobre cada Panel no painelExames
             foreach (Panel pn in painelExames.Controls.OfType<Panel>())
             {
+                if(Convert.ToInt32(pn.Tag) == -1)
+                {
+                    continue;
+                }
                 var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                     .Where(row => row.Field<int>("CodCanal") == Convert.ToInt32(pn.Tag)).CopyToDataTable();
                 int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
@@ -1050,7 +1064,10 @@ namespace PlotagemOpenGL
                     // Iterar sobre cada Label dentro do Panel
                     foreach (Label lb in pn.Controls.OfType<Label>())
                     {
-
+                        if(lb.Tag == null)
+                        {
+                            continue;
+                        }
                         if (lb.Tag.Equals("min"))
                         {
                             Point minLoc = new Point(0, 0);
@@ -1118,6 +1135,11 @@ namespace PlotagemOpenGL
                     // Iterar sobre cada Label dentro do Panel
                     foreach (Label lb in pn.Controls.OfType<Label>())
                     {
+                        if (lb.Tag == null)
+                        {
+                            continue;
+                        }
+
                         if (lb.Tag == pn.Tag)
                         {//Para diferenciar o Panel de Titulo do Label de scala
                          // Ajustar o tamanho da fonte do Label
@@ -1288,32 +1310,46 @@ namespace PlotagemOpenGL
 
         private void RepositionPanels()
         {
-            // Definir o espaçamento entre os painéis
-            const int spacing = 0;
+            // Definir o espaçamento entre os painéis visíveis
+            const int spacing = 0; // Ajuste conforme necessário
 
-            // Ordenar os controles por sua posição Top para garantir que o reposicionamento
-            // seja feito corretamente
-            var panels = painelExames.Controls.OfType<Panel>()
-                                             .OrderBy(p => p.Top)
-                                             .ToList();
+            // Filtrar os painéis que estão visíveis (Location.X != -500)
+            var visiblePanels = painelExames.Controls
+                                            .OfType<Panel>()
+                                            .Where(p => p.Location.X != -500)
+                                            .OrderBy(p => p.Top)
+                                            .ToList();
 
-            int y = 0;
-            foreach (Panel panel in panels)
+            int y = 0; // Coordenada inicial Y para o reposicionamento
+            foreach (Panel panel in visiblePanels)
             {
+                // Atualizar a posição Y do painel
                 panel.Top = y;
+
+                // Se necessário, ajuste o tamanho do painel aqui
+                // Por exemplo, ajustar a altura do painel:
+                // panel.Height = Math.Max(panel.Height, 50); // Exemplo de ajuste de altura mínima
+
+                // Atualizar a posição Y para o próximo painel, considerando o espaçamento
                 y = panel.Bottom + spacing;
             }
-            int indiot = 0;
-            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
-            {
-                int topPn = pn.Top;
-                int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
 
-                int meioPn = pn.Height;
-                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
-                indiot++;
+            // Atualizar o array `desenhoLoc` com a nova posição dos painéis visíveis
+            int index = 0;
+            foreach (Panel pn in visiblePanels)
+            {
+                // Calcular a posição do centro do painel e armazenar em `GlobVar.desenhoLoc`
+                int meioPn = pn.Top + (pn.Height / 2);
+                GlobVar.desenhoLoc[index] = meioPn;
+                index++;
             }
 
+            // Caso tenha menos painéis visíveis do que o tamanho original de `GlobVar.desenhoLoc`,
+            // zera os valores restantes
+            for (int i = index; i < GlobVar.desenhoLoc.Length; i++)
+            {
+                GlobVar.desenhoLoc[i] = 0;
+            }
         }
         private void UpdateDataTableRow(Panel panel)
         {
@@ -1589,12 +1625,56 @@ namespace PlotagemOpenGL
             Play_OpenGl();
 
         }
-        private void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
+        private async void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Ideia para alterar a montagem que esta selecionada, ao testar precisa ser feito muita alteracao ou somente a releitura de algumas coisas
-            //int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
-            //LeituraBanco.AlteraMontagem(CodMont);
+            // Verifica se o formulário já foi completamente carregado
+            if (!isInitialized)
+                return;
 
+            // Evita que o código seja executado caso o índice selecionado não tenha mudado
+            if (MontagemBox.SelectedIndex == -1)
+                return;
+
+            // Mostra a tela de carregamento
+            using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
+            {
+                telaLoad.Show();
+
+                // Atualiza o progresso
+                telaLoad.AtualizarProgresso(10);
+
+                // Ideia para alterar a montagem que está selecionada, com a leitura e outras operações
+                int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
+                LeituraBanco.AlteraMontagem(CodMont);
+                await Task.Delay(100); // Simula uma pequena pausa para ver o progresso
+                telaLoad.AtualizarProgresso(25);
+
+                LeituraEmMatrizTeste.montagemSelecionadaAlterada();
+                LeituraEmMatrizTeste.referencias();
+                await Task.Delay(100);
+                telaLoad.AtualizarProgresso(50);
+
+                load();
+                canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                canais.RealocButton();
+                canais.PainelLb_Resize();
+                canais.reloc();
+                await Task.Delay(100);
+                telaLoad.AtualizarProgresso(75);
+
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
+                await Task.Delay(100);
+                telaLoad.AtualizarProgresso(90);
+
+                UpdateInicioTela();
+                TelaClearAndReload();
+                await Task.Delay(100);
+                telaLoad.AtualizarProgresso(100);
+            }
         }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
         {
@@ -1603,8 +1683,8 @@ namespace PlotagemOpenGL
 
             if (int.TryParse(texto, out numero))
             {
-                qtdGrafics = Convert.ToInt32(texto);
-                if (qtdGrafics <= 0 || qtdGrafics > 25)
+                qtdGrafics = GlobVar.tbl_MontagemSelecionada.Rows.Count;
+                if (qtdGrafics <= 0 || qtdGrafics > 25) 
                 {
                     System.Windows.MessageBox.Show("Por favor, digite um número válido entre 1 e 20.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
                 }
@@ -2802,7 +2882,7 @@ namespace PlotagemOpenGL
                                 isDrawing = false;
                             }
 
-                            if (GlobVar.startX != null)
+                            else if (GlobVar.startX != null && GlobVar.startX != GlobVar.endX)
                             {
                                 int LimiteAux = Math.Abs(GlobVar.endX - (int)GlobVar.startX);
                                 if (GlobVar.lastEvent != null)
@@ -3573,6 +3653,17 @@ namespace PlotagemOpenGL
 
         public void UpdateInicioTela()
         {
+
+            string nome = GlobVar.tbl_DadosExame.Rows[0]["Nome"].ToString();
+            string sexo = $"({GlobVar.tbl_DadosExame.Rows[0]["Sexo"].ToString()})";
+            string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"]} anos";
+            string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"].ToString()}m";
+            string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0,10);
+            string arquivo = $"{GlobVar.textFile.Substring(32, 12)}";
+
+            this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - aqeuivo: {arquivo}";
+
+
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
             int inicio = (GlobVar.indice / GlobVar.namos);
             TimeSpan tempo = TimeSpan.FromSeconds(inicio);
@@ -3983,22 +4074,6 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            // Se encontrou um valor mínimo válido
-            if (posicaoMenorValor != -1)
-            {
-                // Exibe uma MessageBox com as opções "Cancelar" e "Trocar valor"
-                DialogResult resultado = (DialogResult)MessageBox.Show(
-                    $"Menor valor encontrado: {menorValor}",
-                    "Valor Encontrado",
-                    (MessageBoxButton)MessageBoxButtons.OK,
-                    (MessageBoxImage)MessageBoxIcon.Question
-                );
-            }
-            else
-            {
-                MessageBox.Show("Nenhum valor válido encontrado.", "Aviso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Warning);
-            }
-
             int proxPag = (posicaoMenorValor / GlobVar.numeroAmos) / 30;
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
@@ -4021,6 +4096,21 @@ namespace PlotagemOpenGL
                 UpdateInicioTela();
                 TelaClearAndReload();
             }
+
+            // Se encontrou um valor mínimo válido
+            if (posicaoMenorValor != -1)
+            {
+                AutoCloseMessageBox.Show(
+                    $"Menor valor encontrado: {menorValor}",
+                    "Valor Encontrado",
+                    3000 // 3 segundos (3000 ms)
+                );
+            }
+            else
+            {
+                MessageBox.Show("Nenhum valor válido encontrado.", "Aviso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Warning);
+            }
+
         }
 
         // Método auxiliar para exibir um input box para o usuário
@@ -4050,6 +4140,8 @@ namespace PlotagemOpenGL
 
             ProfileForm profileForm = new ProfileForm(codPaciente);
             profileForm.ShowDialog();
+
+            UpdateInicioTela();
         }
 
         public static void retornaOsValoresDosOutrosEstagios()
@@ -5394,15 +5486,18 @@ namespace PlotagemOpenGL
             // Definir a nova altura do painel redimensionado
             resizedPanel.Height = newHeight;
 
-            // Filtrar apenas os painéis visíveis
+            // Filtrar os painéis visíveis e que não têm Location.X == -500
             List<Panel> visiblePanels = painelExames.Controls.OfType<Panel>()
-                                             .Where(p => p.Visible)
+                                             .Where(p => p.Visible && p.Location.X != -500)
                                              .ToList();
 
             int remainingHeight = totalHeight - visiblePanels.Sum(p => p == resizedPanel ? newHeight : p.Height); // Altura restante após o redimensionamento
 
             // Calcular a altura combinada atual dos outros painéis visíveis, excluindo o painel redimensionado
-            List<Panel> otherPanels = visiblePanels.Where(p => p != resizedPanel).ToList();
+            List<Panel> otherPanels = visiblePanels
+                                       .Where(p => p != resizedPanel)
+                                       .ToList();
+
             int totalCurrentHeightOthers = otherPanels.Sum(p => p.Height);
 
             // Ajustar proporcionalmente a altura dos outros painéis se houver excesso de altura
@@ -5525,9 +5620,9 @@ namespace PlotagemOpenGL
             int totalHeight = painelExames.ClientSize.Height; // Altura total disponível do contêiner
             int minHeightPerPanel = 20; // Altura mínima permitida para cada painel
 
-            // Filtrar todos os painéis visíveis após reexibir
+            // Filtrar todos os painéis visíveis após reexibir, ignorando aqueles com Location.X = -500
             List<Panel> visiblePanels = painelExames.Controls.OfType<Panel>()
-                                             .Where(p => p.Visible)
+                                             .Where(p => p.Visible && p.Location.X != -500)
                                              .ToList();
 
             // Calcular a altura combinada atual dos painéis visíveis
@@ -5638,7 +5733,7 @@ namespace PlotagemOpenGL
             int index = 0;
             foreach (Panel panel in painelExames.Controls.OfType<Panel>())
             {
-                if (panel.Visible)
+                if (panel.Visible && panel.Location.X != -500)
                 {
                     GlobVar.desenhoLoc[index] = panel.Top + (panel.Height / 2);
                     index++;

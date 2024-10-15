@@ -56,6 +56,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                                     {
                                         int tagCod = (int)pn.Tag;
+                                        if(tagCod == -1)
+                                        {
+                                            continue;
+                                        }
                                         if (tagCod == codCanal1)
                                         {
                                             int topPn = pn.Top;
@@ -206,6 +210,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                                     {
                                         int tagCod = (int)pn.Tag;
+                                        if (tagCod == -1)
+                                        {
+                                            continue;
+                                        }
                                         if (tagCod == codCanal1)
                                         {
                                             int topPn = pn.Top;
@@ -290,6 +298,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                                     {
                                         int tagCod = (int)pn.Tag;
+                                        if (tagCod == -1)
+                                        {
+                                            continue;
+                                        }
                                         if (tagCod == codCanal1)
                                         {
                                             int topPn = pn.Top;
