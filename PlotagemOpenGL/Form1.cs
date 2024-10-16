@@ -45,6 +45,7 @@ using Image = System.Drawing.Image;
 using System.Threading.Tasks;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
+using PlotagemOpenGL.BD;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -230,7 +231,7 @@ namespace PlotagemOpenGL
             this.Resize += Painel_resiz;
             this.Resize += panelLb_Resiz;
             this.Controls.Add(openglControl1);
-            painelExames.Paint += PainelExames_Paint;
+            painelExames.Paint += painelExames_Paint;
             toolTip1 = new CustomToolTip();
             formOriginalSize = this.Size;
             painelOriginalSize = painelExames.Size;
@@ -646,7 +647,7 @@ namespace PlotagemOpenGL
         private int originalHeight;
         private int originalTop;
         private int originalBut;
-        private void PainelExames_Paint(object sender, PaintEventArgs e)
+        private void painelExames_Paint(object sender, PaintEventArgs e)
         {
             base.OnPaint(e);
 
@@ -4286,7 +4287,204 @@ namespace PlotagemOpenGL
             document.Close();
         }
 
+        private void btnImprimeTudo_Click(object sender, EventArgs e)
+        {
+            // Abrir o diálogo de salvamento
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "PDF File (*.pdf)|*.pdf|Bitmap Image (*.bmp)|*.bmp";
+                saveFileDialog.Title = "Salvar como";
+                saveFileDialog.FileName = "RelatorioCompleto";
 
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Capturar a área específica (painelExames e tela OpenGL)
+                    Bitmap bmp = new Bitmap(painelExames.Width, painelExames.Height);
+                    painelExames.DrawToBitmap(bmp, new Rectangle(0, 0, painelExames.Width, painelExames.Height));
+                    // Caso precise capturar outra área (por exemplo, tela OpenGL), faça uma operação similar
+
+                    // Verificar a extensão do arquivo selecionado
+                    string fileExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
+
+                    if (fileExtension == ".pdf")
+                    {
+                        // Salvar como PDF
+                        ImprimeTudo_Click(saveFileDialog.FileName);
+                    }
+                    else if (fileExtension == ".bmp")
+                    {
+                        // Salvar como BMP
+                        bmp.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    }
+
+                    // Liberar os recursos do bitmap
+                    bmp.Dispose();
+
+                    MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+                }
+            }
+        }
+
+
+        private void ImprimeTudo_Click(string caminhoArquivo)
+        {
+            // Criar um documento PDF
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "Relatório Completo";
+
+            // Criar uma página no documento com orientação Paisagem
+            PdfPage page = document.AddPage();
+            page.Orientation = PdfSharp.PageOrientation.Landscape;
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            // Títulos com dados do exame
+            string tituloPrincipal = this.Text;
+            string medicoSolicitante = GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != null || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].Equals("") ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
+            string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].Equals("") ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+
+
+            // Descrição com as informações fornecidas
+            string descricao = $"Epoca: {ptsEmTela.Text} - Horario: {inicioTela.Text} - Estagio: {estagioatutxt} ({GlobVar.segundos} seg)";
+
+            // Desenhar os títulos no PDF
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 16), XBrushes.Black, new XPoint(40, 40));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 50));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 60));
+
+            // Desenhar a descrição acima da imagem no PDF
+            gfx.DrawString(descricao, new XFont("Arial", 8), XBrushes.Black, new XPoint(40, 80));
+
+            // Capturar a imagem do painelExames
+            Bitmap bitmapPainel = new Bitmap(painelExames.Width, painelExames.Height);
+            painelExames.DrawToBitmap(bitmapPainel, new Rectangle(0, 0, painelExames.Width, painelExames.Height));
+
+            // Capturar a imagem da tela OpenGL
+            Bitmap bitmapOpenGL = new Bitmap(openglControl1.Width, openglControl1.Height);
+            openglControl1.DrawToBitmap(bitmapOpenGL, new Rectangle(0, 0, openglControl1.Width, openglControl1.Height));
+
+            // Combinar as duas imagens lado a lado
+            int totalWidth = bitmapPainel.Width + bitmapOpenGL.Width;
+            int maxHeight = Math.Max(bitmapPainel.Height, bitmapOpenGL.Height);
+            Bitmap bitmapCombinado = new Bitmap(totalWidth, maxHeight);
+            using (Graphics g = Graphics.FromImage(bitmapCombinado))
+            {
+                g.DrawImage(bitmapPainel, 0, 0);
+                g.DrawImage(bitmapOpenGL, bitmapPainel.Width, 0);
+            }
+
+            // Converter a imagem combinada para XImage
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmapCombinado.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                XImage xImage = XImage.FromStream(stream);
+
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 120) / xImage.PixelHeight);
+                double width = xImage.PixelWidth * scaleFactor;
+                double height = xImage.PixelHeight * scaleFactor;
+
+                // Desenhar a imagem combinada no PDF
+                gfx.DrawImage(xImage, (page.Width - width) / 2, 85, width, height); // A posição Y ajustada para ficar abaixo do texto
+            }
+
+            // Salvar o documento PDF
+            document.Save(caminhoArquivo);
+            document.Close();
+        }
+
+        private void ImprimePagina_Click(object sender, EventArgs e)
+        {
+            // Clonar a estrutura de tbl_SellImpressao para manter a mesma ordem de colunas
+            DataTable telaSelect = GlobVar.tbl_SelImpressao.Clone();
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+
+            int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]) / 30;
+
+            var lastNum = GlobVar.tbl_SeqEvento.AsEnumerable().Last();
+            int CodImpressao = lastNum == null ? 1 : Convert.ToInt32(lastNum["ProxPagImp"]) + 1;
+
+            int PagInicial = paginaCoerente;
+            int QtdSeg = GlobVar.segundos;
+            // ajustar dps caso seja EEG
+            int AmplGeral = -1;
+            int PassaBaixaGeral = -1;
+            int PassaAltaGeral = -1;
+            int NotchGeral = -1;
+            bool DadosPagina = false;
+            bool Pontilhado1seg = Tela_Plotagem.Linha1Seg.Checked;
+            int MaiorQtdAmostras = GlobVar.namos;
+            int DadosPagina_MostrarACada = 0;
+            int DadosPagina_OQueMostrar = 0;
+            string Pag_TotPag = $"{(paginaCoerente / 30) + 1}/{maximoPossivel}";
+            int LimpaSinal = 7;
+            int Pos_Video = -1;
+            int? Arq_Video = null;
+            bool PontilhadoAmplitude = Tela_Plotagem.LinhaZeroCanais.Checked;
+            bool MostrarAmpl = MostarAmplitudes.Checked;
+            bool Pont200MiliSeg = Tela_Plotagem.Pontilhado200Mili.Checked;
+            int Ref = 1;
+
+            // Preencher o telaSelect com os dados correspondentes da tbl_MontagemSelecionada
+            foreach (DataRow linhaMontagem in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                DataRow novaLinha = telaSelect.NewRow();
+
+                // Copiar os valores das colunas que existem em ambas as tabelas
+                foreach (DataColumn coluna in GlobVar.tbl_MontagemSelecionada.Columns)
+                {
+                    if (telaSelect.Columns.Contains(coluna.ColumnName))
+                    {
+                        novaLinha[coluna.ColumnName] = linhaMontagem[coluna.ColumnName] == DBNull.Value ? -1 : linhaMontagem[coluna.ColumnName];
+                    }
+                }
+
+                // Adicionar a nova linha ao DataTable
+                telaSelect.Rows.Add(novaLinha);
+            }
+            // Preencher o telaSelect com os dados correspondentes da tbl_MontagemSelecionada
+            for (int i = 0; i < telaSelect.Rows.Count; i++)
+            {
+                DataRow linhaMontagem = telaSelect.Rows[i];
+
+                // Atribuir os valores às respectivas colunas
+                linhaMontagem["CodImpressao"] = CodImpressao;
+                linhaMontagem["PagInicial"] = PagInicial;
+                linhaMontagem["QtdSeg"] = QtdSeg;
+                linhaMontagem["AmplGeral"] = AmplGeral;
+                linhaMontagem["PassaBaixaGeral"] = PassaBaixaGeral;
+                linhaMontagem["PassaAltaGeral"] = PassaAltaGeral;
+                linhaMontagem["NotchGeral"] = NotchGeral;
+                linhaMontagem["DadosPagina"] = DadosPagina;
+                linhaMontagem["Pontilhado1seg"] = Pontilhado1seg;
+                linhaMontagem["MaiorQtdAmostra"] = MaiorQtdAmostras;
+                linhaMontagem["DadosPagina_MostrarACada"] = DadosPagina_MostrarACada;
+                linhaMontagem["DadosPagina_OQueMostrar"] = DadosPagina_OQueMostrar;
+                linhaMontagem["Pag_TotPag"] = Pag_TotPag;
+                linhaMontagem["LimpaSinal"] = LimpaSinal;
+                linhaMontagem["Pos_Video"] = Pos_Video;
+                linhaMontagem["Arq_Video"] = DBNull.Value;
+                linhaMontagem["PontilhadoAmplitude"] = PontilhadoAmplitude;
+                linhaMontagem["MostrarAmpl"] = MostrarAmpl;
+                linhaMontagem["Pont200MiliSeg"] = Pont200MiliSeg;
+                linhaMontagem["Ref"] = Ref;
+                linhaMontagem["NomeMontagem"] = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+
+                // Adicionar a nova linha ao DataTable
+            }
+
+            // Adicionar as linhas do telaSelect ao GlobVar.tbl_SelImpressao
+            foreach (DataRow row in telaSelect.Rows)
+            {
+                GlobVar.tbl_SelImpressao.ImportRow(row);
+            }
+            AlteraBD.AdicionarLinhasNoBancoDeDados(telaSelect, CodImpressao);            
+
+            int a = 1;
+            // Agora o telaSelect possui a estrutura de tbl_SellImpressao e os dados de tbl_MontagemSelecionada
+        }
         public static void retornaOsValoresDosOutrosEstagios()
         {
             int paginaCoerente = GlobVar.indice / GlobVar.namos;

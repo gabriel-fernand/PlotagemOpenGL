@@ -113,6 +113,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_Paginas = new DataTable();
         public static DataTable tbl_ResumoExame = new DataTable();
         public static DataTable tbl_SelImpressao = new DataTable();
+        public static DataTable tbl_SeqEvento = new DataTable();
 
         public static int DessatuDesconsiderar = 60;
         public static int[] canaisReferencia;

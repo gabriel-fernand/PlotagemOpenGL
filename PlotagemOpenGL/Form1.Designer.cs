@@ -3481,6 +3481,7 @@ namespace PlotagemOpenGL
             ImprimePagina.Size = new System.Drawing.Size(47, 47);
             ImprimePagina.TabIndex = 2;
             ImprimePagina.UseVisualStyleBackColor = false;
+            ImprimePagina.Click += ImprimePagina_Click;
             // 
             // OcultarPrinter
             // 
@@ -3505,6 +3506,7 @@ namespace PlotagemOpenGL
             ImprimeTudo.Size = new System.Drawing.Size(47, 47);
             ImprimeTudo.TabIndex = 0;
             ImprimeTudo.UseVisualStyleBackColor = false;
+            ImprimeTudo.Click += btnImprimeTudo_Click;
             // 
             // PainelPerfil
             // 

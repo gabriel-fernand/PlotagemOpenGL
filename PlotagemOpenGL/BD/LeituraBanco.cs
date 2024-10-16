@@ -40,7 +40,9 @@ public class LeituraBanco
             string queryTbl_DadosExame = "SELECT * FROM tbl_DadosExame";
             string queryTbl_Paginas = "SELECT * FROM tbl_Paginas";
             string queryTbl_ResumoExame = "SELECT * FROM tbl_ResumoExame";
-            string queryTbl_SelImpressao = "SELECT * FROM tbl_SelImpressao";
+            string queryTbl_SelImpressao = "SELECT * FROM tbl_selImpressao";
+            string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
+
 
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -60,6 +62,7 @@ public class LeituraBanco
             using var commandTbl_Paginas = new OdbcCommand(queryTbl_Paginas, connectionDatBd);
             using var commandTbl_ResumoExame = new OdbcCommand(queryTbl_ResumoExame, connectionDatBd);
             using var commanfTbl_SelImpressao = new OdbcCommand(queryTbl_SelImpressao, connectionDatBd);
+            using var commandTbl_SeqEvento = new OdbcCommand(queryTbl_SeqEvento, connectionDatBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -78,8 +81,10 @@ public class LeituraBanco
             using var adapterTbl_Paginas = new OdbcDataAdapter(commandTbl_Paginas);
             using var adapterTbl_ResumoExame = new OdbcDataAdapter(commandTbl_ResumoExame);
             using var adapterTbl_SelImpressao = new OdbcDataAdapter(commanfTbl_SelImpressao);
+            using var adapterTbl_SeqEvento = new OdbcDataAdapter(commandTbl_SeqEvento);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_SeqEvento.Fill(GlobVar.tbl_SeqEvento);
             adapterTbl_SelImpressao.Fill(GlobVar.tbl_SelImpressao);
             adapterTbl_ResumoExame.Fill(GlobVar.tbl_ResumoExame);
             adapterTbl_Paginas.Fill(GlobVar.tbl_Paginas);

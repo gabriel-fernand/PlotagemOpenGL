@@ -11,6 +11,7 @@ using ClassesBDNano;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using System.Data.OleDb;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL.BD
 {
@@ -320,10 +321,68 @@ namespace PlotagemOpenGL.BD
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
+                System.Windows.Forms.MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
             }
         }
 
+        public static void AdicionarLinhasNoBancoDeDados(DataTable telaSelect, int attSeq)
+        {
+            // String de conexão com o banco de dados Access
+            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                try
+                {
+                    // Abrir a conexão com o banco de dados
+                    connection.Open();
+
+                    // Percorrer cada linha do DataTable telaSelect
+                    foreach (DataRow row in telaSelect.Rows)
+                    {
+                        // Construir a lista de colunas e valores dinamicamente
+                        string columns = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => col.ColumnName));
+                        string parameterNames = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => "@" + col.ColumnName));
+
+                        // Preparar a query INSERT com os parâmetros
+                        string query = $"INSERT INTO tbl_selImpressao ({columns}) VALUES ({parameterNames})";
+
+                        // Criar o comando para inserir os dados
+                        using (OleDbCommand command = new OleDbCommand(query, connection))
+                        {
+                            // Adicionar os parâmetros ao comando dinamicamente
+                            foreach (DataColumn column in telaSelect.Columns)
+                            {
+                                var value = row[column] ?? DBNull.Value;
+                                command.Parameters.AddWithValue("@" + column.ColumnName, value);
+                            }
+
+                            // Executar o comando
+                            command.ExecuteNonQuery();
+                        }
+
+                        string querySeq = "UPDATE tbl_SeqEvento SET ProxPagImp = @ProxPagImp";
+
+                        using (OleDbCommand command = new OleDbCommand(querySeq, connection))
+                        {
+                            command.Parameters.AddWithValue("@ProxPagImp", attSeq);
+
+                            // Executar o comando
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Fechar a conexão
+                    connection.Close();
+                    System.Windows.Forms.MessageBox.Show("Dados inseridos com sucesso no banco de dados!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    // Caso ocorra algum erro, exibir a mensagem de erro
+                    System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
     }
 }
