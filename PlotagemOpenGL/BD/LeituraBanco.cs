@@ -209,8 +209,11 @@ public class LeituraBanco
     }
     public static void AlteraMontagem(int CodMont)
     {
+        GlobVar.tbl_MontagemSelecionada.Clear();
         GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == CodMont).CopyToDataTable();
-
+        var montagemFiltrada = GlobVar.tbl_Montagem.AsEnumerable()
+            .Where(row => row.Field<int>("CodMontagem") == CodMont)
+            .FirstOrDefault();
         // Certifique-se de que o vetor 'GlobVar.codCanal' e a tabela 'GlobVar.tbl_MontCanal' sejam não nulos
         if (GlobVar.codCanal != null && GlobVar.codCanal.Length > 0 && GlobVar.tbl_MontCanal != null)
         {
@@ -220,6 +223,11 @@ public class LeituraBanco
 
             // Atualiza o DataTable 'GlobVar.tbl_MontagemSelecionada' com as linhas filtradas
             GlobVar.tbl_MontagemSelecionada = linhasFiltradas;
+            
+            foreach(DataRow row in GlobVar.tbl_MontGrav.Rows)
+            {
+                row["NomeMontagem"] = montagemFiltrada[1];
+            }
         }
         else
         {
