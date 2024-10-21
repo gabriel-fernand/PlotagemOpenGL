@@ -1,4 +1,5 @@
 using PlotagemOpenGL.auxi.FormComentario;
+using PlotagemOpenGL.FormesMenuPanels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace PlotagemOpenGL
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new backLog());
             Application.Run(new Tela_Plotagem());
-            //Application.Run(new InserirComentario());
+            //Application.Run(new PagSelecionadasImpressao());
         }
     }
 }

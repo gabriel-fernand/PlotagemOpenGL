@@ -4394,6 +4394,15 @@ namespace PlotagemOpenGL
             document.Close();
         }
 
+        private void ImprimeSele_Click(object sender, EventArgs e)
+        {
+            PagSelecionadasImpressao pg = new PagSelecionadasImpressao();
+
+            pg.ShowDialog();
+        }
+
+
+
         private void ImprimePagina_Click(object sender, EventArgs e)
         {
             // Clonar a estrutura de tbl_SellImpressao para manter a mesma ordem de colunas
@@ -4480,7 +4489,9 @@ namespace PlotagemOpenGL
             {
                 GlobVar.tbl_SelImpressao.ImportRow(row);
             }
-            AlteraBD.AdicionarLinhasNoBancoDeDados(telaSelect, CodImpressao);            
+            AlteraBD.AdicionarLinhasNoBancoDeDados(telaSelect, CodImpressao);
+
+            GlobVar.tbl_SeqEvento.Rows[0]["ProxPagImp"] = CodImpressao;
 
             int a = 1;
             // Agora o telaSelect possui a estrutura de tbl_SellImpressao e os dados de tbl_MontagemSelecionada

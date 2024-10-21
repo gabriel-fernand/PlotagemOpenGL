@@ -3443,6 +3443,7 @@ namespace PlotagemOpenGL
             ImprimeSele.Size = new System.Drawing.Size(47, 47);
             ImprimeSele.TabIndex = 63;
             ImprimeSele.UseVisualStyleBackColor = false;
+            ImprimeSele.Click += ImprimeSele_Click;
             // 
             // CopiaTela
             // 
@@ -3761,7 +3762,6 @@ namespace PlotagemOpenGL
             PainelPerfil.ResumeLayout(false);
             ResumeLayout(false);
         }
-
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;

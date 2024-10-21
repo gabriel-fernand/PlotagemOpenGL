@@ -345,7 +345,7 @@ namespace PlotagemOpenGL.BD
                         string parameterNames = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => "@" + col.ColumnName));
 
                         // Preparar a query INSERT com os parâmetros
-                        string query = $"INSERT INTO tbl_selImpressao ({columns}) VALUES ({parameterNames})";
+                        string query = $"INSERT INTO tbl_SelImpressao ({columns}) VALUES ({parameterNames})";
 
                         // Criar o comando para inserir os dados
                         using (OleDbCommand command = new OleDbCommand(query, connection))
@@ -367,8 +367,7 @@ namespace PlotagemOpenGL.BD
                         {
                             command.Parameters.AddWithValue("@ProxPagImp", attSeq);
 
-                            // Executar o comando
-                            int rowsAffected = command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
                         }
                     }
 
