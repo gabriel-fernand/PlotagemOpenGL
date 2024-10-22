@@ -49,6 +49,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             btnFechar = new Button();
             label2 = new Label();
             label3 = new Label();
+            btnSelecTodoExame = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewPaginas).BeginInit();
             SuspendLayout();
             // 
@@ -59,7 +60,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewPaginas.Location = new System.Drawing.Point(12, 33);
             dataGridViewPaginas.Name = "dataGridViewPaginas";
             dataGridViewPaginas.RowHeadersWidth = 51;
-            dataGridViewPaginas.Size = new System.Drawing.Size(561, 399);
+            dataGridViewPaginas.Size = new System.Drawing.Size(616, 399);
             dataGridViewPaginas.TabIndex = 0;
             // 
             // dataGridViewTextBoxColumn1
@@ -68,6 +69,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewTextBoxColumn1.MinimumWidth = 6;
             dataGridViewTextBoxColumn1.Name = "Código";
             dataGridViewTextBoxColumn1.Width = 125;
+            dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // dataGridViewTextBoxColumn2
             // 
@@ -75,6 +77,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewTextBoxColumn2.MinimumWidth = 6;
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.Width = 125;
+            dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -82,6 +85,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewTextBoxColumn3.MinimumWidth = 6;
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.Width = 125;
+            dataGridViewTextBoxColumn3.ReadOnly = true;
+            dataGridViewTextBoxColumn3.ReadOnly = true;
+
             // 
             // dataGridViewTextBoxColumn4
             // 
@@ -89,6 +95,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewTextBoxColumn4.MinimumWidth = 6;
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             dataGridViewTextBoxColumn4.Width = 125;
+            dataGridViewTextBoxColumn4.ReadOnly = true;
+
             // 
             // dataGridViewTextBoxColumn5
             // 
@@ -96,32 +104,38 @@ namespace PlotagemOpenGL.FormesMenuPanels
             dataGridViewTextBoxColumn5.MinimumWidth = 6;
             dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
             dataGridViewTextBoxColumn5.Width = 125;
+            dataGridViewTextBoxColumn5.ReadOnly = true;
+
             // 
             // dataGridViewTextBoxColumn6
             // 
             dataGridViewTextBoxColumn6.HeaderText = "Ref";
             dataGridViewTextBoxColumn6.MinimumWidth = 6;
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            dataGridViewTextBoxColumn6.ReadOnly = true;
             dataGridViewTextBoxColumn6.Width = 125;
             // 
             // listBoxArquivos
             // 
             listBoxArquivos.Location = new System.Drawing.Point(12, 481);
             listBoxArquivos.Name = "listBoxArquivos";
-            listBoxArquivos.Size = new System.Drawing.Size(561, 104);
+            listBoxArquivos.Size = new System.Drawing.Size(616, 104);
             listBoxArquivos.TabIndex = 1;
             // 
             // btnSelecionarTudo
             // 
+            btnSelecionarTudo.Font = new System.Drawing.Font("Arial", 7.8F);
             btnSelecionarTudo.Location = new System.Drawing.Point(12, 611);
             btnSelecionarTudo.Name = "btnSelecionarTudo";
             btnSelecionarTudo.Size = new System.Drawing.Size(98, 48);
             btnSelecionarTudo.TabIndex = 2;
-            btnSelecionarTudo.Text = "Selecionar\ntudo";
+            btnSelecionarTudo.Text = "Selecionar\nTudo";
+            btnSelecionarTudo.Click += btnSelecionarTudo_Click;
             // 
             // btnImprimir
             // 
-            btnImprimir.Location = new System.Drawing.Point(126, 611);
+            btnImprimir.Font = new System.Drawing.Font("Arial", 7.8F);
+            btnImprimir.Location = new System.Drawing.Point(116, 611);
             btnImprimir.Name = "btnImprimir";
             btnImprimir.Size = new System.Drawing.Size(98, 48);
             btnImprimir.TabIndex = 3;
@@ -129,7 +143,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // 
             // btnVisualizar
             // 
-            btnVisualizar.Location = new System.Drawing.Point(243, 611);
+            btnVisualizar.Font = new System.Drawing.Font("Arial", 7.8F);
+            btnVisualizar.Location = new System.Drawing.Point(324, 611);
             btnVisualizar.Name = "btnVisualizar";
             btnVisualizar.Size = new System.Drawing.Size(98, 48);
             btnVisualizar.TabIndex = 4;
@@ -138,7 +153,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // 
             // btnExcluir
             // 
-            btnExcluir.Location = new System.Drawing.Point(359, 611);
+            btnExcluir.Font = new System.Drawing.Font("Arial", 7.8F);
+            btnExcluir.Location = new System.Drawing.Point(428, 611);
             btnExcluir.Name = "btnExcluir";
             btnExcluir.Size = new System.Drawing.Size(98, 48);
             btnExcluir.TabIndex = 5;
@@ -147,7 +163,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // 
             // btnFechar
             // 
-            btnFechar.Location = new System.Drawing.Point(475, 611);
+            btnFechar.Font = new System.Drawing.Font("Arial", 7.8F);
+            btnFechar.Location = new System.Drawing.Point(532, 611);
             btnFechar.Name = "btnFechar";
             btnFechar.Size = new System.Drawing.Size(98, 48);
             btnFechar.TabIndex = 6;
@@ -172,11 +189,22 @@ namespace PlotagemOpenGL.FormesMenuPanels
             label3.TabIndex = 8;
             label3.Text = "Páginas";
             // 
+            // btnSelecTodoExame
+            // 
+            btnSelecTodoExame.Font = new System.Drawing.Font("Arial", 7.8F);
+            btnSelecTodoExame.Location = new System.Drawing.Point(220, 611);
+            btnSelecTodoExame.Name = "btnSelecTodoExame";
+            btnSelecTodoExame.Size = new System.Drawing.Size(98, 48);
+            btnSelecTodoExame.TabIndex = 9;
+            btnSelecTodoExame.Text = "Selecionar\nTodo Exame";
+            btnSelecTodoExame.Click += btnbtnSelecTodoExame_Click;
+            // 
             // PagSelecionadasImpressao
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(585, 671);
+            ClientSize = new System.Drawing.Size(640, 671);
+            Controls.Add(btnSelecTodoExame);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(dataGridViewPaginas);
@@ -203,5 +231,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private Label label2;
         private Label label3;
+        private Button btnSelecTodoExame;
     }
 }

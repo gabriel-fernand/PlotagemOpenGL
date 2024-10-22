@@ -1642,7 +1642,7 @@ namespace PlotagemOpenGL
             using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
             {
                 telaLoad.Show();
-
+                telaLoad.label1.Text = "Alterando Montagem";
                 // Atualiza o progresso
                 telaLoad.AtualizarProgresso(10);
 
@@ -5778,9 +5778,49 @@ namespace PlotagemOpenGL
 
         private void playSelect_Click(object sender, EventArgs e)
         {
+            if (GlobVar.eventosUpdate != null)
+            {
+                int[] valoresProcurados = { 1, 2, 3, 5, 101 };
+                string nomeArquivo = $"{GlobVar.textFile.Substring(32, 8)}_EventosRespiratorio.txt";
+                string pastaDownloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                string caminhoArquivo = Path.Combine(pastaDownloads, nomeArquivo);
 
-            montagem mont = new montagem();
-            mont.Show();
+                bool possuiValores = GlobVar.eventosUpdate.AsEnumerable()
+                    .Any(row => valoresProcurados.Contains(row.Field<int>("CodEvento")));
+
+                if (possuiValores)
+                {
+                    var listaEventosResp = new List<string>();
+
+                    var tableEventoRespiratorio = GlobVar.eventosUpdate.AsEnumerable()
+                        .Where(row => valoresProcurados.Contains(row.Field<int>("CodEvento")))
+                        .CopyToDataTable();
+
+                    foreach (DataRow row in tableEventoRespiratorio.Rows)
+                    {
+                        int inicio = Convert.ToInt32(row["Inicio"]);
+                        int fim = Convert.ToInt32(row["Duracao"]);
+                        string aevent = "";
+                        int taxaCanal = GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt32(row["CodCanal1"]))];
+
+                        aevent = plotEventos.ValoresEvento(inicio, fim, taxaCanal, Convert.ToInt32(row["CodCanal1"]));
+                        listaEventosResp.Add(aevent);
+                    }
+
+                    // Salvar a lista em um arquivo de texto
+                    try
+                    {
+                        File.WriteAllLines(caminhoArquivo, listaEventosResp);
+                        MessageBox.Show($"Arquivo salvo com sucesso em: {caminhoArquivo}", "Sucesso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro ao salvar o arquivo: {ex.Message}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+                    }
+                }
+            }
+            //montagem mont = new montagem();
+            //mont.Show();
         }
 
         private Panel clickedPanel;

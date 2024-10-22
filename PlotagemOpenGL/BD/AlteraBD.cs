@@ -373,12 +373,12 @@ namespace PlotagemOpenGL.BD
 
                     // Fechar a conexão
                     connection.Close();
-                    System.Windows.Forms.MessageBox.Show("Dados inseridos com sucesso no banco de dados!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //System.Windows.Forms.MessageBox.Show("Dados inseridos com sucesso no banco de dados!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
                     // Caso ocorra algum erro, exibir a mensagem de erro
-                    System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

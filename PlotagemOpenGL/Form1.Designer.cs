@@ -3618,7 +3618,7 @@ namespace PlotagemOpenGL
             playSelect.Name = "playSelect";
             playSelect.Size = new System.Drawing.Size(110, 29);
             playSelect.TabIndex = 57;
-            playSelect.Text = "Montagem";
+            playSelect.Text = "Eventos";
             playSelect.UseVisualStyleBackColor = true;
             playSelect.Click += playSelect_Click;
             // 

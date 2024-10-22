@@ -14,7 +14,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         public static System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Panel panel1;
@@ -49,7 +49,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             label1.AutoSize = true;
             label1.Font = new Font("Modern No. 20", 22.1999989F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.Black;
-            label1.Location = new Point(62, 50);
+            label1.Location = new Point(69, 50);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(371, 38);
