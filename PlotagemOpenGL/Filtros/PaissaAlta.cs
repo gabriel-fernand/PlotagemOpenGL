@@ -3,10 +3,11 @@ using MathNet.Numerics;
 using MathNet.Filtering;
 using MathNet.Filtering.IIR;
 using MathNet.Numerics;
+using UnityEngine;
 
 namespace PlotagemOpenGL.Filtros
 {
-    internal class PaissaAlta
+    public class PaissaAlta
     {
         public static float cutoffFrequency;
         public static float sampleRate;
@@ -14,6 +15,10 @@ namespace PlotagemOpenGL.Filtros
         public static float previousInput;
         public static float previousOutput;
 
+        public PaissaAlta()
+        {
+
+        }
         public PaissaAlta(float cutoffFrequency, float sampleRate)
         {
             PaissaAlta.cutoffFrequency = cutoffFrequency;
@@ -23,7 +28,7 @@ namespace PlotagemOpenGL.Filtros
             PaissaAlta.previousOutput = 0.0f;
         }
 
-        private static float CalculateAlpha(float cutoffFrequency, float sampleRate)
+        public static float CalculateAlpha(float cutoffFrequency, float sampleRate)
         {
             double dt = 1.0 / sampleRate;
             double rc = 1.0 / (2 * Math.PI * cutoffFrequency);
@@ -41,11 +46,27 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] data, float cutoffFrequency, float sampleRate)
         {
-            PaissaAlta alta = new PaissaAlta(cutoffFrequency, sampleRate);
-            float[] outputData = new float[data.Length];
+            //PaissaAlta alta = new PaissaAlta(cutoffFrequency, sampleRate);
+
+            cutoffFrequency = cutoffFrequency;
+            sampleRate = sampleRate;
+            alpha = CalculateAlpha(cutoffFrequency, sampleRate);
+            previousInput = 0.0f;
+            previousOutput = 0.0f;
+
+
+            float[] outputData = new float[100 * 512];
             for (int i = 0; i < data.Length; i++)
             {
-                outputData[i] = alta.Apply(data[i]);
+                if (i >= 100 * 512) { break; }
+
+                float output = alpha * (previousOutput + data[i] - previousInput);
+                previousInput = data[i];
+                previousOutput = output;
+
+
+                outputData[i] = output;
+
             }
             return outputData;
         }

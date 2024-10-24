@@ -60,10 +60,12 @@ namespace PlotagemOpenGL.Filtros
         public static float[] ApplyFilter(float[] input, float notchFrequency, float bandwidth, float samplingRate)
         {
             Notch notchFilter = new Notch(notchFrequency, 2, samplingRate);
-            float[] output = new float[input.Length];
+            float[] output = new float[100 * 512];
             for (int i = 0; i < input.Length; i++)
             {
+                if (i >= 100 * 512) { break; }
                 output[i] = notchFilter.Apply(input[i]);
+
             }
             return output;
         }

@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace PlotagemOpenGL.Filtros
 {
-    internal class PaissaBaixa
+    public class PaissaBaixa
     {
         public static int auxLow;
-        private float _alpha;
-        private float _prevOutput;
+        public static float _alpha;
+        public static float _prevOutput;
+
+        public PaissaBaixa()
+        {
+
+        }
 
         public PaissaBaixa(float cutoffFrequency, float samplingRate)
         {
@@ -18,7 +23,7 @@ namespace PlotagemOpenGL.Filtros
             _prevOutput = 0;
         }
 
-        private float CalculateAlpha(float cutoffFrequency, float samplingRate)
+        public static float CalculateAlpha(float cutoffFrequency, float samplingRate)
         {
             float omega = 2 * (float)Math.PI * cutoffFrequency;
             return omega / (omega + samplingRate);
@@ -33,12 +38,22 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            PaissaBaixa lowPassFilter = new PaissaBaixa(cutoffFrequency, samplingRate);
+            //PaissaBaixa lowPassFilter = new PaissaBaixa(cutoffFrequency, samplingRate);
 
-            float[] output = new float[input.Length];
+            _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
+            _prevOutput = 0;
+
+
+            float[] output = new float[100  * 512];
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = lowPassFilter.Apply(input[i]);
+                if (i >= 100 * 512) { break; }
+
+                float outputaaa = _alpha * input[i] + (1 - _alpha) * _prevOutput;
+                _prevOutput = outputaaa;
+
+                output[i] = outputaaa;
+
             }
             return output;
         }

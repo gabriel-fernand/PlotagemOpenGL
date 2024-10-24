@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Forms;
 using SharpGL;
@@ -19,28 +18,18 @@ using System.ComponentModel;
 using Accord.Math;
 using Accord;
 using System.Data;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using PlotagemOpenGL.Filtros;
-using SharpGL.SceneGraph;
-using System.Linq.Expressions;
 using System.Diagnostics;
 using Input = UnityEngine.Input;
 using PlotagemOpenGL.auxi.auxPlotagem;
-using OpenTK.Windowing.Common.Input;
 using PlotagemOpenGL.auxi.FormsAuxi;
-using System.Windows.Media;
-using ClassesBDNano;
 using PlotagemOpenGL.auxi.FormComentario;
-using Accord.Statistics.Moving;
-using MathNet.Numerics.Distributions;
 using PlotagemOpenGL.auxi.FormLegenda;
 using PlotagemOpenGL.FormesMenuPanels.InferiorSuperior;
 using PlotagemOpenGL.FormesMenuPanels;
 using Cyotek.Windows.Forms;
-using System.Windows.Navigation;
+using System.Data.OleDb;
 using Image = System.Drawing.Image;
 using System.Threading.Tasks;
 using PdfSharp.Pdf;
@@ -57,8 +46,8 @@ namespace PlotagemOpenGL
         public static Plotagem plotagem;
         public static Canais canais;
         private bool isInitialized = false;
-
         private Stopwatch stopwatch;
+
 
         private Size formOriginalSize;
         private Size painelOriginalSize;
@@ -179,6 +168,11 @@ namespace PlotagemOpenGL
         private Dictionary<Panel, Dictionary<string, bool>> panelNotchFilterStates = new Dictionary<Panel, Dictionary<string, bool>>();
         public static System.ComponentModel.ComponentResourceManager resources;
 
+        // Declarando três cronômetros
+        public static Stopwatch cronometro1 = new Stopwatch();
+        public static Stopwatch cronometro2 = new Stopwatch();
+        public static Stopwatch cronometro3 = new Stopwatch();
+
 
         public static Point? prevPosition = null;
         public static ToolTip tooltip = new ToolTip();
@@ -192,7 +186,6 @@ namespace PlotagemOpenGL
 
         [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
         static extern int LoadNvApi32();
-
 
         private void InitializeDedicatedGraphics()
         {
@@ -212,6 +205,7 @@ namespace PlotagemOpenGL
             InitializeComponent();
             InitializeDedicatedGraphics();
             LeitorDiretorio.LeituraDiretorio();
+
 
             LeituraBanco.BancoRead();
             LeituraBanco.AlteraTable();
@@ -258,6 +252,8 @@ namespace PlotagemOpenGL
             GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
             GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
+            GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1;
+
             load();
             camera.X = 0.0f;
             camera.Y = 0.0f;
@@ -312,7 +308,91 @@ namespace PlotagemOpenGL
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
             isInitialized = true;
+            if (GlobVar.ultimaPag != 0)
+            {
+                abreUltimaPaginaFechada();
+            }
+            this.FormClosing += Tela_Plotagem_FormClosed;
         }
+        public void abreUltimaPaginaFechada()
+        {
+            int pagina = GlobVar.ultimaPag;
+            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+
+            int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
+
+            if (pagina < 0) { pagina = 0; }
+            if (pagina > (maximoPossivel / 30)) { pagina = maximoPossivel / 30; }
+
+            string telaPagText = "000";
+            if (pagina >= 100)
+            {
+                telaPagText = $"{pagina}";
+            }
+            else if (pagina >= 10)
+            {
+                telaPagText = $"0{pagina}";
+            }
+            else
+            {
+                if (pagina < 0) { pagina = 0; }
+                telaPagText = $"00{pagina}";
+            }
+            ptsEmTela.Text = $"{telaPagText}";
+
+            int newloc = pagina * 30;
+
+            camera.X = newloc * GlobVar.namos;
+
+            GlobVar.indice = newloc * GlobVar.namos;
+            GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+
+            GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
+            GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+            if (camera.X > 0) hScrollBar1.Value = GlobVar.indice;
+            foiencontradoumUltimo = false;
+            foiencontradoumUltimo = false;
+
+            int alturaTela = (int)openglControl1.Height;
+            //gl.Translate(camera.X, 0, 1);
+            TelaClearAndReload();
+            UpdateInicioTela();
+
+        }
+        private void Tela_Plotagem_FormClosed(object sender, FormClosingEventArgs e)
+        {
+            GlobVar.ultimaPag = Convert.ToInt32(ptsEmTela.Text);
+
+            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                connection.Open();
+
+                OleDbTransaction transaction = connection.BeginTransaction();
+                try
+                {
+                    // Adicione uma condição WHERE para atualizar uma linha específica
+                    string sql = "UPDATE tbl_DadosExame SET Ultima_Pagina = @ultimaPag WHERE CodPaciente = @CodPaciente";
+
+                    using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                    {
+                        command.Parameters.Add("@ultimaPag", OleDbType.Integer).Value = GlobVar.ultimaPag + 1;
+                        command.Parameters.Add("@CodPaciente", OleDbType.Integer).Value = Convert.ToInt16(GlobVar.tbl_DadosExame.Rows[0]["CodPaciente"]);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if(rowsAffected >0){
+                            transaction.Commit();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
+            }
+        }
+
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
         {
@@ -432,12 +512,18 @@ namespace PlotagemOpenGL
         }
         private void load()
         {
-
-
+            /*
+            GlobVar.indice = GlobVar.namos * GlobVar.segundos * GlobVar.ultimaPag;
+            GlobVar.maximaVect = GlobVar.indice * GlobVar.segundos;
+            GlobVar.indiceNumero = GlobVar.segundos * GlobVar.ultimaPag * GlobVar.namosNumerico;
+            GlobVar.maximaNumero = GlobVar.indiceNumero * GlobVar.segundos;
+            camera.X = GlobVar.indice;
+            UpdateInicioTela();
+            */
             //Verificar depois o que e feito para abrir na ultima pagina aberta
             //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
-            int pagina = paginaCoerente / GlobVar.segundos;
+            int pagina = GlobVar.ultimaPag;
             string telaPagText = "000";
             if (pagina >= 10)
             {
@@ -3590,6 +3676,8 @@ namespace PlotagemOpenGL
                 }
             }*/
 
+            hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+            hScrollBar1.Refresh();
             UpdateInicioTela();
             TelaClearAndReload();
         }
@@ -3714,6 +3802,7 @@ namespace PlotagemOpenGL
             }
             ptsEmTela.Text = $"{telaPagText}";
 
+
             int indexLabel = 0;
             for (int i = 1; i <= GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
@@ -3761,6 +3850,7 @@ namespace PlotagemOpenGL
                 Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtualR);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
+
             atualizaButAntProx();
         }
 
@@ -4177,7 +4267,7 @@ namespace PlotagemOpenGL
                 // Loop para encontrar um nome de arquivo disponível
                 do
                 {
-                    sufixo = "_" + contador.ToString("D2"); // Formata o contador como "00", "01", etc.
+                    sufixo = "_" + "tela" + contador.ToString("D2"); // Formata o contador como "00", "01", etc.
                     caminhoCompleto = Path.Combine(caminhoPasta, nomeBaseArquivo + sufixo + ".bmp");
                     contador++;
                 }
@@ -5253,7 +5343,7 @@ namespace PlotagemOpenGL
             // Desmarcar o botão anterior
             if (botaoSelecionadoEventss != null && botaoSelecionadoEventss != btn)
             {
-                DesmarcarBotaoEvents(botaoSelecionadoEventss);
+                //DesmarcarBotaoEvents(botaoSelecionadoEventss);
             }
 
             botaoSelecionadoEventss = btn;
@@ -5285,7 +5375,7 @@ namespace PlotagemOpenGL
             // Desmarcar o botão anterior
             if (botaoSelecionadoEventss != null && botaoSelecionadoEventss != btn)
             {
-                DesmarcarBotaoEvents(botaoSelecionadoEventss);
+                //DesmarcarBotaoEvents(botaoSelecionadoEventss);
             }
 
             botaoSelecionadoEventss = btn;
@@ -5714,7 +5804,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-                if (camera.X > 0) hScrollBar1.Value = (int)newloc;
+                if (camera.X > 0) hScrollBar1.Value = GlobVar.indice;
                 foiencontradoumUltimo = false;
                 foiencontradoumUltimo = false;
 
@@ -8169,7 +8259,7 @@ namespace PlotagemOpenGL
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
             GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
-            Stringao.Text = $"Timer {timerAndarRetroceder} | Dx: {GlobVar.DimXY.X} Dy: {GlobVar.DimXY.Y}| Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
+            Stringao.Text = $"Timer1: {cronometro1.Elapsed.ToString()} | Timer2: {cronometro2.Elapsed.ToString()} Timer3: {cronometro3.Elapsed.ToString()} | Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
                 $"| CodCanal: {tagCodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
                 $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";

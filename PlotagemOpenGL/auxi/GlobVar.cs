@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.Odbc;
 using Connection = ADODB.Connection;
 using System.IO;
+using PlotagemOpenGL.Filtros;
 
 
 
@@ -114,6 +115,8 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_ResumoExame = new DataTable();
         public static DataTable tbl_SelImpressao = new DataTable();
         public static DataTable tbl_SeqEvento = new DataTable();
+
+        public static int ultimaPag;
 
         public static int DessatuDesconsiderar = 60;
         public static int[] canaisReferencia;
