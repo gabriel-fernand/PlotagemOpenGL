@@ -172,6 +172,11 @@ namespace PlotagemOpenGL
         public static Stopwatch cronometro1 = new Stopwatch();
         public static Stopwatch cronometro2 = new Stopwatch();
         public static Stopwatch cronometro3 = new Stopwatch();
+        public static Stopwatch cronometro4 = new Stopwatch();
+        public static Stopwatch cronometroBand = new Stopwatch();
+        public static Stopwatch cronometroBaixa = new Stopwatch();
+        public static Stopwatch cronometroAlta = new Stopwatch();
+        public static Stopwatch cronometroNotch = new Stopwatch();
 
 
         public static Point? prevPosition = null;
@@ -1727,42 +1732,47 @@ namespace PlotagemOpenGL
             // Mostra a tela de carregamento
             using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
             {
+                cronometro4.Reset();
+
+                cronometro4.Start();
                 telaLoad.Show();
                 telaLoad.label1.Text = "Alterando Montagem";
                 // Atualiza o progresso
+                await Task.Delay(10);
                 telaLoad.AtualizarProgresso(10);
 
                 // Ideia para alterar a montagem que está selecionada, com a leitura e outras operações
                 int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
                 LeituraBanco.AlteraMontagem(CodMont);
-                await Task.Delay(100); // Simula uma pequena pausa para ver o progresso
                 telaLoad.AtualizarProgresso(25);
 
                 LeituraEmMatrizTeste.montagemSelecionadaAlterada();
                 LeituraEmMatrizTeste.referencias();
-                await Task.Delay(100);
+                await Task.Delay(2);
                 telaLoad.AtualizarProgresso(50);
 
-                load();
+                //load();
                 canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.RealocButton();
                 canais.PainelLb_Resize();
                 canais.reloc();
-                await Task.Delay(100);
+                await Task.Delay(2);
                 telaLoad.AtualizarProgresso(75);
 
                 UpdatePanelHeightInDataTable();
                 AjustarFonteDosLabels();
                 AjustarBotoesMinusEPlus();
-                await Task.Delay(100);
+                await Task.Delay(2);
                 telaLoad.AtualizarProgresso(90);
 
                 UpdateInicioTela();
                 TelaClearAndReload();
-                await Task.Delay(100);
+                await Task.Delay(2);
                 telaLoad.AtualizarProgresso(100);
+                cronometro4.Stop();
+
             }
         }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
@@ -8259,8 +8269,8 @@ namespace PlotagemOpenGL
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, musezin.Y);
             GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
-            Stringao.Text = $"Timer1: {cronometro1.Elapsed.ToString()} | Timer2: {cronometro2.Elapsed.ToString()} Timer3: {cronometro3.Elapsed.ToString()} | Canal: {GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["Legenda"]} " +
-                $"| CodCanal: {tagCodCanal} | CodTipoCanal: {GlobVar.CodTipoCanalEvent} | InicioX: {isThereAXSartComment} | FimX: {isThereAXEndComment} " +
+            Stringao.Text = $"Timer1: {cronometro1.Elapsed.ToString()} | Timer3: {cronometro3.Elapsed.ToString()} | TimerGeral: {cronometro4.Elapsed.ToString()} " +
+                $"| TimerBand: {cronometroBand.Elapsed.ToString()} | TimerBaixa: {cronometroBaixa.Elapsed.ToString()} | TimerAlta: {cronometroAlta.Elapsed.ToString()} | TimerNotch: {cronometroNotch.Elapsed.ToString()} " +
                 $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";
         }

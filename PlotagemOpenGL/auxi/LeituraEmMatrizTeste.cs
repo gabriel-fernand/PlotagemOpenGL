@@ -132,15 +132,12 @@ namespace PlotagemOpenGL.auxi
                         for (int colunaComp = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp < GlobVar.ponteiroF[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp++)
                         {
                             // Certifique-se de não exceder os limites da matrizCanais
-                            //if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
-                                if (colunaCanalIndex < 300 * 512)
-
-                                {
+                            if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
+                            {
                                     // Copia o valor de matrizCompleta para matrizCanal
                                     GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                                 colunaCanalIndex++;
 
-                                if(colunaCanalIndex >= 300 * 512) { break; }
                             }
                             //else
                             //{
@@ -259,32 +256,68 @@ namespace PlotagemOpenGL.auxi
         public static void montagemSelecionadaAlterada()
         {
             int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
-            int segmentLength = 51200;
-            Tela_Plotagem.cronometro1.Reset();
+            //int segmentLength = GlobVar.matrizCompleta.GetLength(1);
+            int segmentLength = 153600;
 
+
+            Tela_Plotagem.cronometro1.Reset();
             Tela_Plotagem.cronometro1.Start();
             // Paralelizar a cópia de dados para GlobVar.matrizCanal
             Parallel.For(0, rowCount, linhaCanais =>
             {
                 int colunaCanalIndex = 0;
                 int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-
+                int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
                 if (canalIndex == -1)
                 {
                     return;
                 }
-
-                for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
+                if (canal2Index == -1)
                 {
-                    for (int colunaComp = GlobVar.ponteiroI[canalIndex]; colunaComp < GlobVar.ponteiroF[canalIndex]; colunaComp++)
+                    int linha = 0;
+                    while(linha < GlobVar.matrizCompleta.GetLength(0))
                     {
-                        if (colunaCanalIndex < segmentLength)
+                        int colunaComp = GlobVar.ponteiroI[canalIndex];
+
+                        while (colunaComp < GlobVar.ponteiroF[canalIndex])
                         {
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
+                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaComp]);
+
+                            // Incrementa os índices
+                            colunaComp++;
                             colunaCanalIndex++;
 
-                            if (colunaCanalIndex >= segmentLength) { break; }
                         }
+
+                        linha++;
+                    }
+                }
+                else
+                {
+                    int linha = 0;
+                    while (linha < GlobVar.matrizCompleta.GetLength(0))
+                    {
+                        int colunaCan2 = GlobVar.ponteiroI[canal2Index];
+                        int colunaComp = GlobVar.ponteiroI[canalIndex];
+
+                        while (colunaComp < GlobVar.ponteiroF[canalIndex])
+                        {
+                            // Converte os valores das duas colunas e calcula a diferença
+                            int valorColunaComp = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaComp]);
+                            int valorColunaCan2 = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaCan2]);
+
+                            // Atribui a diferença na matriz de destino
+                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
+
+                            // Incrementa os índices
+                            colunaComp++;
+                            colunaCan2++;
+                            colunaCanalIndex++;
+
+                            // Interrompe o loop se o segmento máximo foi alcançado
+                        }
+
+                        linha++;
                     }
                 }
             });
@@ -292,56 +325,6 @@ namespace PlotagemOpenGL.auxi
 
 
             reorganize();
-            Tela_Plotagem.cronometro2.Reset();
-            Tela_Plotagem.cronometro2.Start();
-
-            // Verifica se o canal da montagem tem referência a outro canal do exame
-            Parallel.ForEach(GlobVar.tbl_MontagemSelecionada.AsEnumerable(), row =>
-            {
-                int codCanal1 = row.Field<int>("CodCanal1");
-                int codCanal2 = row.Field<int>("CodCanal2");
-
-                // Se o canal 2 for diferente de -1, realiza a operação de referência
-                if (codCanal2 != -1)
-                {
-                    // Obter o índice do canal 1 no vetor codSelected
-                    int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
-                    if (selectedIndex == -1)
-                    {
-                        // Se o índice não for encontrado, pula para a próxima iteração
-                        return; // Use 'return' em vez de 'continue' em Parallel.ForEach
-                    }
-
-                    // Chamar o método SetReferencia para obter os dados do canal de referência
-                    var referenciaData = SetReferencia(codCanal1, codCanal2);
-
-                    // Calcular o tamanho máximo para copiar os dados, garantindo que não ultrapasse o tamanho do array original ou do segmento desejado
-                    int maxLength = Math.Min(segmentLength, referenciaData.Length);
-
-                    // Atualizar apenas a parte correspondente nos dados da matrizCanal
-                    if (maxLength > 0)
-                    {
-                        lock (GlobVar.matrizCanal) // Bloqueio para garantir acesso seguro à matriz compartilhada
-                        {
-                            var originalData = GlobVar.matrizCanal.GetRow(selectedIndex);
-
-                            // Garantir que a matriz original tenha o tamanho mínimo necessário para a operação
-                            if (originalData.Length < maxLength)
-                            {
-                                // Redimensionar o array original se necessário
-                                Array.Resize(ref originalData, maxLength);
-                            }
-
-                            // Copiar os dados de referência para a matriz apenas no intervalo permitido
-                            Array.Copy(referenciaData, 0, originalData, 0, maxLength);
-
-                            // Atualizar a linha no GlobVar.matrizCanal com os dados modificados
-                            GlobVar.matrizCanal.SetRow(selectedIndex, originalData);
-                        }
-                    }
-                }
-            });
-            Tela_Plotagem.cronometro2.Stop();
 
             Tela_Plotagem.cronometro3.Reset();
             Tela_Plotagem.cronometro3.Start();
@@ -354,6 +337,12 @@ namespace PlotagemOpenGL.auxi
                     row["CodCanal2"] = -1;
                 }
             });
+
+
+            Tela_Plotagem.cronometroBand.Reset();
+            Tela_Plotagem.cronometroBaixa.Reset();
+            Tela_Plotagem.cronometroAlta.Reset();
+            Tela_Plotagem.cronometroNotch.Reset();
 
             // Aplicar filtros paralelamente
             Parallel.For(0, rowCount, ind =>
@@ -432,259 +421,56 @@ namespace PlotagemOpenGL.auxi
                 GlobVar.scale[i] = scala;
             });
         }
-        /*
-        public static void montagemSelecionadaAlterada()
-        {
-            //GlobVar.matrizCanal.Clear();
-            //GlobVar.matrizCanal = new short[GlobVar.tbl_MontagemSelecionada.Rows.Count, GlobVar.indiceDat];
-
-            //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
-            for (int linhaCanais = 0; linhaCanais < GlobVar.tbl_MontagemSelecionada.Rows.Count; linhaCanais++)
-            {
-                int colunaCanalIndex = 0;
-
-                // Tenta obter o índice do canal no GlobVar.codCanal
-                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-
-                // Se o canal não for encontrado, pula para a próxima iteração
-                if (canalIndex == -1)
-                {
-                    continue;
-                }
-
-                // Percorre as linhas da matrizCompleta
-                for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
-                {
-                    // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                    for (int colunaComp = GlobVar.ponteiroI[canalIndex]; colunaComp < GlobVar.ponteiroF[canalIndex]; colunaComp++)
-                    {
-                        // Certifique-se de não exceder os limites da matrizCanais
-                        //if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
-                        if (colunaCanalIndex < 51200)
-
-                        {
-                            // Copia o valor de matrizCompleta para matrizCanal
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
-                            colunaCanalIndex++;
-
-                            if (colunaCanalIndex >= 51200) { break; }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            reorganize();
-            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
-            {
-                if (row["CodCanal2"] == DBNull.Value)
-                {
-                    row["CodCanal2"] = -1;
-                }
-            }
-
-            //Verifica se o canal da montagem tem referencia a outro canal do exame
-            // Define o tamanho fixo a ser processado
-            int segmentLength = 51200;
-
-            // Verifica se o canal da montagem tem referência a outro canal do exame
-            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
-            {
-                int codCanal1 = row.Field<int>("CodCanal1");
-                int codCanal2 = row.Field<int>("CodCanal2");
-
-                // Se o canal 2 for diferente de -1, realiza a operação de referência
-                if (codCanal2 != -1)
-                {
-                    // Obter o índice do canal 1 no vetor codSelected
-                    int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
-                    if (selectedIndex == -1)
-                    {
-                        // Se o índice não for encontrado, pula para a próxima iteração
-                        continue;
-                    }
-
-                    // Chamar o método SetReferencia para obter os dados do canal de referência
-                    var referenciaData = SetReferencia(codCanal1, codCanal2);
-
-                    // Calcular o tamanho máximo para copiar os dados, garantindo que não ultrapasse o tamanho do array original ou do segmento desejado
-                    int maxLength = Math.Min(segmentLength, referenciaData.Length);
-
-                    // Atualizar apenas a parte correspondente nos dados da matrizCanal
-                    if (maxLength > 0)
-                    {
-                        var originalData = GlobVar.matrizCanal.GetRow(selectedIndex);
-
-                        // Garantir que a matriz original tenha o tamanho mínimo necessário para a operação
-                        if (originalData.Length < maxLength)
-                        {
-                            // Redimensionar o array original se necessário
-                            Array.Resize(ref originalData, maxLength);
-                        }
-
-                        // Copiar os dados de referência para a matriz apenas no intervalo permitido
-                        Array.Copy(referenciaData, 0, originalData, 0, maxLength);
-
-                        // Atualizar a linha no GlobVar.matrizCanal com os dados modificados
-                        GlobVar.matrizCanal.SetRow(selectedIndex, originalData);
-                    }
-                }
-            }
-
-            //Verificacao se a filtro no canal
-            int ind = 0;
-            foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
-            {
-                int codCanal = Convert.ToInt16(row["CodCanal1"]);
-                int canalIndex = GlobVar.codCanal.IndexOf(codCanal);
-
-                // Se o canal não for encontrado, pula para a próxima iteração
-                if (canalIndex == -1)
-                {
-                    ind++;
-                    continue;
-                }
-
-                // Obter o índice de GlobVar.codSelected apenas uma vez
-                int selectedIndex = GlobVar.codSelected.IndexOf(codCanal);
-                if (selectedIndex == -1)
-                {
-                    ind++;
-                    continue;
-                }
-
-                // Obter os dados da matriz e o valor de txPorCanal
-                var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
-                float txPorCanal = GlobVar.txPorCanal[canalIndex];
-
-                // Calcular o tamanho para aplicar filtros apenas de 0 a 153600 (ou menos, se o vetor for menor)
-                int endIndex = Math.Min(51200, canalData.Length);
-                var dataToFilter = canalData.Take(endIndex).ToArray();
-
-                // Extrair os valores de frequência, se existirem
-                double? lowHertz = row.IsNull("PassaBaixa") ? (double?)null : row.Field<double>("PassaBaixa");
-                double? highHertz = row.IsNull("PassaAlta") ? (double?)null : row.Field<double>("PassaAlta");
-                double? notchHertz = row.IsNull("Notch") ? (double?)null : row.Field<double>("Notch");
-
-                // Aplicar filtros conforme os valores definidos apenas na parte selecionada (dataToFilter)
-                if (lowHertz.HasValue && lowHertz.Value != 0)
-                {
-                    if (highHertz.HasValue && highHertz.Value != 0)
-                    {
-                        // Filtro BandPass
-                        dataToFilter = ShortToFloat(
-                            BandPass.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, (float)highHertz.Value, txPorCanal)
-                        );
-                    }
-                    else
-                    {
-                        // Filtro PassaBaixa
-                        dataToFilter = ShortToFloat(
-                            PaissaBaixa.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, txPorCanal)
-                        );
-                    }
-                }
-                else if (highHertz.HasValue && highHertz.Value != 0)
-                {
-                    // Filtro PassaAlta
-                    dataToFilter = ShortToFloat(
-                        PaissaAlta.ApplyFilter(FloatToShort(dataToFilter), (float)highHertz.Value, txPorCanal)
-                    );
-                }
-
-                // Aplicar filtro Notch, se necessário
-                if (notchHertz.HasValue && notchHertz.Value != 0)
-                {
-                    dataToFilter = ShortToFloat(
-                        Notch.ApplyFilter(FloatToShort(dataToFilter), (float)notchHertz.Value, 10, txPorCanal)
-                    );
-                }
-
-                // Verificar se os tamanhos dos arrays são compatíveis antes de copiar
-                if (dataToFilter.Length <= endIndex)
-                {
-                    // Substituir a parte filtrada nos dados originais
-                    Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
-                }
-                else
-                {
-                    // Garantir que não ocorra exceção ao copiar
-                    Array.Copy(dataToFilter, 0, canalData, 0, endIndex);
-                }
-
-                // Atualizar os dados no GlobVar.matrizCanal
-                GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
-
-                // Atualizar a tela de plotagem, se necessário
-                if (lowHertz.HasValue || highHertz.HasValue || notchHertz.HasValue)
-                {
-                    Tela_Plotagem.UpdateBeforeLoad(ind + 1, lowHertz ?? 0, highHertz ?? 0, notchHertz ?? 0);
-                }
-
-                ind++;
-            }
-            
-            GlobVar.scale.Clear();
-            GlobVar.scale = new double[GlobVar.tbl_MontagemSelecionada.Rows.Count];
-            for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
-            {
-                float scala = (float)(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i)));
-                GlobVar.scale[i] = scala;
-            }
-
-        }*/
         public static short[] SetReferencia(int principal, int referencia)
         {
-            short[] novoArray = new short[GlobVar.matrizCanal.GetLength(1)];
-            short[] Sla = new short[novoArray.Length];
-            Sla = Referencia(referencia);            
-            if (Sla[0] == 0)
+            int numColunas = GlobVar.matrizCanal.GetLength(1);
+            short[] novoArray = new short[numColunas];
+            short[] sla = Referencia(referencia);
+
+            // Se o primeiro elemento for zero, retorna o novoArray vazio
+            if (sla[0] == 0)
             {
                 return novoArray;
             }
-            for (int i = 0; i < novoArray.Length; i++)
-            {
-                //Verifica se o numero de referencia e negativo para fazer o calculo
-                int aux = Sla[i];
-                if (aux < 0)
-                {
-                    aux *= 1;
-                }
-                novoArray[i] = (short)(GlobVar.matrizCanal[GlobVar.codSelected.IndexOf(principal), i] - aux);
-                if (i >= 100 * 512) { break; }
 
+            // Obtem o índice do canal principal uma vez, em vez de chamá-lo repetidamente dentro do loop
+            int indexPrincipal = GlobVar.codSelected.IndexOf(principal);
+
+            // Calcula o novoArray com a referência
+            for (int i = 0; i < numColunas && i < novoArray.Length; i++)
+            {
+                novoArray[i] = (short)(GlobVar.matrizCanal[indexPrincipal, i] - sla[i]);
             }
+
             return novoArray;
         }
+
         public static short[] Referencia(int codReferencia)
         {
-            // Tamanho do array referencia baseado no número de linhas na matrizCompleta
-            short[] referencia = new short[GlobVar.matrizCanal.GetLength(1)];
-            if (!GlobVar.codCanal.Contains(codReferencia))
+            int numColunas = GlobVar.matrizCanal.GetLength(1);
+            short[] referencia = new short[numColunas];
+
+            // Verifica se o código de referência existe
+            int indexCodReferencia = GlobVar.codCanal.IndexOf(codReferencia);
+            if (indexCodReferencia == -1)
             {
                 return referencia;
             }
-            // Encontra os índices de início e fim para a coluna com base em codReferencia
-            int startCol = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf(codReferencia)];
-            int endCol = GlobVar.ponteiroF[GlobVar.codCanal.IndexOf(codReferencia)];
 
-            // Percorre as linhas da matrizCompleta
-            for (int pontRef = 0; pontRef < referencia.Length;)
+            // Pega os índices de início e fim uma vez
+            int startCol = GlobVar.ponteiroI[indexCodReferencia];
+            int endCol = GlobVar.ponteiroF[indexCodReferencia];
+
+            // Copia os valores de matrizCompleta para o array referencia
+            int pontRef = 0;
+            for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0) && pontRef < numColunas; linhaComp++)
             {
-                // Percorre as colunas da matrizCompleta no intervalo especificado por startCol e endCol
-                for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
+                for (int colunaComp = startCol; colunaComp < endCol && pontRef < numColunas; colunaComp++)
                 {
-                    for (int colunaComp = startCol; colunaComp < endCol; colunaComp++)
-                    {
-                        // Copia o valor de matrizCompleta para o array linhaValores
-                        referencia[pontRef] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
-                        pontRef++;
-                    }
+                    referencia[pontRef++] = (short)GlobVar.matrizCompleta[linhaComp, colunaComp];
                 }
             }
+
             return referencia;
         }
         public static short[] RemoverMetadeParaFrente(short[] array, int vezes)

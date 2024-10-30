@@ -46,19 +46,18 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] data, float cutoffFrequency, float sampleRate)
         {
+            Tela_Plotagem.cronometroAlta.Start();
+
             //PaissaAlta alta = new PaissaAlta(cutoffFrequency, sampleRate);
 
-            cutoffFrequency = cutoffFrequency;
-            sampleRate = sampleRate;
             alpha = CalculateAlpha(cutoffFrequency, sampleRate);
             previousInput = 0.0f;
             previousOutput = 0.0f;
 
 
-            float[] outputData = new float[100 * 512];
+            float[] outputData = new float[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
-                if (i >= 100 * 512) { break; }
 
                 float output = alpha * (previousOutput + data[i] - previousInput);
                 previousInput = data[i];
@@ -68,6 +67,8 @@ namespace PlotagemOpenGL.Filtros
                 outputData[i] = output;
 
             }
+            Tela_Plotagem.cronometroAlta.Stop();
+
             return outputData;
         }
     }
