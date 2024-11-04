@@ -129,13 +129,13 @@ namespace PlotagemOpenGL.auxi
                     for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
                     {
                         // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                        for (int colunaComp = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp < GlobVar.ponteiroF[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp++)
+                        for (int colunaComp = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf((int)(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp < GlobVar.ponteiroF[GlobVar.codCanal.IndexOf((int)(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp++)
                         {
                             // Certifique-se de não exceder os limites da matrizCanais
                             if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
                             {
                                     // Copia o valor de matrizCompleta para matrizCanal
-                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linhaComp, colunaComp]);
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(GlobVar.matrizCompleta[linhaComp, colunaComp]);
                                 colunaCanalIndex++;
 
                             }
@@ -256,68 +256,58 @@ namespace PlotagemOpenGL.auxi
         public static void montagemSelecionadaAlterada()
         {
             int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
-            //int segmentLength = GlobVar.matrizCompleta.GetLength(1);
-            int segmentLength = 153600;
-
+            int segmentLength = 153600; // GlobVar.matrizCanal.GetLength(1);
 
             Tela_Plotagem.cronometro1.Reset();
             Tela_Plotagem.cronometro1.Start();
+
             // Paralelizar a cópia de dados para GlobVar.matrizCanal
             Parallel.For(0, rowCount, linhaCanais =>
             {
                 int colunaCanalIndex = 0;
                 int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
                 int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
-                if (canalIndex == -1)
-                {
-                    return;
-                }
+                if (canalIndex == -1) return;
+
+                int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
                 if (canal2Index == -1)
                 {
-                    int linha = 0;
-                    while(linha < GlobVar.matrizCompleta.GetLength(0))
+                    // Caso sem segundo canal
+                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                     {
-                        int colunaComp = GlobVar.ponteiroI[canalIndex];
-
-                        while (colunaComp < GlobVar.ponteiroF[canalIndex])
+                        int colunaComp = ponteiroI;
+                        while (colunaComp < ponteiroF)
                         {
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaComp]);
-
-                            // Incrementa os índices
+                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
                             colunaComp++;
                             colunaCanalIndex++;
-
                         }
-
-                        linha++;
                     }
                 }
                 else
                 {
-                    int linha = 0;
-                    while (linha < GlobVar.matrizCompleta.GetLength(0))
+                    // Caso com segundo canal
+                    int ponteiroI2 = GlobVar.ponteiroI[canal2Index];
+                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                     {
-                        int colunaCan2 = GlobVar.ponteiroI[canal2Index];
-                        int colunaComp = GlobVar.ponteiroI[canalIndex];
+                        int colunaComp = ponteiroI;
+                        int colunaCan2 = ponteiroI2;
 
-                        while (colunaComp < GlobVar.ponteiroF[canalIndex])
+                        while (colunaComp < ponteiroF)
                         {
-                            // Converte os valores das duas colunas e calcula a diferença
-                            int valorColunaComp = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaComp]);
-                            int valorColunaCan2 = Convert.ToInt16(GlobVar.matrizCompleta[linha, colunaCan2]);
+                            // Calcular a diferença entre valores das colunas de canais
+                            short valorColunaComp = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                            short valorColunaCan2 = (short)GlobVar.matrizCompleta[linha, colunaCan2];
 
-                            // Atribui a diferença na matriz de destino
+                            // Atribuir a diferença para a matriz de destino
                             GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
 
-                            // Incrementa os índices
                             colunaComp++;
                             colunaCan2++;
                             colunaCanalIndex++;
-
-                            // Interrompe o loop se o segmento máximo foi alcançado
                         }
-
-                        linha++;
                     }
                 }
             });
@@ -421,6 +411,8 @@ namespace PlotagemOpenGL.auxi
                 GlobVar.scale[i] = scala;
             });
         }
+
+
         public static short[] SetReferencia(int principal, int referencia)
         {
             int numColunas = GlobVar.matrizCanal.GetLength(1);

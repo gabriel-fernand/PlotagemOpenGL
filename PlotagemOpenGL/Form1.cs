@@ -1751,7 +1751,6 @@ namespace PlotagemOpenGL
                 await Task.Delay(2);
                 telaLoad.AtualizarProgresso(50);
 
-                //load();
                 canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
                 canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
@@ -1775,6 +1774,7 @@ namespace PlotagemOpenGL
 
             }
         }
+
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
         {
             string texto = qtdGraficos.Text;
