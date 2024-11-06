@@ -350,6 +350,8 @@ namespace PlotagemOpenGL
             timerAndaUmaPag = new Timer(components);
             timerVoltaUmaPag = new Timer(components);
             timerRetrocede = new Timer(components);
+            timerTrocaEvento = new Timer(components);
+
 
             timerClick = new Timer(components);
             timerComment = new Timer(components);
@@ -3656,6 +3658,11 @@ namespace PlotagemOpenGL
             toolTip1.InitialDelay = 1;
             toolTip1.IsBalloon = true;
             toolTip1.ReshowDelay = 1;
+            // 
+            // timer1
+            // 
+            timerTrocaEvento.Interval = 1;
+            timerTrocaEvento.Tick += timerTrocaEvento_Tick;
 
             // 
             // timer1
@@ -3778,6 +3785,7 @@ namespace PlotagemOpenGL
         public static Timer timerRetrocede;
 
         public static Timer timer1;
+        public static Timer timerTrocaEvento;
         public static Timer timer2;
         public static Timer timer3;
         public static Timer timerClick;

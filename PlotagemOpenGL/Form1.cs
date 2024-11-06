@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
+using System.Threading;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -1719,36 +1720,38 @@ namespace PlotagemOpenGL
             Play_OpenGl();
 
         }
+        string concluido = "";
+        private Task _backgroundTask;
+        private CancellationTokenSource _cancellationTokenSource;
+
         private async void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Verifica se o formulário já foi completamente carregado
-            if (!isInitialized)
+            if (!isInitialized || MontagemBox.SelectedIndex == -1)
                 return;
 
-            // Evita que o código seja executado caso o índice selecionado não tenha mudado
-            if (MontagemBox.SelectedIndex == -1)
-                return;
+            // Cancela a tarefa anterior sem aguardar a conclusão
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            var token = _cancellationTokenSource.Token;
 
-            // Mostra a tela de carregamento
             using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
             {
+                // Processo principal
                 cronometro4.Reset();
-
+                concluido = "";
                 cronometro4.Start();
                 telaLoad.Show();
                 telaLoad.label1.Text = "Alterando Montagem";
-                // Atualiza o progresso
-                await Task.Delay(10);
+                await Task.Delay(10, token);
                 telaLoad.AtualizarProgresso(10);
 
-                // Ideia para alterar a montagem que está selecionada, com a leitura e outras operações
                 int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
                 LeituraBanco.AlteraMontagem(CodMont);
                 telaLoad.AtualizarProgresso(25);
 
                 LeituraEmMatrizTeste.montagemSelecionadaAlterada();
                 LeituraEmMatrizTeste.referencias();
-                await Task.Delay(2);
+                await Task.Delay(2, token);
                 telaLoad.AtualizarProgresso(50);
 
                 canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
@@ -1757,21 +1760,42 @@ namespace PlotagemOpenGL
                 canais.RealocButton();
                 canais.PainelLb_Resize();
                 canais.reloc();
-                await Task.Delay(2);
+                await Task.Delay(2, token);
                 telaLoad.AtualizarProgresso(75);
 
                 UpdatePanelHeightInDataTable();
                 AjustarFonteDosLabels();
                 AjustarBotoesMinusEPlus();
-                await Task.Delay(2);
+                await Task.Delay(2, token);
                 telaLoad.AtualizarProgresso(90);
 
                 UpdateInicioTela();
                 TelaClearAndReload();
-                await Task.Delay(2);
+                await Task.Delay(2, token);
                 telaLoad.AtualizarProgresso(100);
                 cronometro4.Stop();
 
+                // Inicia uma nova tarefa em segundo plano, interrompida imediatamente se for cancelada
+                _backgroundTask = Task.Run(() =>
+                {
+                    try
+                    {
+                        // Verifica o token constantemente para cancelar rapidamente
+                        if (token.IsCancellationRequested)
+                            token.ThrowIfCancellationRequested();
+
+                        LeituraEmMatrizTeste.montagemSelecionadaAlteradaTudo(token);
+
+                        if (token.IsCancellationRequested)
+                            token.ThrowIfCancellationRequested();
+
+                        concluido = "Concluido";
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("A tarefa em segundo plano foi cancelada.");
+                    }
+                }, token);
             }
         }
 
@@ -8260,6 +8284,10 @@ namespace PlotagemOpenGL
         }
         public static int clickCount = 0;
         public static bool plotanu = false;
+
+        private void timerTrocaEvento_Tick(object sender, EventArgs e)
+        {
+        }
         private void timer3_Tick(object sender, EventArgs e)
         {
             if (isDrawing)
@@ -8271,7 +8299,7 @@ namespace PlotagemOpenGL
 
             Stringao.Text = $"Timer1: {cronometro1.Elapsed.ToString()} | Timer3: {cronometro3.Elapsed.ToString()} | TimerGeral: {cronometro4.Elapsed.ToString()} " +
                 $"| TimerBand: {cronometroBand.Elapsed.ToString()} | TimerBaixa: {cronometroBaixa.Elapsed.ToString()} | TimerAlta: {cronometroAlta.Elapsed.ToString()} | TimerNotch: {cronometroNotch.Elapsed.ToString()} " +
-                $"|  InicioY: {isThereAYStartComment} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
+                $"|  concluido: {concluido} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";
         }
     }
