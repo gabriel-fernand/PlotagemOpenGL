@@ -355,7 +355,6 @@ namespace PlotagemOpenGL
 
             GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-            if (camera.X > 0) hScrollBar1.Value = GlobVar.indice;
             foiencontradoumUltimo = false;
             foiencontradoumUltimo = false;
 
@@ -1546,8 +1545,10 @@ namespace PlotagemOpenGL
                 ReorderGrafSelectedCodSelectedAndScale();
                 TelaClearAndReload();
 
+                var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+                int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
 
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
+                hScrollBar1.Maximum = maximoPossivel;
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
                 click = true;
@@ -1721,6 +1722,7 @@ namespace PlotagemOpenGL
 
         }
         string concluido = "";
+        public static bool conc = true;
         private Task _backgroundTask;
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -1790,6 +1792,7 @@ namespace PlotagemOpenGL
                             token.ThrowIfCancellationRequested();
 
                         concluido = "Concluido";
+                        TelaClearAndReload();
                     }
                     catch (OperationCanceledException)
                     {
@@ -1849,8 +1852,6 @@ namespace PlotagemOpenGL
                 plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                 plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
 
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-                hScrollBar1.Refresh();
                 UpdateInicioTela();
                 click = true;
             }
@@ -1968,7 +1969,6 @@ namespace PlotagemOpenGL
                     {
                         if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1)) {
                             camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -1987,7 +1987,6 @@ namespace PlotagemOpenGL
                         if (GlobVar.indice > 0)
                         {
                             camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -2016,8 +2015,6 @@ namespace PlotagemOpenGL
 
                     int alturaTela = (int)openglControl1.Height;
                     TelaClearAndReload();
-                    hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-                    hScrollBar1.Refresh();
                     UpdateInicioTela();
                 }
             }
@@ -2331,7 +2328,6 @@ namespace PlotagemOpenGL
                                 {
 
                                     camera.X += GlobVar.namos;
-                                    if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
 
                                     GlobVar.indiceNumero += 8 * 1; //(int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED; // 8 * 1;
                                     GlobVar.maximaNumero += 8 * 1;
@@ -2367,7 +2363,6 @@ namespace PlotagemOpenGL
                                 {
 
                                     camera.X += GlobVar.namos;
-                                    if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
 
                                     GlobVar.indiceNumero += 8 * 1; //(int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED; // 8 * 1;
                                     GlobVar.maximaNumero += 8 * 1;
@@ -2872,7 +2867,6 @@ namespace PlotagemOpenGL
                                     {
                                         //lastMousePosition = e.Location;
                                         camera.X += GlobVar.namos;
-                                        if (camera.X > 0) hScrollBar1.Value += GlobVar.namos;
 
                                         GlobVar.indiceNumero += 8 * 1; //(int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED; // 8 * 1;
                                         GlobVar.maximaNumero += 8 * 1;
@@ -3422,6 +3416,7 @@ namespace PlotagemOpenGL
         private bool crtlAtivo = false;
         private bool telaMovi = false;
 
+
         //Comecando a mexer nos KeyDown para alterar os eventos, usar o KeyUp para "replotar a tela"
         private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
@@ -3452,6 +3447,14 @@ namespace PlotagemOpenGL
                             }
                         }
                     }
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
+
+                    int alturaTela = (int)openglControl1.Height;
+                    //gl.Translate(camera.X, 0, 1);
+                    TelaClearAndReload();
+                    UpdateInicioTela();
+
                 }
                 else
                 {
@@ -3473,12 +3476,10 @@ namespace PlotagemOpenGL
                             this.Close();
                             break;
 
-
                         case Keys.D:
                             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
                             {
                                 camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                                 GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -3499,7 +3500,6 @@ namespace PlotagemOpenGL
                             if (GlobVar.indice > 0)
                             {
                                 camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                                 GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                                 GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -3566,17 +3566,96 @@ namespace PlotagemOpenGL
                             MarcarR.PerformClick();
                             break;
                     }
-                }
-                foiencontradoumUltimo = false;
-                foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
+                    foiencontradoumUltimo = false;
 
-                int alturaTela = (int)openglControl1.Height;
-                //gl.Translate(camera.X, 0, 1);
-                TelaClearAndReload();
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-                hScrollBar1.Refresh();
-                UpdateInicioTela();
-                //Update();
+                    int alturaTela = (int)openglControl1.Height;
+                    //gl.Translate(camera.X, 0, 1);
+                    TelaClearAndReload();
+                    UpdateInicioTela();
+
+                }
+                switch (e.KeyData)
+                {
+                    case Keys.End:
+                        if (conc)
+                        {
+                            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+                            int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
+                            maximoPossivel = maximoPossivel / GlobVar.segundos - 1;
+
+                            ptsEmTela.Text = $"{maximoPossivel}";
+                            ptsEmTela.Focus();
+
+                            // Simula o pressionamento da tecla Enter
+                            var enterKeyEvent = new KeyEventArgs(Keys.Enter); // '\r' representa o Enter
+
+                            PtsEmTela_KeyDown(ptsEmTela, enterKeyEvent);
+
+                            // Remove o foco do TextBox e coloca no controle openglControl1
+                            openglControl1.Focus();
+                        }
+                        else
+                        {
+                            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
+                            int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
+                            LeituraEmMatrizTeste.Pause();
+                            LeituraEmMatrizTeste.CarregamentoMontagemRapido(1);
+                            maximoPossivel = maximoPossivel / GlobVar.segundos - 1;
+
+                            ptsEmTela.Text = $"{maximoPossivel}";
+                            ptsEmTela.Focus();
+
+                            // Simula o pressionamento da tecla Enter
+                            var enterKeyEvent = new KeyEventArgs(Keys.Enter); // '\r' representa o Enter
+
+                            PtsEmTela_KeyDown(ptsEmTela, enterKeyEvent);
+
+                            // Remove o foco do TextBox e coloca no controle openglControl1
+                            openglControl1.Focus();
+                            LeituraEmMatrizTeste.Resume();
+
+                        }
+                        break;
+
+                    case Keys.Home:
+                        if (conc)
+                        {
+                            int inicio = 0;
+
+                            ptsEmTela.Text = $"{inicio}";
+                            ptsEmTela.Focus();
+
+                            // Simula o pressionamento da tecla Enter
+                            var enterKeyEvent = new KeyEventArgs(Keys.Enter); // '\r' representa o Enter
+                            PtsEmTela_KeyDown(ptsEmTela, enterKeyEvent);
+
+                            // Remove o foco do TextBox e coloca no controle openglControl1
+                            openglControl1.Focus();
+                        }
+                        else
+                        {
+                            int inicio = 0;
+                            //pausar a task aqui
+                            LeituraEmMatrizTeste.Pause();
+                            LeituraEmMatrizTeste.CarregamentoMontagemRapido(0);
+
+                            ptsEmTela.Text = $"{inicio}";
+                            ptsEmTela.Focus();
+
+                            // Simula o pressionamento da tecla Enter
+                            var enterKeyEvent = new KeyEventArgs(Keys.Enter); // '\r' representa o Enter
+                            PtsEmTela_KeyDown(ptsEmTela, enterKeyEvent);
+
+                            // Remove o foco do TextBox e coloca no controle openglControl1
+                            openglControl1.Focus();
+                            //retomar a task aqui
+                            LeituraEmMatrizTeste.Resume();
+
+                        }
+                        break;
+                }
+
             }
             catch (Exception ex)
             {
@@ -3619,47 +3698,75 @@ namespace PlotagemOpenGL
             {
             }
         }
-
+        bool isScroll = false;
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             try
             {
-                //hScrollBar1.Value = (int)e.NewValue;
+                isScroll = true;
+                // Verifique se hScrollBar1.Value está atualizado
+                hScrollBar1.Value = (int)e.NewValue;
+
                 bool isRight = e.NewValue > hScrollBar1.Value;
+                int newLoc =  512;
+                int newLocNum =  8;
 
                 if (!isRight) // Se estiver indo para a esquerda
                 {
-                    camera.X -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                    GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                    GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    camera.X -= newLoc;
+                    GlobVar.indiceNumero -= newLocNum;
+                    GlobVar.maximaNumero -= newLocNum;
 
-                    GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                    GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.maximaVect -= newLoc;
+                    GlobVar.indice -= newLoc;
 
-                    GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                    GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    // Verifique se GlobVar.namos não é zero
+                    if (GlobVar.namos != 0)
+                    {
+                        GlobVar.inicioTela -= newLoc / GlobVar.namos;
+                        GlobVar.finalTela -= newLoc / GlobVar.namos;
+                    }
+                    if (GlobVar.indice < 0)
+                    {
+                        GlobVar.indice = 0;
+                        GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                        camera.X = 0;
+                    }
+                    if (GlobVar.indiceNumero < 0)
+                    {
+                        GlobVar.indiceNumero = 0;
+                        GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                    }
+
                 }
                 else // Se estiver indo para a direita
                 {
-                    camera.X += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                    GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
-                    GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    camera.X += newLoc;
+                    GlobVar.indiceNumero += newLocNum;
+                    GlobVar.maximaNumero += newLocNum;
 
-                    GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                    GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.maximaVect += newLoc;
+                    GlobVar.indice += newLoc;
 
-                    GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
-                    GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    // Verifique se GlobVar.namos não é zero
+                    if (GlobVar.namos != 0)
+                    {
+                        GlobVar.inicioTela += newLoc / GlobVar.namos;
+                        GlobVar.finalTela += newLoc / GlobVar.namos;
+                    }
                 }
-                foiencontradoumUltimo = false;
+
                 foiencontradoumUltimo = false;
 
                 int alturaTela = (int)openglControl1.Height;
+
                 TelaClearAndReload();
-                //gl.Translate(camera.X, 0, 1);
                 UpdateInicioTela();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro: " + ex.Message);
+            }
         }
 
         private void tempoEmTela_SelectedIndexChanged(object sender, EventArgs e)
@@ -3710,8 +3817,6 @@ namespace PlotagemOpenGL
                 }
             }*/
 
-            hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-            hScrollBar1.Refresh();
             UpdateInicioTela();
             TelaClearAndReload();
         }
@@ -3885,7 +3990,10 @@ namespace PlotagemOpenGL
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
             }
 
+
+            if(!isScroll) hScrollBar1.Value = GlobVar.indice / GlobVar.namos; isScroll = false;
             atualizaButAntProx();
+            openglControl1.Focus();
         }
 
         bool foiencontradoum = false;
@@ -3938,7 +4046,6 @@ namespace PlotagemOpenGL
                     int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                     camera.X = NovaLoc;
-                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                     camera.X = NovaLoc;
 
@@ -4010,7 +4117,6 @@ namespace PlotagemOpenGL
                     int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                     camera.X = NovaLoc;
-                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                     camera.X = NovaLoc;
 
@@ -4052,7 +4158,6 @@ namespace PlotagemOpenGL
                     int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                     camera.X = NovaLoc;
-                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                     camera.X = NovaLoc;
 
@@ -4102,7 +4207,6 @@ namespace PlotagemOpenGL
                     int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                     camera.X = NovaLoc;
-                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                     camera.X = NovaLoc;
 
@@ -4153,7 +4257,6 @@ namespace PlotagemOpenGL
                     int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                     camera.X = NovaLoc;
-                    if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                     camera.X = NovaLoc;
 
@@ -4208,7 +4311,6 @@ namespace PlotagemOpenGL
                 int NovaLocNumerico = GlobVar.numeroAmos * proxPag * GlobVar.segundos;
 
                 camera.X = NovaLoc;
-                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                 camera.X = NovaLoc;
 
@@ -4826,7 +4928,6 @@ namespace PlotagemOpenGL
 
                 // Resto do código permanece o mesmo
                 camera.X += GlobVar.saltoTelas;
-                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas;
 
                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico;
                 GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico;
@@ -4881,7 +4982,6 @@ namespace PlotagemOpenGL
                 int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
 
                 camera.X = NovaLoc;
-                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                 camera.X = NovaLoc;
 
@@ -4924,7 +5024,6 @@ namespace PlotagemOpenGL
                 int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
 
                 camera.X = NovaLoc;
-                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                 camera.X = NovaLoc;
 
@@ -4983,7 +5082,6 @@ namespace PlotagemOpenGL
                 int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
 
                 camera.X = NovaLoc;
-                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                 camera.X = NovaLoc;
 
@@ -5025,7 +5123,6 @@ namespace PlotagemOpenGL
                 int NovaLocNumerico = GlobVar.numeroAmos * startNovoEstagio;
 
                 camera.X = NovaLoc;
-                if (camera.X > 0) hScrollBar1.Value = (int)NovaLoc;
 
                 camera.X = NovaLoc;
 
@@ -5054,7 +5151,6 @@ namespace PlotagemOpenGL
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
                 camera.X += GlobVar.saltoTelas * escolha;
-                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)escolha;
 
                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
                 GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
@@ -5080,7 +5176,6 @@ namespace PlotagemOpenGL
                     int AndaUmSegundoNumerico = GlobVar.numeroAmos * vezesAndar;
 
                     camera.X += AndarUmSegundo * escolha;
-                    if (camera.X > 0) hScrollBar1.Value += (int)AndarUmSegundo;
 
                     GlobVar.indiceNumero += (int)AndaUmSegundoNumerico;
                     GlobVar.maximaNumero += (int)AndaUmSegundoNumerico;
@@ -5110,7 +5205,6 @@ namespace PlotagemOpenGL
             if (GlobVar.indice > 0)
             {
                 camera.X -= GlobVar.saltoTelas * escolha;
-                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)escolha;
 
                 GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
                 GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)escolha;
@@ -5141,8 +5235,6 @@ namespace PlotagemOpenGL
                 foiencontradoumUltimo = false;
 
                 TelaClearAndReload();
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-                hScrollBar1.Refresh();
                 UpdateInicioTela();
             }
             if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
@@ -5155,7 +5247,6 @@ namespace PlotagemOpenGL
                     int VoltaUmSegundoNumerico = GlobVar.numeroAmos * vezesAndar;
 
                     camera.X -= VoltaUmSegundo;
-                    if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo;
 
                     GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico ;
                     GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico;
@@ -5225,7 +5316,6 @@ namespace PlotagemOpenGL
             if (GlobVar.indice > 0)
             {
                 camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                 GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -5268,7 +5358,6 @@ namespace PlotagemOpenGL
                 int VoltaUmSegundoNumerico = GlobVar.numeroAmos * 1;
 
                 camera.X -= VoltaUmSegundo * GlobVar.SPEED;
-                if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
 
                 GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
@@ -5310,7 +5399,6 @@ namespace PlotagemOpenGL
                 int AndarUmSegundo = GlobVar.namos * 1;
                 int AndaUmSegundoNumerico = GlobVar.numeroAmos * 1;
                 camera.X += AndarUmSegundo * GlobVar.SPEED;
-                if (camera.X > 0) hScrollBar1.Value += AndarUmSegundo * (int)GlobVar.SPEED;
 
                 GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
@@ -5332,7 +5420,6 @@ namespace PlotagemOpenGL
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
                 camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -5470,7 +5557,6 @@ namespace PlotagemOpenGL
                         if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
                         {
                             camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0) hScrollBar1.Value += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -5532,7 +5618,6 @@ namespace PlotagemOpenGL
                         if (GlobVar.indice > 0)
                         {
                             camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
-                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -5614,7 +5699,6 @@ namespace PlotagemOpenGL
                             int VoltaUmSegundoNumerico = GlobVar.numeroAmos * 1;
 
                             camera.X -= VoltaUmSegundo * GlobVar.SPEED;
-                            if (camera.X > 0 && hScrollBar1.Value != 0) hScrollBar1.Value -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico * (int)GlobVar.SPEED;
@@ -5696,7 +5780,6 @@ namespace PlotagemOpenGL
                             int AndarUmSegundo = GlobVar.namos * 1;
                             int AndaUmSegundoNumerico = GlobVar.numeroAmos * 1;
                             camera.X += AndarUmSegundo * GlobVar.SPEED;
-                            if (camera.X > 0) hScrollBar1.Value += AndarUmSegundo * (int)GlobVar.SPEED;
 
                             GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
@@ -5838,14 +5921,12 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-                if (camera.X > 0) hScrollBar1.Value = GlobVar.indice;
                 foiencontradoumUltimo = false;
                 foiencontradoumUltimo = false;
 
                 int alturaTela = (int)openglControl1.Height;
                 //gl.Translate(camera.X, 0, 1);
                 TelaClearAndReload();
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
             }
@@ -5892,8 +5973,6 @@ namespace PlotagemOpenGL
                 gl.LoadIdentity();
                 gl.Translate(0, 0, 1);
 
-                hScrollBar1.Maximum = (GlobVar.matrizCanal.GetLength(1));
-                hScrollBar1.Refresh();
                 //UpdateInicioTela();
                 click = true;
             }

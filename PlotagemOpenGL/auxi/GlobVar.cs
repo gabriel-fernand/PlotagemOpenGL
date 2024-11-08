@@ -24,7 +24,7 @@ namespace PlotagemOpenGL.auxi
         public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
         public static string configBD = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
         public static string cabecalho;
-        public static int npagin;
+        public static int npagin; 
         public static string npag;
         public static string tipocanais;
         public static int amos;
@@ -35,6 +35,9 @@ namespace PlotagemOpenGL.auxi
         public static int numeroAmos = 8;
         public static int indiceDat = 0;
         public static int[] FundoColor;
+        public static int LastRowLoaded;
+        public static bool MatrizCompleta;
+        public static bool FiltroCompleto;
 
         public static string diretorioEstagioAtual0 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN0Select.png";
         public static string diretorioEstagioAtual1 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN1Select.png";
