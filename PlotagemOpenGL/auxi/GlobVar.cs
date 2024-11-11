@@ -38,6 +38,7 @@ namespace PlotagemOpenGL.auxi
         public static int LastRowLoaded;
         public static bool MatrizCompleta;
         public static bool FiltroCompleto;
+        public static int areaCarregadaAltMont;
 
         public static string diretorioEstagioAtual0 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN0Select.png";
         public static string diretorioEstagioAtual1 = @"C:\Users\dev_i\source\repos\PlotagemOpenGL\PlotagemOpenGL\Incones\Icones\IcoNumericos\IcoN1Select.png";

@@ -367,6 +367,7 @@ namespace PlotagemOpenGL.auxi
             int startLength = GlobVar.indice;
             int segmentLength = 512 * 600; // GlobVar.matrizCanal.GetLength(1);
             int ln = startLength / GlobVar.namos;
+            GlobVar.areaCarregadaAltMont = startLength + segmentLength;
 
 
             Tela_Plotagem.cronometro1.Reset();
@@ -690,7 +691,7 @@ namespace PlotagemOpenGL.auxi
                     GlobVar.LastRowLoaded++;
 
             }
-
+                GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
                 GlobVar.FiltroCompleto = true;
                 Tela_Plotagem.conc = true;
 
@@ -705,13 +706,14 @@ namespace PlotagemOpenGL.auxi
         public static void Resume() => _pauseEvent.Set();
 
 
-        public static void CarregamentoMontagemRapido(int iniFim)
+        public static async Task CarregamentoMontagemRapido(int iniFim, int areaCarregar = 0)
         {
 
             int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
             int startLength = GlobVar.indice;
-            int segmentLength = iniFim == 0 ? 512 * 300 : GlobVar.matrizCanal.GetLength(1) - (512 * 300); // GlobVar.matrizCanal.GetLength(1);
+            int segmentLength = iniFim == 0 ? 512 * 300 : iniFim == 1 ? GlobVar.matrizCanal.GetLength(1) - (512 * 300) : areaCarregar - GlobVar.indice; ; // GlobVar.matrizCanal.GetLength(1);
             int ln = startLength / GlobVar.namos;
+            GlobVar.areaCarregadaAltMont = startLength + segmentLength;
 
 
             if (!GlobVar.MatrizCompleta)
@@ -802,8 +804,11 @@ namespace PlotagemOpenGL.auxi
                         var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
                         int txPorCanal = GlobVar.txPorCanal[canalIndex];
 
-                        int skipLength = ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
-                        int startFiltLength = ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
+                        int skipLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
+                        int startFiltLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
+
+                        skipLength = skipLength < 0 ? 0 : skipLength;
+                        startFiltLength = startFiltLength < 0 ? 0 : startFiltLength;
 
                         int endIndex = Math.Min(segmentLength, canalData.Length);
                         var dataToFilter = canalData.Skip(skipLength).Take(endIndex - startFiltLength).ToArray();

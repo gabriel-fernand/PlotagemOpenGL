@@ -36,6 +36,9 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
 using System.Threading;
+using DragEventArgs = System.Windows.Forms.DragEventArgs;
+using DataFormats = System.Windows.Forms.DataFormats;
+using DragDropEffects = System.Windows.Forms.DragDropEffects;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -319,6 +322,7 @@ namespace PlotagemOpenGL
                 abreUltimaPaginaFechada();
             }
             this.FormClosing += Tela_Plotagem_FormClosed;
+            GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
         }
         public void abreUltimaPaginaFechada()
         {
@@ -1549,6 +1553,7 @@ namespace PlotagemOpenGL
                 int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
 
                 hScrollBar1.Maximum = maximoPossivel;
+                hScrollBar1.LargeChange = GlobVar.segundos;
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
                 click = true;
@@ -1613,6 +1618,7 @@ namespace PlotagemOpenGL
 
             GlobVar.sizePainelExams.X = painelExames.Width;
             GlobVar.sizePainelExams.Y = painelExames.Height;
+            hScrollBar1.Width = painelExames.Width + openglControl1.Width;
         }
         private void Painel_resiz(object sender, EventArgs e)
         {
@@ -3418,7 +3424,7 @@ namespace PlotagemOpenGL
 
 
         //Comecando a mexer nos KeyDown para alterar os eventos, usar o KeyUp para "replotar a tela"
-        private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
+        private async void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown()
         {
@@ -3600,7 +3606,8 @@ namespace PlotagemOpenGL
                             var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
                             int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
                             LeituraEmMatrizTeste.Pause();
-                            LeituraEmMatrizTeste.CarregamentoMontagemRapido(1);
+                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(1);
+
                             maximoPossivel = maximoPossivel / GlobVar.segundos - 1;
 
                             ptsEmTela.Text = $"{maximoPossivel}";
@@ -3638,7 +3645,7 @@ namespace PlotagemOpenGL
                             int inicio = 0;
                             //pausar a task aqui
                             LeituraEmMatrizTeste.Pause();
-                            LeituraEmMatrizTeste.CarregamentoMontagemRapido(0);
+                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(0);
 
                             ptsEmTela.Text = $"{inicio}";
                             ptsEmTela.Focus();
@@ -3699,7 +3706,8 @@ namespace PlotagemOpenGL
             }
         }
         bool isScroll = false;
-        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        int lastScroll = 0;
+        private async void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             try
             {
@@ -3707,58 +3715,49 @@ namespace PlotagemOpenGL
                 // Verifique se hScrollBar1.Value está atualizado
                 hScrollBar1.Value = (int)e.NewValue;
 
-                bool isRight = e.NewValue > hScrollBar1.Value;
-                int newLoc =  512;
-                int newLocNum =  8;
-
-                if (!isRight) // Se estiver indo para a esquerda
+                bool isRight = e.NewValue > lastScroll;
+                bool isLeft = e.NewValue < lastScroll;
+                int newLoc =  512 * e.NewValue;
+                int newLocNum = 8 * e.NewValue;
+                if (!conc)
                 {
-                    camera.X -= newLoc;
-                    GlobVar.indiceNumero -= newLocNum;
-                    GlobVar.maximaNumero -= newLocNum;
-
-                    GlobVar.maximaVect -= newLoc;
-                    GlobVar.indice -= newLoc;
-
-                    // Verifique se GlobVar.namos não é zero
-                    if (GlobVar.namos != 0)
+                    if(newLoc > GlobVar.areaCarregadaAltMont && newLoc < GlobVar.indice)
                     {
-                        GlobVar.inicioTela -= newLoc / GlobVar.namos;
-                        GlobVar.finalTela -= newLoc / GlobVar.namos;
-                    }
-                    if (GlobVar.indice < 0)
-                    {
-                        GlobVar.indice = 0;
-                        GlobVar.maximaVect = (int)GlobVar.saltoTelas;
-                        camera.X = 0;
-                    }
-                    if (GlobVar.indiceNumero < 0)
-                    {
-                        GlobVar.indiceNumero = 0;
-                        GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
-                    }
-
-                }
-                else // Se estiver indo para a direita
-                {
-                    camera.X += newLoc;
-                    GlobVar.indiceNumero += newLocNum;
-                    GlobVar.maximaNumero += newLocNum;
-
-                    GlobVar.maximaVect += newLoc;
-                    GlobVar.indice += newLoc;
-
-                    // Verifique se GlobVar.namos não é zero
-                    if (GlobVar.namos != 0)
-                    {
-                        GlobVar.inicioTela += newLoc / GlobVar.namos;
-                        GlobVar.finalTela += newLoc / GlobVar.namos;
+                        LeituraEmMatrizTeste.Pause();
+                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(2, newLoc);
+                        LeituraEmMatrizTeste.Resume();
                     }
                 }
+                camera.X = newLoc;
+                GlobVar.indiceNumero = newLocNum;
+                GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico); ;
+
+                GlobVar.indice = newLoc;
+                GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos); ;
+
+                // Verifique se GlobVar.namos não é zero
+                if (GlobVar.namos != 0)
+                {
+                    GlobVar.inicioTela = newLoc / GlobVar.namos;
+                    GlobVar.finalTela = newLoc / GlobVar.namos;
+                }
+                if (GlobVar.indice < 0)
+                {
+                    GlobVar.indice = 0;
+                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                    camera.X = 0;
+                }
+                if (GlobVar.indiceNumero < 0)
+                {
+                    GlobVar.indiceNumero = 0;
+                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                }
+                
 
                 foiencontradoumUltimo = false;
 
                 int alturaTela = (int)openglControl1.Height;
+                lastScroll = (int)e.NewValue;
 
                 TelaClearAndReload();
                 UpdateInicioTela();
@@ -3768,6 +3767,7 @@ namespace PlotagemOpenGL
                 Console.WriteLine("Erro: " + ex.Message);
             }
         }
+
 
         private void tempoEmTela_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -3783,10 +3783,6 @@ namespace PlotagemOpenGL
             GlobVar.saltoTelas = GlobVar.tmpEmTela;
 
             GlobVar.inicioTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
-            //if (GlobVar.segundos >= 120)
-            //{
-            //    GlobVar.maximaVect *= 10;
-            //}
             GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos + (int)GlobVar.inicioTela;
 
             GlobVar.tmpEmTelaNumerico = (GlobVar.namosNumerico * GlobVar.segundos);
@@ -3796,26 +3792,7 @@ namespace PlotagemOpenGL
             GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
 
-            /*
-            if(GlobVar.segundos >= 60){
-                foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
-                {
-                    if (Convert.ToInt16(rw["CodCanal1"]) == 67 || Convert.ToInt16(rw["CodCanal1"]) == 66)
-                    {
-                        rw["AutoEscala"] = false;
-                    }
-                }
-            }
-            else
-            {
-                foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
-                {
-                    if (Convert.ToInt16(rw["CodCanal1"]) == 67 || Convert.ToInt16(rw["CodCanal1"]) == 66)
-                    {
-                        rw["AutoEscala"] = false;
-                    }
-                }
-            }*/
+            hScrollBar1.LargeChange = GlobVar.segundos;
 
             UpdateInicioTela();
             TelaClearAndReload();
