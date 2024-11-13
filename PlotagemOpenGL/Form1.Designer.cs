@@ -412,7 +412,7 @@ namespace PlotagemOpenGL
                 inicioTela.TabIndex = 3;
                 inicioTela.Text = "00-00-00";
                 inicioTela.TextAlign = HorizontalAlignment.Center;
-                // 
+                //
                 // fimTela
                 // 
                 fimTela.Font = new System.Drawing.Font("Arial Narrow", 9F);

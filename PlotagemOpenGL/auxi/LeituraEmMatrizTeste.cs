@@ -454,11 +454,10 @@ namespace PlotagemOpenGL.auxi
             Tela_Plotagem.cronometroBaixa.Reset();
             Tela_Plotagem.cronometroAlta.Reset();
             Tela_Plotagem.cronometroNotch.Reset();
-
+            int ind = 0;
             // Aplicar filtros paralelamente
-            Parallel.For(0, rowCount, ind =>
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
             {
-                var row = GlobVar.tbl_MontagemSelecionada.Rows[ind];
                 int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
                 int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
 
@@ -473,17 +472,17 @@ namespace PlotagemOpenGL.auxi
 
                 if (lowHertz.HasValue || highHertz.HasValue || notchHertz.HasValue)
                 {
-                    
+
 
                     var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
                     int txPorCanal = GlobVar.txPorCanal[canalIndex];
                     segmentLength = txPorCanal * 600;
 
-                    int skipLength = ((startLength / GlobVar.namos ) / 30) * (int)txPorCanal;
-                    int startFiltLength = ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
+                    int skipLength = ((startLength / GlobVar.namos)) * (int)txPorCanal;
+                    int startFiltLength = ((startLength / GlobVar.namos)) * (int)txPorCanal;
 
                     int endIndex = Math.Min(segmentLength, canalData.Length);
-                    var dataToFilter = canalData.Skip(skipLength).Take(endIndex - startFiltLength).ToArray();
+                    var dataToFilter = canalData.Skip(skipLength).Take(endIndex).ToArray();
 
                     if (lowHertz.HasValue && lowHertz.Value != 0)
                     {
@@ -525,7 +524,7 @@ namespace PlotagemOpenGL.auxi
                         Tela_Plotagem.UpdateBeforeLoad(ind + 1, lowHertz ?? 0, highHertz ?? 0, notchHertz ?? 0);
                     }
                 }
-            });
+            }
             Tela_Plotagem.cronometro3.Stop();
 
             // Paralelizar a atualização do array GlobVar.scale
@@ -695,7 +694,7 @@ namespace PlotagemOpenGL.auxi
                 GlobVar.FiltroCompleto = true;
                 Tela_Plotagem.conc = true;
 
-                Tela_Plotagem.TelaClearAndReload();
+                //Tela_Plotagem.TelaClearAndReload();
             }
             catch { return; }
         }
@@ -706,12 +705,12 @@ namespace PlotagemOpenGL.auxi
         public static void Resume() => _pauseEvent.Set();
 
 
-        public static async Task CarregamentoMontagemRapido(int iniFim, int areaCarregar = 0)
+        public static async Task CarregamentoMontagemRapido(int iniFim, int areaCarregar)
         {
 
             int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
-            int startLength = GlobVar.indice;
-            int segmentLength = iniFim == 0 ? 512 * 300 : iniFim == 1 ? GlobVar.matrizCanal.GetLength(1) - (512 * 300) : areaCarregar - GlobVar.indice; ; // GlobVar.matrizCanal.GetLength(1);
+            int startLength = iniFim == 3 ? GlobVar.indice - (512 * 30) : GlobVar.indice;
+            int segmentLength = iniFim == 0 ? 512 * 300 : iniFim == 1 ? GlobVar.matrizCanal.GetLength(1) - (512 * 300) : iniFim == 2 ? areaCarregar - GlobVar.indice : 512 * 300; // GlobVar.matrizCanal.GetLength(1);
             int ln = startLength / GlobVar.namos;
             GlobVar.areaCarregadaAltMont = startLength + segmentLength;
 
@@ -776,7 +775,7 @@ namespace PlotagemOpenGL.auxi
                         }
                     }
                 });
-
+                GlobVar.LastRowLoaded = 0;
             }
             reorganize();
             if(!GlobVar.FiltroCompleto)
@@ -804,14 +803,14 @@ namespace PlotagemOpenGL.auxi
                         var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
                         int txPorCanal = GlobVar.txPorCanal[canalIndex];
 
-                        int skipLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
-                        int startFiltLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos) / 30) * (int)txPorCanal;
+                        int skipLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos)) * (int)txPorCanal;
+                        int startFiltLength = iniFim == 0 ? 0 : ((startLength / GlobVar.namos)) * (int)txPorCanal;
 
                         skipLength = skipLength < 0 ? 0 : skipLength;
                         startFiltLength = startFiltLength < 0 ? 0 : startFiltLength;
 
                         int endIndex = Math.Min(segmentLength, canalData.Length);
-                        var dataToFilter = canalData.Skip(skipLength).Take(endIndex - startFiltLength).ToArray();
+                        var dataToFilter = canalData.Skip(skipLength).Take(Math.Abs(endIndex)).ToArray();
 
                         if (lowHertz.HasValue && lowHertz.Value != 0)
                         {

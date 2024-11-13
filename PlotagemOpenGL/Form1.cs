@@ -1965,7 +1965,7 @@ namespace PlotagemOpenGL
                 System.Windows.MessageBox.Show(message);
             }
         }
-        private void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
+        private async void OpenglControl1_MouseWheel(object sender, MouseEventArgs e)
         {
             try
             {
@@ -1974,6 +1974,9 @@ namespace PlotagemOpenGL
                     if (e.Delta > 0)
                     {
                         if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1)) {
+
+
+
                             camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
 
                             GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -1992,6 +1995,16 @@ namespace PlotagemOpenGL
 
                         if (GlobVar.indice > 0)
                         {
+                            if (!conc)
+                            {
+                                int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                {
+                                    LeituraEmMatrizTeste.Pause();
+                                    await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                }
+                            }
+
                             camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
 
                             GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -2014,6 +2027,7 @@ namespace PlotagemOpenGL
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
+                            LeituraEmMatrizTeste.Resume();
                         }
                     }
                     foiencontradoumUltimo = false;
@@ -3505,6 +3519,16 @@ namespace PlotagemOpenGL
 
                             if (GlobVar.indice > 0)
                             {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+
                                 camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
 
                                 GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -3534,6 +3558,7 @@ namespace PlotagemOpenGL
                                 }
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
+                                if (!conc) LeituraEmMatrizTeste.Resume();
 
                             }
                             break;
@@ -3606,7 +3631,7 @@ namespace PlotagemOpenGL
                             var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
                             int maximoPossivel = Convert.ToInt32(lastRow["NumPag"]);
                             LeituraEmMatrizTeste.Pause();
-                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(1);
+                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(1,0);
 
                             maximoPossivel = maximoPossivel / GlobVar.segundos - 1;
 
@@ -3645,7 +3670,7 @@ namespace PlotagemOpenGL
                             int inicio = 0;
                             //pausar a task aqui
                             LeituraEmMatrizTeste.Pause();
-                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(0);
+                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(0,0);
 
                             ptsEmTela.Text = $"{inicio}";
                             ptsEmTela.Focus();
@@ -3721,7 +3746,7 @@ namespace PlotagemOpenGL
                 int newLocNum = 8 * e.NewValue;
                 if (!conc)
                 {
-                    if(newLoc > GlobVar.areaCarregadaAltMont && newLoc < GlobVar.indice)
+                    if(newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
                     {
                         LeituraEmMatrizTeste.Pause();
                         await LeituraEmMatrizTeste.CarregamentoMontagemRapido(2, newLoc);
@@ -4257,9 +4282,14 @@ namespace PlotagemOpenGL
 
         private void MenorSat_Click(object sender, EventArgs e)
         {
-            var DtDesprezar = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 100).CopyToDataTable();
+            DataTable DtDesprezar = new DataTable();
+            if (GlobVar.eventos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 100)){
+                DtDesprezar = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 100).CopyToDataTable();
+
+            }
             var numsDesprezar = new HashSet<int>(DtDesprezar.AsEnumerable()
-                                                .Select(row => row.Field<int>("NumPag")));
+                    .Select(row => row.Field<int>("NumPag")));
+
             int linhaSaturacao = GlobVar.codSelected.IndexOf(66); // A linha que você quer verificar
             int menorValor = 100; // Inicializa com o maior valor possível
             int posicaoMenorValor = -1; // Armazena a posição do menor valor
@@ -5861,7 +5891,7 @@ namespace PlotagemOpenGL
                 e.Handled = true;
             }
         }
-        private void PtsEmTela_KeyDown(object sender, KeyEventArgs e)
+        private async void PtsEmTela_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -5890,6 +5920,15 @@ namespace PlotagemOpenGL
                 ptsEmTela.Text = $"{telaPagText}";
 
                 int newloc = pagina * 30;
+                if (!conc)
+                {
+                    int newLoc = newloc * GlobVar.namos;
+                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                    {
+                        LeituraEmMatrizTeste.Pause();
+                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                    }
+                }
 
                 camera.X = newloc * GlobVar.namos;
 
@@ -5906,6 +5945,7 @@ namespace PlotagemOpenGL
                 TelaClearAndReload();
                 hScrollBar1.Refresh();
                 UpdateInicioTela();
+                LeituraEmMatrizTeste.Resume();
             }
         }
 
@@ -6651,27 +6691,29 @@ namespace PlotagemOpenGL
                     {
                         foreach(Label lb in pn.Controls.OfType<Label>())
                         {
-                            if (lb.Tag.Equals("min"))
-                            {
-                                lb.Show();
+                            if(lb.Tag != null){
+                                if (lb.Tag.Equals("min"))
+                                {
+                                    lb.Show();
 
 
-                                Point minLoc = new Point(0, 0);
+                                    Point minLoc = new Point(0, 0);
 
-                                minLoc.X = pn.Width - 30;
-                                minLoc.Y = pn.Height - 15;
+                                    minLoc.X = pn.Width - 30;
+                                    minLoc.Y = pn.Height - 15;
 
-                                lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
-                            }
-                            else if (lb.Tag.Equals("max"))
-                            {
-                                lb.Show();
-                                Point maxLoc = new Point(0, 0);
+                                    lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                                }
+                                else if (lb.Tag.Equals("max"))
+                                {
+                                    lb.Show();
+                                    Point maxLoc = new Point(0, 0);
 
-                                maxLoc.X = pn.Width - 30;
-                                maxLoc.Y = 1;
+                                    maxLoc.X = pn.Width - 30;
+                                    maxLoc.Y = 1;
 
-                                lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                                    lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                                }
                             }
                         }
                     }
@@ -6679,13 +6721,15 @@ namespace PlotagemOpenGL
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())
                         {
-                            if (lb.Tag.Equals("min"))
-                            {
-                                lb.Hide();
-                            }
-                            else if (lb.Tag.Equals("max"))
-                            {
-                                lb.Hide();
+                            if(lb.Tag != null){
+                                if (lb.Tag.Equals("min"))
+                                {
+                                    lb.Hide();
+                                }
+                                else if (lb.Tag.Equals("max"))
+                                {
+                                    lb.Hide();
+                                }
                             }
                         }
 
@@ -6833,27 +6877,29 @@ namespace PlotagemOpenGL
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())
                         {
-                            if (lb.Tag.Equals("min"))
-                            {
-                                lb.Show();
+                            if(lb.Tag != null){
+                                if (lb.Tag.Equals("min"))
+                                {
+                                    lb.Show();
 
 
-                                Point minLoc = new Point(0, 0);
+                                    Point minLoc = new Point(0, 0);
 
-                                minLoc.X = pn.Width - 30;
-                                minLoc.Y = pn.Height - 15;
+                                    minLoc.X = pn.Width - 30;
+                                    minLoc.Y = pn.Height - 15;
 
-                                lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
-                            }
-                            else if (lb.Tag.Equals("max"))
-                            {
-                                lb.Show();
-                                Point maxLoc = new Point(0, 0);
+                                    lb.Location = new System.Drawing.Point(minLoc.X, minLoc.Y);
+                                }
+                                else if (lb.Tag.Equals("max"))
+                                {
+                                    lb.Show();
+                                    Point maxLoc = new Point(0, 0);
 
-                                maxLoc.X = pn.Width - 30;
-                                maxLoc.Y = 1;
+                                    maxLoc.X = pn.Width - 30;
+                                    maxLoc.Y = 1;
 
-                                lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                                    lb.Location = new System.Drawing.Point(maxLoc.X, maxLoc.Y);
+                                }
                             }
                         }
                     }
@@ -6861,13 +6907,15 @@ namespace PlotagemOpenGL
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())
                         {
-                            if (lb.Tag.Equals("min"))
-                            {
-                                lb.Hide();
-                            }
-                            else if (lb.Tag.Equals("max"))
-                            {
-                                lb.Hide();
+                            if(lb.Tag != null){
+                                if (lb.Tag.Equals("min"))
+                                {
+                                    lb.Hide();
+                                }
+                                else if (lb.Tag.Equals("max"))
+                                {
+                                    lb.Hide();
+                                }
                             }
                         }
 
@@ -7085,7 +7133,7 @@ namespace PlotagemOpenGL
                             }
                             else
                             {
-                                HorizontalOuVertical.Text = "Alterar paraVertical";
+                                HorizontalOuVertical.Text = "Alterar para Vertical";
                             }
                         }
 
