@@ -21,7 +21,6 @@ using System.Data;
 using System.Linq;
 using PlotagemOpenGL.Filtros;
 using System.Diagnostics;
-using Input = UnityEngine.Input;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.auxi.FormComentario;
@@ -36,9 +35,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
 using System.Threading;
-using DragEventArgs = System.Windows.Forms.DragEventArgs;
-using DataFormats = System.Windows.Forms.DataFormats;
-using DragDropEffects = System.Windows.Forms.DragDropEffects;
+using System.Security.Policy;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -196,23 +193,11 @@ namespace PlotagemOpenGL
         [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
         static extern int LoadNvApi32();
 
-        private void InitializeDedicatedGraphics()
-        {
-            try
-            {
-                if (Environment.Is64BitProcess)
-                    LoadNvApi64();
-                else
-                    LoadNvApi32();
-            }
-            catch { } // will always fail since 'fake' entry point doesn't exists
-        }
-
+        private KeyChecker keyChecker;
 
         public Tela_Plotagem()
         {
             InitializeComponent();
-            InitializeDedicatedGraphics();
             LeitorDiretorio.LeituraDiretorio();
 
 
@@ -244,6 +229,7 @@ namespace PlotagemOpenGL
 
             GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
             openglControl1.Focus();
+            
             GlobVar.sizeOpenGl.X = openglControl1.Width;
             GlobVar.sizeOpenGl.Y = openglControl1.Height;
             GlobVar.sizePainelExams.X = painelExames.Width;
@@ -262,8 +248,8 @@ namespace PlotagemOpenGL
             GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
             resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
             GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1;
-
             load();
+
             camera.X = 0.0f;
             camera.Y = 0.0f;
             camera.Z = 1.0f;
@@ -310,19 +296,74 @@ namespace PlotagemOpenGL
                 }
             }
             toolTip1.SetToolTip(openglControl1, "Teste");
+            this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
             Play_OpenGl();
+            falsoClick();
             AjustarFonteDosLabels();
             AjustarBotoesMinusEPlus();
             InicializarButtonForm();
             timer3.Start();
             tempoEmTela.SelectedIndex = 5;
             isInitialized = true;
+
             if (GlobVar.ultimaPag != 0)
             {
                 abreUltimaPaginaFechada();
             }
             this.FormClosing += Tela_Plotagem_FormClosed;
             GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+        }
+
+
+        public void falsoClick()
+        {
+            keyChecker = new KeyChecker();
+
+            // Ação para a tecla Left
+            keyChecker.LeftKeyPressed += () =>
+            {
+                tecla = "Seta esquerda.";
+                // Adicione aqui a lógica para simular o clique no botão A
+                var enterKeyEvent = new KeyEventArgs(Keys.A); // '\r' representa o Enter
+
+                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                TelaClearAndReload();
+
+            };
+
+            // Ação para a tecla Right
+            keyChecker.RightKeyPressed += () =>
+            {
+                tecla = "Seta direita.";
+                // Adicione aqui a lógica para simular o clique no botão D
+                var enterKeyEvent = new KeyEventArgs(Keys.D); // '\r' representa o Enter
+
+                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                TelaClearAndReload();  
+            };
+            // Ação para a tecla Left
+            keyChecker.UpKeyPressed += () =>
+            {
+                tecla = "Seta esquerda.";
+                // Adicione aqui a lógica para simular o clique no botão A
+                var enterKeyEvent = new KeyEventArgs(Keys.W); // '\r' representa o Enter
+
+                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                TelaClearAndReload();
+
+            };
+
+            // Ação para a tecla Right
+            keyChecker.DownKeyPressed += () =>
+            {
+                tecla = "Seta direita.";
+                // Adicione aqui a lógica para simular o clique no botão D
+                var enterKeyEvent = new KeyEventArgs(Keys.S); // '\r' representa o Enter
+
+                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                TelaClearAndReload();
+            };
+
         }
         public void abreUltimaPaginaFechada()
         {
@@ -400,6 +441,7 @@ namespace PlotagemOpenGL
                     transaction.Rollback();
                 }
             }
+            keyChecker.Stop();
         }
 
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
@@ -1863,12 +1905,6 @@ namespace PlotagemOpenGL
             }
         }
 
-        private void Tela_Plotagem_Load(object sender, EventArgs e)
-        {
-            openglControl1.Focus();
-
-
-        }
 
         public static bool isDrawing = false;
         public static bool isDrawingRectangle = false;
@@ -1879,18 +1915,22 @@ namespace PlotagemOpenGL
         //Metodo que faz a plotagem, e a replotagem quando precisa
         public static void TelaClearAndReload()
         {
-            openglControl1.DoRender();
-            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-            //plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            if (openglControl1.InvokeRequired)
+            {
+                openglControl1.Invoke(new Action(TelaClearAndReload));
+                return;
+            }
 
+            openglControl1.DoRender();
+
+            // Realize as operações gráficas no thread principal
+            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotComentatios.DesenhaComentario(gl);
             plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-
-            //plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc); - Metodo para escrever o Bom Dia e os tipos de eventos aonde o evento esta localizado.
         }
 
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
@@ -3437,6 +3477,45 @@ namespace PlotagemOpenGL
         private bool telaMovi = false;
 
 
+        public string tecla = "";
+
+        private Keys SimularCliqueBotao(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Left:
+                    // Simula o clique no botão A
+                    return Keys.A;
+                    break;
+
+                case Keys.Right:
+                    // Simula o clique no botão D
+                    return Keys.D;
+                    break;
+                default:
+                    return Keys.None;
+                    break;
+            }
+        }
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            SimularCliqueBotao(e.KeyCode);
+
+            // Continue chamando o método TelaPlotagem_KeyDown para o resto da lógica
+            TelaPlotagem_KeyDown(sender, e);
+        }
+        private void BotaoA_Click(object sender, EventArgs e)
+        {
+            // Lógica para o botão A
+            Console.WriteLine("Botão A clicado!");
+        }
+
+        private void BotaoD_Click(object sender, EventArgs e)
+        {
+            // Lógica para o botão D
+            Console.WriteLine("Botão D clicado!");
+        }
+
         //Comecando a mexer nos KeyDown para alterar os eventos, usar o KeyUp para "replotar a tela"
         private async void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
@@ -3444,7 +3523,7 @@ namespace PlotagemOpenGL
         {
             try
             {
-
+                //tecla = e.KeyCode.ToString();
                 if (isAnEvent || isAnEndEvent || isAnStartEvent)
                 {
                     if (e.KeyValue == 46)
@@ -3482,23 +3561,120 @@ namespace PlotagemOpenGL
                     {
                         crtlAtivo = true;
                     }
-                    if (e.KeyValue == 37)
-                    {
-                        this.Close();
-                    }
                     switch (e.KeyData)
                     {
-                        case Keys.Left:
-                            this.Close();
-                            break;
-
                         case Keys.Escape:
                             this.Close();
                             break;
 
+                        case Keys.W:
+                            if (GlobVar.indice > 0)
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.namos;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+                                camera.X -= GlobVar.namos * GlobVar.SPEED;
+                                GlobVar.indiceNumero -= (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.namosNumerico;
+                                }
+
+                                GlobVar.maximaVect -= (int)GlobVar.namos * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                                if (GlobVar.indice < 0)
+                                {
+                                    GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.namos;
+                                    camera.X = 0;
+                                }
+
+                                GlobVar.inicioTela -= ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.namos / (int)GlobVar.namos;
+                                }
+                                if (!conc) LeituraEmMatrizTeste.Resume();
+
+                            }
+                                break;
+                        case Keys.S:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
+                                camera.X += GlobVar.namos * GlobVar.SPEED;
+                                GlobVar.indiceNumero += (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.namos * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                LeituraEmMatrizTeste.Resume();
+
+                            }
+
+                            break;
                         case Keys.D:
                             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
                             {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
+                                camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                LeituraEmMatrizTeste.Resume();
+
+                            }
+                            break;
+                        case Keys.PageDown:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
                                 camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
 
                                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
@@ -3511,12 +3687,53 @@ namespace PlotagemOpenGL
                                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
-
+                                LeituraEmMatrizTeste.Resume();
                             }
 
                             break;
                         case Keys.A:
+                            if (GlobVar.indice > 0)
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+                                camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                                }
 
+                                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                if (GlobVar.indice < 0)
+                                {
+                                    GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                                    camera.X = 0;
+                                }
+
+                                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                                }
+                                if (!conc) LeituraEmMatrizTeste.Resume();
+
+                            }
+                            break;
+                        case Keys.PageUp:
                             if (GlobVar.indice > 0)
                             {
                                 if (!conc)
@@ -3562,7 +3779,6 @@ namespace PlotagemOpenGL
 
                             }
                             break;
-
                         case Keys.NumPad0:
                             Marcar0.PerformClick();
                             break;
@@ -3625,6 +3841,7 @@ namespace PlotagemOpenGL
 
                             // Remove o foco do TextBox e coloca no controle openglControl1
                             openglControl1.Focus();
+                            
                         }
                         else
                         {
@@ -3645,6 +3862,7 @@ namespace PlotagemOpenGL
 
                             // Remove o foco do TextBox e coloca no controle openglControl1
                             openglControl1.Focus();
+                            
                             LeituraEmMatrizTeste.Resume();
 
                         }
@@ -3664,6 +3882,7 @@ namespace PlotagemOpenGL
 
                             // Remove o foco do TextBox e coloca no controle openglControl1
                             openglControl1.Focus();
+                            
                         }
                         else
                         {
@@ -3683,11 +3902,11 @@ namespace PlotagemOpenGL
                             openglControl1.Focus();
                             //retomar a task aqui
                             LeituraEmMatrizTeste.Resume();
+                            
 
                         }
                         break;
                 }
-
             }
             catch (Exception ex)
             {
@@ -3731,6 +3950,7 @@ namespace PlotagemOpenGL
             }
         }
         bool isScroll = false;
+        bool notClick = false;
         int lastScroll = 0;
         private async void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
@@ -3885,16 +4105,20 @@ namespace PlotagemOpenGL
 
         public void UpdateInicioTela()
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(UpdateInicioTela));
+                return;
+            }
 
             string nome = GlobVar.tbl_DadosExame.Rows[0]["Nome"].ToString();
             string sexo = $"({GlobVar.tbl_DadosExame.Rows[0]["Sexo"].ToString()})";
             string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"]} anos";
             string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"].ToString()}m";
-            string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0,10);
+            string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0, 10);
             string arquivo = $"{GlobVar.textFile.Substring(32, 12)}";
 
             this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}";
-
 
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
             int inicio = (GlobVar.indice / GlobVar.namos);
@@ -3902,100 +4126,62 @@ namespace PlotagemOpenGL
             string horasI = tempo.Hours.ToString().PadLeft(2, '0');
             string minutosI = tempo.Minutes.ToString().PadLeft(2, '0');
             string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
-            //FimTela e aonde esta mostrando o tempo em que o exame esta mostrando
+
+            // Atualização de controles com segurança de thread
             fimTela.Text = $"{horasI}:{minutosI}:{segundosI}";
 
-            if (GlobVar.segundos != 30)
-            {
-                PainelMarca.Enabled = false;
-            }
-            else
-            {
-                if (Convert.ToInt16(segundosI) != 30 && Convert.ToInt16(segundosI) != 0)
-                {
-                    PainelMarca.Enabled = false;
-                }
-                else
-                {
-                    PainelMarca.Enabled = true;
-                }
-            }
+            PainelMarca.Enabled = GlobVar.segundos == 30 &&
+                                  (Convert.ToInt16(segundosI) == 30 || Convert.ToInt16(segundosI) == 0);
 
-            //inicioTela vai ser o que vai mostrar a hora em que o aquele momento que esta na tela aconteceu
-            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == paginaCoerente);
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(r => r.Field<int>("NumPag") == paginaCoerente);
             string horario = row["Horario"].ToString();
             inicioTela.Text = $"{horario.Substring(11)}";
 
-            //ptsEmTela vai ser usado para mostrar a pagina que esta, e tambem usado para mudar a pagina
             int pagina = paginaCoerente / 30;
-            string telaPagText = "000";
-            if (pagina >= 10)
-            {
-                telaPagText = $"0{pagina}";
-            }
-            else if (pagina >= 100)
-            {
-                telaPagText = $"{pagina}";
-            }
-            else
-            {
-                telaPagText = $"00{pagina}";
-            }
+            string telaPagText = pagina.ToString("D3");
             ptsEmTela.Text = $"{telaPagText}";
-
 
             int indexLabel = 0;
             for (int i = 1; i <= GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
-                FieldInfo Label = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
-                if (Label != null)
+                FieldInfo labelInfo = typeof(Tela_Plotagem).GetField($"scalaLb{i}", BindingFlags.Static | BindingFlags.Public);
+                if (labelInfo != null)
                 {
-                    Label lb = (Label)Label.GetValue(this);
-                    if (lb != null)
+                    Label label = (Label)labelInfo.GetValue(this);
+                    if (label != null)
                     {
-                        lb.Text = GlobVar.tbl_MontagemSelecionada.Rows[indexLabel]["AmplitudeMin"].ToString() + "μV";
+                        label.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows[indexLabel]["AmplitudeMin"]}μV";
                         indexLabel++;
                     }
                 }
             }
 
-            int estagioatual = Convert.ToInt16(row["Estagio"]);
+            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            Atual.BackgroundImage = GetEstagioImage(estagioAtual);
+            Atual.BackgroundImageLayout = ImageLayout.Stretch;
 
-            if (estagioatual == 0)
+            if (!isScroll)
             {
-                estagioatutxt = "0";
-                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual0);
-                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                isScroll = false;
             }
-            else if (estagioatual == 1)
-            {
-                estagioatutxt = "1";
-                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual1);
-                Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            }
-            else if (estagioatual == 2)
-            {
-                estagioatutxt = "2";
-                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual2);
-                Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            }
-            else if (estagioatual == 3)
-            {
-                estagioatutxt = "3";
-                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtual3);
-                Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            }
-            else if (estagioatual == 5)
-            {
-                estagioatutxt = "R";
-                Atual.BackgroundImage = System.Drawing.Image.FromFile(GlobVar.diretorioEstagioAtualR);
-                Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            }
-
-
-            if(!isScroll) hScrollBar1.Value = GlobVar.indice / GlobVar.namos; isScroll = false;
             atualizaButAntProx();
             openglControl1.Focus();
+        }
+
+        private Image GetEstagioImage(int estagioAtual)
+        {
+            string path = estagioAtual switch
+            {
+                0 => GlobVar.diretorioEstagioAtual0,
+                1 => GlobVar.diretorioEstagioAtual1,
+                2 => GlobVar.diretorioEstagioAtual2,
+                3 => GlobVar.diretorioEstagioAtual3,
+                5 => GlobVar.diretorioEstagioAtualR,
+                _ => null
+            };
+
+            return path != null ? Image.FromFile(path) : null;
         }
 
         bool foiencontradoum = false;
@@ -8389,9 +8575,6 @@ namespace PlotagemOpenGL
         public static int clickCount = 0;
         public static bool plotanu = false;
 
-        private void timerTrocaEvento_Tick(object sender, EventArgs e)
-        {
-        }
         private void timer3_Tick(object sender, EventArgs e)
         {
             if (isDrawing)
@@ -8403,7 +8586,7 @@ namespace PlotagemOpenGL
 
             Stringao.Text = $"Timer1: {cronometro1.Elapsed.ToString()} | Timer3: {cronometro3.Elapsed.ToString()} | TimerGeral: {cronometro4.Elapsed.ToString()} " +
                 $"| TimerBand: {cronometroBand.Elapsed.ToString()} | TimerBaixa: {cronometroBaixa.Elapsed.ToString()} | TimerAlta: {cronometroAlta.Elapsed.ToString()} | TimerNotch: {cronometroNotch.Elapsed.ToString()} " +
-                $"|  concluido: {concluido} | FimY: {isThereAYEndComment} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
+                $"|  concluido: {concluido} | Tecla: {tecla} | Bd: {isA_BN_CPAP_BD}| Contador: {clickCount} | XiYi: {GlobVar.XiYi} " +
                 $"| XfYf: {GlobVar.XfYf} | X0Y0: {isThereX0Y0Comment}  | X0Y1: {isThereX0Y1Comment} | X1Y0: {isThereX1Y0Comment} | X1Y1: {isThereX1Y1Comment}| EUmComentario: {isThereAComment}";
         }
     }

@@ -540,6 +540,7 @@ namespace PlotagemOpenGL
                 openglControl1.Scroll += hScrollBar1_Scroll;
                 openglControl1.KeyDown += TelaPlotagem_KeyDown;
                 openglControl1.KeyUp += TelaPlotagem_KeyUp;
+                //openglControl1.KeyPress
                 openglControl1.MouseDown += OpenGLControl_MouseDown;
                 openglControl1.MouseHover += OpenglControl1_MouseHover;
                 openglControl1.MouseMove += OpenGLControl_MouseMove;
@@ -3699,7 +3700,6 @@ namespace PlotagemOpenGL
                 StartPosition = FormStartPosition.CenterScreen;
                 Text = "Tela_Plotagem";
                 WindowState = FormWindowState.Maximized;
-                Load += Tela_Plotagem_Load;
                 ResizeBegin += Tela_Plotagem_ResizeBegin;
                 ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
                 contextMenuStripOpenGl.ResumeLayout(false);
@@ -3765,6 +3765,7 @@ namespace PlotagemOpenGL
                 ResumeLayout(false);
             }
         }
+
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
