@@ -19,7 +19,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             this.FormBorderStyle = FormBorderStyle.FixedSingle; // Define o estilo da borda como fixo
             this.MaximizeBox = false; // Desativa o botão de maximizar
             CarregarDadosPaginacao();
-            CarregarArquivosDiretorio(@"C:\Users\dev_i\source\repos\Dat\", $"{GlobVar.textFile.Substring(32, 8)}_tela");
+            CarregarArquivosDiretorio(@"C:\Temp\Dat\", $"{GlobVar.textFile.Substring(12, 8)}_tela");
         }
 
         private void CarregarDadosPaginacao()

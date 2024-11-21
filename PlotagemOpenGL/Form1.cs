@@ -196,132 +196,141 @@ namespace PlotagemOpenGL
         public FormVideo telinha;
         public Tela_Plotagem()
         {
-            InitializeComponent();
-            LeitorDiretorio.LeituraDiretorio();
-
-
-            LeituraBanco.BancoRead();
-            LeituraBanco.AlteraTable();
-            LeituraBanco.AjustaMontagem();
-            //Canais.LerCanais();
-            //Leitura.LerArquivo();           
-            Leitura.QuantidadeCanais();
-            //Leitura.LeituraDat();
-            LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
-
-            LeituraEmMatrizTeste.LeituraDat();
-            LeituraEmMatrizTeste.referencias();
-            SetStyle(ControlStyles.DoubleBuffer, true);
-            rectangleLoad();
-            this.Resize += Tela_Plotagem_Resiz;
-            this.Resize += painelComando_Resiz;
-            this.Resize += Painel_resiz;
-            this.Resize += panelLb_Resiz;
-            this.Controls.Add(openglControl1);
-            painelExames.Paint += painelExames_Paint;
-            toolTip1 = new CustomToolTip();
-            formOriginalSize = this.Size;
-            painelOriginalSize = painelExames.Size;
-            painelComandoOriginalSize = painelComando.Size;
-            UpdateStyles();
-            qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
-
-            GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
-            openglControl1.Focus();
-            
-            GlobVar.sizeOpenGl.X = openglControl1.Width;
-            GlobVar.sizeOpenGl.Y = openglControl1.Height;
-            GlobVar.sizePainelExams.X = painelExames.Width;
-            GlobVar.sizePainelExams.Y = painelExames.Height;
-
-            GlobVar.sizeButtons.X = plusLb1.Width;
-            GlobVar.sizeButtons.Y = plusLb1.Height;
-            GlobVar.sizeLabelExams.X = label1.Width;
-            GlobVar.sizeLabelExams.Y = label1.Height;
-            GlobVar.sizePanelLb.X = panel1.Width;
-            GlobVar.sizePanelLb.Y = panel1.Height;
-
-            GlobVar.locBut.X = plusLb1.Location.X;
-            GlobVar.locScale.X = scalaLb1.Location.X;
-            GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
-            GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
-            resources = new System.ComponentModel.ComponentResourceManager(typeof(Tela_Plotagem));
-            GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1;
-            load();
-
-            camera.X = 0.0f;
-            camera.Y = 0.0f;
-            camera.Z = 1.0f;
-            velocidadeScroll.SelectedIndex = 0;
-            stopwatch = new Stopwatch();
-            this.MouseUp += Form1_MouseUp;
-            this.MouseMove += openglControl1_MouseMove;
-            painelExames.MouseLeave += panel_MouseLeave;
-            painelComando.MouseEnter += panel_MouseLeave;
-            openglControl1.MouseEnter += panel_MouseLeave;
-            timerAvanca.Tick += TimerAvanca_Tick;
-            timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
-            timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
-            timerRetrocede.Tick += TimerRetrocede_Tick;
-
-            MontagemBox.Items.Clear();
-            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+            try
             {
-                MontagemBox.Items.Add(row["DescrMontagem"].ToString());
-            }
-            string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
-            MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+                InitializeComponent();
+                LeitorDiretorio.LeituraDiretorio();
 
-            foreach (Control panel in painelExames.Controls)
-            {
-                if (panel is Panel)
+
+                LeituraBanco.BancoRead();
+                LeituraBanco.AlteraTable();
+                LeituraBanco.AjustaMontagem();
+                //Canais.LerCanais();
+                //Leitura.LerArquivo();           
+                Leitura.QuantidadeCanais();
+                //Leitura.LeituraDat();
+                LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
+
+                LeituraEmMatrizTeste.LeituraDat();
+                LeituraEmMatrizTeste.referencias();
+                SetStyle(ControlStyles.DoubleBuffer, true);
+                rectangleLoad();
+                this.Resize += Tela_Plotagem_Resiz;
+                this.Resize += painelComando_Resiz;
+                this.Resize += Painel_resiz;
+                this.Resize += panelLb_Resiz;
+                this.Controls.Add(openglControl1);
+                painelExames.Paint += painelExames_Paint;
+                toolTip1 = new CustomToolTip();
+                formOriginalSize = this.Size;
+                painelOriginalSize = painelExames.Size;
+                painelComandoOriginalSize = painelComando.Size;
+                UpdateStyles();
+                qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
+
+                GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
+                openglControl1.Focus();
+
+                GlobVar.sizeOpenGl.X = openglControl1.Width;
+                GlobVar.sizeOpenGl.Y = openglControl1.Height;
+                GlobVar.sizePainelExams.X = painelExames.Width;
+                GlobVar.sizePainelExams.Y = painelExames.Height;
+
+                GlobVar.sizeButtons.X = plusLb1.Width;
+                GlobVar.sizeButtons.Y = plusLb1.Height;
+                GlobVar.sizeLabelExams.X = label1.Width;
+                GlobVar.sizeLabelExams.Y = label1.Height;
+                GlobVar.sizePanelLb.X = panel1.Width;
+                GlobVar.sizePanelLb.Y = panel1.Height;
+
+                GlobVar.locBut.X = plusLb1.Location.X;
+                GlobVar.locScale.X = scalaLb1.Location.X;
+                GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
+                GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
+                //GlobVar.ultimaPag = 2;
+                load();
+                camera.X = 0.0f;
+                camera.Y = 0.0f;
+                camera.Z = 1.0f;
+                velocidadeScroll.SelectedIndex = 0;
+                stopwatch = new Stopwatch();
+                this.MouseUp += Form1_MouseUp;
+                this.MouseMove += openglControl1_MouseMove;
+                painelExames.MouseLeave += panel_MouseLeave;
+                painelComando.MouseEnter += panel_MouseLeave;
+                openglControl1.MouseEnter += panel_MouseLeave;
+                timerAvanca.Tick += TimerAvanca_Tick;
+                timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
+                timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
+                timerRetrocede.Tick += TimerRetrocede_Tick;
+
+                MontagemBox.Items.Clear();
+                foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
                 {
-                    panel.MouseDown += Panel_MouseDown;
-                    panel.MouseMove += Panel_MouseMove;
-                    panel.MouseUp += Panel_MouseUp;
-                    panel.MouseEnter += panel_MouseEnter;
-                    //panel.MouseLeave += panel_MouseLeave;
-                    panel.Click += Panel_Click;
-                    foreach (Control lable in panel.Controls)
+                    MontagemBox.Items.Add(row["DescrMontagem"].ToString());
+                }
+                string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+                MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+
+                foreach (Control panel in painelExames.Controls)
+                {
+                    if (panel is Panel)
                     {
-                        if (lable is Label)
+                        panel.MouseDown += Panel_MouseDown;
+                        panel.MouseMove += Panel_MouseMove;
+                        panel.MouseUp += Panel_MouseUp;
+                        panel.MouseEnter += panel_MouseEnter;
+                        //panel.MouseLeave += panel_MouseLeave;
+                        panel.Click += Panel_Click;
+                        foreach (Control lable in panel.Controls)
                         {
-                            lable.MouseEnter += panel_MouseEnter;
-                            lable.MouseDown += Panel_MouseDown;
-                            lable.MouseMove += Panel_MouseMove;
-                            lable.MouseUp += Panel_MouseUp;
+                            if (lable is Label)
+                            {
+                                lable.MouseEnter += panel_MouseEnter;
+                                lable.MouseDown += Panel_MouseDown;
+                                lable.MouseMove += Panel_MouseMove;
+                                lable.MouseUp += Panel_MouseUp;
+                            }
                         }
                     }
                 }
-            }
-            toolTip1.SetToolTip(openglControl1, "Teste");
-            this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
-            Play_OpenGl();
-            falsoClick();
-            AjustarFonteDosLabels();
-            AjustarBotoesMinusEPlus();
-            InicializarButtonForm();
-            timer3.Start();
-            tempoEmTela.SelectedIndex = 5;
-            isInitialized = true;
+                toolTip1.SetToolTip(openglControl1, "Teste");
+                this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
+                Play_OpenGl();
+                falsoClick();
+                AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
+                InicializarButtonForm();
 
-            if (GlobVar.ultimaPag != 0)
-            {
-                abreUltimaPaginaFechada();
-            }
-            telinha = new FormVideo();
-            telinha.Owner = this;
+                timer3.Start();
+                tempoEmTela.SelectedIndex = 5;
+                isInitialized = true;
 
-            if (telinha != null && GlobVar.tbl_ArqVideo != null)
-            {
-                telinha.Show();
-                telinha.videoCarregado();
-                videoIni = true;
-            }
+                if (GlobVar.ultimaPag != 0)
+                {
+                    abreUltimaPaginaFechada();
+                }
+                telinha = new FormVideo();
+                telinha.Owner = this;
 
-            
-            this.FormClosing += Tela_Plotagem_FormClosed;
-            GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+                if (telinha != null && GlobVar.tbl_ArqVideo != null)
+                {
+                    telinha.Show();
+                    telinha.videoCarregado();
+                    videoIni = true;
+                    telinha.videoPlayer.Ctlcontrols.stop();
+                }
+
+
+                this.FormClosing += Tela_Plotagem_FormClosed;
+                GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+            }
+            catch (Exception e) 
+            {               
+                MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+
+            }
         }
         bool videoIni = false;
         public void Video_Click(Object sender, EventArgs e)
@@ -1875,10 +1884,6 @@ namespace PlotagemOpenGL
             if (int.TryParse(texto, out numero))
             {
                 qtdGrafics = GlobVar.tbl_MontagemSelecionada.Rows.Count;
-                if (qtdGrafics <= 0 || qtdGrafics > 25) 
-                {
-                    System.Windows.MessageBox.Show("Por favor, digite um número válido entre 1 e 20.", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
-                }
             }
             else
             {
@@ -4186,6 +4191,7 @@ namespace PlotagemOpenGL
             if (videoIni)
             {
                 telinha.attLocVideo();
+                telinha.videoPlayer.Ctlcontrols.pause();
             }
             openglControl1.Focus();
         }

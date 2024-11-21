@@ -41,7 +41,6 @@
             videoPlayer.OcxState = (System.Windows.Forms.AxHost.State)resources.GetObject("videoPlayer.OcxState");
             videoPlayer.Size = new System.Drawing.Size(381, 245);
             videoPlayer.TabIndex = 0;
-            videoPlayer.Enter += videoPlayer_Enter;
             // 
             // FormVideo
             // 

@@ -46,7 +46,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 txtMedicoSolicitante.Text = dadosExame.Field<string>("MedicoSolicitante") ?? string.Empty;
                 txtRg.Text = dadosExame.Field<string>("Rg") ?? string.Empty;
                 txtObservacao.Text = dadosExame.Field<string>("Observacao") ?? string.Empty;
-                txtArquivo.Text = GlobVar.textFile.Substring(32, 8);
+                txtArquivo.Text = GlobVar.textFile.Substring(12, 8);
 
                 var pagSel = GlobVar.tbl_SelImpressao.AsEnumerable().OrderByDescending(row => row.Field<int>("CodImpressao")).First();
 

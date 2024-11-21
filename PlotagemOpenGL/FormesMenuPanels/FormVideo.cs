@@ -59,9 +59,13 @@ namespace PlotagemOpenGL.FormesMenuPanels
                             videoPlayer.Ctlcontrols.currentPosition = tickini / 1000.0;
                             videoPlayer.Ctlcontrols.play();
                             videoPlayer.Ctlcontrols.pause();
+                            videoPlayer.Ctlcontrols.pause();
+
 
                         }
+
                     }
+
                 }
             }
             catch (Exception ex)
@@ -143,10 +147,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
             {
                 base.OnFormClosing(e); // Permite o fechamento em outros casos (por exemplo, encerramento do aplicativo)
             }
-        }
-        private void videoPlayer_Enter(object sender, EventArgs e)
-        {
-
         }
     }
 }
