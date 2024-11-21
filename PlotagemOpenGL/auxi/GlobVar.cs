@@ -119,6 +119,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_ResumoExame = new DataTable();
         public static DataTable tbl_SelImpressao = new DataTable();
         public static DataTable tbl_SeqEvento = new DataTable();
+        public static DataTable tbl_ArqVideo = new DataTable();
 
         public static int ultimaPag;
 

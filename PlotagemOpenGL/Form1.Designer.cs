@@ -3589,6 +3589,7 @@ namespace PlotagemOpenGL
                 Video.Size = new System.Drawing.Size(47, 47);
                 Video.TabIndex = 2;
                 Video.UseVisualStyleBackColor = false;
+                Video.Click += Video_Click;
                 // 
                 // OcultaProf
                 // 

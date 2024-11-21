@@ -42,7 +42,7 @@ public class LeituraBanco
             string queryTbl_ResumoExame = "SELECT * FROM tbl_ResumoExame";
             string queryTbl_SelImpressao = "SELECT * FROM tbl_selImpressao";
             string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
-
+            string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
 
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -63,6 +63,7 @@ public class LeituraBanco
             using var commandTbl_ResumoExame = new OdbcCommand(queryTbl_ResumoExame, connectionDatBd);
             using var commanfTbl_SelImpressao = new OdbcCommand(queryTbl_SelImpressao, connectionDatBd);
             using var commandTbl_SeqEvento = new OdbcCommand(queryTbl_SeqEvento, connectionDatBd);
+            using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -72,6 +73,7 @@ public class LeituraBanco
             using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
             using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
             using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
+            using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
 
             using var adapter = new OdbcDataAdapter(command);
             using var adapterTbl_MontGrav = new OdbcDataAdapter(commandTbl_MontGrav);
@@ -84,6 +86,7 @@ public class LeituraBanco
             using var adapterTbl_SeqEvento = new OdbcDataAdapter(commandTbl_SeqEvento);
 
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_ArqVideo.Fill(GlobVar.tbl_ArqVideo);
             adapterTbl_SeqEvento.Fill(GlobVar.tbl_SeqEvento);
             adapterTbl_SelImpressao.Fill(GlobVar.tbl_SelImpressao);
             adapterTbl_ResumoExame.Fill(GlobVar.tbl_ResumoExame);

@@ -8,7 +8,7 @@ namespace PlotagemOpenGL.auxi
     {
         public static void LeituraDiretorio()
         {
-            string filePath = @"C:\Diretorios.txt";
+            string filePath = @"C:\Temp\Diretorios.txt";
 
             using (FileStream fl = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {

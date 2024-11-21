@@ -35,7 +35,6 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
 using System.Threading;
-using System.Security.Policy;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -194,7 +193,7 @@ namespace PlotagemOpenGL
         static extern int LoadNvApi32();
 
         private KeyChecker keyChecker;
-
+        public FormVideo telinha;
         public Tela_Plotagem()
         {
             InitializeComponent();
@@ -310,11 +309,29 @@ namespace PlotagemOpenGL
             {
                 abreUltimaPaginaFechada();
             }
+            telinha = new FormVideo();
+            telinha.Owner = this;
+
+            if (telinha != null && GlobVar.tbl_ArqVideo != null)
+            {
+                telinha.Show();
+                telinha.videoCarregado();
+                videoIni = true;
+            }
+
+            
             this.FormClosing += Tela_Plotagem_FormClosed;
             GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
         }
-
-
+        bool videoIni = false;
+        public void Video_Click(Object sender, EventArgs e)
+        {
+            if (telinha != null && GlobVar.tbl_ArqVideo != null)
+            {
+                telinha.Show();
+                //telinha.videoCarregado();
+            }
+        }
         public void falsoClick()
         {
             keyChecker = new KeyChecker();
@@ -4116,7 +4133,7 @@ namespace PlotagemOpenGL
             string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"]} anos";
             string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"].ToString()}m";
             string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0, 10);
-            string arquivo = $"{GlobVar.textFile.Substring(32, 12)}";
+            string arquivo = $"{GlobVar.textFile.Substring(12, 12)}";
 
             this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}";
 
@@ -4166,6 +4183,10 @@ namespace PlotagemOpenGL
                 isScroll = false;
             }
             atualizaButAntProx();
+            if (videoIni)
+            {
+                telinha.attLocVideo();
+            }
             openglControl1.Focus();
         }
 
