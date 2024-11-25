@@ -318,6 +318,7 @@ namespace PlotagemOpenGL
                 {
                     telinha.Show();
                     telinha.videoCarregado();
+                    telinha.videoPlayer.Ctlcontrols.pause();
                     videoIni = true;
                     telinha.videoPlayer.Ctlcontrols.stop();
                 }
@@ -2395,7 +2396,7 @@ namespace PlotagemOpenGL
                             {
                                 TelaClearAndReload();
                                 UpdateInicioTela();
-
+                                telinha.videoPlayer.Ctlcontrols.pause();
                                 isTelaClearAndReloadExecuted = true;
                             }
                         }
