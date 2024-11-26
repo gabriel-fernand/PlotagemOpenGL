@@ -48,7 +48,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(386, 251);
             Controls.Add(videoPlayer);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             Name = "FormVideo";
             Text = "Video";
             ((System.ComponentModel.ISupportInitialize)videoPlayer).EndInit();

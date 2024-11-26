@@ -169,7 +169,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.Vertex(GlobVar.canalA.Length, margem[i]);
                 gl.End();
             }*/
+            //marcacao video
+            gl.Color(0.5f, 0.5f, 0.5f);
 
+            gl.Begin(OpenGL.GL_LINE_STRIP);
+            gl.Vertex(GlobVar.ponteiroVideo,0);
+            gl.Vertex(GlobVar.ponteiroVideo, GlobVar.sizeOpenGl.Y);
+            gl.End();
 
             if (Tela_Plotagem.Linha1Seg.Checked)
             {

@@ -193,7 +193,10 @@ namespace PlotagemOpenGL
         static extern int LoadNvApi32();
 
         private KeyChecker keyChecker;
-        public FormVideo telinha;
+        public static FormVideo telinha;
+        public static Tela_Plotagem Instance { get; private set; }
+        public static bool videoIni = false;
+
         public Tela_Plotagem()
         {
             try
@@ -227,7 +230,7 @@ namespace PlotagemOpenGL
                 painelComandoOriginalSize = painelComando.Size;
                 UpdateStyles();
                 qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
-
+                GlobVar.ponteiroVideo = GlobVar.namos * (GlobVar.segundos / 2);
                 GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
                 openglControl1.Focus();
 
@@ -311,21 +314,10 @@ namespace PlotagemOpenGL
                 {
                     abreUltimaPaginaFechada();
                 }
-                telinha = new FormVideo();
-                telinha.Owner = this;
-
-                if (telinha != null && GlobVar.tbl_ArqVideo != null)
-                {
-                    telinha.Show();
-                    telinha.videoCarregado();
-                    telinha.videoPlayer.Ctlcontrols.pause();
-                    videoIni = true;
-                    telinha.videoPlayer.Ctlcontrols.stop();
-                }
-
-
+                Instance = this; // Define a instância estática
                 this.FormClosing += Tela_Plotagem_FormClosed;
                 GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+                chamarTelinhaVid();
             }
             catch (Exception e) 
             {               
@@ -333,7 +325,19 @@ namespace PlotagemOpenGL
 
             }
         }
-        bool videoIni = false;
+        public void chamarTelinhaVid()
+        {
+            telinha = new FormVideo();
+            telinha.Owner = this;
+
+            if (telinha != null && GlobVar.tbl_ArqVideo != null)
+            {
+                telinha.Show();
+                telinha.videoCarregado();
+                telinha.videoPlayer.Ctlcontrols.pause();
+                videoIni = true;
+            }
+        }
         public void Video_Click(Object sender, EventArgs e)
         {
             if (telinha != null && GlobVar.tbl_ArqVideo != null)
@@ -427,6 +431,9 @@ namespace PlotagemOpenGL
 
             GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+
+            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
             foiencontradoumUltimo = false;
             foiencontradoumUltimo = false;
 
@@ -1960,62 +1967,6 @@ namespace PlotagemOpenGL
         {
             try
             {
-                /*this.Cursor = new Cursor(Cursor.Current.Handle);
-                Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y);
-                Cursor.Clip = new Rectangle(this.Location, this.Size);
-
-                // Flag to determine if the mouse is over any panel
-                bool mouseOverAnyPanel = false;
-
-                // Iterate over all controls within the form or a specific container
-                foreach (Control control in this.Controls) // or openglControl1.Controls if they are children of openglControl1
-                {
-                    if (control is Panel panel)
-                    {
-                        // Check if the cursor is within the bounds of the panel
-                        if (panel.ClientRectangle.Contains(panel.PointToClient(Cursor.Position)))
-                        {
-                            // Show buttons within the panel
-                            foreach (Control panelControl in panel.Controls)
-                            {
-                                if (panelControl is Button)
-                                {
-                                    panelControl.Visible = true;
-                                }
-                            }
-                            mouseOverAnyPanel = true;
-                        }
-                        else
-                        {
-                            // Hide buttons within the panel
-                            foreach (Control panelControl in panel.Controls)
-                            {
-                                if (panelControl is Button)
-                                {
-                                    panelControl.Visible = false;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // If the mouse is not over any panel, reset visibility if necessary
-                if (!mouseOverAnyPanel)
-                {
-                    foreach (Control control in this.Controls) // or openglControl1.Controls
-                    {
-                        if (control is Panel panel)
-                        {
-                            foreach (Control panelControl in panel.Controls)
-                            {
-                                if (panelControl is Button)
-                                {
-                                    panelControl.Visible = false;
-                                }
-                            }
-                        }
-                    }
-                }*/
                 if (this.Cursor == Cursors.SizeAll)
                 {
                     toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
@@ -2051,6 +2002,8 @@ namespace PlotagemOpenGL
                             GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                         }
                     }
                     else
@@ -2090,6 +2043,8 @@ namespace PlotagemOpenGL
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                             LeituraEmMatrizTeste.Resume();
                         }
                     }
@@ -2126,6 +2081,8 @@ namespace PlotagemOpenGL
         public static bool isThereX1Y0Comment = false;
         public static bool isThereX1Y1Comment = false;
 
+        public static bool isThereVideoPonteiro = false;
+
         private bool isTelaClearAndReloadExecuted;
 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
@@ -2138,7 +2095,7 @@ namespace PlotagemOpenGL
                     originalCursor = this.Cursor;
                     isMouseDown = true;
 
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         timer2.Start();
                         isDrawing = true;
@@ -2325,6 +2282,10 @@ namespace PlotagemOpenGL
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
                         }
                     }
+                    else if (isThereVideoPonteiro)
+                    {
+                        isDrawing = true;
+                    }
                 }
                 if (e.Button == MouseButtons.Right)
                 {
@@ -2383,11 +2344,12 @@ namespace PlotagemOpenGL
                             isThereX1Y0Comment = plotComentatios.IsThereX1Y0Comment(e.X, e.Y);
                             isThereX1Y1Comment = plotComentatios.IsThereX1Y1Comment(e.X, e.Y);
 
+                            isThereVideoPonteiro = FormVideo.ponteiroCoord(e.X, e.Y);
                         }
                     }
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
 
-                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         if (!isMouseDown)
                         {
@@ -2420,6 +2382,8 @@ namespace PlotagemOpenGL
 
                                     GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
                                     GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
+                                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                     UpdateInicioTela();
@@ -2455,6 +2419,8 @@ namespace PlotagemOpenGL
 
                                     GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
                                     GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
+                                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
                                     //UpdateInicioTela();
@@ -2467,7 +2433,7 @@ namespace PlotagemOpenGL
                             //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
                     }
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2509,7 +2475,7 @@ namespace PlotagemOpenGL
                     }
 
                     /* x Inixio */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2544,7 +2510,7 @@ namespace PlotagemOpenGL
                         }
                     }
                     /* x Fim */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2578,7 +2544,7 @@ namespace PlotagemOpenGL
 
                     }
                     /* y Inixio */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2619,7 +2585,7 @@ namespace PlotagemOpenGL
 
                     }
                     /* y Fim */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2657,7 +2623,7 @@ namespace PlotagemOpenGL
                     }
 
                     /* X0 - Y0 */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2711,7 +2677,7 @@ namespace PlotagemOpenGL
 
                     }
                     /* X0 - Y1 */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2762,7 +2728,7 @@ namespace PlotagemOpenGL
 
                     }
                     /* X1 - Y0 */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2812,7 +2778,7 @@ namespace PlotagemOpenGL
                         }
                     }
                     /* X1 - Y1 */
-                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment))
+                    else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2859,7 +2825,7 @@ namespace PlotagemOpenGL
 
                     }
 
-                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if (isAnEvent && (!this.isAnStartEvent || !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         timerClick.Start();
 
@@ -2901,7 +2867,7 @@ namespace PlotagemOpenGL
                             initialMousePosition.X = (int)outX;
                         }
                     }
-                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    else if ((!isAnEvent && this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isTelaClearAndReloadExecuted = false;
 
@@ -2963,6 +2929,7 @@ namespace PlotagemOpenGL
                                         UpdateInicioTela();
                                         foiencontradoumUltimo = false;
                                         foiencontradoumUltimo = false;
+                                        GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                                         ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
                                         lastMousePosition = e.Location;
@@ -3007,6 +2974,55 @@ namespace PlotagemOpenGL
                             }
                         }
                     }
+
+                    else if ((!isAnEvent && !this.isAnStartEvent) || (!isAnEvent && this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && isThereVideoPonteiro)
+                    {
+                        isTelaClearAndReloadExecuted = false;
+
+                        if (!isMouseDown)
+                        {
+                            this.Cursor = Cursors.SizeWE;
+                            openglControl1.DoRender();
+                        }
+                        if (isDrawing)
+                        {
+                            toolTip1.RemoveAll();
+                            timerClick.Start();
+
+                            float outX = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
+
+                            float deltaX = outX - initialMousePosition.X;
+
+                            if (e.X != lastMousePosition.X)
+                            {
+                                if (isThereVideoPonteiro)
+                                {
+                                    deltaX = GlobVar.ponteiroVideo - outX;
+
+                                    if (e.X < lastMousePosition.X)
+                                    {
+                                        GlobVar.ponteiroVideo -= ((int)Math.Abs(deltaX));
+                                    }
+                                    else
+                                    {
+                                        GlobVar.ponteiroVideo += ((int)Math.Abs(deltaX));
+                                    }
+
+                                }
+
+                                initialMousePosition.X = (int)outX;
+
+                                lastMousePosition = e.Location;
+
+
+                                openglControl1.Refresh();
+                                TelaClearAndReload();
+
+                            }
+                        }
+
+                    }
                 }
 
                 //openglControl1.DoRender();
@@ -3030,7 +3046,7 @@ namespace PlotagemOpenGL
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment))
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         isDrawing = false;
                         isDrawingRectangle = false;
@@ -3311,6 +3327,13 @@ namespace PlotagemOpenGL
 
                         }
                     }
+                    else if (isThereVideoPonteiro)
+                    {
+                        isDrawing = false;
+                        TelaClearAndReload();
+                        UpdateInicioTela();
+
+                    }
                 }
                 if (e.Button == MouseButtons.Right)
                 {
@@ -3502,43 +3525,6 @@ namespace PlotagemOpenGL
 
         public string tecla = "";
 
-        private Keys SimularCliqueBotao(Keys key)
-        {
-            switch (key)
-            {
-                case Keys.Left:
-                    // Simula o clique no botão A
-                    return Keys.A;
-                    break;
-
-                case Keys.Right:
-                    // Simula o clique no botão D
-                    return Keys.D;
-                    break;
-                default:
-                    return Keys.None;
-                    break;
-            }
-        }
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            SimularCliqueBotao(e.KeyCode);
-
-            // Continue chamando o método TelaPlotagem_KeyDown para o resto da lógica
-            TelaPlotagem_KeyDown(sender, e);
-        }
-        private void BotaoA_Click(object sender, EventArgs e)
-        {
-            // Lógica para o botão A
-            Console.WriteLine("Botão A clicado!");
-        }
-
-        private void BotaoD_Click(object sender, EventArgs e)
-        {
-            // Lógica para o botão D
-            Console.WriteLine("Botão D clicado!");
-        }
-
         //Comecando a mexer nos KeyDown para alterar os eventos, usar o KeyUp para "replotar a tela"
         private async void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
         //private void TelaPlotagem_KeyDown(object sender, KeyEventArgs e)
@@ -3628,6 +3614,8 @@ namespace PlotagemOpenGL
                                     GlobVar.inicioTela = 0;
                                     GlobVar.finalTela = (int)GlobVar.namos / (int)GlobVar.namos;
                                 }
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                                 if (!conc) LeituraEmMatrizTeste.Resume();
 
                             }
@@ -3655,6 +3643,7 @@ namespace PlotagemOpenGL
                                 GlobVar.inicioTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             }
 
@@ -3682,6 +3671,7 @@ namespace PlotagemOpenGL
                                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             }
                             break;
@@ -3711,6 +3701,8 @@ namespace PlotagemOpenGL
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
                                 LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                             }
 
                             break;
@@ -3753,6 +3745,7 @@ namespace PlotagemOpenGL
                                     GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
                                 }
                                 if (!conc) LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             }
                             break;
@@ -3799,6 +3792,7 @@ namespace PlotagemOpenGL
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
                                 if (!conc) LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             }
                             break;
@@ -4020,7 +4014,8 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
-                
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
 
                 foiencontradoumUltimo = false;
 
@@ -4059,6 +4054,7 @@ namespace PlotagemOpenGL
 
             GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
+            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
             hScrollBar1.LargeChange = GlobVar.segundos;
 
@@ -4197,6 +4193,46 @@ namespace PlotagemOpenGL
             openglControl1.Focus();
         }
 
+        public static async void OnVideoStateChanged(bool isPlaying)
+        {
+            if (isPlaying)
+            {
+                if(GlobVar.ponteiroVideo > GlobVar.indice + (GlobVar.segundos * GlobVar.namos))
+                {
+                    if (!conc)
+                    {
+                        int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                        if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                        {
+                            LeituraEmMatrizTeste.Pause();
+                            await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                        }
+                    }
+
+                    camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                    GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                    GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                    GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                    GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                    GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                    LeituraEmMatrizTeste.Resume();
+                    videoIni = false;
+                    Tela_Plotagem.Instance?.UpdateInicioTela();
+                    videoIni = true;
+                }
+                // Realiza ações quando o vídeo está tocando
+                TelaClearAndReload();
+            }
+            else
+            {
+                // Realiza ações quando o vídeo está pausado
+                // Por exemplo, parar atualizações
+            }
+        }
+
         private Image GetEstagioImage(int estagioAtual)
         {
             string path = estagioAtual switch
@@ -4273,6 +4309,8 @@ namespace PlotagemOpenGL
                     foiencontradoumUltimo = false;
                     UpdateInicioTela();
                     TelaClearAndReload();
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
                 }
             }
             else
@@ -4338,6 +4376,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4379,6 +4418,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4428,6 +4468,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4478,6 +4519,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4537,6 +4579,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5155,6 +5198,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas;
                 GlobVar.indice += (int)GlobVar.saltoTelas;
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
@@ -5208,6 +5252,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5250,6 +5295,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5308,6 +5354,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5349,6 +5396,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5403,6 +5451,7 @@ namespace PlotagemOpenGL
 
                     GlobVar.maximaVect += (int)AndarUmSegundo;
                     GlobVar.indice += (int)AndarUmSegundo;
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                     GlobVar.inicioTela += ((int)AndarUmSegundo) / GlobVar.namos;
                     GlobVar.finalTela += ((int)AndarUmSegundo) / GlobVar.namos;
@@ -5444,6 +5493,7 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
@@ -5486,6 +5536,7 @@ namespace PlotagemOpenGL
                         GlobVar.maximaVect = (int)VoltaUmSegundo;
                         camera.X = 0;
                     }
+                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
                     UpdateInicioTela();
                     TelaClearAndReload();
                 }
@@ -5555,6 +5606,7 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5597,6 +5649,7 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)VoltaUmSegundo;
                     camera.X = 0;
                 }
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5626,6 +5679,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                 GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5647,6 +5701,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5784,6 +5839,7 @@ namespace PlotagemOpenGL
 
                             GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                             GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5857,6 +5913,7 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                                 camera.X = 0;
                             }
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5938,6 +5995,7 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)VoltaUmSegundo;
                                 camera.X = 0;
                             }
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6007,6 +6065,7 @@ namespace PlotagemOpenGL
 
                             GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                             GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
+                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                             GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6148,6 +6207,7 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = newloc * GlobVar.namos;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
+                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -7482,6 +7542,8 @@ namespace PlotagemOpenGL
 
             GlobVar.indice = inicioPag * GlobVar.namos;
             GlobVar.maximaVect = finalPag * GlobVar.namos;
+            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+
             GlobVar.indiceNumero = inicioPag * GlobVar.namosNumerico;
             GlobVar.maximaNumero = finalPag * GlobVar.namosNumerico;
             camera.X = GlobVar.indice;

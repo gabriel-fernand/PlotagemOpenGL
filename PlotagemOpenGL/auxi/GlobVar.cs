@@ -169,6 +169,7 @@ namespace PlotagemOpenGL.auxi
         public static int indiceNumero = 0;
         public static int maximaNumero; // = (int)GlobVar.sizeOpenGl.X;
         public static float[] desenhoLoc;
+        public static float ponteiroVideo;
 
         public static float saltoTelas;
         public static float SPEED = 1.0f;
