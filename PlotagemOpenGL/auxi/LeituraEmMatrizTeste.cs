@@ -120,34 +120,6 @@ namespace PlotagemOpenGL.auxi
                 GlobVar.indiceDat = GlobVar.npagin * GlobVar.amos * 2;
                 //int[] pontF = GlobVar.ponteiroF;
                 GlobVar.matrizCanal = new short[GlobVar.tbl_MontagemSelecionada.Rows.Count, GlobVar.indiceDat];
-                /*
-                //Separa os valores de cada canal para a MatrizCanal, para poder desenhar eles separadamente
-                for (int linhaCanais = 0; linhaCanais < GlobVar.tbl_MontagemSelecionada.Rows.Count; linhaCanais++)
-                {
-                    int colunaCanalIndex = 0;
-
-                    // Percorre as linhas da matrizCompleta
-                    for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0); linhaComp++)
-                    {
-                        // Percorre as colunas da matrizCompleta no intervalo especificado por pontI e pontF 
-                        for (int colunaComp = GlobVar.ponteiroI[GlobVar.codCanal.IndexOf((int)(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp < GlobVar.ponteiroF[GlobVar.codCanal.IndexOf((int)(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]))]; colunaComp++)
-                        {
-                            // Certifique-se de não exceder os limites da matrizCanais
-                            if (colunaCanalIndex < GlobVar.matrizCanal.GetLength(1))
-                            {
-                                    // Copia o valor de matrizCompleta para matrizCanal
-                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(GlobVar.matrizCompleta[linhaComp, colunaComp]);
-                                colunaCanalIndex++;
-
-                            }
-                            //else
-                            //{
-                                // Se exceder os limites da matrizCanal, saia do loop
-                            //    break;
-                            //}
-                        }
-                    }
-                }*/
                 int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
                 int segmentLength = GlobVar.matrizCanal.GetLength(1);
 
@@ -208,96 +180,6 @@ namespace PlotagemOpenGL.auxi
                         row["CodCanal2"] = -1;
                     }
                 }
-                /*//Verifica se o canal da montagem tem referencia a outro canal do exame
-                foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
-                {
-                    int codCanal1 = row.Field<int>("CodCanal1");
-                    int codCanal2 = Convert.ToInt32(row.Field<int>("CodCanal2"));
-                    if (codCanal2 != -1)
-                    {
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), SetReferencia(codCanal1, codCanal2));
-                    }
-                }
-                */
-                /*//Verificacao se a filtro no canal
-                int ind = 0;
-                foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
-                {
-                    
-                    double? lowHertz = null;
-                    double? highHertz = null;
-                    double? notchHertz = null;
-
-                    if (!row.IsNull("PassaBaixa"))
-                    {
-                        double passaBaixaValue = row.Field<double>("PassaBaixa");
-                        if (passaBaixaValue != 0)
-                        {
-                            lowHertz = passaBaixaValue;
-                        }
-                    }
-
-                    if (!row.IsNull("PassaAlta"))
-                    {
-                        double passaAltaValue = row.Field<double>("PassaAlta");
-                        if (passaAltaValue != 0)
-                        {
-                            highHertz = passaAltaValue;
-                        }
-                    }
-
-                    if (!row.IsNull("Notch"))
-                    {
-                        double notchValue = row.Field<double>("Notch");
-                        if (notchValue != 0)
-                        {
-                            notchHertz = notchValue;
-                        }
-                    }
-
-                    if (lowHertz != null)
-                    {
-                        if (highHertz != null)
-                        {
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
-                            ShortToFloat(BandPass.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))),
-                            (float)lowHertz,
-                            (float)highHertz,
-                            GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])]
-                            )));
-                        }
-                        else
-                        {
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
-                                ShortToFloat(PaissaBaixa.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)lowHertz, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])] )));
-                        }
-                    }
-                    if (lowHertz == null && highHertz != null)
-                    {
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
-                                    ShortToFloat(PaissaAlta.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)highHertz, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
-                        
-                    }
-
-                    if (notchHertz != null)
-                    {
-                        if(lowHertz == null) { lowHertz = 0; }
-                        if(highHertz == null) {  highHertz = 0; }
-
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])),
-                                ShortToFloat(Notch.ApplyFilter(FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[ind]["CodCanal1"])))), (float)notchHertz, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[ind])])));
-                         
-                    }
-                    if (notchHertz != null || highHertz != null || lowHertz != null)
-                    {
-                        if (lowHertz == null) { lowHertz = 0; }
-                        if (highHertz == null) { highHertz = 0; }
-                        if (notchHertz == null) { notchHertz = 0; }
-                        Tela_Plotagem.UpdateBeforeLoad(ind + 1, (double)lowHertz, (double)highHertz, (double)notchHertz);
-                    }
-                    ind++;
-                }
-                */
                 foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
 

@@ -2635,7 +2635,7 @@ namespace PlotagemOpenGL
                 // UmaProxima
                 // 
                 UmaProxima.BackColor = System.Drawing.Color.Lime;
-                UmaProxima.BackgroundImage = Properties.Resources.IcoNVazio;
+                //UmaProxima.BackgroundImage = Properties.Resources.IcoNVazio;
                 UmaProxima.BackgroundImageLayout = ImageLayout.Stretch;
                 UmaProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
                 UmaProxima.Location = new System.Drawing.Point(239, 1);

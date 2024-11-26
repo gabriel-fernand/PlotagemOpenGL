@@ -46,12 +46,12 @@ namespace PlotagemOpenGL.auxi
         public static string diretorioEstagioAtual3 = @"C:\Temp\Icones\IcoNumericos\IcoN3Select.png";
         public static string diretorioEstagioAtualR = @"C:\Temp\Icones\IcoNumericos\IcoNRSelect.png";
 
-        public static string diretorioEstagioAnteriorProximoNada = @"C:\Temp\Incones\IcoNumericos\IcoNVazio.png";
-        public static string diretorioEstagioAnteriorProximo0 = @"C:\Temp\Icones\IcoNumericos\IcoN0.png";
-        public static string diretorioEstagioAnteriorProximo1 = @"C:\Temp\Icones\IcoNumericos\IcoN1.png";
-        public static string diretorioEstagioAnteriorProximo2 = @"C:\Temp\Icones\IcoNumericos\IcoN2.png";
-        public static string diretorioEstagioAnteriorProximo3 = @"C:\Temp\Icones\IcoNumericos\IcoN3.png";
-        public static string diretorioEstagioAnteriorProximoR = @"C:\Temp\Icones\IcoNumericos\IcoNR.png";
+        public static string diretorioEstagioAnteriorProximoNada = @"C:\Temp\Icones\IcoNumericos\IcoNVazio.png";
+        public static string diretorioEstagioAnteriorProximo0 =    @"C:\Temp\Icones\IcoNumericos\IcoN0.png";
+        public static string diretorioEstagioAnteriorProximo1 =    @"C:\Temp\Icones\IcoNumericos\IcoN1.png";
+        public static string diretorioEstagioAnteriorProximo2 =    @"C:\Temp\Icones\IcoNumericos\IcoN2.png";
+        public static string diretorioEstagioAnteriorProximo3 =    @"C:\Temp\Icones\IcoNumericos\IcoN3.png";
+        public static string diretorioEstagioAnteriorProximoR =    @"C:\Temp\Icones\IcoNumericos\IcoNR.png";
 
         //Variaveis para mexer nos eventos
         public static bool drawBordenInAnEvent;
