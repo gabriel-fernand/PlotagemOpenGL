@@ -2002,7 +2002,7 @@ namespace PlotagemOpenGL
                             GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                         }
                     }
@@ -2043,7 +2043,7 @@ namespace PlotagemOpenGL
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             //UpdateInicioTela();
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             LeituraEmMatrizTeste.Resume();
                         }
@@ -2382,7 +2382,7 @@ namespace PlotagemOpenGL
 
                                     GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
                                     GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
-                                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                    GlobVar.ponteiroVideo += GlobVar.namos;
 
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
@@ -2419,7 +2419,7 @@ namespace PlotagemOpenGL
 
                                     GlobVar.inicioTela += GlobVar.namos / GlobVar.namos;
                                     GlobVar.finalTela += GlobVar.namos / GlobVar.namos;
-                                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                    GlobVar.ponteiroVideo += GlobVar.namos;
 
                                     //TelaClearAndReload();
                                     gl.Translate(-Tela_Plotagem.camera.X, 0, 1);
@@ -2929,7 +2929,7 @@ namespace PlotagemOpenGL
                                         UpdateInicioTela();
                                         foiencontradoumUltimo = false;
                                         foiencontradoumUltimo = false;
-                                        GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                        GlobVar.ponteiroVideo += GlobVar.namos;
 
                                         ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
                                         lastMousePosition = e.Location;
@@ -3614,7 +3614,7 @@ namespace PlotagemOpenGL
                                     GlobVar.inicioTela = 0;
                                     GlobVar.finalTela = (int)GlobVar.namos / (int)GlobVar.namos;
                                 }
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo -= (int)GlobVar.namos * (int)GlobVar.SPEED;
 
                                 if (!conc) LeituraEmMatrizTeste.Resume();
 
@@ -3643,7 +3643,7 @@ namespace PlotagemOpenGL
                                 GlobVar.inicioTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo += (int)GlobVar.namos * (int)GlobVar.SPEED;
 
                             }
 
@@ -3671,7 +3671,7 @@ namespace PlotagemOpenGL
                                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             }
                             break;
@@ -3701,7 +3701,7 @@ namespace PlotagemOpenGL
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
                                 LeituraEmMatrizTeste.Resume();
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             }
 
@@ -3745,7 +3745,7 @@ namespace PlotagemOpenGL
                                     GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
                                 }
                                 if (!conc) LeituraEmMatrizTeste.Resume();
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             }
                             break;
@@ -3792,7 +3792,7 @@ namespace PlotagemOpenGL
                                 //UpdateInicioTela();
                                 //TelaClearAndReload();
                                 if (!conc) LeituraEmMatrizTeste.Resume();
-                                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                                GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
 
                             }
                             break;
@@ -4014,7 +4014,8 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
 
                 foiencontradoumUltimo = false;
@@ -4054,7 +4055,8 @@ namespace PlotagemOpenGL
 
             GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
-            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
             hScrollBar1.LargeChange = GlobVar.segundos;
 
@@ -4309,7 +4311,8 @@ namespace PlotagemOpenGL
                     foiencontradoumUltimo = false;
                     UpdateInicioTela();
                     TelaClearAndReload();
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 }
             }
@@ -4376,7 +4379,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4418,7 +4422,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4468,7 +4473,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4519,7 +4525,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4579,7 +4586,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5198,7 +5206,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas;
                 GlobVar.indice += (int)GlobVar.saltoTelas;
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
@@ -5252,7 +5261,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5295,7 +5305,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5354,7 +5365,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5396,7 +5408,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5451,7 +5464,8 @@ namespace PlotagemOpenGL
 
                     GlobVar.maximaVect += (int)AndarUmSegundo;
                     GlobVar.indice += (int)AndarUmSegundo;
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.inicioTela += ((int)AndarUmSegundo) / GlobVar.namos;
                     GlobVar.finalTela += ((int)AndarUmSegundo) / GlobVar.namos;
@@ -5493,7 +5507,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
@@ -5536,7 +5551,8 @@ namespace PlotagemOpenGL
                         GlobVar.maximaVect = (int)VoltaUmSegundo;
                         camera.X = 0;
                     }
-                    GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
                     UpdateInicioTela();
                     TelaClearAndReload();
                 }
@@ -5606,7 +5622,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5649,7 +5666,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)VoltaUmSegundo;
                     camera.X = 0;
                 }
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5679,7 +5697,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                 GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5701,7 +5720,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5839,7 +5859,8 @@ namespace PlotagemOpenGL
 
                             GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                             GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                             GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5913,7 +5934,8 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                                 camera.X = 0;
                             }
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5995,7 +6017,8 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)VoltaUmSegundo;
                                 camera.X = 0;
                             }
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                             GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6065,7 +6088,8 @@ namespace PlotagemOpenGL
 
                             GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                             GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
-                            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                             GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6207,7 +6231,8 @@ namespace PlotagemOpenGL
 
                 GlobVar.indice = newloc * GlobVar.namos;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -7542,7 +7567,8 @@ namespace PlotagemOpenGL
 
             GlobVar.indice = inicioPag * GlobVar.namos;
             GlobVar.maximaVect = finalPag * GlobVar.namos;
-            GlobVar.ponteiroVideo = GlobVar.indice + (GlobVar.namos * (GlobVar.segundos / 2));
+            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+            GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
             GlobVar.indiceNumero = inicioPag * GlobVar.namosNumerico;
             GlobVar.maximaNumero = finalPag * GlobVar.namosNumerico;
