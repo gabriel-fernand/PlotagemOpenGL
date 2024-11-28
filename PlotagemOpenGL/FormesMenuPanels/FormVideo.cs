@@ -32,22 +32,13 @@ namespace PlotagemOpenGL.FormesMenuPanels
             formOriginalSize = this.Size;
             this.Resize += res;
             vidi = new Rectangle(videoPlayer.Location, videoPlayer.Size);
+            videoPlayer.uiMode = "mini";
         }
         public void Resiz(Control c, Rectangle r)
         {
-            // Calcula a razão de redimensionamento com base no tamanho atual do formulário
-            float xRatio = (float)this.ClientSize.Width / (float)formOriginalSize.Width;
-            float yRatio = (float)this.ClientSize.Height / (float)formOriginalSize.Height;
-
-            // Ajusta a posição e tamanho do controle proporcionalmente
-            int newX = (int)(r.X * xRatio);
-            int newY = (int)(r.Y * yRatio);
-            int newWidth = (int)(r.Width * xRatio);
-            int newHeight = (int)(r.Height * yRatio);
-
             // Aplica as novas dimensões e localização ao controle
             c.Location = new Point(0,0);
-            c.Size = new Size(newWidth, newHeight);
+            c.Size = new Size(this.ClientSize.Width, this.ClientSize.Height);
         }
         public void res(object sender, EventArgs e)
         {
@@ -219,11 +210,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
                             videoPlayer.Ctlcontrols.currentPosition = Math.Abs(Convert.ToInt32(matchingRow["TickIni"]) - tickini) / 1000.0;
                             videoPlayer.Ctlcontrols.play(); // Dá um breve play para renderizar o quadro
 
-                            Task.Delay(2).ContinueWith(_ =>
-                            {
-                                videoPlayer.Ctlcontrols.pause(); // Pausa o vídeo
-                                isProgrammaticChange = false; // Libera eventos
-                            });
+                            videoPlayer.Ctlcontrols.currentPosition = Math.Abs(Convert.ToInt32(matchingRow["TickIni"]) - tickini) / 1000.0;
+
+                            videoPlayer.Ctlcontrols.pause(); // Pausa o vídeo
                         }
                         else
                         {

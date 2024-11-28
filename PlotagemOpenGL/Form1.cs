@@ -6228,10 +6228,10 @@ namespace PlotagemOpenGL
                 }
 
                 camera.X = newloc * GlobVar.namos;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = newloc * GlobVar.namos;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;

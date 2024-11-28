@@ -170,12 +170,28 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 gl.End();
             }*/
             //marcacao video
-            gl.Color(0.5f, 0.5f, 0.5f);
+            gl.Color(0.1f, 0.1f, 0.1f);
 
-            gl.Begin(OpenGL.GL_LINE_STRIP);
-            gl.Vertex(GlobVar.ponteiroVideo,0);
-            gl.Vertex(GlobVar.ponteiroVideo, GlobVar.sizeOpenGl.Y);
+            // Definir o comprimento do traço e do espaço
+            float dashLength = 10.0f; // Comprimento do traço
+            float spaceLength = 5.0f; // Comprimento do espaço
+            float totalLength = GlobVar.sizeOpenGl.Y; // Altura total da tela
+            float currentY = 0.0f; // Posição inicial no eixo Y
+
+            gl.Begin(OpenGL.GL_LINES);
+
+            // Criar os traços e os espaços
+            while (currentY < totalLength)
+            {
+                // Desenhar um traço
+                gl.Vertex(GlobVar.ponteiroVideo, currentY);
+                gl.Vertex(GlobVar.ponteiroVideo, currentY + dashLength);
+
+                // Incrementar Y para adicionar o espaço
+                currentY += dashLength + spaceLength;
+            }
             gl.End();
+
 
             if (Tela_Plotagem.Linha1Seg.Checked)
             {

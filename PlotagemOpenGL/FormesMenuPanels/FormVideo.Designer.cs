@@ -36,10 +36,10 @@
             // videoPlayer
             // 
             videoPlayer.Enabled = true;
-            videoPlayer.Location = new System.Drawing.Point(2, 3);
+            videoPlayer.Location = new System.Drawing.Point(0, 0);
             videoPlayer.Name = "videoPlayer";
             videoPlayer.OcxState = (System.Windows.Forms.AxHost.State)resources.GetObject("videoPlayer.OcxState");
-            videoPlayer.Size = new System.Drawing.Size(381, 245);
+            videoPlayer.Size = new System.Drawing.Size(386, 253);
             videoPlayer.TabIndex = 0;
             // 
             // FormVideo
