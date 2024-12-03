@@ -21,8 +21,8 @@ namespace PlotagemOpenGL
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new backLog());
-            Application.Run(new Tela_Plotagem());
-            //Application.Run(new PagSelecionadasImpressao());
+            //Application.Run(new Tela_Plotagem());
+            Application.Run(new iCelera());
         }
     }
 }

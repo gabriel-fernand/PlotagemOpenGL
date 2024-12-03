@@ -193,7 +193,6 @@ namespace PlotagemOpenGL
         static extern int LoadNvApi32();
 
         private KeyChecker keyChecker;
-        public static FormVideo telinha;
         public static Tela_Plotagem Instance { get; private set; }
         public static bool videoIni = false;
 
@@ -201,123 +200,11 @@ namespace PlotagemOpenGL
         {
             try
             {
-                InitializeComponent();
-                LeitorDiretorio.LeituraDiretorio();
-
-
-                LeituraBanco.BancoRead();
-                LeituraBanco.AlteraTable();
-                LeituraBanco.AjustaMontagem();
-                //Canais.LerCanais();
-                //Leitura.LerArquivo();           
-                Leitura.QuantidadeCanais();
-                //Leitura.LeituraDat();
-                LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
-
-                LeituraEmMatrizTeste.LeituraDat();
-                LeituraEmMatrizTeste.referencias();
-                SetStyle(ControlStyles.DoubleBuffer, true);
-                rectangleLoad();
-                this.Resize += Tela_Plotagem_Resiz;
-                this.Resize += painelComando_Resiz;
-                this.Resize += Painel_resiz;
-                this.Resize += panelLb_Resiz;
-                this.Controls.Add(openglControl1);
-                painelExames.Paint += painelExames_Paint;
-                toolTip1 = new CustomToolTip();
-                formOriginalSize = this.Size;
-                painelOriginalSize = painelExames.Size;
-                painelComandoOriginalSize = painelComando.Size;
-                UpdateStyles();
-                qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
-                GlobVar.ponteiroVideo = GlobVar.namos * (GlobVar.segundos / 2);
-                GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
-                openglControl1.Focus();
-
-                GlobVar.sizeOpenGl.X = openglControl1.Width;
-                GlobVar.sizeOpenGl.Y = openglControl1.Height;
-                GlobVar.sizePainelExams.X = painelExames.Width;
-                GlobVar.sizePainelExams.Y = painelExames.Height;
-
-                GlobVar.sizeButtons.X = plusLb1.Width;
-                GlobVar.sizeButtons.Y = plusLb1.Height;
-                GlobVar.sizeLabelExams.X = label1.Width;
-                GlobVar.sizeLabelExams.Y = label1.Height;
-                GlobVar.sizePanelLb.X = panel1.Width;
-                GlobVar.sizePanelLb.Y = panel1.Height;
-
-                GlobVar.locBut.X = plusLb1.Location.X;
-                GlobVar.locScale.X = scalaLb1.Location.X;
-                GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
-                GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
-                GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
-                //GlobVar.ultimaPag = 2;
-                load();
-                camera.X = 0.0f;
-                camera.Y = 0.0f;
-                camera.Z = 1.0f;
-                velocidadeScroll.SelectedIndex = 0;
-                stopwatch = new Stopwatch();
-                this.MouseUp += Form1_MouseUp;
-                this.MouseMove += openglControl1_MouseMove;
-                painelExames.MouseLeave += panel_MouseLeave;
-                painelComando.MouseEnter += panel_MouseLeave;
-                openglControl1.MouseEnter += panel_MouseLeave;
-                timerAvanca.Tick += TimerAvanca_Tick;
-                timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
-                timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
-                timerRetrocede.Tick += TimerRetrocede_Tick;
-
-                MontagemBox.Items.Clear();
-                foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+                using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
-                    MontagemBox.Items.Add(row["DescrMontagem"].ToString());
-                }
-                string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
-                MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+                    InitializeComponent();
 
-                foreach (Control panel in painelExames.Controls)
-                {
-                    if (panel is Panel)
-                    {
-                        panel.MouseDown += Panel_MouseDown;
-                        panel.MouseMove += Panel_MouseMove;
-                        panel.MouseUp += Panel_MouseUp;
-                        panel.MouseEnter += panel_MouseEnter;
-                        //panel.MouseLeave += panel_MouseLeave;
-                        panel.Click += Panel_Click;
-                        foreach (Control lable in panel.Controls)
-                        {
-                            if (lable is Label)
-                            {
-                                lable.MouseEnter += panel_MouseEnter;
-                                lable.MouseDown += Panel_MouseDown;
-                                lable.MouseMove += Panel_MouseMove;
-                                lable.MouseUp += Panel_MouseUp;
-                            }
-                        }
-                    }
                 }
-                toolTip1.SetToolTip(openglControl1, "Teste");
-                this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
-                Play_OpenGl();
-                falsoClick();
-                AjustarFonteDosLabels();
-                AjustarBotoesMinusEPlus();
-                InicializarButtonForm();
-
-                timer3.Start();
-                tempoEmTela.SelectedIndex = 5;
-                isInitialized = true;
-
-                if (GlobVar.ultimaPag != 0)
-                {
-                    abreUltimaPaginaFechada();
-                }
-                Instance = this; // Define a instância estática
-                this.FormClosing += Tela_Plotagem_FormClosed;
-                GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
-                chamarTelinhaVid();
             }
             catch (Exception e) 
             {               
@@ -325,25 +212,199 @@ namespace PlotagemOpenGL
 
             }
         }
+
+        public async Task InitializeAsync()
+        {
+            try {
+                using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
+                {
+                    telaLoad.Show();
+                    telaLoad.label1.Text = "Abrindo Exame";
+                    telaLoad.label1.TextAlign = ContentAlignment.MiddleCenter; 
+                    await Task.Delay(45);
+                    telaLoad.AtualizarProgresso(10);
+
+                    LeitorDiretorio.LeituraDiretorio();
+
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    LeituraBanco.BancoRead();
+                    LeituraBanco.AlteraTable();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    LeituraBanco.AjustaMontagem();
+                    //Canais.LerCanais();
+                    //Leitura.LerArquivo();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    Leitura.QuantidadeCanais();
+                    //Leitura.LeituraDat();
+                    LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
+                    await Task.Delay(25);
+
+                    LeituraEmMatrizTeste.LeituraDat();
+                    LeituraEmMatrizTeste.referencias();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    SetStyle(ControlStyles.DoubleBuffer, true);
+                    rectangleLoad();
+                    await Task.Delay(25);
+
+                    this.Resize += Tela_Plotagem_Resiz;
+                    this.Resize += painelComando_Resiz;
+                    this.Resize += Painel_resiz;
+                    this.Resize += panelLb_Resiz;
+                    this.Controls.Add(openglControl1);
+                    painelExames.Paint += painelExames_Paint;
+                    toolTip1 = new CustomToolTip();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    formOriginalSize = this.Size;
+                    painelOriginalSize = painelExames.Size;
+                    painelComandoOriginalSize = painelComando.Size;
+                    UpdateStyles();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
+                    GlobVar.ponteiroVideo = GlobVar.namos * (GlobVar.segundos / 2);
+                    GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
+                    openglControl1.Focus();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    GlobVar.sizeOpenGl.X = openglControl1.Width;
+                    GlobVar.sizeOpenGl.Y = openglControl1.Height;
+                    GlobVar.sizePainelExams.X = painelExames.Width;
+                    GlobVar.sizePainelExams.Y = painelExames.Height;
+
+                    GlobVar.sizeButtons.X = plusLb1.Width;
+                    GlobVar.sizeButtons.Y = plusLb1.Height;
+                    GlobVar.sizeLabelExams.X = label1.Width;
+                    GlobVar.sizeLabelExams.Y = label1.Height;
+                    GlobVar.sizePanelLb.X = panel1.Width;
+                    GlobVar.sizePanelLb.Y = panel1.Height;
+
+                    GlobVar.locBut.X = plusLb1.Location.X;
+                    GlobVar.locScale.X = scalaLb1.Location.X;
+                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                    GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
+                    GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+                    //GlobVar.ultimaPag = 2;
+                    load();
+                    camera.X = 0.0f;
+                    camera.Y = 0.0f;
+                    camera.Z = 1.0f;
+                    velocidadeScroll.SelectedIndex = 0;
+                    stopwatch = new Stopwatch();
+                    this.MouseUp += Form1_MouseUp;
+                    this.MouseMove += openglControl1_MouseMove;
+                    painelExames.MouseLeave += panel_MouseLeave;
+                    painelComando.MouseEnter += panel_MouseLeave;
+                    openglControl1.MouseEnter += panel_MouseLeave;
+                    timerAvanca.Tick += TimerAvanca_Tick;
+                    timerAndaUmaPag.Tick += TimerAndaUmaPag_Tick;
+                    timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
+                    timerRetrocede.Tick += TimerRetrocede_Tick;
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(1);
+
+                    MontagemBox.Items.Clear();
+                    foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+                    {
+                        MontagemBox.Items.Add(row["DescrMontagem"].ToString());
+                    }
+                    string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+                    MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+
+                    foreach (Control panel in painelExames.Controls)
+                    {
+                        if (panel is Panel)
+                        {
+                            panel.MouseDown += Panel_MouseDown;
+                            panel.MouseMove += Panel_MouseMove;
+                            panel.MouseUp += Panel_MouseUp;
+                            panel.MouseEnter += panel_MouseEnter;
+                            //panel.MouseLeave += panel_MouseLeave;
+                            panel.Click += Panel_Click;
+                            foreach (Control lable in panel.Controls)
+                            {
+                                if (lable is Label)
+                                {
+                                    lable.MouseEnter += panel_MouseEnter;
+                                    lable.MouseDown += Panel_MouseDown;
+                                    lable.MouseMove += Panel_MouseMove;
+                                    lable.MouseUp += Panel_MouseUp;
+                                }
+                            }
+                        }
+                    }
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(2);
+
+                    toolTip1.SetToolTip(openglControl1, "Teste");
+                    this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
+                    Play_OpenGl();
+                    falsoClick();
+                    AjustarFonteDosLabels();
+                    AjustarBotoesMinusEPlus();
+                    InicializarButtonForm();
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(1);
+
+                    timer3.Start();
+                    tempoEmTela.SelectedIndex = 5;
+                    isInitialized = true;
+
+                    if (GlobVar.ultimaPag != 0)
+                    {
+                        abreUltimaPaginaFechada();
+                    }
+                    Instance = this; // Define a instância estática
+                    this.FormClosing += Tela_Plotagem_FormClosed;
+                    GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(10);
+
+                    chamarTelinhaVid();
+
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+
+            }
+        }
         public void chamarTelinhaVid()
         {
-            telinha = new FormVideo();
-            telinha.Owner = this;
 
-            if (telinha != null && GlobVar.tbl_ArqVideo != null)
+            if (iCelera.telinha != null && GlobVar.tbl_ArqVideo != null)
             {
-                telinha.Show();
-                telinha.videoCarregado();
-                telinha.videoPlayer.Ctlcontrols.pause();
+                iCelera.telinha.Show();
+                iCelera.telinha.videoCarregado();
+                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
+                videoIni = true;
+            }
+            else
+            {
+                iCelera.telinha.Hide();
                 videoIni = true;
             }
         }
         public void Video_Click(Object sender, EventArgs e)
         {
-            if (telinha != null && GlobVar.tbl_ArqVideo != null)
+            if (iCelera.telinha != null && GlobVar.tbl_ArqVideo != null)
             {
-                telinha.Show();
-                //telinha.videoCarregado();
+                iCelera.telinha.Show();
+                //iCelera.telinha.videoCarregado();
             }
         }
         public void falsoClick()
@@ -476,6 +537,53 @@ namespace PlotagemOpenGL
                 }
             }
             keyChecker.Stop();
+
+            GlobVar.eventosUpdate.Reset();
+            GlobVar.eventos.Reset();
+            GlobVar.tbl_CadCanal.Reset();
+            GlobVar.tbl_TipoCanal.Reset();
+            GlobVar.tbl_EventoTipoCanal.Reset();
+
+            GlobVar.tbl_Montagem.Reset();
+            GlobVar.tbl_MontCanal.Reset();
+            GlobVar.tbl_MontGrav.Reset();
+            GlobVar.tbl_TipoExame.Reset();
+            GlobVar.tbl_MontagemSelecionada.Reset();
+            GlobVar.tbl_CadTipoCanal.Reset();
+            GlobVar.tbl_CadEvento.Reset();
+            GlobVar.tbl_Comentarios.Reset();
+            GlobVar.tbl_DadosExame.Reset();
+            GlobVar.tbl_Paginas.Reset();
+            GlobVar.tbl_ResumoExame.Reset();
+            GlobVar.tbl_SelImpressao.Reset();
+            GlobVar.tbl_SeqEvento.Reset();
+            GlobVar.tbl_ArqVideo.Reset();
+
+            GlobVar.eventosUpdate.Dispose();
+            GlobVar.eventos.Dispose();
+
+            GlobVar.tbl_CadCanal.Dispose();
+            GlobVar.tbl_TipoCanal.Dispose();
+            GlobVar.tbl_EventoTipoCanal.Dispose();
+            GlobVar.tbl_Montagem.Dispose();
+            GlobVar.tbl_MontCanal.Dispose();
+            GlobVar.tbl_MontGrav.Dispose();
+            GlobVar.tbl_TipoExame.Dispose();
+            GlobVar.tbl_MontagemSelecionada.Dispose();
+            GlobVar.tbl_CadTipoCanal.Dispose();
+            GlobVar.tbl_CadEvento.Dispose();
+            GlobVar.tbl_Comentarios.Dispose();
+            GlobVar.tbl_DadosExame.Dispose();
+            GlobVar.tbl_Paginas.Dispose();
+            GlobVar.tbl_ResumoExame.Dispose();
+            GlobVar.tbl_SelImpressao.Dispose();
+            GlobVar.tbl_SeqEvento.Dispose();
+            GlobVar.tbl_ArqVideo.Dispose();
+
+            iCelera.telinha.Hide();
+
+            iCelera ic = new iCelera();
+            ic.Show();
         }
 
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
@@ -2358,7 +2466,7 @@ namespace PlotagemOpenGL
                             {
                                 TelaClearAndReload();
                                 UpdateInicioTela();
-                                telinha.videoPlayer.Ctlcontrols.pause();
+                                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
                                 isTelaClearAndReloadExecuted = true;
                             }
                         }
@@ -3018,7 +3126,11 @@ namespace PlotagemOpenGL
 
                                 openglControl1.Refresh();
                                 TelaClearAndReload();
-
+                                if (videoIni)
+                                {
+                                    iCelera.telinha.attLocVideo();
+                                    iCelera.telinha.videoPlayer.Ctlcontrols.pause();
+                                }
                             }
                         }
 
@@ -4189,8 +4301,8 @@ namespace PlotagemOpenGL
             atualizaButAntProx();
             if (videoIni)
             {
-                telinha.attLocVideo();
-                telinha.videoPlayer.Ctlcontrols.pause();
+                iCelera.telinha.attLocVideo();
+                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
             }
             openglControl1.Focus();
         }

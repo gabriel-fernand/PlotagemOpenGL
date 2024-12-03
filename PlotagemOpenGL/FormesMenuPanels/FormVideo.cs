@@ -33,6 +33,12 @@ namespace PlotagemOpenGL.FormesMenuPanels
             this.Resize += res;
             vidi = new Rectangle(videoPlayer.Location, videoPlayer.Size);
             videoPlayer.uiMode = "mini";
+            // Calcula a posição no canto superior direito
+            int x = Screen.PrimaryScreen.WorkingArea.Width - this.Width - 16; // Distância da borda direita
+            int y = 18; // Topo da tela
+
+            // Define a localização do formulário
+            this.Location = new Point(x, y);
         }
         public void Resiz(Control c, Rectangle r)
         {

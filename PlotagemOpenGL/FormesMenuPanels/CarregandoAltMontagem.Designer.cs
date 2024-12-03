@@ -16,7 +16,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         public System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        public static System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Panel panel1;
 
         protected override void Dispose(bool disposing)
@@ -36,7 +35,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             label1 = new Label();
             label2 = new Label();
             progressBar1 = new ProgressBar();
@@ -52,7 +50,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             label1.Location = new Point(69, 50);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(371, 38);
+            label1.Size = new Size(353, 38);
             label1.TabIndex = 0;
             label1.Text = "Alterando Montagem";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -93,7 +91,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             panel1.Size = new Size(493, 230);
             panel1.TabIndex = 0;
             // 
-            // zerando
+            // CarregandoAltMontagem
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -101,7 +99,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(4, 5, 4, 5);
-            Name = "zerando";
+            Name = "CarregandoAltMontagem";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Zero Pneumotach";
             panel1.ResumeLayout(false);
@@ -109,5 +107,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             ResumeLayout(false);
         }
         #endregion
+
+        public ProgressBar progressBar1;
     }
 }

@@ -525,6 +525,7 @@ namespace PlotagemOpenGL
                 Play.Text = ">";
                 Play.UseVisualStyleBackColor = true;
                 Play.Click += Play_Click;
+                Play.Visible = false;
                 // 
                 // openglControl1
                 // 
@@ -3024,7 +3025,7 @@ namespace PlotagemOpenGL
                 PainelAvRet.Controls.Add(OcultaTempo);
                 PainelAvRet.Controls.Add(Retrocede);
                 PainelAvRet.Controls.Add(TempoTimerAndar);
-                PainelAvRet.Location = new System.Drawing.Point(1337, 3);
+                PainelAvRet.Location = new System.Drawing.Point(1219, 4);
                 PainelAvRet.Name = "PainelAvRet";
                 PainelAvRet.Size = new System.Drawing.Size(316, 49);
                 PainelAvRet.TabIndex = 68;
@@ -3618,13 +3619,14 @@ namespace PlotagemOpenGL
                 // 
                 // playSelect
                 // 
-                playSelect.Location = new System.Drawing.Point(1220, 13);
+                playSelect.Location = new System.Drawing.Point(1558, 14);
                 playSelect.Name = "playSelect";
                 playSelect.Size = new System.Drawing.Size(110, 29);
                 playSelect.TabIndex = 57;
                 playSelect.Text = "Eventos";
                 playSelect.UseVisualStyleBackColor = true;
                 playSelect.Click += playSelect_Click;
+                playSelect.Visible = false;
                 // 
                 // minusAll
                 // 
@@ -3635,6 +3637,7 @@ namespace PlotagemOpenGL
                 minusAll.Text = "-";
                 minusAll.UseVisualStyleBackColor = true;
                 minusAll.Click += minusAll_Click;
+                minusAll.Visible = false;
                 // 
                 // plusAll
                 // 
@@ -3645,6 +3648,7 @@ namespace PlotagemOpenGL
                 plusAll.Text = "+";
                 plusAll.UseVisualStyleBackColor = true;
                 plusAll.Click += plusAll_Click;
+                plusAll.Visible = false;
                 // 
                 // qtdGraficos
                 // 
@@ -3653,6 +3657,7 @@ namespace PlotagemOpenGL
                 qtdGraficos.Size = new System.Drawing.Size(86, 27);
                 qtdGraficos.TabIndex = 50;
                 qtdGraficos.TextChanged += qtdGraficos_TextChanged;
+                qtdGraficos.Visible = false;
                 // 
                 // toolTip1
                 // 
