@@ -147,6 +147,7 @@
             SeleExame.TabIndex = 6;
             SeleExame.Tag = "Arq";
             SeleExame.Text = "Selecionar Exame";
+            SeleExame.Click += SelecionarExame_Click;
             // 
             // label5
             // 

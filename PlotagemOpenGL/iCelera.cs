@@ -1,4 +1,5 @@
-﻿using PlotagemOpenGL.FormesMenuPanels;
+﻿using PlotagemOpenGL.auxi;
+using PlotagemOpenGL.FormesMenuPanels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ namespace PlotagemOpenGL
         public iCelera()
         {
             InitializeComponent();
+            LeitorDiretorio.LeituraDiretorio();
             AtualizarLabelsComArquivos();
             groupBox1.Paint += GroupBox1_Paint;
             groupBox2.Paint += GroupBox1_Paint;
@@ -30,6 +32,10 @@ namespace PlotagemOpenGL
             telinha.Owner = this;
             telinha.TopMost = true;
             this.FormClosing += ICelera_FormClosing;
+
+            // Bloqueia a maximização do formulário
+            this.MaximizeBox = false; // Remove o botão de maximizar
+            this.FormBorderStyle = FormBorderStyle.FixedSingle; // Define um estilo fixo
         }
 
         private void ICelera_FormClosing(object sender, FormClosingEventArgs e)
@@ -49,11 +55,94 @@ namespace PlotagemOpenGL
         {
             try
             {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    // Configurações do diálogo
+                    openFileDialog.Filter = "Arquivos DAT (*.dat)|*.dat"; // Filtra para arquivos .dat
+                    openFileDialog.Title = "Selecione um arquivo .dat";
+                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Diretório inicial
 
-            }catch (Exception ex)
-            {
-                MessageBox.Show($"{ex}");
+                    // Exibe o diálogo de seleção
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string nomeArquivo = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                        // Obtém o caminho completo do arquivo selecionado
+                        string arquivoSelecionado = openFileDialog.FileName;
+                        // Exibe o diretório do arquivo
+                        string diretorioArquivo = Path.GetDirectoryName(arquivoSelecionado);
+                        string diretorioDatMdb = diretorioArquivo +"\\"+ nomeArquivo + ".mdb";
+
+                        //MessageBox.Show($"Arquivo selecionado: {arquivoSelecionado}\nDiretório: {diretorioArquivo}\nmdb diretorio: {diretorioDatMdb}");
+
+                        // Retorna ou utiliza o diretório conforme necessário
+                        await Task.Run(() => ProcessarArquivo(arquivoSelecionado));
+                        if (!string.IsNullOrEmpty(arquivoSelecionado))
+                        {
+                            // Exibe os diretórios selecionados
+                            //MessageBox.Show($"Diretório selecionado: {diretorioDat} {diretorioMdb}", "Informação");
+
+                            // Caminho do arquivo
+                            string filePath = @"C:\Temp\Diretorios.txt";
+
+                            if (File.Exists(filePath))
+                            {
+                                // Lê o conteúdo do arquivo
+                                string fileContent = File.ReadAllText(filePath);
+
+                                // Divide o conteúdo em diretórios
+                                string[] diretorios = fileContent.Split(',');
+
+                                // Substitui os dois primeiros diretórios, se existirem
+                                if (diretorios.Length >= 2)
+                                {
+                                    diretorios[0] = arquivoSelecionado;
+                                    diretorios[1] = diretorioDatMdb;
+
+                                    // Junta os diretórios novamente com vírgulas
+                                    string updatedContent = string.Join(",", diretorios);
+
+                                    // Escreve o conteúdo atualizado de volta no arquivo
+                                    File.WriteAllText(filePath, updatedContent);
+
+
+                                    await exame.InitializeAsync(); // Aguarde a inicialização assíncrona
+                                    exame.Show();
+                                    this.Hide();
+
+                                    //MessageBox.Show("Os diretórios foram atualizados com sucesso!", "Sucesso");
+                                }
+                                else
+                                {
+                                    MessageBox.Show("O arquivo não contém diretórios suficientes para atualizar.", "Erro");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("O arquivo Diretorios.txt não foi encontrado.", "Erro");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("A tag do Label está vazia ou não foi definida.", "Aviso");
+                        }
+
+                    }
+                    else
+                    {
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocorreu um erro: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Exemplo de método para processar o arquivo selecionado
+        private void ProcessarArquivo(string caminhoArquivo)
+        {
+            // Lógica para processar o arquivo .dat
+            // Por exemplo, ler o conteúdo, validar o arquivo, etc.
         }
         private async void examClick(object sender, EventArgs e)
         {
@@ -89,6 +178,7 @@ namespace PlotagemOpenGL
 
                             // Escreve o conteúdo atualizado de volta no arquivo
                             File.WriteAllText(filePath, updatedContent);
+
 
                             await exame.InitializeAsync(); // Aguarde a inicialização assíncrona
                             exame.Show();

@@ -10,6 +10,14 @@ namespace PlotagemOpenGL.FormesMenuPanels
             InitializeComponent();
         }
 
+        public void realoctxt()
+        {
+            int Meiosize = this.Size.Width / 2;
+            int newLoc = label1.Width / 2;
+
+            label1.Width = Meiosize - newLoc;
+
+        }
         // Método para atualizar o progresso
         public void AtualizarProgresso(int valor)
         {

@@ -36,6 +36,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // Calcula a posição no canto superior direito
             int x = Screen.PrimaryScreen.WorkingArea.Width - this.Width - 16; // Distância da borda direita
             int y = 18; // Topo da tela
+            videoPlayer.Ctlcontrols.pause();
 
             // Define a localização do formulário
             this.Location = new Point(x, y);
@@ -74,6 +75,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         videoUpdateThread = new Thread(UpdateVideoPosition);
                         videoUpdateThread.IsBackground = true; // Permite encerrar a thread com o aplicativo
                         videoUpdateThread.Start();
+
                     }
                     break;
 

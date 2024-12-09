@@ -12,30 +12,21 @@ using ClassesBDNano;
 public class LeituraBanco
 {
     static DataTable sele = new DataTable();
-    private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-    private static string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
+    //private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+    //private static string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
     public static void BancoRead()
     {
         try
         {
-            using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
+            string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
             using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
 
-            connectionConfigBd.Open();
             connectionDatBd.Open();
             //MessageBox.Show("Conexão bem-sucedida!");
 
-            string queryConfig = "SELECT * FROM tbl_CadCanal";
             string query = "SELECT * FROM tbl_Eventos";
-            string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
-            string queryTbl_Montagem = "SELECT * FROM tbl_Montagem";
             string quaryTbl_MontGrav = "SELECT * FROM tbl_MontGrav";
-            string quaryTbl_TipoExame = "SELECT * FROM tbl_TipoExame";
             string quaryTipoExame = "SELECT TOP 1 CodTipoExame FROM tbl_DadosExame";
-            string queryCadTipoCanal = "SELECT * FROM tbl_CadTipoCanal";
-            string queryCadEvento = "SELECT * FROM tbl_CadEvento";
-            string queryEventTipCanal = "SELECT * FROM tbl_EventoTipoCanal";
-            string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
             string queryTbl_Comentarios = "SELECT * FROM tbl_Comentarios";
             string queryTbl_DadosExame = "SELECT * FROM tbl_DadosExame";
             string queryTbl_Paginas = "SELECT * FROM tbl_Paginas";
@@ -44,15 +35,6 @@ public class LeituraBanco
             string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
             string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
 
-
-            using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
-            using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
-            using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
-            using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
-            using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
-            using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
-            using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
-            using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
 
             using var command = new OdbcCommand(query, connectionDatBd);
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
@@ -65,14 +47,6 @@ public class LeituraBanco
             using var commandTbl_SeqEvento = new OdbcCommand(queryTbl_SeqEvento, connectionDatBd);
             using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
 
-            using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
-            using var adapterConfig = new OdbcDataAdapter(commandConfig);
-            using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
-            using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
-            using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
-            using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
-            using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
-            using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
             using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
 
             using var adapter = new OdbcDataAdapter(command);
@@ -94,11 +68,64 @@ public class LeituraBanco
             adapterTbl_DadosExame.Fill(GlobVar.tbl_DadosExame);
             adapterTbl_Comentarios.Fill(GlobVar.tbl_Comentarios);
             adapterTipoExame.Fill(sele);
-            adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapter.Fill(GlobVar.eventos);
+            adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
+
+            connectionDatBd.Close();
+            
+        }
+        catch (OdbcException ex)
+        {
+            // Tratamento de exceções específicas do ODBC
+            Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Tratamento de outras exceções
+            Console.WriteLine($"Erro inesperado: {ex.Message}");
+        }
+    }
+    public static void BancoConifg()
+    {
+        try
+        {
+            string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
+            using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
+
+            connectionConfigBd.Open();
+
+            string queryConfig = "SELECT * FROM tbl_CadCanal";
+            string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
+            string queryTbl_Montagem = "SELECT * FROM tbl_Montagem";
+            string quaryTbl_TipoExame = "SELECT * FROM tbl_TipoExame";
+            string queryCadTipoCanal = "SELECT * FROM tbl_CadTipoCanal";
+            string queryCadEvento = "SELECT * FROM tbl_CadEvento";
+            string queryEventTipCanal = "SELECT * FROM tbl_EventoTipoCanal";
+            string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
+
+
+            using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
+            using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
+            using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
+            using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
+            using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
+            using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
+            using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
+            using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
+
+
+            using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
+            using var adapterConfig = new OdbcDataAdapter(commandConfig);
+            using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
+            using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
+            using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
+            using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
+            using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
+            using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
+
+            adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
             adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
-            adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
             adapterTbl_TipeExam.Fill(GlobVar.tbl_TipoExame);
             adapterTbl_CadTipoCanal.Fill(GlobVar.tbl_CadTipoCanal);
             adapterCadExame.Fill(GlobVar.tbl_CadEvento);
@@ -107,8 +134,7 @@ public class LeituraBanco
 
 
             connectionConfigBd.Close();
-            connectionDatBd.Close();
-            
+
         }
         catch (OdbcException ex)
         {

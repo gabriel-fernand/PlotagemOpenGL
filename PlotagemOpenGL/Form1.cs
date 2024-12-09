@@ -203,7 +203,8 @@ namespace PlotagemOpenGL
                 using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
                     InitializeComponent();
-
+                    ConfigurarTooltips(painelComando); // Configura os tooltips para todos os botões do painel principal
+                    toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 pagina");
                 }
             }
             catch (Exception e) 
@@ -218,27 +219,29 @@ namespace PlotagemOpenGL
             try {
                 using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
-                    telaLoad.Show();
                     telaLoad.label1.Text = "Abrindo Exame";
-                    telaLoad.label1.TextAlign = ContentAlignment.MiddleCenter; 
+                    telaLoad.label1.TextAlign = ContentAlignment.MiddleCenter;
+                    telaLoad.realoctxt();
+                    telaLoad.Show();
                     await Task.Delay(45);
                     telaLoad.AtualizarProgresso(10);
 
                     LeitorDiretorio.LeituraDiretorio();
 
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(20);
+                    LeituraBanco.BancoConifg();
 
+                    await Task.Delay(25);
+                    telaLoad.AtualizarProgresso(30);
                     LeituraBanco.BancoRead();
                     LeituraBanco.AlteraTable();
-                    await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
-
                     LeituraBanco.AjustaMontagem();
+
                     //Canais.LerCanais();
                     //Leitura.LerArquivo();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(40);
 
                     Leitura.QuantidadeCanais();
                     //Leitura.LeituraDat();
@@ -248,7 +251,7 @@ namespace PlotagemOpenGL
                     LeituraEmMatrizTeste.LeituraDat();
                     LeituraEmMatrizTeste.referencias();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(50);
 
                     SetStyle(ControlStyles.DoubleBuffer, true);
                     rectangleLoad();
@@ -262,21 +265,21 @@ namespace PlotagemOpenGL
                     painelExames.Paint += painelExames_Paint;
                     toolTip1 = new CustomToolTip();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(60);
 
                     formOriginalSize = this.Size;
                     painelOriginalSize = painelExames.Size;
                     painelComandoOriginalSize = painelComando.Size;
                     UpdateStyles();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(70);
 
                     qtdGraficos.Text = $"{GlobVar.tbl_MontagemSelecionada.Rows.Count.ToString()}";
                     GlobVar.ponteiroVideo = GlobVar.namos * (GlobVar.segundos / 2);
                     GlobVar.FundoColor = new int[] { 255, 255, 255, 255 };
                     openglControl1.Focus();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(80);
 
                     GlobVar.sizeOpenGl.X = openglControl1.Width;
                     GlobVar.sizeOpenGl.Y = openglControl1.Height;
@@ -296,7 +299,7 @@ namespace PlotagemOpenGL
                     GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
                     GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(90);
                     //GlobVar.ultimaPag = 2;
                     load();
                     camera.X = 0.0f;
@@ -314,7 +317,7 @@ namespace PlotagemOpenGL
                     timerVoltaUmaPag.Tick += TimerVoltaUmaPag_Tick;
                     timerRetrocede.Tick += TimerRetrocede_Tick;
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(1);
+                    telaLoad.AtualizarProgresso(91);
 
                     MontagemBox.Items.Clear();
                     foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
@@ -347,7 +350,7 @@ namespace PlotagemOpenGL
                         }
                     }
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(2);
+                    telaLoad.AtualizarProgresso(93);
 
                     toolTip1.SetToolTip(openglControl1, "Teste");
                     this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
@@ -357,7 +360,7 @@ namespace PlotagemOpenGL
                     AjustarBotoesMinusEPlus();
                     InicializarButtonForm();
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(1);
+                    telaLoad.AtualizarProgresso(94);
 
                     timer3.Start();
                     tempoEmTela.SelectedIndex = 5;
@@ -371,7 +374,7 @@ namespace PlotagemOpenGL
                     this.FormClosing += Tela_Plotagem_FormClosed;
                     GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
                     await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(10);
+                    telaLoad.AtualizarProgresso(100);
 
                     chamarTelinhaVid();
 
@@ -385,18 +388,32 @@ namespace PlotagemOpenGL
         }
         public void chamarTelinhaVid()
         {
-
+            // Verifica se telinha e tbl_ArqVideo não são nulos
             if (iCelera.telinha != null && GlobVar.tbl_ArqVideo != null)
             {
-                iCelera.telinha.Show();
-                iCelera.telinha.videoCarregado();
-                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
-                videoIni = true;
-            }
-            else
-            {
-                iCelera.telinha.Hide();
-                videoIni = true;
+                // Verifica se o DataTable possui ao menos uma linha
+                if (GlobVar.tbl_ArqVideo.Rows.Count > 0)
+                {
+                    // Verifica o valor de TickIni
+                    if (Convert.ToInt32(GlobVar.tbl_ArqVideo.Rows[0]["TickIni"]) != 0)
+                    {
+                        iCelera.telinha.Show();
+                        iCelera.telinha.videoCarregado();
+                        iCelera.telinha.videoPlayer.Ctlcontrols.pause();
+                        videoIni = true;
+                    }
+                    else if (Convert.ToInt32(GlobVar.tbl_ArqVideo.Rows[0]["TickIni"]) == 0)
+                    {
+                        iCelera.telinha.Close();
+                        videoIni = true;
+                    }
+                }
+                else
+                {
+                    // Caso não existam linhas no DataTable
+                    iCelera.telinha.Close();
+                    videoIni = false; // Ou mantenha o comportamento desejado
+                }
             }
         }
         public void Video_Click(Object sender, EventArgs e)
@@ -404,6 +421,7 @@ namespace PlotagemOpenGL
             if (iCelera.telinha != null && GlobVar.tbl_ArqVideo != null)
             {
                 iCelera.telinha.Show();
+                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
                 //iCelera.telinha.videoCarregado();
             }
         }
@@ -537,6 +555,28 @@ namespace PlotagemOpenGL
                 }
             }
             keyChecker.Stop();
+
+            GlobVar.eventosUpdate.Clear();
+            GlobVar.eventos.Clear();
+            GlobVar.tbl_CadCanal.Clear();
+            GlobVar.tbl_TipoCanal.Clear();
+            GlobVar.tbl_EventoTipoCanal.Clear();
+
+            GlobVar.tbl_Montagem.Clear();
+            GlobVar.tbl_MontCanal.Clear();
+            GlobVar.tbl_MontGrav.Clear();
+            GlobVar.tbl_TipoExame.Clear();
+            GlobVar.tbl_MontagemSelecionada.Clear();
+            GlobVar.tbl_CadTipoCanal.Clear();
+            GlobVar.tbl_CadEvento.Clear();
+            GlobVar.tbl_Comentarios.Clear();
+            GlobVar.tbl_DadosExame.Clear();
+            GlobVar.tbl_Paginas.Clear();
+            GlobVar.tbl_ResumoExame.Clear();
+            GlobVar.tbl_SelImpressao.Clear();
+            GlobVar.tbl_SeqEvento.Clear();
+            GlobVar.tbl_ArqVideo.Clear();
+
 
             GlobVar.eventosUpdate.Reset();
             GlobVar.eventos.Reset();
@@ -820,7 +860,7 @@ namespace PlotagemOpenGL
         }
 
 
-        private void UpdateFilterStates()
+        public void UpdateFilterStates()
         {
             int panelIndex = 1;
             foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
@@ -1960,7 +2000,8 @@ namespace PlotagemOpenGL
                 AjustarBotoesMinusEPlus();
                 await Task.Delay(2, token);
                 telaLoad.AtualizarProgresso(90);
-
+                 
+                UpdateFilterStates();
                 UpdateInicioTela();
                 TelaClearAndReload();
                 await Task.Delay(2, token);
@@ -2158,6 +2199,7 @@ namespace PlotagemOpenGL
                     }
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     int alturaTela = (int)openglControl1.Height;
                     TelaClearAndReload();
@@ -3146,6 +3188,36 @@ namespace PlotagemOpenGL
             }
         }
 
+        private void ConfigurarTooltips(Control container)
+        {
+            foreach (Control controle in container.Controls)
+            {
+                if (controle is Button botao)
+                {
+                    // Adiciona os eventos para exibir e esconder o tooltip
+                    botao.MouseEnter += (s, e) => MostrarTooltip(botao);
+                    botao.MouseLeave += (s, e) => EsconderTooltip();
+                }
+                else if (controle is Panel painel)
+                {
+                    // Configura os botões nos subpainéis
+                    ConfigurarTooltips(painel);
+                }
+            }
+        }
+
+        private void MostrarTooltip(Button botao)
+        {
+            // Configura o conteúdo e a posição do tooltip
+            toolTip2.Show(botao.Name, botao, 0, botao.Height); // Dura 2 segundos
+        }
+
+        private void EsconderTooltip()
+        {
+            toolTip2.Hide(painelComando); // Esconde o tooltip do painel principal
+        }
+
+
         int lastStartX;
 
         public static Point LocationMouseClickComentario;
@@ -3729,9 +3801,10 @@ namespace PlotagemOpenGL
                                 GlobVar.ponteiroVideo -= (int)GlobVar.namos * (int)GlobVar.SPEED;
 
                                 if (!conc) LeituraEmMatrizTeste.Resume();
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
-                                break;
+                            break;
                         case Keys.S:
                             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
                             {
@@ -3756,6 +3829,7 @@ namespace PlotagemOpenGL
                                 GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.namos * (int)GlobVar.SPEED;
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
 
@@ -3784,6 +3858,7 @@ namespace PlotagemOpenGL
                                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
                             break;
@@ -3814,6 +3889,7 @@ namespace PlotagemOpenGL
                                 //TelaClearAndReload();
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
 
@@ -3858,6 +3934,7 @@ namespace PlotagemOpenGL
                                 }
                                 if (!conc) LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
                             break;
@@ -3905,9 +3982,11 @@ namespace PlotagemOpenGL
                                 //TelaClearAndReload();
                                 if (!conc) LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
                             break;
+
                         case Keys.NumPad0:
                             Marcar0.PerformClick();
                             break;
@@ -3970,7 +4049,8 @@ namespace PlotagemOpenGL
 
                             // Remove o foco do TextBox e coloca no controle openglControl1
                             openglControl1.Focus();
-                            
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+
                         }
                         else
                         {
@@ -3993,6 +4073,7 @@ namespace PlotagemOpenGL
                             openglControl1.Focus();
                             
                             LeituraEmMatrizTeste.Resume();
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                         }
                         break;
@@ -4011,7 +4092,8 @@ namespace PlotagemOpenGL
 
                             // Remove o foco do TextBox e coloca no controle openglControl1
                             openglControl1.Focus();
-                            
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+
                         }
                         else
                         {
@@ -4031,7 +4113,8 @@ namespace PlotagemOpenGL
                             openglControl1.Focus();
                             //retomar a task aqui
                             LeituraEmMatrizTeste.Resume();
-                            
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+
 
                         }
                         break;
@@ -4105,6 +4188,7 @@ namespace PlotagemOpenGL
                 camera.X = newLoc;
                 GlobVar.indiceNumero = newLocNum;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico); ;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = newLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos); ;
@@ -4126,9 +4210,7 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
-
 
                 foiencontradoumUltimo = false;
 
@@ -4169,6 +4251,7 @@ namespace PlotagemOpenGL
             GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
             float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
             hScrollBar1.LargeChange = GlobVar.segundos;
 
@@ -4296,7 +4379,7 @@ namespace PlotagemOpenGL
             if (!isScroll)
             {
                 hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
-                isScroll = false;
+                isScroll = true;
             }
             atualizaButAntProx();
             if (videoIni)
@@ -4414,6 +4497,7 @@ namespace PlotagemOpenGL
                     camera.X = NovaLoc;
 
                     camera.X = NovaLoc;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
@@ -4423,8 +4507,8 @@ namespace PlotagemOpenGL
                     foiencontradoumUltimo = false;
                     UpdateInicioTela();
                     TelaClearAndReload();
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 }
             }
@@ -4488,11 +4572,12 @@ namespace PlotagemOpenGL
                     camera.X = NovaLoc;
 
                     camera.X = NovaLoc;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4531,16 +4616,17 @@ namespace PlotagemOpenGL
                     camera.X = NovaLoc;
 
                     camera.X = NovaLoc;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     UpdateInicioTela();
                     TelaClearAndReload();
@@ -4582,11 +4668,12 @@ namespace PlotagemOpenGL
                     camera.X = NovaLoc;
 
                     camera.X = NovaLoc;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4634,11 +4721,12 @@ namespace PlotagemOpenGL
                     camera.X = NovaLoc;
 
                     camera.X = NovaLoc;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.indice = NovaLoc;
                     GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     GlobVar.indiceNumero = NovaLocNumerico;
                     GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -4695,11 +4783,12 @@ namespace PlotagemOpenGL
                 camera.X = NovaLoc;
 
                 camera.X = NovaLoc;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5283,49 +5372,89 @@ namespace PlotagemOpenGL
         }
         private void Marcar_Click(object sender, EventArgs e)
         {
-            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+            if (GlobVar.maximaVect > GlobVar.matrizCanal.GetLength(1))
+                return;
+
+            Button botao = sender as Button;
+            if (botao == null)
+                return;
+
+            int newEstagio = Convert.ToInt32(botao.Tag);
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            int rowIndex = FindRowIndex(paginaCoerente);
+
+            if (rowIndex >= 0)
             {
-                Button botao = sender as Button;
-                int newEstagio = Convert.ToInt32(botao.Tag);
-                int paginaCoerente = GlobVar.indice / GlobVar.namos;
-                var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+                int totalRows = GlobVar.tbl_Paginas.Rows.Count;
+                int limite = Math.Min(rowIndex + 30, totalRows);
 
-                if (rowIndex >= 0)
-                {
-                    int totalRows = GlobVar.tbl_Paginas.Rows.Count;
-                    int limite = Math.Min(rowIndex + 30, totalRows);
+                List<Tuple<int, int>> updates = PrepareUpdates(rowIndex, limite, newEstagio);
 
-                    List<Tuple<int, int>> updates = new List<Tuple<int, int>>();
-
-                    for (int i = rowIndex; i < limite; i++)
-                    {
-                        GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
-
-                        // Adiciona a atualização para a lista
-                        int numPag = GlobVar.tbl_Paginas.Rows[i].Field<int>("NumPag");
-                        updates.Add(new Tuple<int, int>(numPag, newEstagio));
-                    }
-
-                    // Agora faz uma chamada ao banco de dados com todas as atualizações de uma vez
-                    BD.AlteraBD.AlteraEstagioDaEpoca(updates);
-                }
-
-                // Resto do código permanece o mesmo
-                camera.X += GlobVar.saltoTelas;
-
-                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico;
-                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico;
-
-                GlobVar.maximaVect += (int)GlobVar.saltoTelas;
-                GlobVar.indice += (int)GlobVar.saltoTelas;
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
-                GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
-
-                GlobVar.inicioTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
-                GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
-                UpdateInicioTela();
-                TelaClearAndReload();
+                ExecuteDatabaseUpdate(updates);
             }
+
+            UpdateGlobVarStates();
+            UpdateInterface();
+        }
+
+        /// <summary>
+        /// Encontra o índice da linha no DataTable com base no número da página coerente.
+        /// </summary>
+        private int FindRowIndex(int paginaCoerente)
+        {
+            return GlobVar.tbl_Paginas.AsEnumerable()
+                .ToList()
+                .FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+        }
+
+        /// <summary>
+        /// Prepara as atualizações a serem feitas no DataTable e no banco de dados.
+        /// </summary>
+        private List<Tuple<int, int>> PrepareUpdates(int start, int limit, int newEstagio)
+        {
+            List<Tuple<int, int>> updates = new List<Tuple<int, int>>();
+
+            for (int i = start; i < limit; i++)
+            {
+                GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
+                int numPag = GlobVar.tbl_Paginas.Rows[i].Field<int>("NumPag");
+                updates.Add(new Tuple<int, int>(numPag, newEstagio));
+            }
+
+            return updates;
+        }
+
+        /// <summary>
+        /// Executa as atualizações no banco de dados.
+        /// </summary>
+        private void ExecuteDatabaseUpdate(List<Tuple<int, int>> updates)
+        {
+            BD.AlteraBD.AlteraEstagioDaEpoca(updates);
+        }
+
+        /// <summary>
+        /// Atualiza os estados das variáveis globais.
+        /// </summary>
+        private void UpdateGlobVarStates()
+        {
+            GlobVar.maximaVect += (int)GlobVar.saltoTelas;
+            GlobVar.indice += (int)GlobVar.saltoTelas;
+            GlobVar.ponteiroVideo = GlobVar.indice + Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+            GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico;
+            GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico;
+            GlobVar.inicioTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
+            GlobVar.finalTela += ((int)GlobVar.saltoTelas / GlobVar.namos);
+        }
+
+        /// <summary>
+        /// Atualiza a interface do usuário.
+        /// </summary>
+        private void UpdateInterface()
+        {
+            camera.X += GlobVar.saltoTelas;
+            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+            UpdateInicioTela();
+            TelaClearAndReload();
         }
         private void Proximo_Click(object sender, EventArgs e)
         {
@@ -5370,11 +5499,12 @@ namespace PlotagemOpenGL
                 camera.X = NovaLoc;
 
                 camera.X = NovaLoc;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5414,11 +5544,12 @@ namespace PlotagemOpenGL
                 camera.X = NovaLoc;
 
                 camera.X = NovaLoc;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5474,11 +5605,12 @@ namespace PlotagemOpenGL
                 camera.X = NovaLoc;
 
                 camera.X = NovaLoc;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5517,11 +5649,12 @@ namespace PlotagemOpenGL
                 camera.X = NovaLoc;
 
                 camera.X = NovaLoc;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = NovaLoc;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = NovaLocNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -5573,11 +5706,12 @@ namespace PlotagemOpenGL
 
                     GlobVar.indiceNumero += (int)AndaUmSegundoNumerico;
                     GlobVar.maximaNumero += (int)AndaUmSegundoNumerico;
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.maximaVect += (int)AndarUmSegundo;
                     GlobVar.indice += (int)AndarUmSegundo;
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                     GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                     GlobVar.inicioTela += ((int)AndarUmSegundo) / GlobVar.namos;
                     GlobVar.finalTela += ((int)AndarUmSegundo) / GlobVar.namos;
@@ -5609,6 +5743,7 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)escolha;
                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)escolha;
@@ -5619,8 +5754,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)escolha) / GlobVar.namos;
@@ -5653,6 +5788,7 @@ namespace PlotagemOpenGL
                         GlobVar.indiceNumero = 0;
                         GlobVar.maximaNumero = VoltaUmSegundoNumerico;
                     }
+                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                     GlobVar.maximaVect -= (int)VoltaUmSegundo;
                     GlobVar.indice -= (int)VoltaUmSegundo;
@@ -5663,8 +5799,9 @@ namespace PlotagemOpenGL
                         GlobVar.maximaVect = (int)VoltaUmSegundo;
                         camera.X = 0;
                     }
-                    float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
-                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                    GlobVar.ponteiroVideo = GlobVar.indice + calcPont; 
+                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+
                     UpdateInicioTela();
                     TelaClearAndReload();
                 }
@@ -5724,6 +5861,7 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -5734,8 +5872,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                     camera.X = 0;
                 }
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5768,6 +5906,7 @@ namespace PlotagemOpenGL
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = VoltaUmSegundoNumerico;
                 }
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.maximaVect -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
                 GlobVar.indice -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
@@ -5778,8 +5917,8 @@ namespace PlotagemOpenGL
                     GlobVar.maximaVect = (int)VoltaUmSegundo;
                     camera.X = 0;
                 }
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5806,11 +5945,12 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                 GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5829,11 +5969,12 @@ namespace PlotagemOpenGL
 
                 GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                 GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                 GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -5968,11 +6109,12 @@ namespace PlotagemOpenGL
 
                             GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                             GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                             GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6036,6 +6178,7 @@ namespace PlotagemOpenGL
                                 GlobVar.indiceNumero = 0;
                                 GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                             }
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                             GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
                             GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
@@ -6046,8 +6189,8 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)GlobVar.saltoTelas;
                                 camera.X = 0;
                             }
-                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6119,6 +6262,7 @@ namespace PlotagemOpenGL
                                 GlobVar.indiceNumero = 0;
                                 GlobVar.maximaNumero = VoltaUmSegundoNumerico;
                             }
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                             GlobVar.maximaVect -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
                             GlobVar.indice -= (int)VoltaUmSegundo * (int)GlobVar.SPEED;
@@ -6129,8 +6273,8 @@ namespace PlotagemOpenGL
                                 GlobVar.maximaVect = (int)VoltaUmSegundo;
                                 camera.X = 0;
                             }
-                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             GlobVar.inicioTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela -= ((int)VoltaUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6197,11 +6341,12 @@ namespace PlotagemOpenGL
 
                             GlobVar.indiceNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
                             GlobVar.maximaNumero += AndaUmSegundoNumerico * (int)GlobVar.SPEED;
+                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                             GlobVar.maximaVect += AndarUmSegundo * (int)GlobVar.SPEED;
                             GlobVar.indice += AndarUmSegundo * (int)GlobVar.SPEED;
-                            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
                             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             GlobVar.inicioTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
                             GlobVar.finalTela += (AndarUmSegundo * (int)GlobVar.SPEED) / GlobVar.namos;
@@ -6338,13 +6483,14 @@ namespace PlotagemOpenGL
                         await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
                     }
                 }
+                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 camera.X = newloc * GlobVar.namos;
-                float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
                 GlobVar.indice = newloc * GlobVar.namos;
                 GlobVar.maximaVect = GlobVar.indice + (GlobVar.segundos * GlobVar.namos);
                 GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                 GlobVar.indiceNumero = newloc * GlobVar.namosNumerico;
                 GlobVar.maximaNumero = GlobVar.indiceNumero + (GlobVar.segundos * GlobVar.namosNumerico);
@@ -6792,7 +6938,15 @@ namespace PlotagemOpenGL
             {
                 PlotagemOpenGL.FormesMenuPanels.InformaçõesDoCanal Info = new PlotagemOpenGL.FormesMenuPanels.InformaçõesDoCanal();
                 buttonForm.HideOverlay();
-                Info.ShowDialog();                
+
+                // Exibe o formulário e espera o fechamento
+                DialogResult result = Info.ShowDialog();
+
+                // Verifica se o formulário foi fechado
+                if (result == DialogResult.OK)
+                {
+                    UpdateFilterStates();
+                }
             }
             catch { }
 
@@ -7583,9 +7737,9 @@ namespace PlotagemOpenGL
                         alterarRefText(rowNumerico);
 
                         clickedPanel = panel;
-                        UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
-                        UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
-                        UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
+                        // UpdateMenuItems(panel, menu.Items, panelLowFilterStates[panel]);
+                        //UpdateMenuItems(panel, menu.Items, panelHighFilterStates[panel]);
+                        //UpdateMenuItems(panel, menu.Items, panelNotchFilterStates[panel]);
 
                     }
                     else
@@ -7636,7 +7790,15 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
+        private void FiltrosDropDownOpening(object sender, EventArgs e)
+        {
+            // Identificar o item que disparou o evento
+            if (sender is ToolStripMenuItem clickedItem && clickedPanel is Panel panel)
+            {
+                // Atualizar os itens do menu com base no dicionário correspondente ao painel
+                UpdateMenuItemsFilters(panel, clickedItem.DropDownItems, panelLowFilterStates[panel]);
+            }
+        }
         private void CorDeFundo_Click(object sender, EventArgs e)
         {
             try
@@ -7676,11 +7838,12 @@ namespace PlotagemOpenGL
                 inicioPag = 0;
                 finalPag = 30;
             }
+            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
 
             GlobVar.indice = inicioPag * GlobVar.namos;
             GlobVar.maximaVect = finalPag * GlobVar.namos;
-            float calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
             GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
             GlobVar.indiceNumero = inicioPag * GlobVar.namosNumerico;
             GlobVar.maximaNumero = finalPag * GlobVar.namosNumerico;
@@ -7851,7 +8014,7 @@ namespace PlotagemOpenGL
             {
                 EditComentClick = true;
                 InserirComentario insert = new InserirComentario();                
-                insert.Show();
+                insert.ShowDialog();
 
             }
             catch { }
@@ -7952,30 +8115,42 @@ namespace PlotagemOpenGL
                 }
             }
         }
+        private void UpdateMenuItemsFilters(Panel panel, ToolStripItemCollection items, Dictionary<string, bool> filterStates)
+        {
+            foreach (ToolStripItem item in items)
+            {
+                if (item is ToolStripMenuItem menuItem && filterStates.ContainsKey(menuItem.Name))
+                {
+                    menuItem.Checked = filterStates[menuItem.Name];
+                }
+            }
+        }
+        // ---------------------- Parte aonde mostra quais filtros estao aplicados no canal, com base em qual panel ele abre
         private void toolTripItemDropDown_OpeningLow(object sender, EventArgs e)
         {
-            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
-            if (clickedPanel is Panel panel)
+            // Identificar o item que disparou o evento
+            if (sender is ToolStripMenuItem clickedItem && clickedPanel is Panel panel)
             {
-                UpdateMenuItems(panel, clickedItem.DropDownItems, panelLowFilterStates[panel]);
+                // Atualizar os itens do menu com base no dicionário correspondente ao painel
+                UpdateMenuItemsFilters(panel, clickedItem.DropDownItems, panelLowFilterStates[panel]);
             }
         }
         private void toolTripItemDropDown_OpeningHigh(object sender, EventArgs e)
         {
-            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
-            if (clickedPanel is Panel panel)
+            // Identificar o item que disparou o evento
+            if (sender is ToolStripMenuItem clickedItem && clickedPanel is Panel panel)
             {
-                UpdateMenuItems(panel, clickedItem.DropDownItems, panelHighFilterStates[panel]);
-
+                // Atualizar os itens do menu com base no dicionário correspondente ao painel
+                UpdateMenuItemsFilters(panel, clickedItem.DropDownItems, panelHighFilterStates[panel]);
             }
         }
         private void toolTripItemDropDown_OpeningNotch(object sender, EventArgs e)
         {
-            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
-            if (clickedPanel is Panel panel)
+            // Identificar o item que disparou o evento
+            if (sender is ToolStripMenuItem clickedItem && clickedPanel is Panel panel)
             {
-                UpdateMenuItems(panel, clickedItem.DropDownItems, panelNotchFilterStates[panel]);
-
+                // Atualizar os itens do menu com base no dicionário correspondente ao painel
+                UpdateMenuItemsFilters(panel, clickedItem.DropDownItems, panelNotchFilterStates[panel]);
             }
         }
 
@@ -8019,7 +8194,7 @@ namespace PlotagemOpenGL
             return false;
         }
 
-        private void MenuItem_Click(object sender, EventArgs e)
+        private void MenuItem_Click(object sender, EventArgs e)  //Aplicacao de filtro ------------------------------------------------------------------------------------------------------- 
         {
             //try { 
                 ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
@@ -8220,6 +8395,7 @@ namespace PlotagemOpenGL
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
                         }
+                    TelaClearAndReload();
                     }
                     else if (panelHighFilterStates.ContainsKey(panel) && ContainsFilter(panelHighFilterStates, clickedItem.Name))
                     {
@@ -8426,8 +8602,9 @@ namespace PlotagemOpenGL
                             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
 
                         }
+                    TelaClearAndReload();
 
-                    }
+                }
                     else if (panelNotchFilterStates.ContainsKey(panel) && ContainsFilter(panelNotchFilterStates, clickedItem.Name))
                     {
                         Dictionary<string, bool> filterStatesHigh;
@@ -8688,9 +8865,10 @@ namespace PlotagemOpenGL
                             }
 
                         }
-                    }
+                    TelaClearAndReload();
+                }
 
-                    else
+                else
                     {
                         return;
                     }
@@ -8802,7 +8980,7 @@ namespace PlotagemOpenGL
         }
         public static int clickCount = 0;
         public static bool plotanu = false;
-
+         
         private void timer3_Tick(object sender, EventArgs e)
         {
             if (isDrawing)
