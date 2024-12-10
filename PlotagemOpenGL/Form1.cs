@@ -1973,8 +1973,9 @@ namespace PlotagemOpenGL
                 cronometro4.Reset();
                 concluido = "";
                 cronometro4.Start();
-                telaLoad.Show();
                 telaLoad.label1.Text = "Alterando Montagem";
+                telaLoad.realoctxt();
+                telaLoad.Show();
                 await Task.Delay(10, token);
                 telaLoad.AtualizarProgresso(10);
 
@@ -3536,6 +3537,8 @@ namespace PlotagemOpenGL
                 // Restaurar o cursor original e marca que o mouse foi liberado
                 this.Cursor = originalCursor;
                 isMouseDown = false;
+                TelaClearAndReload();
+                UpdateInicioTela();
             }
             catch
             {

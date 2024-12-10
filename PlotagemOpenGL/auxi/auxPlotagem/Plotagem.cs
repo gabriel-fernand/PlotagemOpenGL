@@ -27,8 +27,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static float[] StartY;
         public static float[] EndY;
 
-
-
         public Plotagem(OpenGL gl)
         {
             this.gl = gl;
@@ -85,9 +83,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 }
             }
         }
-
-
-
         public void DesenhaGrafico(int altura, int qtdGraf)
         {
             Tela_Plotagem.plotanu = true;
@@ -491,7 +486,5 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             */
             return voltaSapora;
         }
-
-
     }
 }

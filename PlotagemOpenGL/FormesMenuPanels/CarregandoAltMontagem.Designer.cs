@@ -89,7 +89,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
             panel1.Name = "panel1";
             panel1.Size = new Size(493, 230);
             panel1.TabIndex = 0;
-            panel1.Paint += panel1_Paint;
             // 
             // CarregandoAltMontagem
             // 

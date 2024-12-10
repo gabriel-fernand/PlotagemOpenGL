@@ -23,6 +23,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
         public static float locVideo;
         private Thread videoUpdateThread;
         private bool isRunning = false; // Controla a execução da thread
+        private DateTime lastUpdateTime; // Para rastrear o tempo da última atualização
+        private double lastVideoPosition; // Para armazenar a última posição do vídeo
 
         public FormVideo()
         {
@@ -52,9 +54,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Resiz(videoPlayer, vidi);
 
         }
-        private DateTime lastUpdateTime; // Para rastrear o tempo da última atualização
-        private double lastVideoPosition; // Para armazenar a última posição do vídeo
-
         public async void VideoPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
             if (isProgrammaticChange)
@@ -85,7 +84,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     break;
             }
         }
-
         private void UpdateVideoPosition()
         {
             while (isRunning)
@@ -120,8 +118,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 }
             }
         }
-
-
         public void videoCarregado()
         {
             try
@@ -174,7 +170,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 MessageBox.Show($"Erro ao carregar o vídeo: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void attLocVideo()
         {
             int pag = (int)GlobVar.ponteiroVideo / GlobVar.namos;

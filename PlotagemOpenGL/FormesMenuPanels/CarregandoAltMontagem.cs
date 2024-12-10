@@ -10,7 +10,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
         {
             InitializeComponent();
         }
-
         public void realoctxt()
         {
             // Calcula a metade da largura do formulário
@@ -39,11 +38,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     this.Close();
                 }
             }
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }
