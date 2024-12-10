@@ -47,12 +47,11 @@ namespace PlotagemOpenGL.FormesMenuPanels
             label1.AutoSize = true;
             label1.Font = new Font("Modern No. 20", 22.1999989F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.Black;
-            label1.Location = new Point(69, 50);
+            label1.Location = new Point(246, 60);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(353, 38);
+            label1.Size = new Size(0, 38);
             label1.TabIndex = 0;
-            label1.Text = "Alterando Montagem";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label2
@@ -90,6 +89,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             panel1.Name = "panel1";
             panel1.Size = new Size(493, 230);
             panel1.TabIndex = 0;
+            panel1.Paint += panel1_Paint;
             // 
             // CarregandoAltMontagem
             // 

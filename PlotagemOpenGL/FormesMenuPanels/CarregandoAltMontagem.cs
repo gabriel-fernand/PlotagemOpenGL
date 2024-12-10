@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlotagemOpenGL.FormesMenuPanels
@@ -12,11 +13,14 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
         public void realoctxt()
         {
-            int Meiosize = this.Size.Width / 2;
-            int newLoc = label1.Width / 2;
+            // Calcula a metade da largura do formulário
+            int meioSize = this.Size.Width / 2;
 
-            label1.Width = Meiosize - newLoc;
+            // Calcula a metade da largura do label
+            int metadeLabel = label1.Width / 2;
 
+            // Define a nova localização para centralizar o label
+            label1.Location = new Point(meioSize - metadeLabel, label1.Location.Y);
         }
         // Método para atualizar o progresso
         public void AtualizarProgresso(int valor)
@@ -35,6 +39,11 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     this.Close();
                 }
             }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

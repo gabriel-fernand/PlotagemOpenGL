@@ -112,6 +112,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 dadosExame["Altura"] = double.TryParse(txtAltura.Text, out double altura) ? (object)altura : DBNull.Value;
                 dadosExame["Peso"] = int.TryParse(txtPeso.Text, out int peso) ? (object)peso : DBNull.Value;
                 dadosExame["DataNascimento"] = dtpDataNascimento.Value;
+                dadosExame["IdadeAno"] = CalculaIdade();
                 dadosExame["Sexo"] = ConvertSexoToDb(cmbSexo.SelectedItem?.ToString());
                 dadosExame["DataRealizacao"] = dtpDataExame.Value;
                 dadosExame["Email"] = string.IsNullOrWhiteSpace(txtEmail.Text) ? DBNull.Value : txtEmail.Text;
@@ -196,6 +197,25 @@ namespace PlotagemOpenGL.FormesMenuPanels
             ApenasNumeros(e);
         }
 
+        private int CalculaIdade()
+        {
+            // Obtém o ano de nascimento a partir do DateTimePicker
+            int anoNascimento = dtpDataNascimento.Value.Year;
+
+            // Obtém o ano atual
+            int anoAtual = DateTime.Now.Year;
+
+            // Calcula a idade inicial
+            int idade = anoAtual - anoNascimento;
+
+            // Ajusta a idade se o aniversário ainda não foi comemorado este ano
+            if (dtpDataNascimento.Value.Date > DateTime.Now.Date.AddYears(-idade))
+            {
+                idade--;
+            }
+
+            return idade;
+        }
         private void ApenasCaracteres(KeyPressEventArgs e)
         {
             if (!char.IsLetter(e.KeyChar) && !char.IsControl(e.KeyChar) && !char.IsWhiteSpace(e.KeyChar))
@@ -257,64 +277,65 @@ namespace PlotagemOpenGL.FormesMenuPanels
             try
             {
                 string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};";
-
                 using (OleDbConnection connection = new OleDbConnection(connectionString))
                 {
                     connection.Open();
 
-                    // Inicia uma transação
-                    OleDbTransaction transaction = connection.BeginTransaction();
-
-                    try
+                    using (OleDbTransaction transaction = connection.BeginTransaction())
                     {
-                        // SQL para atualizar os campos necessários
-                        string sql = "UPDATE tbl_DadosExame SET DataRealizacao = @DataRealizacao, Nome = @Nome, Altura = @Altura, Peso = @Peso, DataNascimento = @DataNascimento, Sexo = @Sexo, Email = @Email, Cpf = @Cpf, MedicoSolicitante = @MedicoSolicitante, Rg = @Rg, Observacao = @Observacao WHERE CodPaciente = @CodPaciente";
-
-                        using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                        try
                         {
-                            // Verificando comprimento dos campos antes de salvar
-                            string nome = txtNome.Text.Length > 50 ? txtNome.Text.Substring(0, 50) : txtNome.Text;
-                            string email = txtEmail.Text.Length > 100 ? txtEmail.Text.Substring(0, 100) : txtEmail.Text;
-                            string cpf = txtCpf.Text.Length > 11 ? txtCpf.Text.Substring(0, 11) : txtCpf.Text;
-                            string rg = txtRg.Text.Length > 9 ? txtRg.Text.Substring(0, 9) : txtRg.Text;
-                            string observacao = txtObservacao.Text.Length > 255 ? txtObservacao.Text.Substring(0, 255) : txtObservacao.Text;
+                            int idade = CalculaIdade();
+                            string sql = @"
+                                UPDATE tbl_DadosExame 
+                                SET 
+                                DataRealizacao = @DataRealizacao, 
+                                Nome = @Nome, 
+                                Altura = @Altura, 
+                                Peso = @Peso, 
+                                DataNascimento = @DataNascimento, 
+                                IdadeAno = @IdadeAno, 
+                                Sexo = @Sexo, 
+                                Email = @Email, 
+                                Cpf = @Cpf, 
+                                MedicoSolicitante = @MedicoSolicitante, 
+                                Rg = @Rg, 
+                                Observacao = @Observacao 
+                                WHERE 
+                                CodPaciente = @CodPaciente";
 
-                            // Formatando a data corretamente como DateTime para inserir no banco
-                            DateTime dataNascimento = dtpDataNascimento.Value.Date;
+                            using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@DataRealizacao", dtpDataExame.Value);
+                                command.Parameters.AddWithValue("@Nome", txtNome.Text);
+                                command.Parameters.AddWithValue("@Altura", double.TryParse(txtAltura.Text, out double altura) ? (object)altura : DBNull.Value);
+                                command.Parameters.AddWithValue("@Peso", int.TryParse(txtPeso.Text, out int peso) ? (object)peso : DBNull.Value);
+                                command.Parameters.AddWithValue("@DataNascimento", dtpDataNascimento.Value);
+                                command.Parameters.AddWithValue("@IdadeAno", idade);
+                                command.Parameters.AddWithValue("@Sexo", ConvertSexoToDb(cmbSexo.SelectedItem?.ToString()));
+                                command.Parameters.AddWithValue("@Email", txtEmail.Text);
+                                command.Parameters.AddWithValue("@Cpf", txtCpf.Text);
+                                command.Parameters.AddWithValue("@MedicoSolicitante", txtMedicoSolicitante.Text);
+                                command.Parameters.AddWithValue("@Rg", txtRg.Text);
+                                command.Parameters.AddWithValue("@Observacao", txtObservacao.Text);
+                                command.Parameters.AddWithValue("@CodPaciente", codPaciente);
 
-                            // Adicionando parâmetros para a query
-                            command.Parameters.Add("@Nome", OleDbType.VarChar).Value = nome;
-                            command.Parameters.Add("@Altura", OleDbType.Double).Value = double.TryParse(txtAltura.Text, out double altura) ? altura : 0;
-                            command.Parameters.Add("@Peso", OleDbType.Double).Value = double.TryParse(txtPeso.Text, out double peso) ? peso : 0;
-                            command.Parameters.Add("@DataNascimento", OleDbType.Date).Value = string.IsNullOrWhiteSpace(dtpDataNascimento.Value.ToString("dd/MM/yyyy")) ? DBNull.Value : dtpDataNascimento.Value.ToString("dd/MM/yyyy"); // Salvando a data como DateTime
-                            command.Parameters.Add("@Sexo", OleDbType.VarChar).Value = cmbSexo.SelectedItem.ToString();
-                            command.Parameters.Add("@Email", OleDbType.VarChar).Value = email;
-                            command.Parameters.Add("@Cpf", OleDbType.VarChar).Value = cpf;
-                            command.Parameters.Add("@MedicoSolicitante", OleDbType.VarChar).Value = txtMedicoSolicitante.Text.Length > 50 ? txtMedicoSolicitante.Text.Substring(0, 50) : txtMedicoSolicitante.Text;
-                            command.Parameters.Add("@Rg", OleDbType.VarChar).Value = rg;
-                            command.Parameters.Add("@Observacao", OleDbType.VarChar).Value = observacao;
-                            command.Parameters.Add("@CodPaciente", OleDbType.Integer).Value = codPaciente;
-                            command.Parameters.Add("@DataRealizacao", OleDbType.Date).Value = string.IsNullOrWhiteSpace(dtpDataExame.Value.ToString("dd/MM/yyyy")) ? DBNull.Value : dtpDataExame.Value.ToString("dd/MM/yyyy");
-
-                            // Executa a query de atualização
-                            command.ExecuteNonQuery();
+                                command.ExecuteNonQuery();
+                                transaction.Commit();
+                                //MessageBox.Show("Dados atualizados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
                         }
-
-                        // Confirma a transação
-                        transaction.Commit();
-                        MessageBox.Show("Dados atualizados com sucesso!");
-                    }
-                    catch (Exception ex)
-                    {
-                        // Reverte a transação em caso de erro
-                        transaction.Rollback();
-                        MessageBox.Show($"Erro ao atualizar os dados: {ex.Message}");
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            MessageBox.Show($"Erro ao atualizar os dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao conectar ao banco de dados: {ex.Message}");
+                MessageBox.Show($"Erro ao conectar ao banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

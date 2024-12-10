@@ -223,6 +223,7 @@ namespace PlotagemOpenGL
                     telaLoad.label1.TextAlign = ContentAlignment.MiddleCenter;
                     telaLoad.realoctxt();
                     telaLoad.Show();
+
                     await Task.Delay(45);
                     telaLoad.AtualizarProgresso(10);
 
