@@ -793,33 +793,33 @@ namespace PlotagemOpenGL
                         // Initialize the dictionary for each panel
                         panelLowFilterStates[pn] = new Dictionary<string, bool>
                         {
-                            { "NenhumLow", false },
-                            { "hertz70", false },
-                            { "hertz50", false },
-                            { "hertz40", false },
-                            { "hertz35", false },
-                            { "hertz30", false },
-                            { "hertz25", false },
-                            { "hertz20", false },
-                            { "hertz15", false },
-                            { "hertz10", false },
-                            { "hertz5", false },
-                            { "OutroLow", false }
+                            { "NenhumLowGl", false },
+                            { "hertz70Gl", false },
+                            { "hertz50Gl", false },
+                            { "hertz40Gl", false },
+                            { "hertz35Gl", false },
+                            { "hertz30Gl", false },
+                            { "hertz25Gl", false },
+                            { "hertz20Gl", false },
+                            { "hertz15Gl", false },
+                            { "hertz10Gl", false },
+                            { "hertz5Gl", false },
+                            { "OutroLowGl", false }
                         };
 
                         panelHighFilterStates[pn] = new Dictionary<string, bool>
                         {
-                            { "NenhumHigh", false },
-                            { "outroHigh", false },
-                            { "hertz10H", false },
-                            { "Hertz7", false },
-                            { "hertz5H", false },
-                            { "hertz3", false },
-                            { "hertz1", false },
-                            { "hertz07", false },
-                            { "hertz05", false },
-                            { "hertz03", false },
-                            { "hertz01", false }
+                            { "NenhumHighGl", false },
+                            { "outroHighGl", false },
+                            { "hertz10HGl", false },
+                            { "Hertz7Gl", false },
+                            { "hertz5HGl", false },
+                            { "hertz3Gl", false },
+                            { "hertz1Gl", false },
+                            { "hertz07Gl", false },
+                            { "hertz05Gl", false },
+                            { "hertz03Gl", false },
+                            { "hertz01Gl", false }
                         };
                         panelNotchFilterStates[pn] = new Dictionary<string, bool>
                         {
@@ -893,21 +893,21 @@ namespace PlotagemOpenGL
                 {
                     panelLowFilterStates[panel][key] = false;
                 }
-                if (lowHertz.Value == 70) panelLowFilterStates[panel]["hertz70"] = true;
-                else if (lowHertz.Value == 50) panelLowFilterStates[panel]["hertz50"] = true;
-                else if (lowHertz.Value == 40) panelLowFilterStates[panel]["hertz40"] = true;
-                else if (lowHertz.Value == 35) panelLowFilterStates[panel]["hertz35"] = true;
-                else if (lowHertz.Value == 30) panelLowFilterStates[panel]["hertz30"] = true;
-                else if (lowHertz.Value == 25) panelLowFilterStates[panel]["hertz25"] = true;
-                else if (lowHertz.Value == 20) panelLowFilterStates[panel]["hertz20"] = true;
-                else if (lowHertz.Value == 15) panelLowFilterStates[panel]["hertz15"] = true;
-                else if (lowHertz.Value == 10) panelLowFilterStates[panel]["hertz10"] = true;
-                else if (lowHertz.Value == 5) panelLowFilterStates[panel]["hertz5"] = true;
-                else panelLowFilterStates[panel]["OutroLow"] = true;
+                if (lowHertz.Value == 70) panelLowFilterStates[panel]["hertz70Gl"] = true;
+                else if (lowHertz.Value == 50) panelLowFilterStates[panel]["hertz50Gl"] = true;
+                else if (lowHertz.Value == 40) panelLowFilterStates[panel]["hertz40Gl"] = true;
+                else if (lowHertz.Value == 35) panelLowFilterStates[panel]["hertz35Gl"] = true;
+                else if (lowHertz.Value == 30) panelLowFilterStates[panel]["hertz30Gl"] = true;
+                else if (lowHertz.Value == 25) panelLowFilterStates[panel]["hertz25Gl"] = true;
+                else if (lowHertz.Value == 20) panelLowFilterStates[panel]["hertz20Gl"] = true;
+                else if (lowHertz.Value == 15) panelLowFilterStates[panel]["hertz15Gl"] = true;
+                else if (lowHertz.Value == 10) panelLowFilterStates[panel]["hertz10Gl"] = true;
+                else if (lowHertz.Value == 5) panelLowFilterStates[panel]["hertz5Gl"] = true;
+                else panelLowFilterStates[panel]["OutroLowGl"] = true;
             }
             else
             {
-                panelLowFilterStates[panel]["NenhumLow"] = true;
+                panelLowFilterStates[panel]["NenhumLowGl"] = true;
             }
         }
 
@@ -919,19 +919,19 @@ namespace PlotagemOpenGL
                 {
                     panelHighFilterStates[panel][key] = false;
                 }
-                if (highHertz.Value == 10) panelHighFilterStates[panel]["hertz10H"] = true;
-                else if (highHertz.Value == 7) panelHighFilterStates[panel]["Hertz7"] = true;
-                else if (highHertz.Value == 5) panelHighFilterStates[panel]["hertz5H"] = true;
-                else if (highHertz.Value == 3) panelHighFilterStates[panel]["hertz3"] = true;
-                else if (highHertz.Value == 1) panelHighFilterStates[panel]["hertz1"] = true;
-                else if (highHertz.Value == 0.7) panelHighFilterStates[panel]["hertz07"] = true;
-                else if (highHertz.Value == 0.5) panelHighFilterStates[panel]["hertz05"] = true;
-                else if (highHertz.Value == 0.3) panelHighFilterStates[panel]["hertz03"] = true;
-                else panelHighFilterStates[panel]["outroHigh"] = true;
+                if (highHertz.Value == 10) panelHighFilterStates[panel]["hertz10HGl"] = true;
+                else if (highHertz.Value == 7) panelHighFilterStates[panel]["Hertz7Gl"] = true;
+                else if (highHertz.Value == 5) panelHighFilterStates[panel]["hertz5HGl"] = true;
+                else if (highHertz.Value == 3) panelHighFilterStates[panel]["hertz3Gl"] = true;
+                else if (highHertz.Value == 1) panelHighFilterStates[panel]["hertz1Gl"] = true;
+                else if (highHertz.Value == 0.7) panelHighFilterStates[panel]["hertz07Gl"] = true;
+                else if (highHertz.Value == 0.5) panelHighFilterStates[panel]["hertz05Gl"] = true;
+                else if (highHertz.Value == 0.3) panelHighFilterStates[panel]["hertz03Gl"] = true;
+                else panelHighFilterStates[panel]["outroHighGl"] = true;
             }
             else
             {
-                panelHighFilterStates[panel]["NenhumHigh"] = true;
+                panelHighFilterStates[panel]["NenhumHighGl"] = true;
             }
         }
 
@@ -1313,6 +1313,174 @@ namespace PlotagemOpenGL
             {
                 panel.Top = currentY;
                 currentY += panel.Height;
+            }
+        }
+        public void ReorganizarPainelComando()
+        {
+            // Dimensões e margens
+            int margemHorizontal = 5; // Espaçamento entre controles na horizontal
+            int margemVertical = 5;   // Espaçamento entre controles na vertical
+
+            // Largura máxima do painelComando para reorganização
+            int larguraDisponivel = painelComando.Width;
+
+            // Posição inicial
+            int posicaoXAtual = margemHorizontal;
+            int posicaoYAtual = margemVertical;
+
+            // Obtenha todos os controles visíveis no painelComando
+            var controlesVisiveis = painelComando.Controls.Cast<Control>()
+                .Where(c => c.Visible) // Apenas controles visíveis
+                .ToList();
+
+            // Obtenha os painéis que podem ser reorganizados
+            var paineisReorganizaveis = controlesVisiveis
+                .OfType<Panel>() // Apenas `Panel`
+                .Where(p => p.Name != "PainelPerfil") // Exclui o PainelPerfil
+                .ToList();
+
+            // Obtenha os limites fixos (TextBox, ComboBox e PainelPerfil visíveis)
+            foreach (var controle in controlesVisiveis)
+            {
+                if (controle is TextBox || controle is ComboBox || controle.Name == "PainelPerfil")
+                {
+                    // Ajusta a posição inicial X para garantir que os painéis fiquem depois desses controles
+                    int limiteDireito = controle.Bounds.Right + margemHorizontal;
+                    if (limiteDireito > posicaoXAtual)
+                        posicaoXAtual = limiteDireito;
+                }
+            }
+
+            // Reorganizar os painéis visíveis
+            foreach (var painel in paineisReorganizaveis)
+            {
+                // Verifica se o painel ultrapassa a largura disponível
+                if (posicaoXAtual + painel.Width > larguraDisponivel)
+                {
+                    // Muda para a próxima "linha"
+                    posicaoXAtual = margemHorizontal; // Reseta X
+                    posicaoYAtual += painel.Height + margemVertical; // Avança Y
+                }
+
+                // Define a nova posição do painel
+                painel.Location = new Point(posicaoXAtual, posicaoYAtual);
+
+                // Atualiza a posição X para o próximo painel
+                posicaoXAtual += painel.Width + margemHorizontal;
+            }
+        }
+        private void ImpressaoStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem8.Checked)
+            {
+                toolStripMenuItem8.Checked = false;
+                PainelPrinters.Visible = false;
+                PainelPrinters.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem8.Checked = true;
+                PainelPrinters.Show();
+                PainelPrinters.Visible = true;
+                ReorganizarPainelComando();
+
+            }
+        }
+        private void DeslocStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem2.Checked)
+            {
+                toolStripMenuItem2.Checked = false;
+                PainelAvRet.Visible = false;
+                PainelAvRet.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem2.Checked = true;
+                PainelAvRet.Show();
+                PainelAvRet.Visible = true;
+                ReorganizarPainelComando();
+
+            }
+        }
+        private void EstagEpocasStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem4.Checked)
+            {
+                toolStripMenuItem4.Checked = false;
+                PainelLoc.Visible = false;
+                PainelLoc.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem4.Checked = true;
+                PainelLoc.Show();
+                PainelLoc.Visible = true;
+                ReorganizarPainelComando();
+
+            }
+        }
+        private void AtribuEstagioStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem5.Checked)
+            {
+                toolStripMenuItem5.Checked = false;
+                PainelMarca.Visible = false;
+                PainelMarca.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem5.Checked = true;
+                PainelMarca.Show();
+                PainelMarca.Visible = true;
+                ReorganizarPainelComando();
+
+            }
+        }
+        private void PainelMarcaAntProxStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem6.Checked)
+            {
+                toolStripMenuItem6.Checked = false;
+                PainelMarcaAntProx.Visible = false;
+                PainelMarcaAntProx.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem6.Checked = true;
+                PainelMarcaAntProx.Show();
+                PainelMarcaAntProx.Visible = true;
+                ReorganizarPainelComando();
+
+            }
+        }
+        private void PainelDescEventoStripMenu_Click(object sender, EventArgs e)
+        {
+
+            if (toolStripMenuItem7.Checked)
+            {
+                toolStripMenuItem7.Checked = false;
+                PanelEventos.Visible = false;
+                PanelEventos.Hide();
+                ReorganizarPainelComando();
+            }
+            else
+            {
+                toolStripMenuItem7.Checked = true;
+                PanelEventos.Show();
+                PanelEventos.Visible = true;
+                ReorganizarPainelComando();
+
             }
         }
 
@@ -4322,7 +4490,22 @@ namespace PlotagemOpenGL
             }
 
         }
+        public void CalcularQtdImpressao()
+        {
+            // Verifica se o DataTable existe e possui linhas
+            if (GlobVar.tbl_SelImpressao == null || GlobVar.tbl_SelImpressao.Rows.Count == 0)
+            {
+                GlobVar.qtdImpressao = 0;
+                return;
+            }
 
+            // Usa LINQ para agrupar os valores da coluna "CodImpressao" e contar as linhas correspondentes
+            var agrupado = GlobVar.tbl_SelImpressao.AsEnumerable()
+                .GroupBy(row => row.Field<string>("CodImpressao"));
+
+            // Soma todas as quantidades de agrupamento
+            GlobVar.qtdImpressao = agrupado.Count();
+        }
         public void UpdateInicioTela()
         {
             if (this.InvokeRequired)
@@ -4386,6 +4569,7 @@ namespace PlotagemOpenGL
                 isScroll = true;
             }
             atualizaButAntProx();
+            //CalcularQtdImpressao();
             if (videoIni)
             {
                 iCelera.telinha.attLocVideo();
@@ -5301,11 +5485,11 @@ namespace PlotagemOpenGL
             {
                 switch (estagio)
                 {
-                    case 0: return GlobVar.diretorioEstagioAnteriorProximo0;
-                    case 1: return GlobVar.diretorioEstagioAnteriorProximo1;
-                    case 2: return GlobVar.diretorioEstagioAnteriorProximo2;
-                    case 3: return GlobVar.diretorioEstagioAnteriorProximo3;
-                    case 5: return GlobVar.diretorioEstagioAnteriorProximoR;
+                    case 0: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo0; 
+                    case 1: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo1; 
+                    case 2: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo2; 
+                    case 3: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo3; 
+                    case 5: GlobVar.estagioAtual = "R"; return GlobVar.diretorioEstagioAnteriorProximoR;
                     default: return GlobVar.diretorioEstagioAnteriorProximoNada; // Caso o valor seja nulo ou não mapeado, usar a imagem "Nada"
                 }
             }
@@ -6562,7 +6746,7 @@ namespace PlotagemOpenGL
             if (GlobVar.eventosUpdate != null)
             {
                 int[] valoresProcurados = { 1, 2, 3, 5, 101 };
-                string nomeArquivo = $"{GlobVar.textFile.Substring(32, 8)}_EventosRespiratorio.txt";
+                string nomeArquivo = $"{GlobVar.textFile.Substring(12, 8)}_EventosRespiratorio.txt";
                 string pastaDownloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
                 string caminhoArquivo = Path.Combine(pastaDownloads, nomeArquivo);
 
@@ -6576,7 +6760,7 @@ namespace PlotagemOpenGL
                     var tableEventoRespiratorio = GlobVar.eventosUpdate.AsEnumerable()
                         .Where(row => valoresProcurados.Contains(row.Field<int>("CodEvento")))
                         .CopyToDataTable();
-
+                    tableEventoRespiratorio = tableEventoRespiratorio.AsEnumerable().OrderBy(row => row.Field<int>("CodEvento")).OrderBy(row => row.Field<int>("CodCanal1")).CopyToDataTable();
                     foreach (DataRow row in tableEventoRespiratorio.Rows)
                     {
                         int inicio = Convert.ToInt32(row["Inicio"]);
@@ -6600,8 +6784,7 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            //montagem mont = new montagem();
-            //mont.Show();
+
         }
 
         private Panel clickedPanel;
@@ -7577,6 +7760,26 @@ namespace PlotagemOpenGL
             catch { }
 
         }
+        private void ToolBarMenu_Opening(object sender, EventArgs e)
+        {
+            try
+            {
+                toolStripMenuItem2.Checked = PainelAvRet.Visible;
+                toolStripMenuItem4.Checked = PainelLoc.Visible;
+                toolStripMenuItem5.Checked = PainelMarca.Visible;
+                toolStripMenuItem6.Checked = PainelMarcaAntProx.Visible;
+                toolStripMenuItem7.Checked = PanelEventos.Visible;
+                toolStripMenuItem8.Checked = PainelPrinters.Visible;
+                                                                                                                                                                                                                                                                                                                                                       
+            }
+            catch
+            {
+
+            }
+        }
+
+
+
         public static void alterarRefText(DataRow rowNumerico)
         {
             // Obtém o valor atual de CodCanal2
@@ -8068,7 +8271,7 @@ namespace PlotagemOpenGL
                 {
                     if (low > 70)
                     {
-                        string outro = "OutroLow";
+                        string outro = "OutroLowGl";
                     }
                     else
                     {
@@ -8079,7 +8282,7 @@ namespace PlotagemOpenGL
                 {
                     if (high > 10)
                     {
-                        string outro = "OutroHigh";
+                        string outro = "OutroHighGl";
                     }
                     else if(high == 10 || high == 5)
                     {
@@ -8220,7 +8423,7 @@ namespace PlotagemOpenGL
                         {
                             string value = GetSelectedFilterItem(panel, filterStatesHigh);
 
-                            if (value.Equals("NenhumHigh"))
+                            if (value.Equals("NenhumHighGl"))
                             {
                                 if (clickedItem.CheckOnClick == true)
                                 {
@@ -8269,7 +8472,7 @@ namespace PlotagemOpenGL
                                 }
                             }
                             //para pegar a informacao de um valor que esteja sendo aplicado no filtro que seja em Outro, pega do banco de dados, para aplicar o filtro corretamente
-                            else if (value.Equals("outroHigh"))
+                            else if (value.Equals("outroHighGl"))
                             {
                                 Int16 hertzSelectH = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
                                 if (clickedItem.CheckOnClick == true)
@@ -8415,7 +8618,7 @@ namespace PlotagemOpenGL
                         {
                             string value = GetSelectedFilterItem(panel, filterStatesLow);
 
-                            if (value.Equals("NenhumLow"))
+                            if (value.Equals("NenhumLowGl"))
                             {
                                 if (clickedItem.CheckOnClick == true)
                                 {
@@ -8472,7 +8675,7 @@ namespace PlotagemOpenGL
                                     }
                                 }
                             }
-                            else if (value.Equals("OutroLow"))
+                            else if (value.Equals("OutroLowGl"))
                             {
                                 Int16 hertzSelectL = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
                                 if (clickedItem.CheckOnClick == true)
@@ -8626,12 +8829,12 @@ namespace PlotagemOpenGL
                         if (isAnyFilterSelectedLow)
                         {
                             string value = GetSelectedFilterItem(panel, filterStatesLow);
-                            if (value.Equals("NenhumLow"))
+                            if (value.Equals("NenhumLowGl"))
                             {
                                 hertzSelectLow = 0;
 
                             }
-                            else if (value.Equals("OutroLow"))
+                            else if (value.Equals("OutroLowGl"))
                             {
                                 hertzSelectLow = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"]);
 
@@ -8646,12 +8849,12 @@ namespace PlotagemOpenGL
                         if (isAnyFilterSelectedHigh)
                         {
                             string value = GetSelectedFilterItem(panel, filterStatesHigh);
-                            if (value.Equals("NenhumHigh"))
+                            if (value.Equals("NenhumHighGl"))
                             {
                                 hertzSelectHigh = 0;
 
                             }
-                            else if (value.Equals("outroHigh"))
+                            else if (value.Equals("outroHighGl"))
                             {
                                 hertzSelectHigh = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"]);
                             }

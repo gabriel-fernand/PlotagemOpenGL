@@ -1112,22 +1112,21 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static string ValoresEvento(int inicio, int fim, int txCanal, int codCanal)
         {
             string valores = "";
-            // calculo para procurar 2 min antes e 2 min depois
-            int doisMinutos = 5 * txCanal;
-            inicio -= doisMinutos;
-            fim += doisMinutos;
+            // calculo para procurar 2 seg antes e 2 seg depois
+            int doisSeg = 2 * txCanal;
+            inicio -= doisSeg;
+            fim += doisSeg;
             int index = GlobVar.codSelected.IndexOf(codCanal);
 
             for(int i = inicio; i <= fim; i++)
             {
                 int valor = GlobVar.matrizCanal[index, i];
 
-                valores += $", {valor}";
+                valores += $"{valor}, ";
             }
-
-
+            valores += "\n\r";
             return valores;
-        }
+        } 
     }
 }
 

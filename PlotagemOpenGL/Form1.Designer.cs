@@ -233,6 +233,7 @@ namespace PlotagemOpenGL
             scalaLb23 = new Label();
             painelTelaGl = new Panel();
             painelComando = new Panel();
+            panelMontTmpTela = new Panel();
             ptsEmTela = new TextBox();
             PainelLoc = new Panel();
             TresProxima = new Button();
@@ -330,11 +331,25 @@ namespace PlotagemOpenGL
             menuStrip1 = new MenuStrip();
             arquivoToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
+            toolStripMenuItem5 = new ToolStripMenuItem();
+            toolStripMenuItem6 = new ToolStripMenuItem();
+            toolStripMenuItem7 = new ToolStripMenuItem();
+            toolStripMenuItem8 = new ToolStripMenuItem();
+            toolStripMenuItem9 = new ToolStripMenuItem();
             janelaResumoToolStripMenuItem = new ToolStripMenuItem();
             ferramentasToolStripMenuItem = new ToolStripMenuItem();
             configuracaoToolStripMenuItem = new ToolStripMenuItem();
             cadastroToolStripMenuItem = new ToolStripMenuItem();
             Stringao = new Label();
+            pnPeriodos = new Panel();
+            pnImpressao = new Panel();
+            pnEstagio = new Panel();
+            pnGrand = new Panel();
+            lbEstagio = new Label();
+            lbImpressao = new Label();
+            lbPeriodo = new Label();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             painelExames.SuspendLayout();
@@ -363,6 +378,7 @@ namespace PlotagemOpenGL
             panel23.SuspendLayout();
             painelTelaGl.SuspendLayout();
             painelComando.SuspendLayout();
+            panelMontTmpTela.SuspendLayout();
             PainelLoc.SuspendLayout();
             PainelMarca.SuspendLayout();
             PainelMarcaAntProx.SuspendLayout();
@@ -371,11 +387,15 @@ namespace PlotagemOpenGL
             PainelPrinters.SuspendLayout();
             PainelPerfil.SuspendLayout();
             menuStrip1.SuspendLayout();
+            pnPeriodos.SuspendLayout();
+            pnImpressao.SuspendLayout();
+            pnEstagio.SuspendLayout();
+            pnGrand.SuspendLayout();
             SuspendLayout();
             // 
             // hScrollBar1
             // 
-            hScrollBar1.Location = new System.Drawing.Point(-1, 0);
+            hScrollBar1.Location = new System.Drawing.Point(5, -1);
             hScrollBar1.Name = "hScrollBar1";
             hScrollBar1.Size = new System.Drawing.Size(1908, 24);
             hScrollBar1.TabIndex = 0;
@@ -413,7 +433,7 @@ namespace PlotagemOpenGL
             tempoEmTela.FormattingEnabled = true;
             tempoEmTela.IntegralHeight = false;
             tempoEmTela.Items.AddRange(new object[] { "1 seg", "2 seg", "4 seg", "8 seg", "12 seg", "30 seg", "60 seg", "90 seg", "120 seg", "240 seg" });
-            tempoEmTela.Location = new System.Drawing.Point(1079, 14);
+            tempoEmTela.Location = new System.Drawing.Point(204, 10);
             tempoEmTela.Name = "tempoEmTela";
             tempoEmTela.Size = new System.Drawing.Size(65, 28);
             tempoEmTela.TabIndex = 5;
@@ -441,7 +461,7 @@ namespace PlotagemOpenGL
             MontagemBox.FormattingEnabled = true;
             MontagemBox.IntegralHeight = false;
             MontagemBox.Items.AddRange(new object[] { "Series" });
-            MontagemBox.Location = new System.Drawing.Point(880, 14);
+            MontagemBox.Location = new System.Drawing.Point(5, 10);
             MontagemBox.Name = "MontagemBox";
             MontagemBox.Size = new System.Drawing.Size(193, 28);
             MontagemBox.TabIndex = 8;
@@ -517,7 +537,7 @@ namespace PlotagemOpenGL
             openglControl1.Name = "openglControl1";
             openglControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             openglControl1.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            openglControl1.Size = new System.Drawing.Size(1802, 751);
+            openglControl1.Size = new System.Drawing.Size(1802, 738);
             openglControl1.TabIndex = 50;
             openglControl1.Scroll += hScrollBar1_Scroll;
             openglControl1.KeyDown += TelaPlotagem_KeyDown;
@@ -1088,7 +1108,7 @@ namespace PlotagemOpenGL
             painelExames.Controls.Add(panel23);
             painelExames.Location = new System.Drawing.Point(3, 200);
             painelExames.Name = "painelExames";
-            painelExames.Size = new System.Drawing.Size(97, 751);
+            painelExames.Size = new System.Drawing.Size(97, 738);
             painelExames.TabIndex = 51;
             painelExames.MouseUp += Form1_MouseUp;
             // 
@@ -2295,18 +2315,21 @@ namespace PlotagemOpenGL
             // painelTelaGl
             // 
             painelTelaGl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            painelTelaGl.BorderStyle = BorderStyle.FixedSingle;
-            painelTelaGl.Controls.Add(Stringao);
+            painelTelaGl.Controls.Add(pnGrand);
+            painelTelaGl.Controls.Add(pnEstagio);
+            painelTelaGl.Controls.Add(pnImpressao);
+            painelTelaGl.Controls.Add(pnPeriodos);
             painelTelaGl.Controls.Add(hScrollBar1);
             painelTelaGl.Dock = DockStyle.Bottom;
-            painelTelaGl.Location = new System.Drawing.Point(0, 956);
+            painelTelaGl.Location = new System.Drawing.Point(0, 941);
             painelTelaGl.Margin = new Padding(0);
             painelTelaGl.Name = "painelTelaGl";
-            painelTelaGl.Size = new System.Drawing.Size(1920, 35);
+            painelTelaGl.Size = new System.Drawing.Size(1920, 50);
             painelTelaGl.TabIndex = 52;
             // 
             // painelComando
             // 
+            painelComando.Controls.Add(panelMontTmpTela);
             painelComando.Controls.Add(ptsEmTela);
             painelComando.Controls.Add(PainelLoc);
             painelComando.Controls.Add(PainelMarca);
@@ -2322,13 +2345,20 @@ namespace PlotagemOpenGL
             painelComando.Controls.Add(inicioTela);
             painelComando.Controls.Add(fimTela);
             painelComando.Controls.Add(Play);
-            painelComando.Controls.Add(tempoEmTela);
-            painelComando.Controls.Add(MontagemBox);
             painelComando.Controls.Add(velocidadeScroll);
             painelComando.Location = new System.Drawing.Point(3, 31);
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(1908, 167);
             painelComando.TabIndex = 53;
+            // 
+            // panelMontTmpTela
+            // 
+            panelMontTmpTela.Controls.Add(MontagemBox);
+            panelMontTmpTela.Controls.Add(tempoEmTela);
+            panelMontTmpTela.Location = new System.Drawing.Point(879, 4);
+            panelMontTmpTela.Name = "panelMontTmpTela";
+            panelMontTmpTela.Size = new System.Drawing.Size(276, 49);
+            panelMontTmpTela.TabIndex = 81;
             // 
             // ptsEmTela
             // 
@@ -2819,7 +2849,7 @@ namespace PlotagemOpenGL
             PainelAvRet.Controls.Add(OcultaTempo);
             PainelAvRet.Controls.Add(Retrocede);
             PainelAvRet.Controls.Add(TempoTimerAndar);
-            PainelAvRet.Location = new System.Drawing.Point(1150, 3);
+            PainelAvRet.Location = new System.Drawing.Point(1160, 3);
             PainelAvRet.Name = "PainelAvRet";
             PainelAvRet.Size = new System.Drawing.Size(316, 49);
             PainelAvRet.TabIndex = 68;
@@ -3419,7 +3449,7 @@ namespace PlotagemOpenGL
             playSelect.TabIndex = 57;
             playSelect.Text = "Eventos";
             playSelect.UseVisualStyleBackColor = true;
-            playSelect.Visible = false;
+            //playSelect.Visible = false;
             playSelect.Click += playSelect_Click;
             // 
             // minusAll
@@ -3432,7 +3462,7 @@ namespace PlotagemOpenGL
             minusAll.UseVisualStyleBackColor = true;
             minusAll.Visible = false;
             minusAll.Click += minusAll_Click;
-            // 
+            //  
             // plusAll
             // 
             plusAll.Location = new System.Drawing.Point(1721, 13);
@@ -3503,9 +3533,59 @@ namespace PlotagemOpenGL
             // 
             // toolStripMenuItem1
             // 
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem4, toolStripMenuItem5, toolStripMenuItem6, toolStripMenuItem7, toolStripMenuItem8, toolStripMenuItem9 });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new System.Drawing.Size(74, 24);
             toolStripMenuItem1.Text = "ToolBar";
+            toolStripMenuItem1.DropDownOpening += ToolBarMenu_Opening;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem2.Text = "Deslocamento Automático";
+            toolStripMenuItem2.Click += DeslocStripMenu_Click;
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem4.Text = "Estágio das Épocas";
+            toolStripMenuItem4.Click += EstagEpocasStripMenu_Click;
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem5.Text = "Atribuicao de Estágio";
+            toolStripMenuItem5.Click += AtribuEstagioStripMenu_Click;
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem6.Text = "Deslocamento de Estágios";
+            toolStripMenuItem6.Click += PainelMarcaAntProxStripMenu_Click;
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem7.Text = "Deslocamento de Eventos";
+            toolStripMenuItem7.Click += PainelDescEventoStripMenu_Click;
+            // 
+            // toolStripMenuItem8
+            // 
+            toolStripMenuItem8.Name = "toolStripMenuItem8";
+            toolStripMenuItem8.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem8.Text = "Impressão";
+            toolStripMenuItem8.Click += ImpressaoStripMenu_Click;
+            // 
+            // toolStripMenuItem9
+            // 
+            toolStripMenuItem9.Name = "toolStripMenuItem9";
+            toolStripMenuItem9.Size = new System.Drawing.Size(270, 26);
+            toolStripMenuItem9.Text = "Amplitude e filtro gerais";
             // 
             // janelaResumoToolStripMenuItem
             // 
@@ -3523,7 +3603,7 @@ namespace PlotagemOpenGL
             // 
             configuracaoToolStripMenuItem.Name = "configuracaoToolStripMenuItem";
             configuracaoToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
-            configuracaoToolStripMenuItem.Text = "Configuracao";
+            configuracaoToolStripMenuItem.Text = "Configuração";
             // 
             // cadastroToolStripMenuItem
             // 
@@ -3534,15 +3614,86 @@ namespace PlotagemOpenGL
             // Stringao
             // 
             Stringao.AutoSize = true;
-            Stringao.Location = new System.Drawing.Point(4, 24);
+            Stringao.Location = new System.Drawing.Point(3, 2);
             Stringao.Name = "Stringao";
             Stringao.Size = new System.Drawing.Size(65, 20);
             Stringao.TabIndex = 59;
             Stringao.Text = "Stringao";
             Stringao.Visible = false;
             // 
-            // Tela_Plotagem
+            // pnPeriodos
             // 
+            pnPeriodos.BorderStyle = BorderStyle.Fixed3D;
+            pnPeriodos.Controls.Add(lbPeriodo);
+            pnPeriodos.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnPeriodos.ImeMode = ImeMode.NoControl;
+            pnPeriodos.Location = new System.Drawing.Point(1771, 23);
+            pnPeriodos.Name = "pnPeriodos";
+            pnPeriodos.Size = new System.Drawing.Size(148, 26);
+            pnPeriodos.TabIndex = 60;
+            // 
+            // pnImpressao
+            // 
+            pnImpressao.BorderStyle = BorderStyle.Fixed3D;
+            pnImpressao.Controls.Add(lbImpressao);
+            pnImpressao.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnImpressao.ImeMode = ImeMode.NoControl;
+            pnImpressao.Location = new System.Drawing.Point(1621, 23);
+            pnImpressao.Name = "pnImpressao";
+            pnImpressao.Size = new System.Drawing.Size(148, 26);
+            pnImpressao.TabIndex = 61;
+            // 
+            // pnEstagio
+            // 
+            pnEstagio.BorderStyle = BorderStyle.Fixed3D;
+            pnEstagio.Controls.Add(lbEstagio);
+            pnEstagio.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnEstagio.ImeMode = ImeMode.NoControl;
+            pnEstagio.Location = new System.Drawing.Point(1440, 23);
+            pnEstagio.Name = "pnEstagio";
+            pnEstagio.Size = new System.Drawing.Size(178, 26);
+            pnEstagio.TabIndex = 62;
+            // 
+            // pnGrand
+            // 
+            pnGrand.BorderStyle = BorderStyle.Fixed3D;
+            pnGrand.Controls.Add(Stringao);
+            pnGrand.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnGrand.ImeMode = ImeMode.NoControl;
+            pnGrand.Location = new System.Drawing.Point(0, 23);
+            pnGrand.Name = "pnGrand";
+            pnGrand.Size = new System.Drawing.Size(1436, 26);
+            pnGrand.TabIndex = 63;
+            // 
+            // lbEstagio
+            // 
+            lbEstagio.AutoSize = true;
+            lbEstagio.Location = new System.Drawing.Point(3, 2);
+            lbEstagio.Name = "lbEstagio";
+            lbEstagio.Size = new System.Drawing.Size(65, 20);
+            lbEstagio.TabIndex = 0;
+            //lbEstagio.Text = $"Estagio: {GlobVar.estagioAtual}";
+            // 
+            // lbImpressao
+            // 
+            lbImpressao.AutoSize = true;
+            lbImpressao.Location = new System.Drawing.Point(3, 2);
+            lbImpressao.Name = "lbImpressao";
+            lbImpressao.Size = new System.Drawing.Size(84, 20);
+            lbImpressao.TabIndex = 1;
+            //lbImpressao.Text = $"Impressao: {GlobVar.qtdImpressao}";
+            //
+            // lbPeriodo
+            //
+            lbPeriodo.AutoSize = true;
+            lbPeriodo.Location = new System.Drawing.Point(2, 2);
+            lbPeriodo.Name = "lbPeriodo";
+            lbPeriodo.Size = new System.Drawing.Size(73, 20);
+            lbPeriodo.TabIndex = 2;
+            //lbPeriodo.Text = $"Periodos: {GlobVar.qtdPeriodos}";
+            //
+            // Tela_Plotagem
+            //
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1920, 991);
@@ -3608,9 +3759,9 @@ namespace PlotagemOpenGL
             panel23.ResumeLayout(false);
             panel23.PerformLayout();
             painelTelaGl.ResumeLayout(false);
-            painelTelaGl.PerformLayout();
             painelComando.ResumeLayout(false);
             painelComando.PerformLayout();
+            panelMontTmpTela.ResumeLayout(false);
             PainelLoc.ResumeLayout(false);
             PainelMarca.ResumeLayout(false);
             PainelMarcaAntProx.ResumeLayout(false);
@@ -3620,10 +3771,17 @@ namespace PlotagemOpenGL
             PainelPerfil.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            pnPeriodos.ResumeLayout(false);
+            pnPeriodos.PerformLayout();
+            pnImpressao.ResumeLayout(false);
+            pnImpressao.PerformLayout();
+            pnEstagio.ResumeLayout(false);
+            pnEstagio.PerformLayout();
+            pnGrand.ResumeLayout(false);
+            pnGrand.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
-
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;
@@ -3632,6 +3790,14 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
+        public static Panel panelMontTmpTela;
+        public static ToolStripMenuItem toolStripMenuItem2;
+        public static ToolStripMenuItem toolStripMenuItem4;
+        public static ToolStripMenuItem toolStripMenuItem5;
+        public static ToolStripMenuItem toolStripMenuItem6;
+        public static ToolStripMenuItem toolStripMenuItem7;
+        public static ToolStripMenuItem toolStripMenuItem8;
+        public static ToolStripMenuItem toolStripMenuItem9;
         public static MenuStrip menuStrip1;
         public static ToolStripMenuItem arquivoToolStripMenuItem;
         public static ToolStripMenuItem toolStripMenuItem1;
@@ -3851,7 +4017,6 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem OutroNotch;
         public static ToolStripMenuItem hertz50N;
         public static ToolStripMenuItem NotchPassFilter;
-        public static Label Stringao;
         public static Panel PainelPerfil;
         public static Button Amplislaoq;
         public static Button MinimoEvento;
@@ -3930,5 +4095,13 @@ namespace PlotagemOpenGL
         public static Button OcultaPA;
         public static Button Anterior0;
         public static ToolStripMenuItem cadastroToolStripMenuItem;
+        public static Label Stringao;
+        public static Panel pnPeriodos;
+        public static Panel pnGrand;
+        public static Panel pnEstagio;
+        public static Panel pnImpressao;
+        public static Label lbEstagio;
+        public static Label lbImpressao;
+        public static Label lbPeriodo;
     }
 }

@@ -40,6 +40,10 @@ namespace PlotagemOpenGL.auxi
         public static bool FiltroCompleto;
         public static int areaCarregadaAltMont;
 
+        public static string estagioAtual = "0";
+        public static int qtdImpressao = 0;
+        public static int qtdPeriodos = 0;
+
         public static string diretorioEstagioAtual0 = @"C:\Temp\Icones\IcoNumericos\IcoN0Select.png";
         public static string diretorioEstagioAtual1 = @"C:\Temp\Icones\IcoNumericos\IcoN1Select.png";
         public static string diretorioEstagioAtual2 = @"C:\Temp\Icones\IcoNumericos\IcoN2Select.png";
