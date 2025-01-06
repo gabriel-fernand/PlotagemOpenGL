@@ -479,6 +479,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
                         GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
 
+                        var dt = GlobVar.tbl_CadEvento.AsEnumerable().Where(x => x.Field<int>("CodEvento") == GlobVar.CodEvento).CopyToDataTable();
+                        GlobVar.AtualEvento = dt.Rows[0]["DescrEvento"].ToString();
                         isThereAnEvent = true;
                         //break; // Sai do loop assim que encontrar um evento
                     }

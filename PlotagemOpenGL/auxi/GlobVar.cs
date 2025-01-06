@@ -103,6 +103,7 @@ namespace PlotagemOpenGL.auxi
         //public static cls_dbExame obj_dbEventos = new ClassesBDNano.cls_dbExame();  //Nao esta funcionando, pois da um erro para estanciar
         public static cls_DataSource obj_dbDataSource;
         public static cls_dbConfig obj_dbConfig;
+        public static string AtualEvento;
 
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();

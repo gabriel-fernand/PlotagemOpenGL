@@ -232,9 +232,40 @@ namespace PlotagemOpenGL
             plusLb23 = new Button();
             scalaLb23 = new Label();
             painelTelaGl = new Panel();
+            pnGrand = new Panel();
+            Stringao = new Label();
+            pnEstagio = new Panel();
+            lbEstagio = new Label();
+            pnImpressao = new Panel();
+            lbImpressao = new Label();
+            pnPeriodos = new Panel();
+            lbPeriodo = new Label();
             painelComando = new Panel();
-            panelMontTmpTela = new Panel();
             ptsEmTela = new TextBox();
+            PainelPerfil = new Panel();
+            Amplislaoq = new Button();
+            MinimoEvento = new Button();
+            EventoUmClick = new Button();
+            AnaliseAutomatica = new Button();
+            Video = new Button();
+            Profile = new Button();
+            PainelPrinters = new Panel();
+            ImprimeLaudo = new Button();
+            ImprimeSele = new Button();
+            CopiaTela = new Button();
+            ImprimeTela = new Button();
+            ImprimePagina = new Button();
+            OcultarPrinter = new Button();
+            ImprimeTudo = new Button();
+            panelMontTmpTela = new Panel();
+            PainelAvRet = new Panel();
+            Avanca = new Button();
+            AndaUmaPag = new Button();
+            Pausa = new Button();
+            VoltaUmaPag = new Button();
+            OcultaTempo = new Button();
+            Retrocede = new Button();
+            TempoTimerAndar = new ComboBox();
             PainelLoc = new Panel();
             TresProxima = new Button();
             DuasProxima = new Button();
@@ -269,14 +300,6 @@ namespace PlotagemOpenGL
             Proximo0 = new Button();
             OcultaPA = new Button();
             Anterior0 = new Button();
-            PainelAvRet = new Panel();
-            Avanca = new Button();
-            AndaUmaPag = new Button();
-            Pausa = new Button();
-            VoltaUmaPag = new Button();
-            OcultaTempo = new Button();
-            Retrocede = new Button();
-            TempoTimerAndar = new ComboBox();
             PanelEventos = new Panel();
             Cpap = new Button();
             ProximoDes = new Button();
@@ -297,22 +320,7 @@ namespace PlotagemOpenGL
             ProximoPulmao = new Button();
             button20 = new Button();
             AnteriorPulmao = new Button();
-            PainelPrinters = new Panel();
-            ImprimeLaudo = new Button();
-            ImprimeSele = new Button();
-            CopiaTela = new Button();
-            ImprimeTela = new Button();
-            ImprimePagina = new Button();
-            OcultarPrinter = new Button();
-            ImprimeTudo = new Button();
-            PainelPerfil = new Panel();
-            Amplislaoq = new Button();
-            MinimoEvento = new Button();
-            EventoUmClick = new Button();
-            AnaliseAutomatica = new Button();
-            Video = new Button();
-            OcultaProf = new Button();
-            Profile = new Button();
+            ApnEvento = new Button();
             playSelect = new Button();
             minusAll = new Button();
             plusAll = new Button();
@@ -342,14 +350,6 @@ namespace PlotagemOpenGL
             ferramentasToolStripMenuItem = new ToolStripMenuItem();
             configuracaoToolStripMenuItem = new ToolStripMenuItem();
             cadastroToolStripMenuItem = new ToolStripMenuItem();
-            Stringao = new Label();
-            pnPeriodos = new Panel();
-            pnImpressao = new Panel();
-            pnEstagio = new Panel();
-            pnGrand = new Panel();
-            lbEstagio = new Label();
-            lbImpressao = new Label();
-            lbPeriodo = new Label();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             painelExames.SuspendLayout();
@@ -377,20 +377,20 @@ namespace PlotagemOpenGL
             panel22.SuspendLayout();
             panel23.SuspendLayout();
             painelTelaGl.SuspendLayout();
+            pnGrand.SuspendLayout();
+            pnEstagio.SuspendLayout();
+            pnImpressao.SuspendLayout();
+            pnPeriodos.SuspendLayout();
             painelComando.SuspendLayout();
+            PainelPerfil.SuspendLayout();
+            PainelPrinters.SuspendLayout();
             panelMontTmpTela.SuspendLayout();
+            PainelAvRet.SuspendLayout();
             PainelLoc.SuspendLayout();
             PainelMarca.SuspendLayout();
             PainelMarcaAntProx.SuspendLayout();
-            PainelAvRet.SuspendLayout();
             PanelEventos.SuspendLayout();
-            PainelPrinters.SuspendLayout();
-            PainelPerfil.SuspendLayout();
             menuStrip1.SuspendLayout();
-            pnPeriodos.SuspendLayout();
-            pnImpressao.SuspendLayout();
-            pnEstagio.SuspendLayout();
-            pnGrand.SuspendLayout();
             SuspendLayout();
             // 
             // hScrollBar1
@@ -447,7 +447,7 @@ namespace PlotagemOpenGL
             velocidadeScroll.FormattingEnabled = true;
             velocidadeScroll.IntegralHeight = false;
             velocidadeScroll.Items.AddRange(new object[] { "1.0x", "1.5x", "2.0x", "2.5x", "5.0x" });
-            velocidadeScroll.Location = new System.Drawing.Point(1489, 15);
+            velocidadeScroll.Location = new System.Drawing.Point(1838, 47);
             velocidadeScroll.Name = "velocidadeScroll";
             velocidadeScroll.Size = new System.Drawing.Size(63, 28);
             velocidadeScroll.TabIndex = 7;
@@ -2327,38 +2327,106 @@ namespace PlotagemOpenGL
             painelTelaGl.Size = new System.Drawing.Size(1920, 50);
             painelTelaGl.TabIndex = 52;
             // 
+            // pnGrand
+            // 
+            pnGrand.BorderStyle = BorderStyle.Fixed3D;
+            pnGrand.Controls.Add(Stringao);
+            pnGrand.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnGrand.ImeMode = ImeMode.NoControl;
+            pnGrand.Location = new System.Drawing.Point(0, 23);
+            pnGrand.Name = "pnGrand";
+            pnGrand.Size = new System.Drawing.Size(1436, 26);
+            pnGrand.TabIndex = 63;
+            // 
+            // Stringao
+            // 
+            Stringao.AutoSize = true;
+            Stringao.Location = new System.Drawing.Point(3, 2);
+            Stringao.Name = "Stringao";
+            Stringao.Size = new System.Drawing.Size(0, 20);
+            Stringao.TabIndex = 59;
+            // 
+            // pnEstagio
+            // 
+            pnEstagio.BorderStyle = BorderStyle.Fixed3D;
+            pnEstagio.Controls.Add(lbEstagio);
+            pnEstagio.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnEstagio.ImeMode = ImeMode.NoControl;
+            pnEstagio.Location = new System.Drawing.Point(1440, 23);
+            pnEstagio.Name = "pnEstagio";
+            pnEstagio.Size = new System.Drawing.Size(178, 26);
+            pnEstagio.TabIndex = 62;
+            // 
+            // lbEstagio
+            // 
+            lbEstagio.AutoSize = true;
+            lbEstagio.Location = new System.Drawing.Point(3, 2);
+            lbEstagio.Name = "lbEstagio";
+            lbEstagio.Size = new System.Drawing.Size(0, 20);
+            lbEstagio.TabIndex = 0;
+            // 
+            // pnImpressao
+            // 
+            pnImpressao.BorderStyle = BorderStyle.Fixed3D;
+            pnImpressao.Controls.Add(lbImpressao);
+            pnImpressao.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnImpressao.ImeMode = ImeMode.NoControl;
+            pnImpressao.Location = new System.Drawing.Point(1621, 23);
+            pnImpressao.Name = "pnImpressao";
+            pnImpressao.Size = new System.Drawing.Size(148, 26);
+            pnImpressao.TabIndex = 61;
+            // 
+            // lbImpressao
+            // 
+            lbImpressao.AutoSize = true;
+            lbImpressao.Location = new System.Drawing.Point(3, 2);
+            lbImpressao.Name = "lbImpressao";
+            lbImpressao.Size = new System.Drawing.Size(0, 20);
+            lbImpressao.TabIndex = 1;
+            // 
+            // pnPeriodos
+            // 
+            pnPeriodos.BorderStyle = BorderStyle.Fixed3D;
+            pnPeriodos.Controls.Add(lbPeriodo);
+            pnPeriodos.ForeColor = System.Drawing.SystemColors.ControlText;
+            pnPeriodos.ImeMode = ImeMode.NoControl;
+            pnPeriodos.Location = new System.Drawing.Point(1771, 23);
+            pnPeriodos.Name = "pnPeriodos";
+            pnPeriodos.Size = new System.Drawing.Size(148, 26);
+            pnPeriodos.TabIndex = 60;
+            // 
+            // lbPeriodo
+            // 
+            lbPeriodo.AutoSize = true;
+            lbPeriodo.Location = new System.Drawing.Point(2, 2);
+            lbPeriodo.Name = "lbPeriodo";
+            lbPeriodo.Size = new System.Drawing.Size(0, 20);
+            lbPeriodo.TabIndex = 2;
+            // 
             // painelComando
             // 
-            painelComando.Controls.Add(panelMontTmpTela);
             painelComando.Controls.Add(ptsEmTela);
+            painelComando.Controls.Add(inicioTela);
+            painelComando.Controls.Add(fimTela);
+            painelComando.Controls.Add(PainelPerfil);
+            painelComando.Controls.Add(PainelPrinters);
+            painelComando.Controls.Add(panelMontTmpTela);
+            painelComando.Controls.Add(PainelAvRet);
             painelComando.Controls.Add(PainelLoc);
             painelComando.Controls.Add(PainelMarca);
             painelComando.Controls.Add(PainelMarcaAntProx);
-            painelComando.Controls.Add(PainelAvRet);
             painelComando.Controls.Add(PanelEventos);
-            painelComando.Controls.Add(PainelPrinters);
-            painelComando.Controls.Add(PainelPerfil);
+            painelComando.Controls.Add(ApnEvento);
             painelComando.Controls.Add(playSelect);
             painelComando.Controls.Add(minusAll);
             painelComando.Controls.Add(plusAll);
             painelComando.Controls.Add(qtdGraficos);
-            painelComando.Controls.Add(inicioTela);
-            painelComando.Controls.Add(fimTela);
             painelComando.Controls.Add(Play);
             painelComando.Controls.Add(velocidadeScroll);
             painelComando.Location = new System.Drawing.Point(3, 31);
             painelComando.Name = "painelComando";
             painelComando.Size = new System.Drawing.Size(1908, 167);
             painelComando.TabIndex = 53;
-            // 
-            // panelMontTmpTela
-            // 
-            panelMontTmpTela.Controls.Add(MontagemBox);
-            panelMontTmpTela.Controls.Add(tempoEmTela);
-            panelMontTmpTela.Location = new System.Drawing.Point(879, 4);
-            panelMontTmpTela.Name = "panelMontTmpTela";
-            panelMontTmpTela.Size = new System.Drawing.Size(276, 49);
-            panelMontTmpTela.TabIndex = 81;
             // 
             // ptsEmTela
             // 
@@ -2372,867 +2440,96 @@ namespace PlotagemOpenGL
             ptsEmTela.KeyDown += PtsEmTela_KeyDown;
             ptsEmTela.KeyPress += PtsEmTela_KeyPress;
             // 
-            // PainelLoc
-            // 
-            PainelLoc.Controls.Add(TresProxima);
-            PainelLoc.Controls.Add(DuasProxima);
-            PainelLoc.Controls.Add(MarcaNoGraf);
-            PainelLoc.Controls.Add(MarcaDAguia);
-            PainelLoc.Controls.Add(QuatroProxima);
-            PainelLoc.Controls.Add(UmaProxima);
-            PainelLoc.Controls.Add(Atual);
-            PainelLoc.Controls.Add(UmaAnterior);
-            PainelLoc.Controls.Add(DuasAnterior);
-            PainelLoc.Controls.Add(TresAnterior);
-            PainelLoc.Controls.Add(OcultaPanelLoc);
-            PainelLoc.Controls.Add(QuatroAnterior);
-            PainelLoc.Location = new System.Drawing.Point(6, 56);
-            PainelLoc.Name = "PainelLoc";
-            PainelLoc.Size = new System.Drawing.Size(595, 49);
-            PainelLoc.TabIndex = 80;
-            // 
-            // TresProxima
-            // 
-            TresProxima.BackColor = System.Drawing.Color.Lime;
-            TresProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("TresProxima.BackgroundImage");
-            TresProxima.BackgroundImageLayout = ImageLayout.Stretch;
-            TresProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            TresProxima.Location = new System.Drawing.Point(335, 1);
-            TresProxima.Name = "TresProxima";
-            TresProxima.Size = new System.Drawing.Size(47, 47);
-            TresProxima.TabIndex = 76;
-            TresProxima.Tag = 3;
-            TresProxima.UseVisualStyleBackColor = false;
-            TresProxima.Click += UmaProxima_Click;
-            // 
-            // DuasProxima
-            // 
-            DuasProxima.BackColor = System.Drawing.Color.Lime;
-            DuasProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("DuasProxima.BackgroundImage");
-            DuasProxima.BackgroundImageLayout = ImageLayout.Stretch;
-            DuasProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            DuasProxima.Location = new System.Drawing.Point(289, 1);
-            DuasProxima.Name = "DuasProxima";
-            DuasProxima.Size = new System.Drawing.Size(47, 47);
-            DuasProxima.TabIndex = 77;
-            DuasProxima.Tag = 2;
-            DuasProxima.UseVisualStyleBackColor = false;
-            DuasProxima.Click += UmaProxima_Click;
-            // 
-            // MarcaNoGraf
-            // 
-            MarcaNoGraf.BackColor = System.Drawing.Color.Lime;
-            MarcaNoGraf.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaNoGraf.BackgroundImage");
-            MarcaNoGraf.BackgroundImageLayout = ImageLayout.Stretch;
-            MarcaNoGraf.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            MarcaNoGraf.Location = new System.Drawing.Point(491, 1);
-            MarcaNoGraf.Name = "MarcaNoGraf";
-            MarcaNoGraf.Size = new System.Drawing.Size(47, 47);
-            MarcaNoGraf.TabIndex = 71;
-            MarcaNoGraf.UseVisualStyleBackColor = false;
-            // 
-            // MarcaDAguia
-            // 
-            MarcaDAguia.BackColor = System.Drawing.Color.Lime;
-            MarcaDAguia.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaDAguia.BackgroundImage");
-            MarcaDAguia.BackgroundImageLayout = ImageLayout.Stretch;
-            MarcaDAguia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            MarcaDAguia.Location = new System.Drawing.Point(441, 1);
-            MarcaDAguia.Name = "MarcaDAguia";
-            MarcaDAguia.Size = new System.Drawing.Size(47, 47);
-            MarcaDAguia.TabIndex = 67;
-            MarcaDAguia.UseVisualStyleBackColor = false;
-            MarcaDAguia.Click += MarcaDAguia_Click;
-            // 
-            // QuatroProxima
-            // 
-            QuatroProxima.BackColor = System.Drawing.Color.Lime;
-            QuatroProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("QuatroProxima.BackgroundImage");
-            QuatroProxima.BackgroundImageLayout = ImageLayout.Stretch;
-            QuatroProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            QuatroProxima.Location = new System.Drawing.Point(386, 1);
-            QuatroProxima.Name = "QuatroProxima";
-            QuatroProxima.Size = new System.Drawing.Size(47, 47);
-            QuatroProxima.TabIndex = 66;
-            QuatroProxima.Tag = 4;
-            QuatroProxima.UseVisualStyleBackColor = false;
-            QuatroProxima.Click += UmaProxima_Click;
-            // 
-            // UmaProxima
-            // 
-            UmaProxima.BackColor = System.Drawing.Color.Lime;
-            UmaProxima.BackgroundImageLayout = ImageLayout.Stretch;
-            UmaProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            UmaProxima.Location = new System.Drawing.Point(239, 1);
-            UmaProxima.Name = "UmaProxima";
-            UmaProxima.Size = new System.Drawing.Size(47, 47);
-            UmaProxima.TabIndex = 62;
-            UmaProxima.Tag = 1;
-            UmaProxima.UseVisualStyleBackColor = false;
-            UmaProxima.Click += UmaProxima_Click;
-            // 
-            // Atual
-            // 
-            Atual.BackColor = System.Drawing.Color.GreenYellow;
-            Atual.BackgroundImage = (System.Drawing.Image)resources.GetObject("Atual.BackgroundImage");
-            Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            Atual.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Atual.Location = new System.Drawing.Point(192, 1);
-            Atual.Name = "Atual";
-            Atual.Size = new System.Drawing.Size(47, 47);
-            Atual.TabIndex = 63;
-            Atual.UseVisualStyleBackColor = false;
-            // 
-            // UmaAnterior
-            // 
-            UmaAnterior.BackColor = System.Drawing.Color.Lime;
-            UmaAnterior.BackgroundImageLayout = ImageLayout.Stretch;
-            UmaAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            UmaAnterior.Location = new System.Drawing.Point(142, 1);
-            UmaAnterior.Name = "UmaAnterior";
-            UmaAnterior.Size = new System.Drawing.Size(47, 47);
-            UmaAnterior.TabIndex = 64;
-            UmaAnterior.Tag = 1;
-            UmaAnterior.UseVisualStyleBackColor = false;
-            UmaAnterior.Click += UmaAnterior_Click;
-            // 
-            // DuasAnterior
-            // 
-            DuasAnterior.BackColor = System.Drawing.Color.Lime;
-            DuasAnterior.BackgroundImageLayout = ImageLayout.Stretch;
-            DuasAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            DuasAnterior.Location = new System.Drawing.Point(96, 1);
-            DuasAnterior.Name = "DuasAnterior";
-            DuasAnterior.Size = new System.Drawing.Size(47, 47);
-            DuasAnterior.TabIndex = 65;
-            DuasAnterior.Tag = 2;
-            DuasAnterior.UseVisualStyleBackColor = false;
-            DuasAnterior.Click += UmaAnterior_Click;
-            // 
-            // TresAnterior
-            // 
-            TresAnterior.BackColor = System.Drawing.Color.Lime;
-            TresAnterior.BackgroundImageLayout = ImageLayout.Stretch;
-            TresAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            TresAnterior.Location = new System.Drawing.Point(47, 1);
-            TresAnterior.Name = "TresAnterior";
-            TresAnterior.Size = new System.Drawing.Size(47, 47);
-            TresAnterior.TabIndex = 2;
-            TresAnterior.Tag = 3;
-            TresAnterior.UseVisualStyleBackColor = false;
-            TresAnterior.Click += UmaAnterior_Click;
-            // 
-            // OcultaPanelLoc
-            // 
-            OcultaPanelLoc.BackColor = System.Drawing.Color.Lime;
-            OcultaPanelLoc.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaPanelLoc.BackgroundImage");
-            OcultaPanelLoc.BackgroundImageLayout = ImageLayout.Stretch;
-            OcultaPanelLoc.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            OcultaPanelLoc.Location = new System.Drawing.Point(542, 1);
-            OcultaPanelLoc.Name = "OcultaPanelLoc";
-            OcultaPanelLoc.Size = new System.Drawing.Size(47, 47);
-            OcultaPanelLoc.TabIndex = 1;
-            OcultaPanelLoc.UseVisualStyleBackColor = false;
-            // 
-            // QuatroAnterior
-            // 
-            QuatroAnterior.BackColor = System.Drawing.Color.Lime;
-            QuatroAnterior.BackgroundImageLayout = ImageLayout.Stretch;
-            QuatroAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            QuatroAnterior.Location = new System.Drawing.Point(1, 1);
-            QuatroAnterior.Name = "QuatroAnterior";
-            QuatroAnterior.Size = new System.Drawing.Size(47, 47);
-            QuatroAnterior.TabIndex = 0;
-            QuatroAnterior.Tag = 4;
-            QuatroAnterior.UseVisualStyleBackColor = false;
-            QuatroAnterior.Click += UmaAnterior_Click;
-            // 
-            // PainelMarca
-            // 
-            PainelMarca.Controls.Add(MarcarR);
-            PainelMarca.Controls.Add(Marcar3);
-            PainelMarca.Controls.Add(Marcar2);
-            PainelMarca.Controls.Add(Marcar1);
-            PainelMarca.Controls.Add(OcultarMarcar);
-            PainelMarca.Controls.Add(Marcar0);
-            PainelMarca.Location = new System.Drawing.Point(607, 56);
-            PainelMarca.Name = "PainelMarca";
-            PainelMarca.Size = new System.Drawing.Size(294, 49);
-            PainelMarca.TabIndex = 69;
-            // 
-            // MarcarR
-            // 
-            MarcarR.BackColor = System.Drawing.Color.BlueViolet;
-            MarcarR.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcarR.BackgroundImage");
-            MarcarR.BackgroundImageLayout = ImageLayout.Stretch;
-            MarcarR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            MarcarR.Location = new System.Drawing.Point(189, 1);
-            MarcarR.Name = "MarcarR";
-            MarcarR.Size = new System.Drawing.Size(47, 47);
-            MarcarR.TabIndex = 63;
-            MarcarR.Tag = 5;
-            MarcarR.UseVisualStyleBackColor = false;
-            MarcarR.Click += Marcar_Click;
-            // 
-            // Marcar3
-            // 
-            Marcar3.BackColor = System.Drawing.Color.BlueViolet;
-            Marcar3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar3.BackgroundImage");
-            Marcar3.BackgroundImageLayout = ImageLayout.Stretch;
-            Marcar3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Marcar3.Location = new System.Drawing.Point(142, 1);
-            Marcar3.Name = "Marcar3";
-            Marcar3.Size = new System.Drawing.Size(47, 47);
-            Marcar3.TabIndex = 64;
-            Marcar3.Tag = 3;
-            Marcar3.UseVisualStyleBackColor = false;
-            Marcar3.Click += Marcar_Click;
-            // 
-            // Marcar2
-            // 
-            Marcar2.BackColor = System.Drawing.Color.BlueViolet;
-            Marcar2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar2.BackgroundImage");
-            Marcar2.BackgroundImageLayout = ImageLayout.Stretch;
-            Marcar2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Marcar2.Location = new System.Drawing.Point(95, 1);
-            Marcar2.Name = "Marcar2";
-            Marcar2.Size = new System.Drawing.Size(47, 47);
-            Marcar2.TabIndex = 65;
-            Marcar2.Tag = 2;
-            Marcar2.UseVisualStyleBackColor = false;
-            Marcar2.Click += Marcar_Click;
-            // 
-            // Marcar1
-            // 
-            Marcar1.BackColor = System.Drawing.Color.BlueViolet;
-            Marcar1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar1.BackgroundImage");
-            Marcar1.BackgroundImageLayout = ImageLayout.Stretch;
-            Marcar1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Marcar1.Location = new System.Drawing.Point(48, 1);
-            Marcar1.Name = "Marcar1";
-            Marcar1.Size = new System.Drawing.Size(47, 47);
-            Marcar1.TabIndex = 2;
-            Marcar1.Tag = 1;
-            Marcar1.UseVisualStyleBackColor = false;
-            Marcar1.Click += Marcar_Click;
-            // 
-            // OcultarMarcar
-            // 
-            OcultarMarcar.BackColor = System.Drawing.Color.BlueViolet;
-            OcultarMarcar.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultarMarcar.BackgroundImage");
-            OcultarMarcar.BackgroundImageLayout = ImageLayout.Stretch;
-            OcultarMarcar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            OcultarMarcar.Location = new System.Drawing.Point(242, 1);
-            OcultarMarcar.Name = "OcultarMarcar";
-            OcultarMarcar.Size = new System.Drawing.Size(47, 47);
-            OcultarMarcar.TabIndex = 1;
-            OcultarMarcar.UseVisualStyleBackColor = false;
-            // 
-            // Marcar0
-            // 
-            Marcar0.BackColor = System.Drawing.Color.BlueViolet;
-            Marcar0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar0.BackgroundImage");
-            Marcar0.BackgroundImageLayout = ImageLayout.Stretch;
-            Marcar0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Marcar0.Location = new System.Drawing.Point(1, 1);
-            Marcar0.Name = "Marcar0";
-            Marcar0.Size = new System.Drawing.Size(47, 47);
-            Marcar0.TabIndex = 0;
-            Marcar0.Tag = 0;
-            Marcar0.UseVisualStyleBackColor = false;
-            Marcar0.Click += Marcar_Click;
-            // 
-            // PainelMarcaAntProx
-            // 
-            PainelMarcaAntProx.Controls.Add(Proximo3);
-            PainelMarcaAntProx.Controls.Add(Anterior3);
-            PainelMarcaAntProx.Controls.Add(ProximoDif);
-            PainelMarcaAntProx.Controls.Add(AnteriorDif);
-            PainelMarcaAntProx.Controls.Add(ProximoR);
-            PainelMarcaAntProx.Controls.Add(AnteriorR);
-            PainelMarcaAntProx.Controls.Add(Proximo2);
-            PainelMarcaAntProx.Controls.Add(Anterior2);
-            PainelMarcaAntProx.Controls.Add(Proximo1);
-            PainelMarcaAntProx.Controls.Add(Anterior1);
-            PainelMarcaAntProx.Controls.Add(Proximo0);
-            PainelMarcaAntProx.Controls.Add(OcultaPA);
-            PainelMarcaAntProx.Controls.Add(Anterior0);
-            PainelMarcaAntProx.Location = new System.Drawing.Point(907, 56);
-            PainelMarcaAntProx.Name = "PainelMarcaAntProx";
-            PainelMarcaAntProx.Size = new System.Drawing.Size(641, 49);
-            PainelMarcaAntProx.TabIndex = 79;
-            // 
-            // Proximo3
-            // 
-            Proximo3.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Proximo3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo3.BackgroundImage");
-            Proximo3.BackgroundImageLayout = ImageLayout.Stretch;
-            Proximo3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Proximo3.Location = new System.Drawing.Point(335, 1);
-            Proximo3.Name = "Proximo3";
-            Proximo3.Size = new System.Drawing.Size(47, 47);
-            Proximo3.TabIndex = 76;
-            Proximo3.Tag = 3;
-            Proximo3.UseVisualStyleBackColor = false;
-            Proximo3.Click += Proximo_Click;
-            // 
-            // Anterior3
-            // 
-            Anterior3.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Anterior3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior3.BackgroundImage");
-            Anterior3.BackgroundImageLayout = ImageLayout.Stretch;
-            Anterior3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Anterior3.Location = new System.Drawing.Point(289, 1);
-            Anterior3.Name = "Anterior3";
-            Anterior3.Size = new System.Drawing.Size(47, 47);
-            Anterior3.TabIndex = 77;
-            Anterior3.Tag = 3;
-            Anterior3.UseVisualStyleBackColor = false;
-            Anterior3.Click += Anterior_Click;
-            // 
-            // ProximoDif
-            // 
-            ProximoDif.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoDif.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoDif.BackgroundImage");
-            ProximoDif.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoDif.Location = new System.Drawing.Point(530, 1);
-            ProximoDif.Name = "ProximoDif";
-            ProximoDif.Size = new System.Drawing.Size(47, 47);
-            ProximoDif.TabIndex = 70;
-            ProximoDif.UseVisualStyleBackColor = false;
-            ProximoDif.Click += ProximoDif_Click;
-            // 
-            // AnteriorDif
-            // 
-            AnteriorDif.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorDif.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorDif.BackgroundImage");
-            AnteriorDif.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorDif.Location = new System.Drawing.Point(484, 1);
-            AnteriorDif.Name = "AnteriorDif";
-            AnteriorDif.Size = new System.Drawing.Size(47, 47);
-            AnteriorDif.TabIndex = 71;
-            AnteriorDif.UseVisualStyleBackColor = false;
-            AnteriorDif.Click += AnteriorDif_Click;
-            // 
-            // ProximoR
-            // 
-            ProximoR.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoR.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoR.BackgroundImage");
-            ProximoR.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoR.Location = new System.Drawing.Point(433, 1);
-            ProximoR.Name = "ProximoR";
-            ProximoR.Size = new System.Drawing.Size(47, 47);
-            ProximoR.TabIndex = 67;
-            ProximoR.Tag = 5;
-            ProximoR.UseVisualStyleBackColor = false;
-            ProximoR.Click += Proximo_Click;
-            // 
-            // AnteriorR
-            // 
-            AnteriorR.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorR.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorR.BackgroundImage");
-            AnteriorR.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorR.Location = new System.Drawing.Point(386, 1);
-            AnteriorR.Name = "AnteriorR";
-            AnteriorR.Size = new System.Drawing.Size(47, 47);
-            AnteriorR.TabIndex = 66;
-            AnteriorR.Tag = 5;
-            AnteriorR.UseVisualStyleBackColor = false;
-            AnteriorR.Click += Anterior_Click;
-            // 
-            // Proximo2
-            // 
-            Proximo2.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Proximo2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo2.BackgroundImage");
-            Proximo2.BackgroundImageLayout = ImageLayout.Stretch;
-            Proximo2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Proximo2.Location = new System.Drawing.Point(239, 1);
-            Proximo2.Name = "Proximo2";
-            Proximo2.Size = new System.Drawing.Size(47, 47);
-            Proximo2.TabIndex = 62;
-            Proximo2.Tag = 2;
-            Proximo2.UseVisualStyleBackColor = false;
-            Proximo2.Click += Proximo_Click;
-            // 
-            // Anterior2
-            // 
-            Anterior2.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Anterior2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior2.BackgroundImage");
-            Anterior2.BackgroundImageLayout = ImageLayout.Stretch;
-            Anterior2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Anterior2.Location = new System.Drawing.Point(192, 1);
-            Anterior2.Name = "Anterior2";
-            Anterior2.Size = new System.Drawing.Size(47, 47);
-            Anterior2.TabIndex = 63;
-            Anterior2.Tag = 2;
-            Anterior2.UseVisualStyleBackColor = false;
-            Anterior2.Click += Anterior_Click;
-            // 
-            // Proximo1
-            // 
-            Proximo1.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Proximo1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo1.BackgroundImage");
-            Proximo1.BackgroundImageLayout = ImageLayout.Stretch;
-            Proximo1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Proximo1.Location = new System.Drawing.Point(142, 1);
-            Proximo1.Name = "Proximo1";
-            Proximo1.Size = new System.Drawing.Size(47, 47);
-            Proximo1.TabIndex = 64;
-            Proximo1.Tag = 1;
-            Proximo1.UseVisualStyleBackColor = false;
-            Proximo1.Click += Proximo_Click;
-            // 
-            // Anterior1
-            // 
-            Anterior1.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Anterior1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior1.BackgroundImage");
-            Anterior1.BackgroundImageLayout = ImageLayout.Stretch;
-            Anterior1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Anterior1.Location = new System.Drawing.Point(96, 1);
-            Anterior1.Name = "Anterior1";
-            Anterior1.Size = new System.Drawing.Size(47, 47);
-            Anterior1.TabIndex = 65;
-            Anterior1.Tag = 1;
-            Anterior1.UseVisualStyleBackColor = false;
-            Anterior1.Click += Anterior_Click;
-            // 
-            // Proximo0
-            // 
-            Proximo0.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Proximo0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo0.BackgroundImage");
-            Proximo0.BackgroundImageLayout = ImageLayout.Stretch;
-            Proximo0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Proximo0.Location = new System.Drawing.Point(47, 1);
-            Proximo0.Name = "Proximo0";
-            Proximo0.Size = new System.Drawing.Size(47, 47);
-            Proximo0.TabIndex = 2;
-            Proximo0.Tag = 0;
-            Proximo0.UseVisualStyleBackColor = false;
-            Proximo0.Click += Proximo_Click;
-            // 
-            // OcultaPA
-            // 
-            OcultaPA.BackColor = System.Drawing.Color.FromArgb(128, 128, 255);
-            OcultaPA.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaPA.BackgroundImage");
-            OcultaPA.BackgroundImageLayout = ImageLayout.Stretch;
-            OcultaPA.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            OcultaPA.Location = new System.Drawing.Point(583, 1);
-            OcultaPA.Name = "OcultaPA";
-            OcultaPA.Size = new System.Drawing.Size(47, 47);
-            OcultaPA.TabIndex = 1;
-            OcultaPA.UseVisualStyleBackColor = false;
-            // 
-            // Anterior0
-            // 
-            Anterior0.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Anterior0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior0.BackgroundImage");
-            Anterior0.BackgroundImageLayout = ImageLayout.Stretch;
-            Anterior0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Anterior0.Location = new System.Drawing.Point(1, 1);
-            Anterior0.Name = "Anterior0";
-            Anterior0.Size = new System.Drawing.Size(47, 47);
-            Anterior0.TabIndex = 0;
-            Anterior0.Tag = 0;
-            Anterior0.UseVisualStyleBackColor = false;
-            Anterior0.Click += Anterior_Click;
-            // 
-            // PainelAvRet
-            // 
-            PainelAvRet.Controls.Add(Avanca);
-            PainelAvRet.Controls.Add(AndaUmaPag);
-            PainelAvRet.Controls.Add(Pausa);
-            PainelAvRet.Controls.Add(VoltaUmaPag);
-            PainelAvRet.Controls.Add(OcultaTempo);
-            PainelAvRet.Controls.Add(Retrocede);
-            PainelAvRet.Controls.Add(TempoTimerAndar);
-            PainelAvRet.Location = new System.Drawing.Point(1160, 3);
-            PainelAvRet.Name = "PainelAvRet";
-            PainelAvRet.Size = new System.Drawing.Size(316, 49);
-            PainelAvRet.TabIndex = 68;
-            // 
-            // Avanca
-            // 
-            Avanca.BackColor = System.Drawing.Color.OrangeRed;
-            Avanca.BackgroundImage = (System.Drawing.Image)resources.GetObject("Avanca.BackgroundImage");
-            Avanca.BackgroundImageLayout = ImageLayout.Stretch;
-            Avanca.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Avanca.Location = new System.Drawing.Point(189, 1);
-            Avanca.Name = "Avanca";
-            Avanca.Size = new System.Drawing.Size(47, 47);
-            Avanca.TabIndex = 63;
-            Avanca.UseVisualStyleBackColor = false;
-            Avanca.Click += Avanca_Click;
-            // 
-            // AndaUmaPag
-            // 
-            AndaUmaPag.BackColor = System.Drawing.Color.OrangeRed;
-            AndaUmaPag.BackgroundImage = (System.Drawing.Image)resources.GetObject("AndaUmaPag.BackgroundImage");
-            AndaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
-            AndaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AndaUmaPag.Location = new System.Drawing.Point(142, 1);
-            AndaUmaPag.Name = "AndaUmaPag";
-            AndaUmaPag.Size = new System.Drawing.Size(47, 47);
-            AndaUmaPag.TabIndex = 64;
-            AndaUmaPag.UseVisualStyleBackColor = false;
-            AndaUmaPag.Click += AndaUmaPag_Click;
-            // 
-            // Pausa
-            // 
-            Pausa.BackColor = System.Drawing.Color.OrangeRed;
-            Pausa.BackgroundImage = (System.Drawing.Image)resources.GetObject("Pausa.BackgroundImage");
-            Pausa.BackgroundImageLayout = ImageLayout.Stretch;
-            Pausa.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Pausa.Location = new System.Drawing.Point(95, 1);
-            Pausa.Name = "Pausa";
-            Pausa.Size = new System.Drawing.Size(47, 47);
-            Pausa.TabIndex = 65;
-            Pausa.UseVisualStyleBackColor = false;
-            Pausa.Click += Pausa_Click;
-            // 
-            // VoltaUmaPag
-            // 
-            VoltaUmaPag.BackColor = System.Drawing.Color.OrangeRed;
-            VoltaUmaPag.BackgroundImage = (System.Drawing.Image)resources.GetObject("VoltaUmaPag.BackgroundImage");
-            VoltaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
-            VoltaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            VoltaUmaPag.Location = new System.Drawing.Point(48, 1);
-            VoltaUmaPag.Name = "VoltaUmaPag";
-            VoltaUmaPag.Size = new System.Drawing.Size(47, 47);
-            VoltaUmaPag.TabIndex = 2;
-            VoltaUmaPag.UseVisualStyleBackColor = false;
-            VoltaUmaPag.Click += VoltaUmaPag_Click;
-            // 
-            // OcultaTempo
-            // 
-            OcultaTempo.BackColor = System.Drawing.Color.OrangeRed;
-            OcultaTempo.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaTempo.BackgroundImage");
-            OcultaTempo.BackgroundImageLayout = ImageLayout.Stretch;
-            OcultaTempo.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            OcultaTempo.Location = new System.Drawing.Point(265, 1);
-            OcultaTempo.Name = "OcultaTempo";
-            OcultaTempo.Size = new System.Drawing.Size(47, 47);
-            OcultaTempo.TabIndex = 1;
-            OcultaTempo.UseVisualStyleBackColor = false;
-            // 
-            // Retrocede
-            // 
-            Retrocede.BackColor = System.Drawing.Color.OrangeRed;
-            Retrocede.BackgroundImage = (System.Drawing.Image)resources.GetObject("Retrocede.BackgroundImage");
-            Retrocede.BackgroundImageLayout = ImageLayout.Stretch;
-            Retrocede.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Retrocede.Location = new System.Drawing.Point(1, 1);
-            Retrocede.Name = "Retrocede";
-            Retrocede.Size = new System.Drawing.Size(47, 47);
-            Retrocede.TabIndex = 0;
-            Retrocede.UseVisualStyleBackColor = false;
-            Retrocede.Click += Retrocede_Click;
-            // 
-            // TempoTimerAndar
-            // 
-            TempoTimerAndar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            TempoTimerAndar.DisplayMember = "0.00x";
-            TempoTimerAndar.DropDownStyle = ComboBoxStyle.DropDownList;
-            TempoTimerAndar.FlatStyle = FlatStyle.System;
-            TempoTimerAndar.FormattingEnabled = true;
-            TempoTimerAndar.IntegralHeight = false;
-            TempoTimerAndar.Items.AddRange(new object[] { "0.00x", "0.10x", "0.25x", "0.50x", "1.00x", "2.00x" });
-            TempoTimerAndar.Location = new System.Drawing.Point(195, 14);
-            TempoTimerAndar.Name = "TempoTimerAndar";
-            TempoTimerAndar.Size = new System.Drawing.Size(64, 28);
-            TempoTimerAndar.TabIndex = 81;
-            TempoTimerAndar.DropDown += TempoTimerAndar_DropDown;
-            TempoTimerAndar.SelectedIndexChanged += TempoTimerAndar_SelectedIndexChanged;
-            // 
-            // PanelEventos
-            // 
-            PanelEventos.Controls.Add(Cpap);
-            PanelEventos.Controls.Add(ProximoDes);
-            PanelEventos.Controls.Add(AnteriorDes);
-            PanelEventos.Controls.Add(Dessatu);
-            PanelEventos.Controls.Add(BaNotche);
-            PanelEventos.Controls.Add(BaDia);
-            PanelEventos.Controls.Add(ProximoComentario);
-            PanelEventos.Controls.Add(AnteriorComentario);
-            PanelEventos.Controls.Add(ProximoRonco);
-            PanelEventos.Controls.Add(AnteriorRonco);
-            PanelEventos.Controls.Add(ProximoPerna);
-            PanelEventos.Controls.Add(AnteriorPerna);
-            PanelEventos.Controls.Add(ProximoCardio);
-            PanelEventos.Controls.Add(AnteriorCardio);
-            PanelEventos.Controls.Add(ProximoAcordar);
-            PanelEventos.Controls.Add(AnteriorAcordar);
-            PanelEventos.Controls.Add(ProximoPulmao);
-            PanelEventos.Controls.Add(button20);
-            PanelEventos.Controls.Add(AnteriorPulmao);
-            PanelEventos.Location = new System.Drawing.Point(5, 112);
-            PanelEventos.Name = "PanelEventos";
-            PanelEventos.Size = new System.Drawing.Size(926, 49);
-            PanelEventos.TabIndex = 69;
-            // 
-            // Cpap
-            // 
-            Cpap.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Cpap.BackgroundImage = (System.Drawing.Image)resources.GetObject("Cpap.BackgroundImage");
-            Cpap.BackgroundImageLayout = ImageLayout.Stretch;
-            Cpap.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Cpap.Location = new System.Drawing.Point(775, 1);
-            Cpap.Name = "Cpap";
-            Cpap.Size = new System.Drawing.Size(47, 47);
-            Cpap.TabIndex = 78;
-            Cpap.Tag = 50;
-            Cpap.UseVisualStyleBackColor = false;
-            Cpap.Click += IndoBomDiaBoaNoiteCPAP;
-            // 
-            // ProximoDes
-            // 
-            ProximoDes.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoDes.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoDes.BackgroundImage");
-            ProximoDes.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoDes.Location = new System.Drawing.Point(335, 1);
-            ProximoDes.Name = "ProximoDes";
-            ProximoDes.Size = new System.Drawing.Size(47, 47);
-            ProximoDes.TabIndex = 76;
-            ProximoDes.Tag = 20;
-            ProximoDes.UseVisualStyleBackColor = false;
-            ProximoDes.Click += ProximoEvento_Click;
-            // 
-            // AnteriorDes
-            // 
-            AnteriorDes.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorDes.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorDes.BackgroundImage");
-            AnteriorDes.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorDes.Location = new System.Drawing.Point(289, 1);
-            AnteriorDes.Name = "AnteriorDes";
-            AnteriorDes.Size = new System.Drawing.Size(47, 47);
-            AnteriorDes.TabIndex = 77;
-            AnteriorDes.Tag = 20;
-            AnteriorDes.UseVisualStyleBackColor = false;
-            AnteriorDes.Click += UltimoEvento_Click;
-            // 
-            // Dessatu
-            // 
-            Dessatu.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            Dessatu.BackgroundImage = (System.Drawing.Image)resources.GetObject("Dessatu.BackgroundImage");
-            Dessatu.BackgroundImageLayout = ImageLayout.Stretch;
-            Dessatu.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Dessatu.Location = new System.Drawing.Point(828, 1);
-            Dessatu.Name = "Dessatu";
-            Dessatu.Size = new System.Drawing.Size(47, 47);
-            Dessatu.TabIndex = 75;
-            Dessatu.UseVisualStyleBackColor = false;
-            Dessatu.Click += MenorSat_Click;
-            // 
-            // BaNotche
-            // 
-            BaNotche.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            BaNotche.BackgroundImage = (System.Drawing.Image)resources.GetObject("BaNotche.BackgroundImage");
-            BaNotche.BackgroundImageLayout = ImageLayout.Stretch;
-            BaNotche.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            BaNotche.Location = new System.Drawing.Point(728, 1);
-            BaNotche.Name = "BaNotche";
-            BaNotche.Size = new System.Drawing.Size(47, 47);
-            BaNotche.TabIndex = 72;
-            BaNotche.Tag = 19;
-            BaNotche.UseVisualStyleBackColor = false;
-            BaNotche.Click += IndoBomDiaBoaNoiteCPAP;
-            // 
-            // BaDia
-            // 
-            BaDia.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            BaDia.BackgroundImage = (System.Drawing.Image)resources.GetObject("BaDia.BackgroundImage");
-            BaDia.BackgroundImageLayout = ImageLayout.Stretch;
-            BaDia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            BaDia.Location = new System.Drawing.Point(680, 1);
-            BaDia.Name = "BaDia";
-            BaDia.Size = new System.Drawing.Size(47, 47);
-            BaDia.TabIndex = 73;
-            BaDia.Tag = 18;
-            BaDia.UseVisualStyleBackColor = false;
-            BaDia.Click += IndoBomDiaBoaNoiteCPAP;
-            // 
-            // ProximoComentario
-            // 
-            ProximoComentario.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoComentario.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoComentario.BackgroundImage");
-            ProximoComentario.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoComentario.Location = new System.Drawing.Point(627, 1);
-            ProximoComentario.Name = "ProximoComentario";
-            ProximoComentario.Size = new System.Drawing.Size(47, 47);
-            ProximoComentario.TabIndex = 68;
-            ProximoComentario.UseVisualStyleBackColor = false;
-            ProximoComentario.Click += ProximoComentario_Click;
-            // 
-            // AnteriorComentario
-            // 
-            AnteriorComentario.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorComentario.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorComentario.BackgroundImage");
-            AnteriorComentario.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorComentario.Location = new System.Drawing.Point(581, 1);
-            AnteriorComentario.Name = "AnteriorComentario";
-            AnteriorComentario.Size = new System.Drawing.Size(47, 47);
-            AnteriorComentario.TabIndex = 69;
-            AnteriorComentario.UseVisualStyleBackColor = false;
-            AnteriorComentario.Click += AnteriorComentario_Click;
-            // 
-            // ProximoRonco
-            // 
-            ProximoRonco.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoRonco.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoRonco.BackgroundImage");
-            ProximoRonco.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoRonco.Location = new System.Drawing.Point(530, 1);
-            ProximoRonco.Name = "ProximoRonco";
-            ProximoRonco.Size = new System.Drawing.Size(47, 47);
-            ProximoRonco.TabIndex = 70;
-            ProximoRonco.Tag = 7;
-            ProximoRonco.UseVisualStyleBackColor = false;
-            ProximoRonco.Click += ProximoEvento_Click;
-            // 
-            // AnteriorRonco
-            // 
-            AnteriorRonco.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorRonco.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorRonco.BackgroundImage");
-            AnteriorRonco.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorRonco.Location = new System.Drawing.Point(484, 1);
-            AnteriorRonco.Name = "AnteriorRonco";
-            AnteriorRonco.Size = new System.Drawing.Size(47, 47);
-            AnteriorRonco.TabIndex = 71;
-            AnteriorRonco.Tag = 7;
-            AnteriorRonco.UseVisualStyleBackColor = false;
-            AnteriorRonco.Click += UltimoEvento_Click;
-            // 
-            // ProximoPerna
-            // 
-            ProximoPerna.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoPerna.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoPerna.BackgroundImage");
-            ProximoPerna.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoPerna.Location = new System.Drawing.Point(433, 1);
-            ProximoPerna.Name = "ProximoPerna";
-            ProximoPerna.Size = new System.Drawing.Size(47, 47);
-            ProximoPerna.TabIndex = 67;
-            ProximoPerna.Tag = 4;
-            ProximoPerna.UseVisualStyleBackColor = false;
-            ProximoPerna.Click += ProximoEvento_Click;
-            // 
-            // AnteriorPerna
-            // 
-            AnteriorPerna.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorPerna.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorPerna.BackgroundImage");
-            AnteriorPerna.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorPerna.Location = new System.Drawing.Point(386, 1);
-            AnteriorPerna.Name = "AnteriorPerna";
-            AnteriorPerna.Size = new System.Drawing.Size(47, 47);
-            AnteriorPerna.TabIndex = 66;
-            AnteriorPerna.Tag = 4;
-            AnteriorPerna.UseVisualStyleBackColor = false;
-            AnteriorPerna.Click += UltimoEvento_Click;
-            // 
-            // ProximoCardio
-            // 
-            ProximoCardio.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoCardio.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoCardio.BackgroundImage");
-            ProximoCardio.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoCardio.Location = new System.Drawing.Point(239, 1);
-            ProximoCardio.Name = "ProximoCardio";
-            ProximoCardio.Size = new System.Drawing.Size(47, 47);
-            ProximoCardio.TabIndex = 62;
-            ProximoCardio.Tag = 2;
-            ProximoCardio.UseVisualStyleBackColor = false;
-            ProximoCardio.Click += ProximoEvento_Click;
-            // 
-            // AnteriorCardio
-            // 
-            AnteriorCardio.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorCardio.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorCardio.BackgroundImage");
-            AnteriorCardio.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorCardio.Location = new System.Drawing.Point(192, 1);
-            AnteriorCardio.Name = "AnteriorCardio";
-            AnteriorCardio.Size = new System.Drawing.Size(47, 47);
-            AnteriorCardio.TabIndex = 63;
-            AnteriorCardio.Tag = 2;
-            AnteriorCardio.UseVisualStyleBackColor = false;
-            AnteriorCardio.Click += UltimoEvento_Click;
-            // 
-            // ProximoAcordar
-            // 
-            ProximoAcordar.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoAcordar.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoAcordar.BackgroundImage");
-            ProximoAcordar.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoAcordar.Location = new System.Drawing.Point(142, 1);
-            ProximoAcordar.Name = "ProximoAcordar";
-            ProximoAcordar.Size = new System.Drawing.Size(47, 47);
-            ProximoAcordar.TabIndex = 64;
-            ProximoAcordar.Tag = 1;
-            ProximoAcordar.UseVisualStyleBackColor = false;
-            ProximoAcordar.Click += ProximoEvento_Click;
-            // 
-            // AnteriorAcordar
-            // 
-            AnteriorAcordar.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorAcordar.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorAcordar.BackgroundImage");
-            AnteriorAcordar.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorAcordar.Location = new System.Drawing.Point(96, 1);
-            AnteriorAcordar.Name = "AnteriorAcordar";
-            AnteriorAcordar.Size = new System.Drawing.Size(47, 47);
-            AnteriorAcordar.TabIndex = 65;
-            AnteriorAcordar.Tag = 1;
-            AnteriorAcordar.UseVisualStyleBackColor = false;
-            AnteriorAcordar.Click += UltimoEvento_Click;
-            // 
-            // ProximoPulmao
-            // 
-            ProximoPulmao.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            ProximoPulmao.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoPulmao.BackgroundImage");
-            ProximoPulmao.BackgroundImageLayout = ImageLayout.Stretch;
-            ProximoPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            ProximoPulmao.Location = new System.Drawing.Point(47, 1);
-            ProximoPulmao.Name = "ProximoPulmao";
-            ProximoPulmao.Size = new System.Drawing.Size(47, 47);
-            ProximoPulmao.TabIndex = 2;
-            ProximoPulmao.Tag = 8;
-            ProximoPulmao.UseVisualStyleBackColor = false;
-            ProximoPulmao.Click += ProximoEvento_Click;
-            // 
-            // button20
-            // 
-            button20.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            button20.BackgroundImage = (System.Drawing.Image)resources.GetObject("button20.BackgroundImage");
-            button20.BackgroundImageLayout = ImageLayout.Stretch;
-            button20.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            button20.Location = new System.Drawing.Point(875, 1);
-            button20.Name = "button20";
-            button20.Size = new System.Drawing.Size(47, 47);
-            button20.TabIndex = 1;
-            button20.UseVisualStyleBackColor = false;
-            // 
-            // AnteriorPulmao
-            // 
-            AnteriorPulmao.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
-            AnteriorPulmao.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorPulmao.BackgroundImage");
-            AnteriorPulmao.BackgroundImageLayout = ImageLayout.Stretch;
-            AnteriorPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnteriorPulmao.Location = new System.Drawing.Point(1, 1);
-            AnteriorPulmao.Name = "AnteriorPulmao";
-            AnteriorPulmao.Size = new System.Drawing.Size(47, 47);
-            AnteriorPulmao.TabIndex = 0;
-            AnteriorPulmao.Tag = 8;
-            AnteriorPulmao.UseVisualStyleBackColor = false;
-            AnteriorPulmao.Click += UltimoEvento_Click;
+            // PainelPerfil
+            // 
+            PainelPerfil.Controls.Add(Amplislaoq);
+            PainelPerfil.Controls.Add(MinimoEvento);
+            PainelPerfil.Controls.Add(EventoUmClick);
+            PainelPerfil.Controls.Add(AnaliseAutomatica);
+            PainelPerfil.Controls.Add(Video);
+            PainelPerfil.Controls.Add(Profile);
+            PainelPerfil.Location = new System.Drawing.Point(198, 3);
+            PainelPerfil.Name = "PainelPerfil";
+            PainelPerfil.Size = new System.Drawing.Size(287, 49);
+            PainelPerfil.TabIndex = 61;
+            // 
+            // Amplislaoq
+            // 
+            Amplislaoq.BackColor = System.Drawing.Color.LightCyan;
+            Amplislaoq.BackgroundImage = (System.Drawing.Image)resources.GetObject("Amplislaoq.BackgroundImage");
+            Amplislaoq.BackgroundImageLayout = ImageLayout.Stretch;
+            Amplislaoq.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Amplislaoq.Location = new System.Drawing.Point(238, 1);
+            Amplislaoq.Name = "Amplislaoq";
+            Amplislaoq.Size = new System.Drawing.Size(47, 47);
+            Amplislaoq.TabIndex = 62;
+            Amplislaoq.UseVisualStyleBackColor = false;
+            // 
+            // MinimoEvento
+            // 
+            MinimoEvento.BackColor = System.Drawing.Color.LightCyan;
+            MinimoEvento.BackgroundImage = (System.Drawing.Image)resources.GetObject("MinimoEvento.BackgroundImage");
+            MinimoEvento.BackgroundImageLayout = ImageLayout.Stretch;
+            MinimoEvento.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            MinimoEvento.Location = new System.Drawing.Point(192, 1);
+            MinimoEvento.Name = "MinimoEvento";
+            MinimoEvento.Size = new System.Drawing.Size(47, 47);
+            MinimoEvento.TabIndex = 63;
+            MinimoEvento.Tag = 2;
+            MinimoEvento.UseVisualStyleBackColor = false;
+            MinimoEvento.Click += MinimoEvento_Click;
+            // 
+            // EventoUmClick
+            // 
+            EventoUmClick.BackColor = System.Drawing.Color.LightCyan;
+            EventoUmClick.BackgroundImage = (System.Drawing.Image)resources.GetObject("EventoUmClick.BackgroundImage");
+            EventoUmClick.BackgroundImageLayout = ImageLayout.Stretch;
+            EventoUmClick.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            EventoUmClick.Location = new System.Drawing.Point(144, 1);
+            EventoUmClick.Name = "EventoUmClick";
+            EventoUmClick.Size = new System.Drawing.Size(47, 47);
+            EventoUmClick.TabIndex = 64;
+            EventoUmClick.Tag = 1;
+            EventoUmClick.UseVisualStyleBackColor = false;
+            EventoUmClick.Click += EventoUmClick_Click;
+            // 
+            // AnaliseAutomatica
+            // 
+            AnaliseAutomatica.BackColor = System.Drawing.Color.LightCyan;
+            AnaliseAutomatica.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnaliseAutomatica.BackgroundImage");
+            AnaliseAutomatica.BackgroundImageLayout = ImageLayout.Stretch;
+            AnaliseAutomatica.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnaliseAutomatica.Location = new System.Drawing.Point(96, 1);
+            AnaliseAutomatica.Name = "AnaliseAutomatica";
+            AnaliseAutomatica.Size = new System.Drawing.Size(47, 47);
+            AnaliseAutomatica.TabIndex = 65;
+            AnaliseAutomatica.UseVisualStyleBackColor = false;
+            // 
+            // Video
+            // 
+            Video.BackColor = System.Drawing.Color.LightCyan;
+            Video.BackgroundImage = (System.Drawing.Image)resources.GetObject("Video.BackgroundImage");
+            Video.BackgroundImageLayout = ImageLayout.Stretch;
+            Video.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Video.Location = new System.Drawing.Point(48, 1);
+            Video.Name = "Video";
+            Video.Size = new System.Drawing.Size(47, 47);
+            Video.TabIndex = 2;
+            Video.UseVisualStyleBackColor = false;
+            Video.Click += Video_Click;
+            // 
+            // Profile
+            // 
+            Profile.BackColor = System.Drawing.Color.LightCyan;
+            Profile.BackgroundImage = (System.Drawing.Image)resources.GetObject("Profile.BackgroundImage");
+            Profile.BackgroundImageLayout = ImageLayout.Stretch;
+            Profile.ForeColor = System.Drawing.Color.Transparent;
+            Profile.Location = new System.Drawing.Point(1, 1);
+            Profile.Name = "Profile";
+            Profile.Size = new System.Drawing.Size(47, 47);
+            Profile.TabIndex = 0;
+            Profile.UseVisualStyleBackColor = false;
+            Profile.Click += Profile_Click;
             // 
             // PainelPrinters
             // 
@@ -3243,7 +2540,7 @@ namespace PlotagemOpenGL
             PainelPrinters.Controls.Add(ImprimePagina);
             PainelPrinters.Controls.Add(OcultarPrinter);
             PainelPrinters.Controls.Add(ImprimeTudo);
-            PainelPrinters.Location = new System.Drawing.Point(537, 4);
+            PainelPrinters.Location = new System.Drawing.Point(489, 3);
             PainelPrinters.Name = "PainelPrinters";
             PainelPrinters.Size = new System.Drawing.Size(338, 49);
             PainelPrinters.TabIndex = 67;
@@ -3323,6 +2620,7 @@ namespace PlotagemOpenGL
             OcultarPrinter.Size = new System.Drawing.Size(47, 47);
             OcultarPrinter.TabIndex = 1;
             OcultarPrinter.UseVisualStyleBackColor = false;
+            OcultarPrinter.Click += hideBottom_Click;
             // 
             // ImprimeTudo
             // 
@@ -3337,119 +2635,902 @@ namespace PlotagemOpenGL
             ImprimeTudo.UseVisualStyleBackColor = false;
             ImprimeTudo.Click += btnImprimeTudo_Click;
             // 
-            // PainelPerfil
+            // panelMontTmpTela
             // 
-            PainelPerfil.Controls.Add(Amplislaoq);
-            PainelPerfil.Controls.Add(MinimoEvento);
-            PainelPerfil.Controls.Add(EventoUmClick);
-            PainelPerfil.Controls.Add(AnaliseAutomatica);
-            PainelPerfil.Controls.Add(Video);
-            PainelPerfil.Controls.Add(OcultaProf);
-            PainelPerfil.Controls.Add(Profile);
-            PainelPerfil.Location = new System.Drawing.Point(198, 3);
-            PainelPerfil.Name = "PainelPerfil";
-            PainelPerfil.Size = new System.Drawing.Size(333, 49);
-            PainelPerfil.TabIndex = 61;
+            panelMontTmpTela.Controls.Add(MontagemBox);
+            panelMontTmpTela.Controls.Add(tempoEmTela);
+            panelMontTmpTela.Location = new System.Drawing.Point(831, 3);
+            panelMontTmpTela.Name = "panelMontTmpTela";
+            panelMontTmpTela.Size = new System.Drawing.Size(276, 49);
+            panelMontTmpTela.TabIndex = 81;
             // 
-            // Amplislaoq
+            // PainelAvRet
             // 
-            Amplislaoq.BackColor = System.Drawing.Color.LightCyan;
-            Amplislaoq.BackgroundImage = (System.Drawing.Image)resources.GetObject("Amplislaoq.BackgroundImage");
-            Amplislaoq.BackgroundImageLayout = ImageLayout.Stretch;
-            Amplislaoq.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Amplislaoq.Location = new System.Drawing.Point(238, 1);
-            Amplislaoq.Name = "Amplislaoq";
-            Amplislaoq.Size = new System.Drawing.Size(47, 47);
-            Amplislaoq.TabIndex = 62;
-            Amplislaoq.UseVisualStyleBackColor = false;
+            PainelAvRet.Controls.Add(Avanca);
+            PainelAvRet.Controls.Add(AndaUmaPag);
+            PainelAvRet.Controls.Add(Pausa);
+            PainelAvRet.Controls.Add(VoltaUmaPag);
+            PainelAvRet.Controls.Add(OcultaTempo);
+            PainelAvRet.Controls.Add(Retrocede);
+            PainelAvRet.Controls.Add(TempoTimerAndar);
+            PainelAvRet.Location = new System.Drawing.Point(1113, 3);
+            PainelAvRet.Name = "PainelAvRet";
+            PainelAvRet.Size = new System.Drawing.Size(316, 49);
+            PainelAvRet.TabIndex = 68;
             // 
-            // MinimoEvento
+            // Avanca
             // 
-            MinimoEvento.BackColor = System.Drawing.Color.LightCyan;
-            MinimoEvento.BackgroundImage = (System.Drawing.Image)resources.GetObject("MinimoEvento.BackgroundImage");
-            MinimoEvento.BackgroundImageLayout = ImageLayout.Stretch;
-            MinimoEvento.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            MinimoEvento.Location = new System.Drawing.Point(192, 1);
-            MinimoEvento.Name = "MinimoEvento";
-            MinimoEvento.Size = new System.Drawing.Size(47, 47);
-            MinimoEvento.TabIndex = 63;
-            MinimoEvento.Tag = 2;
-            MinimoEvento.UseVisualStyleBackColor = false;
-            MinimoEvento.Click += MinimoEvento_Click;
+            Avanca.BackColor = System.Drawing.Color.OrangeRed;
+            Avanca.BackgroundImage = (System.Drawing.Image)resources.GetObject("Avanca.BackgroundImage");
+            Avanca.BackgroundImageLayout = ImageLayout.Stretch;
+            Avanca.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Avanca.Location = new System.Drawing.Point(189, 1);
+            Avanca.Name = "Avanca";
+            Avanca.Size = new System.Drawing.Size(47, 47);
+            Avanca.TabIndex = 63;
+            Avanca.UseVisualStyleBackColor = false;
+            Avanca.Click += Avanca_Click;
             // 
-            // EventoUmClick
+            // AndaUmaPag
             // 
-            EventoUmClick.BackColor = System.Drawing.Color.LightCyan;
-            EventoUmClick.BackgroundImage = (System.Drawing.Image)resources.GetObject("EventoUmClick.BackgroundImage");
-            EventoUmClick.BackgroundImageLayout = ImageLayout.Stretch;
-            EventoUmClick.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            EventoUmClick.Location = new System.Drawing.Point(144, 1);
-            EventoUmClick.Name = "EventoUmClick";
-            EventoUmClick.Size = new System.Drawing.Size(47, 47);
-            EventoUmClick.TabIndex = 64;
-            EventoUmClick.Tag = 1;
-            EventoUmClick.UseVisualStyleBackColor = false;
-            EventoUmClick.Click += EventoUmClick_Click;
+            AndaUmaPag.BackColor = System.Drawing.Color.OrangeRed;
+            AndaUmaPag.BackgroundImage = (System.Drawing.Image)resources.GetObject("AndaUmaPag.BackgroundImage");
+            AndaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
+            AndaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AndaUmaPag.Location = new System.Drawing.Point(142, 1);
+            AndaUmaPag.Name = "AndaUmaPag";
+            AndaUmaPag.Size = new System.Drawing.Size(47, 47);
+            AndaUmaPag.TabIndex = 64;
+            AndaUmaPag.UseVisualStyleBackColor = false;
+            AndaUmaPag.Click += AndaUmaPag_Click;
             // 
-            // AnaliseAutomatica
+            // Pausa
             // 
-            AnaliseAutomatica.BackColor = System.Drawing.Color.LightCyan;
-            AnaliseAutomatica.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnaliseAutomatica.BackgroundImage");
-            AnaliseAutomatica.BackgroundImageLayout = ImageLayout.Stretch;
-            AnaliseAutomatica.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            AnaliseAutomatica.Location = new System.Drawing.Point(96, 1);
-            AnaliseAutomatica.Name = "AnaliseAutomatica";
-            AnaliseAutomatica.Size = new System.Drawing.Size(47, 47);
-            AnaliseAutomatica.TabIndex = 65;
-            AnaliseAutomatica.UseVisualStyleBackColor = false;
+            Pausa.BackColor = System.Drawing.Color.OrangeRed;
+            Pausa.BackgroundImage = (System.Drawing.Image)resources.GetObject("Pausa.BackgroundImage");
+            Pausa.BackgroundImageLayout = ImageLayout.Stretch;
+            Pausa.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Pausa.Location = new System.Drawing.Point(95, 1);
+            Pausa.Name = "Pausa";
+            Pausa.Size = new System.Drawing.Size(47, 47);
+            Pausa.TabIndex = 65;
+            Pausa.UseVisualStyleBackColor = false;
+            Pausa.Click += Pausa_Click;
             // 
-            // Video
+            // VoltaUmaPag
             // 
-            Video.BackColor = System.Drawing.Color.LightCyan;
-            Video.BackgroundImage = (System.Drawing.Image)resources.GetObject("Video.BackgroundImage");
-            Video.BackgroundImageLayout = ImageLayout.Stretch;
-            Video.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            Video.Location = new System.Drawing.Point(48, 1);
-            Video.Name = "Video";
-            Video.Size = new System.Drawing.Size(47, 47);
-            Video.TabIndex = 2;
-            Video.UseVisualStyleBackColor = false;
-            Video.Click += Video_Click;
+            VoltaUmaPag.BackColor = System.Drawing.Color.OrangeRed;
+            VoltaUmaPag.BackgroundImage = (System.Drawing.Image)resources.GetObject("VoltaUmaPag.BackgroundImage");
+            VoltaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
+            VoltaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            VoltaUmaPag.Location = new System.Drawing.Point(48, 1);
+            VoltaUmaPag.Name = "VoltaUmaPag";
+            VoltaUmaPag.Size = new System.Drawing.Size(47, 47);
+            VoltaUmaPag.TabIndex = 2;
+            VoltaUmaPag.UseVisualStyleBackColor = false;
+            VoltaUmaPag.Click += VoltaUmaPag_Click;
             // 
-            // OcultaProf
+            // OcultaTempo
             // 
-            OcultaProf.BackColor = System.Drawing.Color.LightCyan;
-            OcultaProf.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaProf.BackgroundImage");
-            OcultaProf.BackgroundImageLayout = ImageLayout.Stretch;
-            OcultaProf.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            OcultaProf.Location = new System.Drawing.Point(285, 1);
-            OcultaProf.Name = "OcultaProf";
-            OcultaProf.Size = new System.Drawing.Size(47, 47);
-            OcultaProf.TabIndex = 1;
-            OcultaProf.UseVisualStyleBackColor = false;
+            OcultaTempo.BackColor = System.Drawing.Color.OrangeRed;
+            OcultaTempo.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaTempo.BackgroundImage");
+            OcultaTempo.BackgroundImageLayout = ImageLayout.Stretch;
+            OcultaTempo.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            OcultaTempo.Location = new System.Drawing.Point(265, 1);
+            OcultaTempo.Name = "OcultaTempo";
+            OcultaTempo.Size = new System.Drawing.Size(47, 47);
+            OcultaTempo.TabIndex = 1;
+            OcultaTempo.UseVisualStyleBackColor = false;
+            OcultaTempo.Click += hideBottom_Click;
             // 
-            // Profile
+            // Retrocede
             // 
-            Profile.BackColor = System.Drawing.Color.LightCyan;
-            Profile.BackgroundImage = (System.Drawing.Image)resources.GetObject("Profile.BackgroundImage");
-            Profile.BackgroundImageLayout = ImageLayout.Stretch;
-            Profile.ForeColor = System.Drawing.Color.Transparent;
-            Profile.Location = new System.Drawing.Point(1, 1);
-            Profile.Name = "Profile";
-            Profile.Size = new System.Drawing.Size(47, 47);
-            Profile.TabIndex = 0;
-            Profile.UseVisualStyleBackColor = false;
-            Profile.Click += Profile_Click;
+            Retrocede.BackColor = System.Drawing.Color.OrangeRed;
+            Retrocede.BackgroundImage = (System.Drawing.Image)resources.GetObject("Retrocede.BackgroundImage");
+            Retrocede.BackgroundImageLayout = ImageLayout.Stretch;
+            Retrocede.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Retrocede.Location = new System.Drawing.Point(1, 1);
+            Retrocede.Name = "Retrocede";
+            Retrocede.Size = new System.Drawing.Size(47, 47);
+            Retrocede.TabIndex = 0;
+            Retrocede.UseVisualStyleBackColor = false;
+            Retrocede.Click += Retrocede_Click;
+            // 
+            // TempoTimerAndar
+            // 
+            TempoTimerAndar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            TempoTimerAndar.DisplayMember = "0.00x";
+            TempoTimerAndar.DropDownStyle = ComboBoxStyle.DropDownList;
+            TempoTimerAndar.FlatStyle = FlatStyle.System;
+            TempoTimerAndar.FormattingEnabled = true;
+            TempoTimerAndar.IntegralHeight = false;
+            TempoTimerAndar.Items.AddRange(new object[] { "0.00x", "0.10x", "0.25x", "0.50x", "1.00x", "2.00x" });
+            TempoTimerAndar.Location = new System.Drawing.Point(195, 14);
+            TempoTimerAndar.Name = "TempoTimerAndar";
+            TempoTimerAndar.Size = new System.Drawing.Size(64, 28);
+            TempoTimerAndar.TabIndex = 81;
+            TempoTimerAndar.DropDown += TempoTimerAndar_DropDown;
+            TempoTimerAndar.SelectedIndexChanged += TempoTimerAndar_SelectedIndexChanged;
+            // 
+            // PainelLoc
+            // 
+            PainelLoc.Controls.Add(TresProxima);
+            PainelLoc.Controls.Add(DuasProxima);
+            PainelLoc.Controls.Add(MarcaNoGraf);
+            PainelLoc.Controls.Add(MarcaDAguia);
+            PainelLoc.Controls.Add(QuatroProxima);
+            PainelLoc.Controls.Add(UmaProxima);
+            PainelLoc.Controls.Add(Atual);
+            PainelLoc.Controls.Add(UmaAnterior);
+            PainelLoc.Controls.Add(DuasAnterior);
+            PainelLoc.Controls.Add(TresAnterior);
+            PainelLoc.Controls.Add(OcultaPanelLoc);
+            PainelLoc.Controls.Add(QuatroAnterior);
+            PainelLoc.Location = new System.Drawing.Point(6, 56);
+            PainelLoc.Name = "PainelLoc";
+            PainelLoc.Size = new System.Drawing.Size(558, 49);
+            PainelLoc.TabIndex = 80;
+            // 
+            // TresProxima
+            // 
+            TresProxima.BackColor = System.Drawing.Color.Lime;
+            TresProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("TresProxima.BackgroundImage");
+            TresProxima.BackgroundImageLayout = ImageLayout.Stretch;
+            TresProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            TresProxima.Location = new System.Drawing.Point(323, 1);
+            TresProxima.Name = "TresProxima";
+            TresProxima.Size = new System.Drawing.Size(47, 47);
+            TresProxima.TabIndex = 76;
+            TresProxima.Tag = 3;
+            TresProxima.UseVisualStyleBackColor = false;
+            TresProxima.Click += UmaProxima_Click;
+            // 
+            // DuasProxima
+            // 
+            DuasProxima.BackColor = System.Drawing.Color.Lime;
+            DuasProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("DuasProxima.BackgroundImage");
+            DuasProxima.BackgroundImageLayout = ImageLayout.Stretch;
+            DuasProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            DuasProxima.Location = new System.Drawing.Point(277, 1);
+            DuasProxima.Name = "DuasProxima";
+            DuasProxima.Size = new System.Drawing.Size(47, 47);
+            DuasProxima.TabIndex = 77;
+            DuasProxima.Tag = 2;
+            DuasProxima.UseVisualStyleBackColor = false;
+            DuasProxima.Click += UmaProxima_Click;
+            // 
+            // MarcaNoGraf
+            // 
+            MarcaNoGraf.BackColor = System.Drawing.Color.Lime;
+            MarcaNoGraf.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaNoGraf.BackgroundImage");
+            MarcaNoGraf.BackgroundImageLayout = ImageLayout.Stretch;
+            MarcaNoGraf.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            MarcaNoGraf.Location = new System.Drawing.Point(461, 1);
+            MarcaNoGraf.Name = "MarcaNoGraf";
+            MarcaNoGraf.Size = new System.Drawing.Size(47, 47);
+            MarcaNoGraf.TabIndex = 71;
+            MarcaNoGraf.UseVisualStyleBackColor = false;
+            // 
+            // MarcaDAguia
+            // 
+            MarcaDAguia.BackColor = System.Drawing.Color.Lime;
+            MarcaDAguia.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaDAguia.BackgroundImage");
+            MarcaDAguia.BackgroundImageLayout = ImageLayout.Stretch;
+            MarcaDAguia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            MarcaDAguia.Location = new System.Drawing.Point(415, 1);
+            MarcaDAguia.Name = "MarcaDAguia";
+            MarcaDAguia.Size = new System.Drawing.Size(47, 47);
+            MarcaDAguia.TabIndex = 67;
+            MarcaDAguia.UseVisualStyleBackColor = false;
+            MarcaDAguia.Click += MarcaDAguia_Click;
+            // 
+            // QuatroProxima
+            // 
+            QuatroProxima.BackColor = System.Drawing.Color.Lime;
+            QuatroProxima.BackgroundImage = (System.Drawing.Image)resources.GetObject("QuatroProxima.BackgroundImage");
+            QuatroProxima.BackgroundImageLayout = ImageLayout.Stretch;
+            QuatroProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            QuatroProxima.Location = new System.Drawing.Point(369, 1);
+            QuatroProxima.Name = "QuatroProxima";
+            QuatroProxima.Size = new System.Drawing.Size(47, 47);
+            QuatroProxima.TabIndex = 66;
+            QuatroProxima.Tag = 4;
+            QuatroProxima.UseVisualStyleBackColor = false;
+            QuatroProxima.Click += UmaProxima_Click;
+            // 
+            // UmaProxima
+            // 
+            UmaProxima.BackColor = System.Drawing.Color.Lime;
+            UmaProxima.BackgroundImageLayout = ImageLayout.Stretch;
+            UmaProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            UmaProxima.Location = new System.Drawing.Point(231, 1);
+            UmaProxima.Name = "UmaProxima";
+            UmaProxima.Size = new System.Drawing.Size(47, 47);
+            UmaProxima.TabIndex = 62;
+            UmaProxima.Tag = 1;
+            UmaProxima.UseVisualStyleBackColor = false;
+            UmaProxima.Click += UmaProxima_Click;
+            // 
+            // Atual
+            // 
+            Atual.BackColor = System.Drawing.Color.GreenYellow;
+            Atual.BackgroundImage = (System.Drawing.Image)resources.GetObject("Atual.BackgroundImage");
+            Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            Atual.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Atual.Location = new System.Drawing.Point(185, 1);
+            Atual.Name = "Atual";
+            Atual.Size = new System.Drawing.Size(47, 47);
+            Atual.TabIndex = 63;
+            Atual.UseVisualStyleBackColor = false;
+            // 
+            // UmaAnterior
+            // 
+            UmaAnterior.BackColor = System.Drawing.Color.Lime;
+            UmaAnterior.BackgroundImageLayout = ImageLayout.Stretch;
+            UmaAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            UmaAnterior.Location = new System.Drawing.Point(139, 1);
+            UmaAnterior.Name = "UmaAnterior";
+            UmaAnterior.Size = new System.Drawing.Size(47, 47);
+            UmaAnterior.TabIndex = 64;
+            UmaAnterior.Tag = 1;
+            UmaAnterior.UseVisualStyleBackColor = false;
+            UmaAnterior.Click += UmaAnterior_Click;
+            // 
+            // DuasAnterior
+            // 
+            DuasAnterior.BackColor = System.Drawing.Color.Lime;
+            DuasAnterior.BackgroundImageLayout = ImageLayout.Stretch;
+            DuasAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            DuasAnterior.Location = new System.Drawing.Point(93, 1);
+            DuasAnterior.Name = "DuasAnterior";
+            DuasAnterior.Size = new System.Drawing.Size(47, 47);
+            DuasAnterior.TabIndex = 65;
+            DuasAnterior.Tag = 2;
+            DuasAnterior.UseVisualStyleBackColor = false;
+            DuasAnterior.Click += UmaAnterior_Click;
+            // 
+            // TresAnterior
+            // 
+            TresAnterior.BackColor = System.Drawing.Color.Lime;
+            TresAnterior.BackgroundImageLayout = ImageLayout.Stretch;
+            TresAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            TresAnterior.Location = new System.Drawing.Point(47, 1);
+            TresAnterior.Name = "TresAnterior";
+            TresAnterior.Size = new System.Drawing.Size(47, 47);
+            TresAnterior.TabIndex = 2;
+            TresAnterior.Tag = 3;
+            TresAnterior.UseVisualStyleBackColor = false;
+            TresAnterior.Click += UmaAnterior_Click;
+            // 
+            // OcultaPanelLoc
+            // 
+            OcultaPanelLoc.BackColor = System.Drawing.Color.Lime;
+            OcultaPanelLoc.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaPanelLoc.BackgroundImage");
+            OcultaPanelLoc.BackgroundImageLayout = ImageLayout.Stretch;
+            OcultaPanelLoc.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            OcultaPanelLoc.Location = new System.Drawing.Point(510, 1);
+            OcultaPanelLoc.Name = "OcultaPanelLoc";
+            OcultaPanelLoc.Size = new System.Drawing.Size(47, 47);
+            OcultaPanelLoc.TabIndex = 1;
+            OcultaPanelLoc.UseVisualStyleBackColor = false;
+            OcultaPanelLoc.Click += hideBottom_Click;
+            // 
+            // QuatroAnterior
+            // 
+            QuatroAnterior.BackColor = System.Drawing.Color.Lime;
+            QuatroAnterior.BackgroundImageLayout = ImageLayout.Stretch;
+            QuatroAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            QuatroAnterior.Location = new System.Drawing.Point(1, 1);
+            QuatroAnterior.Name = "QuatroAnterior";
+            QuatroAnterior.Size = new System.Drawing.Size(47, 47);
+            QuatroAnterior.TabIndex = 0;
+            QuatroAnterior.Tag = 4;
+            QuatroAnterior.UseVisualStyleBackColor = false;
+            QuatroAnterior.Click += UmaAnterior_Click;
+            // 
+            // PainelMarca
+            // 
+            PainelMarca.Controls.Add(MarcarR);
+            PainelMarca.Controls.Add(Marcar3);
+            PainelMarca.Controls.Add(Marcar2);
+            PainelMarca.Controls.Add(Marcar1);
+            PainelMarca.Controls.Add(OcultarMarcar);
+            PainelMarca.Controls.Add(Marcar0);
+            PainelMarca.Location = new System.Drawing.Point(570, 56);
+            PainelMarca.Name = "PainelMarca";
+            PainelMarca.Size = new System.Drawing.Size(294, 49);
+            PainelMarca.TabIndex = 69;
+            // 
+            // MarcarR
+            // 
+            MarcarR.BackColor = System.Drawing.Color.BlueViolet;
+            MarcarR.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcarR.BackgroundImage");
+            MarcarR.BackgroundImageLayout = ImageLayout.Stretch;
+            MarcarR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            MarcarR.Location = new System.Drawing.Point(189, 1);
+            MarcarR.Name = "MarcarR";
+            MarcarR.Size = new System.Drawing.Size(47, 47);
+            MarcarR.TabIndex = 63;
+            MarcarR.Tag = 5;
+            MarcarR.UseVisualStyleBackColor = false;
+            MarcarR.Click += Marcar_Click;
+            // 
+            // Marcar3
+            // 
+            Marcar3.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar3.BackgroundImage");
+            Marcar3.BackgroundImageLayout = ImageLayout.Stretch;
+            Marcar3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Marcar3.Location = new System.Drawing.Point(142, 1);
+            Marcar3.Name = "Marcar3";
+            Marcar3.Size = new System.Drawing.Size(47, 47);
+            Marcar3.TabIndex = 64;
+            Marcar3.Tag = 3;
+            Marcar3.UseVisualStyleBackColor = false;
+            Marcar3.Click += Marcar_Click;
+            // 
+            // Marcar2
+            // 
+            Marcar2.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar2.BackgroundImage");
+            Marcar2.BackgroundImageLayout = ImageLayout.Stretch;
+            Marcar2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Marcar2.Location = new System.Drawing.Point(95, 1);
+            Marcar2.Name = "Marcar2";
+            Marcar2.Size = new System.Drawing.Size(47, 47);
+            Marcar2.TabIndex = 65;
+            Marcar2.Tag = 2;
+            Marcar2.UseVisualStyleBackColor = false;
+            Marcar2.Click += Marcar_Click;
+            // 
+            // Marcar1
+            // 
+            Marcar1.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar1.BackgroundImage");
+            Marcar1.BackgroundImageLayout = ImageLayout.Stretch;
+            Marcar1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Marcar1.Location = new System.Drawing.Point(48, 1);
+            Marcar1.Name = "Marcar1";
+            Marcar1.Size = new System.Drawing.Size(47, 47);
+            Marcar1.TabIndex = 2;
+            Marcar1.Tag = 1;
+            Marcar1.UseVisualStyleBackColor = false;
+            Marcar1.Click += Marcar_Click;
+            // 
+            // OcultarMarcar
+            // 
+            OcultarMarcar.BackColor = System.Drawing.Color.BlueViolet;
+            OcultarMarcar.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultarMarcar.BackgroundImage");
+            OcultarMarcar.BackgroundImageLayout = ImageLayout.Stretch;
+            OcultarMarcar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            OcultarMarcar.Location = new System.Drawing.Point(242, 1);
+            OcultarMarcar.Name = "OcultarMarcar";
+            OcultarMarcar.Size = new System.Drawing.Size(47, 47);
+            OcultarMarcar.TabIndex = 1;
+            OcultarMarcar.UseVisualStyleBackColor = false;
+            OcultarMarcar.Click += hideBottom_Click;
+            // 
+            // Marcar0
+            // 
+            Marcar0.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar0.BackgroundImage");
+            Marcar0.BackgroundImageLayout = ImageLayout.Stretch;
+            Marcar0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Marcar0.Location = new System.Drawing.Point(1, 1);
+            Marcar0.Name = "Marcar0";
+            Marcar0.Size = new System.Drawing.Size(47, 47);
+            Marcar0.TabIndex = 0;
+            Marcar0.Tag = 0;
+            Marcar0.UseVisualStyleBackColor = false;
+            Marcar0.Click += Marcar_Click;
+            // 
+            // PainelMarcaAntProx
+            // 
+            PainelMarcaAntProx.Controls.Add(Proximo3);
+            PainelMarcaAntProx.Controls.Add(Anterior3);
+            PainelMarcaAntProx.Controls.Add(ProximoDif);
+            PainelMarcaAntProx.Controls.Add(AnteriorDif);
+            PainelMarcaAntProx.Controls.Add(ProximoR);
+            PainelMarcaAntProx.Controls.Add(AnteriorR);
+            PainelMarcaAntProx.Controls.Add(Proximo2);
+            PainelMarcaAntProx.Controls.Add(Anterior2);
+            PainelMarcaAntProx.Controls.Add(Proximo1);
+            PainelMarcaAntProx.Controls.Add(Anterior1);
+            PainelMarcaAntProx.Controls.Add(Proximo0);
+            PainelMarcaAntProx.Controls.Add(OcultaPA);
+            PainelMarcaAntProx.Controls.Add(Anterior0);
+            PainelMarcaAntProx.Location = new System.Drawing.Point(870, 56);
+            PainelMarcaAntProx.Name = "PainelMarcaAntProx";
+            PainelMarcaAntProx.Size = new System.Drawing.Size(612, 49);
+            PainelMarcaAntProx.TabIndex = 79;
+            // 
+            // Proximo3
+            // 
+            Proximo3.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Proximo3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo3.BackgroundImage");
+            Proximo3.BackgroundImageLayout = ImageLayout.Stretch;
+            Proximo3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Proximo3.Location = new System.Drawing.Point(323, 1);
+            Proximo3.Name = "Proximo3";
+            Proximo3.Size = new System.Drawing.Size(47, 47);
+            Proximo3.TabIndex = 76;
+            Proximo3.Tag = 3;
+            Proximo3.UseVisualStyleBackColor = false;
+            Proximo3.Click += Proximo_Click;
+            // 
+            // Anterior3
+            // 
+            Anterior3.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Anterior3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior3.BackgroundImage");
+            Anterior3.BackgroundImageLayout = ImageLayout.Stretch;
+            Anterior3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Anterior3.Location = new System.Drawing.Point(277, 1);
+            Anterior3.Name = "Anterior3";
+            Anterior3.Size = new System.Drawing.Size(47, 47);
+            Anterior3.TabIndex = 77;
+            Anterior3.Tag = 3;
+            Anterior3.UseVisualStyleBackColor = false;
+            Anterior3.Click += Anterior_Click;
+            // 
+            // ProximoDif
+            // 
+            ProximoDif.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoDif.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoDif.BackgroundImage");
+            ProximoDif.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoDif.Location = new System.Drawing.Point(507, 1);
+            ProximoDif.Name = "ProximoDif";
+            ProximoDif.Size = new System.Drawing.Size(47, 47);
+            ProximoDif.TabIndex = 70;
+            ProximoDif.UseVisualStyleBackColor = false;
+            ProximoDif.Click += ProximoDif_Click;
+            // 
+            // AnteriorDif
+            // 
+            AnteriorDif.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorDif.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorDif.BackgroundImage");
+            AnteriorDif.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorDif.Location = new System.Drawing.Point(461, 1);
+            AnteriorDif.Name = "AnteriorDif";
+            AnteriorDif.Size = new System.Drawing.Size(47, 47);
+            AnteriorDif.TabIndex = 71;
+            AnteriorDif.UseVisualStyleBackColor = false;
+            AnteriorDif.Click += AnteriorDif_Click;
+            // 
+            // ProximoR
+            // 
+            ProximoR.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoR.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoR.BackgroundImage");
+            ProximoR.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoR.Location = new System.Drawing.Point(415, 1);
+            ProximoR.Name = "ProximoR";
+            ProximoR.Size = new System.Drawing.Size(47, 47);
+            ProximoR.TabIndex = 67;
+            ProximoR.Tag = 5;
+            ProximoR.UseVisualStyleBackColor = false;
+            ProximoR.Click += Proximo_Click;
+            // 
+            // AnteriorR
+            // 
+            AnteriorR.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorR.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorR.BackgroundImage");
+            AnteriorR.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorR.Location = new System.Drawing.Point(369, 1);
+            AnteriorR.Name = "AnteriorR";
+            AnteriorR.Size = new System.Drawing.Size(47, 47);
+            AnteriorR.TabIndex = 66;
+            AnteriorR.Tag = 5;
+            AnteriorR.UseVisualStyleBackColor = false;
+            AnteriorR.Click += Anterior_Click;
+            // 
+            // Proximo2
+            // 
+            Proximo2.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Proximo2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo2.BackgroundImage");
+            Proximo2.BackgroundImageLayout = ImageLayout.Stretch;
+            Proximo2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Proximo2.Location = new System.Drawing.Point(231, 1);
+            Proximo2.Name = "Proximo2";
+            Proximo2.Size = new System.Drawing.Size(47, 47);
+            Proximo2.TabIndex = 62;
+            Proximo2.Tag = 2;
+            Proximo2.UseVisualStyleBackColor = false;
+            Proximo2.Click += Proximo_Click;
+            // 
+            // Anterior2
+            // 
+            Anterior2.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Anterior2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior2.BackgroundImage");
+            Anterior2.BackgroundImageLayout = ImageLayout.Stretch;
+            Anterior2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Anterior2.Location = new System.Drawing.Point(185, 1);
+            Anterior2.Name = "Anterior2";
+            Anterior2.Size = new System.Drawing.Size(47, 47);
+            Anterior2.TabIndex = 63;
+            Anterior2.Tag = 2;
+            Anterior2.UseVisualStyleBackColor = false;
+            Anterior2.Click += Anterior_Click;
+            // 
+            // Proximo1
+            // 
+            Proximo1.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Proximo1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo1.BackgroundImage");
+            Proximo1.BackgroundImageLayout = ImageLayout.Stretch;
+            Proximo1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Proximo1.Location = new System.Drawing.Point(139, 1);
+            Proximo1.Name = "Proximo1";
+            Proximo1.Size = new System.Drawing.Size(47, 47);
+            Proximo1.TabIndex = 64;
+            Proximo1.Tag = 1;
+            Proximo1.UseVisualStyleBackColor = false;
+            Proximo1.Click += Proximo_Click;
+            // 
+            // Anterior1
+            // 
+            Anterior1.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Anterior1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior1.BackgroundImage");
+            Anterior1.BackgroundImageLayout = ImageLayout.Stretch;
+            Anterior1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Anterior1.Location = new System.Drawing.Point(93, 1);
+            Anterior1.Name = "Anterior1";
+            Anterior1.Size = new System.Drawing.Size(47, 47);
+            Anterior1.TabIndex = 65;
+            Anterior1.Tag = 1;
+            Anterior1.UseVisualStyleBackColor = false;
+            Anterior1.Click += Anterior_Click;
+            // 
+            // Proximo0
+            // 
+            Proximo0.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Proximo0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Proximo0.BackgroundImage");
+            Proximo0.BackgroundImageLayout = ImageLayout.Stretch;
+            Proximo0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Proximo0.Location = new System.Drawing.Point(47, 1);
+            Proximo0.Name = "Proximo0";
+            Proximo0.Size = new System.Drawing.Size(47, 47);
+            Proximo0.TabIndex = 2;
+            Proximo0.Tag = 0;
+            Proximo0.UseVisualStyleBackColor = false;
+            Proximo0.Click += Proximo_Click;
+            // 
+            // OcultaPA
+            // 
+            OcultaPA.BackColor = System.Drawing.Color.FromArgb(128, 128, 255);
+            OcultaPA.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultaPA.BackgroundImage");
+            OcultaPA.BackgroundImageLayout = ImageLayout.Stretch;
+            OcultaPA.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            OcultaPA.Location = new System.Drawing.Point(561, 1);
+            OcultaPA.Name = "OcultaPA";
+            OcultaPA.Size = new System.Drawing.Size(47, 47);
+            OcultaPA.TabIndex = 1;
+            OcultaPA.UseVisualStyleBackColor = false;
+            OcultaPA.Click += hideBottom_Click;
+            // 
+            // Anterior0
+            // 
+            Anterior0.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Anterior0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Anterior0.BackgroundImage");
+            Anterior0.BackgroundImageLayout = ImageLayout.Stretch;
+            Anterior0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Anterior0.Location = new System.Drawing.Point(1, 1);
+            Anterior0.Name = "Anterior0";
+            Anterior0.Size = new System.Drawing.Size(47, 47);
+            Anterior0.TabIndex = 0;
+            Anterior0.Tag = 0;
+            Anterior0.UseVisualStyleBackColor = false;
+            Anterior0.Click += Anterior_Click;
+            // 
+            // PanelEventos
+            // 
+            PanelEventos.Controls.Add(Cpap);
+            PanelEventos.Controls.Add(ProximoDes);
+            PanelEventos.Controls.Add(AnteriorDes);
+            PanelEventos.Controls.Add(Dessatu);
+            PanelEventos.Controls.Add(BaNotche);
+            PanelEventos.Controls.Add(BaDia);
+            PanelEventos.Controls.Add(ProximoComentario);
+            PanelEventos.Controls.Add(AnteriorComentario);
+            PanelEventos.Controls.Add(ProximoRonco);
+            PanelEventos.Controls.Add(AnteriorRonco);
+            PanelEventos.Controls.Add(ProximoPerna);
+            PanelEventos.Controls.Add(AnteriorPerna);
+            PanelEventos.Controls.Add(ProximoCardio);
+            PanelEventos.Controls.Add(AnteriorCardio);
+            PanelEventos.Controls.Add(ProximoAcordar);
+            PanelEventos.Controls.Add(AnteriorAcordar);
+            PanelEventos.Controls.Add(ProximoPulmao);
+            PanelEventos.Controls.Add(button20);
+            PanelEventos.Controls.Add(AnteriorPulmao);
+            PanelEventos.Location = new System.Drawing.Point(5, 112);
+            PanelEventos.Name = "PanelEventos";
+            PanelEventos.Size = new System.Drawing.Size(897, 49);
+            PanelEventos.TabIndex = 69;
+            // 
+            // Cpap
+            // 
+            Cpap.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Cpap.BackgroundImage = (System.Drawing.Image)resources.GetObject("Cpap.BackgroundImage");
+            Cpap.BackgroundImageLayout = ImageLayout.Stretch;
+            Cpap.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Cpap.Location = new System.Drawing.Point(742, 1);
+            Cpap.Name = "Cpap";
+            Cpap.Size = new System.Drawing.Size(47, 47);
+            Cpap.TabIndex = 78;
+            Cpap.Tag = 50;
+            Cpap.UseVisualStyleBackColor = false;
+            Cpap.Click += IndoBomDiaBoaNoiteCPAP;
+            // 
+            // ProximoDes
+            // 
+            ProximoDes.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoDes.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoDes.BackgroundImage");
+            ProximoDes.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoDes.Location = new System.Drawing.Point(323, 1);
+            ProximoDes.Name = "ProximoDes";
+            ProximoDes.Size = new System.Drawing.Size(47, 47);
+            ProximoDes.TabIndex = 76;
+            ProximoDes.Tag = 20;
+            ProximoDes.UseVisualStyleBackColor = false;
+            ProximoDes.Click += ProximoEvento_Click;
+            // 
+            // AnteriorDes
+            // 
+            AnteriorDes.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorDes.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorDes.BackgroundImage");
+            AnteriorDes.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorDes.Location = new System.Drawing.Point(277, 1);
+            AnteriorDes.Name = "AnteriorDes";
+            AnteriorDes.Size = new System.Drawing.Size(47, 47);
+            AnteriorDes.TabIndex = 77;
+            AnteriorDes.Tag = 20;
+            AnteriorDes.UseVisualStyleBackColor = false;
+            AnteriorDes.Click += UltimoEvento_Click;
+            // 
+            // Dessatu
+            // 
+            Dessatu.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            Dessatu.BackgroundImage = (System.Drawing.Image)resources.GetObject("Dessatu.BackgroundImage");
+            Dessatu.BackgroundImageLayout = ImageLayout.Stretch;
+            Dessatu.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            Dessatu.Location = new System.Drawing.Point(788, 1);
+            Dessatu.Name = "Dessatu";
+            Dessatu.Size = new System.Drawing.Size(47, 47);
+            Dessatu.TabIndex = 75;
+            Dessatu.UseVisualStyleBackColor = false;
+            Dessatu.Click += MenorSat_Click;
+            // 
+            // BaNotche
+            // 
+            BaNotche.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            BaNotche.BackgroundImage = (System.Drawing.Image)resources.GetObject("BaNotche.BackgroundImage");
+            BaNotche.BackgroundImageLayout = ImageLayout.Stretch;
+            BaNotche.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            BaNotche.Location = new System.Drawing.Point(696, 1);
+            BaNotche.Name = "BaNotche";
+            BaNotche.Size = new System.Drawing.Size(47, 47);
+            BaNotche.TabIndex = 72;
+            BaNotche.Tag = 19;
+            BaNotche.UseVisualStyleBackColor = false;
+            BaNotche.Click += IndoBomDiaBoaNoiteCPAP;
+            // 
+            // BaDia
+            // 
+            BaDia.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            BaDia.BackgroundImage = (System.Drawing.Image)resources.GetObject("BaDia.BackgroundImage");
+            BaDia.BackgroundImageLayout = ImageLayout.Stretch;
+            BaDia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            BaDia.Location = new System.Drawing.Point(650, 1);
+            BaDia.Name = "BaDia";
+            BaDia.Size = new System.Drawing.Size(47, 47);
+            BaDia.TabIndex = 73;
+            BaDia.Tag = 18;
+            BaDia.UseVisualStyleBackColor = false;
+            BaDia.Click += IndoBomDiaBoaNoiteCPAP;
+            // 
+            // ProximoComentario
+            // 
+            ProximoComentario.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoComentario.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoComentario.BackgroundImage");
+            ProximoComentario.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoComentario.Location = new System.Drawing.Point(599, 1);
+            ProximoComentario.Name = "ProximoComentario";
+            ProximoComentario.Size = new System.Drawing.Size(47, 47);
+            ProximoComentario.TabIndex = 68;
+            ProximoComentario.UseVisualStyleBackColor = false;
+            ProximoComentario.Click += ProximoComentario_Click;
+            // 
+            // AnteriorComentario
+            // 
+            AnteriorComentario.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorComentario.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorComentario.BackgroundImage");
+            AnteriorComentario.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorComentario.Location = new System.Drawing.Point(553, 1);
+            AnteriorComentario.Name = "AnteriorComentario";
+            AnteriorComentario.Size = new System.Drawing.Size(47, 47);
+            AnteriorComentario.TabIndex = 69;
+            AnteriorComentario.UseVisualStyleBackColor = false;
+            AnteriorComentario.Click += AnteriorComentario_Click;
+            // 
+            // ProximoRonco
+            // 
+            ProximoRonco.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoRonco.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoRonco.BackgroundImage");
+            ProximoRonco.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoRonco.Location = new System.Drawing.Point(507, 1);
+            ProximoRonco.Name = "ProximoRonco";
+            ProximoRonco.Size = new System.Drawing.Size(47, 47);
+            ProximoRonco.TabIndex = 70;
+            ProximoRonco.Tag = 7;
+            ProximoRonco.UseVisualStyleBackColor = false;
+            ProximoRonco.Click += ProximoEvento_Click;
+            // 
+            // AnteriorRonco
+            // 
+            AnteriorRonco.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorRonco.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorRonco.BackgroundImage");
+            AnteriorRonco.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorRonco.Location = new System.Drawing.Point(461, 1);
+            AnteriorRonco.Name = "AnteriorRonco";
+            AnteriorRonco.Size = new System.Drawing.Size(47, 47);
+            AnteriorRonco.TabIndex = 71;
+            AnteriorRonco.Tag = 7;
+            AnteriorRonco.UseVisualStyleBackColor = false;
+            AnteriorRonco.Click += UltimoEvento_Click;
+            // 
+            // ProximoPerna
+            // 
+            ProximoPerna.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoPerna.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoPerna.BackgroundImage");
+            ProximoPerna.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoPerna.Location = new System.Drawing.Point(415, 1);
+            ProximoPerna.Name = "ProximoPerna";
+            ProximoPerna.Size = new System.Drawing.Size(47, 47);
+            ProximoPerna.TabIndex = 67;
+            ProximoPerna.Tag = 4;
+            ProximoPerna.UseVisualStyleBackColor = false;
+            ProximoPerna.Click += ProximoEvento_Click;
+            // 
+            // AnteriorPerna
+            // 
+            AnteriorPerna.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorPerna.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorPerna.BackgroundImage");
+            AnteriorPerna.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorPerna.Location = new System.Drawing.Point(369, 1);
+            AnteriorPerna.Name = "AnteriorPerna";
+            AnteriorPerna.Size = new System.Drawing.Size(47, 47);
+            AnteriorPerna.TabIndex = 66;
+            AnteriorPerna.Tag = 4;
+            AnteriorPerna.UseVisualStyleBackColor = false;
+            AnteriorPerna.Click += UltimoEvento_Click;
+            // 
+            // ProximoCardio
+            // 
+            ProximoCardio.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoCardio.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoCardio.BackgroundImage");
+            ProximoCardio.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoCardio.Location = new System.Drawing.Point(231, 1);
+            ProximoCardio.Name = "ProximoCardio";
+            ProximoCardio.Size = new System.Drawing.Size(47, 47);
+            ProximoCardio.TabIndex = 62;
+            ProximoCardio.Tag = 2;
+            ProximoCardio.UseVisualStyleBackColor = false;
+            ProximoCardio.Click += ProximoEvento_Click;
+            // 
+            // AnteriorCardio
+            // 
+            AnteriorCardio.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorCardio.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorCardio.BackgroundImage");
+            AnteriorCardio.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorCardio.Location = new System.Drawing.Point(185, 1);
+            AnteriorCardio.Name = "AnteriorCardio";
+            AnteriorCardio.Size = new System.Drawing.Size(47, 47);
+            AnteriorCardio.TabIndex = 63;
+            AnteriorCardio.Tag = 2;
+            AnteriorCardio.UseVisualStyleBackColor = false;
+            AnteriorCardio.Click += UltimoEvento_Click;
+            // 
+            // ProximoAcordar
+            // 
+            ProximoAcordar.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoAcordar.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoAcordar.BackgroundImage");
+            ProximoAcordar.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoAcordar.Location = new System.Drawing.Point(139, 1);
+            ProximoAcordar.Name = "ProximoAcordar";
+            ProximoAcordar.Size = new System.Drawing.Size(47, 47);
+            ProximoAcordar.TabIndex = 64;
+            ProximoAcordar.Tag = 1;
+            ProximoAcordar.UseVisualStyleBackColor = false;
+            ProximoAcordar.Click += ProximoEvento_Click;
+            // 
+            // AnteriorAcordar
+            // 
+            AnteriorAcordar.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorAcordar.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorAcordar.BackgroundImage");
+            AnteriorAcordar.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorAcordar.Location = new System.Drawing.Point(93, 1);
+            AnteriorAcordar.Name = "AnteriorAcordar";
+            AnteriorAcordar.Size = new System.Drawing.Size(47, 47);
+            AnteriorAcordar.TabIndex = 65;
+            AnteriorAcordar.Tag = 1;
+            AnteriorAcordar.UseVisualStyleBackColor = false;
+            AnteriorAcordar.Click += UltimoEvento_Click;
+            // 
+            // ProximoPulmao
+            // 
+            ProximoPulmao.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            ProximoPulmao.BackgroundImage = (System.Drawing.Image)resources.GetObject("ProximoPulmao.BackgroundImage");
+            ProximoPulmao.BackgroundImageLayout = ImageLayout.Stretch;
+            ProximoPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            ProximoPulmao.Location = new System.Drawing.Point(47, 1);
+            ProximoPulmao.Name = "ProximoPulmao";
+            ProximoPulmao.Size = new System.Drawing.Size(47, 47);
+            ProximoPulmao.TabIndex = 2;
+            ProximoPulmao.Tag = 8;
+            ProximoPulmao.UseVisualStyleBackColor = false;
+            ProximoPulmao.Click += ProximoEvento_Click;
+            // 
+            // button20
+            // 
+            button20.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            button20.BackgroundImage = (System.Drawing.Image)resources.GetObject("button20.BackgroundImage");
+            button20.BackgroundImageLayout = ImageLayout.Stretch;
+            button20.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            button20.Location = new System.Drawing.Point(846, 1);
+            button20.Name = "button20";
+            button20.Size = new System.Drawing.Size(47, 47);
+            button20.TabIndex = 1;
+            button20.UseVisualStyleBackColor = false;
+            button20.Click += hideBottom_Click;
+            // 
+            // AnteriorPulmao
+            // 
+            AnteriorPulmao.BackColor = System.Drawing.Color.FromArgb(128, 255, 255);
+            AnteriorPulmao.BackgroundImage = (System.Drawing.Image)resources.GetObject("AnteriorPulmao.BackgroundImage");
+            AnteriorPulmao.BackgroundImageLayout = ImageLayout.Stretch;
+            AnteriorPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            AnteriorPulmao.Location = new System.Drawing.Point(1, 1);
+            AnteriorPulmao.Name = "AnteriorPulmao";
+            AnteriorPulmao.Size = new System.Drawing.Size(47, 47);
+            AnteriorPulmao.TabIndex = 0;
+            AnteriorPulmao.Tag = 8;
+            AnteriorPulmao.UseVisualStyleBackColor = false;
+            AnteriorPulmao.Click += UltimoEvento_Click;
+            // 
+            // ApnEvento
+            // 
+            ApnEvento.Location = new System.Drawing.Point(1486, 12);
+            ApnEvento.Name = "ApnEvento";
+            ApnEvento.Size = new System.Drawing.Size(88, 29);
+            ApnEvento.TabIndex = 82;
+            ApnEvento.Text = "Apneia";
+            ApnEvento.UseVisualStyleBackColor = true;
+            ApnEvento.Visible = false;
+            ApnEvento.Click += ApnEvent_Click;
             // 
             // playSelect
             // 
-            playSelect.Location = new System.Drawing.Point(1558, 14);
+            playSelect.Location = new System.Drawing.Point(1580, 12);
             playSelect.Name = "playSelect";
-            playSelect.Size = new System.Drawing.Size(110, 29);
+            playSelect.Size = new System.Drawing.Size(88, 29);
             playSelect.TabIndex = 57;
-            playSelect.Text = "Eventos";
+            playSelect.Text = "Hipo";
             playSelect.UseVisualStyleBackColor = true;
-            //playSelect.Visible = false;
+            playSelect.Visible = false;
             playSelect.Click += playSelect_Click;
             // 
             // minusAll
@@ -3462,7 +3543,7 @@ namespace PlotagemOpenGL
             minusAll.UseVisualStyleBackColor = true;
             minusAll.Visible = false;
             minusAll.Click += minusAll_Click;
-            //  
+            // 
             // plusAll
             // 
             plusAll.Location = new System.Drawing.Point(1721, 13);
@@ -3611,89 +3692,8 @@ namespace PlotagemOpenGL
             cadastroToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
             cadastroToolStripMenuItem.Text = "Cadastro";
             // 
-            // Stringao
-            // 
-            Stringao.AutoSize = true;
-            Stringao.Location = new System.Drawing.Point(3, 2);
-            Stringao.Name = "Stringao";
-            Stringao.Size = new System.Drawing.Size(65, 20);
-            Stringao.TabIndex = 59;
-            Stringao.Text = "Stringao";
-            Stringao.Visible = false;
-            // 
-            // pnPeriodos
-            // 
-            pnPeriodos.BorderStyle = BorderStyle.Fixed3D;
-            pnPeriodos.Controls.Add(lbPeriodo);
-            pnPeriodos.ForeColor = System.Drawing.SystemColors.ControlText;
-            pnPeriodos.ImeMode = ImeMode.NoControl;
-            pnPeriodos.Location = new System.Drawing.Point(1771, 23);
-            pnPeriodos.Name = "pnPeriodos";
-            pnPeriodos.Size = new System.Drawing.Size(148, 26);
-            pnPeriodos.TabIndex = 60;
-            // 
-            // pnImpressao
-            // 
-            pnImpressao.BorderStyle = BorderStyle.Fixed3D;
-            pnImpressao.Controls.Add(lbImpressao);
-            pnImpressao.ForeColor = System.Drawing.SystemColors.ControlText;
-            pnImpressao.ImeMode = ImeMode.NoControl;
-            pnImpressao.Location = new System.Drawing.Point(1621, 23);
-            pnImpressao.Name = "pnImpressao";
-            pnImpressao.Size = new System.Drawing.Size(148, 26);
-            pnImpressao.TabIndex = 61;
-            // 
-            // pnEstagio
-            // 
-            pnEstagio.BorderStyle = BorderStyle.Fixed3D;
-            pnEstagio.Controls.Add(lbEstagio);
-            pnEstagio.ForeColor = System.Drawing.SystemColors.ControlText;
-            pnEstagio.ImeMode = ImeMode.NoControl;
-            pnEstagio.Location = new System.Drawing.Point(1440, 23);
-            pnEstagio.Name = "pnEstagio";
-            pnEstagio.Size = new System.Drawing.Size(178, 26);
-            pnEstagio.TabIndex = 62;
-            // 
-            // pnGrand
-            // 
-            pnGrand.BorderStyle = BorderStyle.Fixed3D;
-            pnGrand.Controls.Add(Stringao);
-            pnGrand.ForeColor = System.Drawing.SystemColors.ControlText;
-            pnGrand.ImeMode = ImeMode.NoControl;
-            pnGrand.Location = new System.Drawing.Point(0, 23);
-            pnGrand.Name = "pnGrand";
-            pnGrand.Size = new System.Drawing.Size(1436, 26);
-            pnGrand.TabIndex = 63;
-            // 
-            // lbEstagio
-            // 
-            lbEstagio.AutoSize = true;
-            lbEstagio.Location = new System.Drawing.Point(3, 2);
-            lbEstagio.Name = "lbEstagio";
-            lbEstagio.Size = new System.Drawing.Size(65, 20);
-            lbEstagio.TabIndex = 0;
-            //lbEstagio.Text = $"Estagio: {GlobVar.estagioAtual}";
-            // 
-            // lbImpressao
-            // 
-            lbImpressao.AutoSize = true;
-            lbImpressao.Location = new System.Drawing.Point(3, 2);
-            lbImpressao.Name = "lbImpressao";
-            lbImpressao.Size = new System.Drawing.Size(84, 20);
-            lbImpressao.TabIndex = 1;
-            //lbImpressao.Text = $"Impressao: {GlobVar.qtdImpressao}";
-            //
-            // lbPeriodo
-            //
-            lbPeriodo.AutoSize = true;
-            lbPeriodo.Location = new System.Drawing.Point(2, 2);
-            lbPeriodo.Name = "lbPeriodo";
-            lbPeriodo.Size = new System.Drawing.Size(73, 20);
-            lbPeriodo.TabIndex = 2;
-            //lbPeriodo.Text = $"Periodos: {GlobVar.qtdPeriodos}";
-            //
             // Tela_Plotagem
-            //
+            // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1920, 991);
@@ -3759,26 +3759,26 @@ namespace PlotagemOpenGL
             panel23.ResumeLayout(false);
             panel23.PerformLayout();
             painelTelaGl.ResumeLayout(false);
+            pnGrand.ResumeLayout(false);
+            pnGrand.PerformLayout();
+            pnEstagio.ResumeLayout(false);
+            pnEstagio.PerformLayout();
+            pnImpressao.ResumeLayout(false);
+            pnImpressao.PerformLayout();
+            pnPeriodos.ResumeLayout(false);
+            pnPeriodos.PerformLayout();
             painelComando.ResumeLayout(false);
             painelComando.PerformLayout();
+            PainelPerfil.ResumeLayout(false);
+            PainelPrinters.ResumeLayout(false);
             panelMontTmpTela.ResumeLayout(false);
+            PainelAvRet.ResumeLayout(false);
             PainelLoc.ResumeLayout(false);
             PainelMarca.ResumeLayout(false);
             PainelMarcaAntProx.ResumeLayout(false);
-            PainelAvRet.ResumeLayout(false);
             PanelEventos.ResumeLayout(false);
-            PainelPrinters.ResumeLayout(false);
-            PainelPerfil.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            pnPeriodos.ResumeLayout(false);
-            pnPeriodos.PerformLayout();
-            pnImpressao.ResumeLayout(false);
-            pnImpressao.PerformLayout();
-            pnEstagio.ResumeLayout(false);
-            pnEstagio.PerformLayout();
-            pnGrand.ResumeLayout(false);
-            pnGrand.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -3790,6 +3790,7 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
+        public static Button ApnEvento;
         public static Panel panelMontTmpTela;
         public static ToolStripMenuItem toolStripMenuItem2;
         public static ToolStripMenuItem toolStripMenuItem4;
@@ -4023,7 +4024,6 @@ namespace PlotagemOpenGL
         public static Button EventoUmClick;
         public static Button AnaliseAutomatica;
         public static Button Video;
-        public static Button OcultaProf;
         public static Button Profile;
         public static Panel PainelPrinters;
         public static Button ImprimeLaudo;
