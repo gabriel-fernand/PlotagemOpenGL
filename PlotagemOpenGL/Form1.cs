@@ -1759,7 +1759,6 @@ namespace PlotagemOpenGL
             UpdateInicioTela();
 
         }
-
         private void AjustarBotoesMinusEPlus()
         {
             foreach (Panel pn in painelExames.Controls)
@@ -1817,7 +1816,6 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
         // Evento de mouse leave para ocultar o ButtonForm
         private void panel_MouseLeave(object sender, EventArgs e)
         {
@@ -1830,7 +1828,6 @@ namespace PlotagemOpenGL
                 buttonForm.HideOverlay();
             }
         }
-
         // Evento de clique no painel para mostrar o ButtonForm
         private void Panel_Click(object sender, EventArgs e)
         {
@@ -1842,10 +1839,8 @@ namespace PlotagemOpenGL
                 buttonForm.ShowOverlay(new Point(location.X + panel.Width - 30, location.Y - 10), new Size(25, 50));
             }
         }
-
         // Declaração do ButtonForm na classe principal
         private ButtonForm buttonForm;
-
         // Método para inicializar o ButtonForm
         private void InicializarButtonForm()
         {
@@ -1881,7 +1876,6 @@ namespace PlotagemOpenGL
             buttonForm.Controls.Add(btnPlus);
             buttonForm.Controls.Add(btnMinus);
         }
-
         private void RepositionPanels()
         {
             // Definir o espaçamento entre os painéis visíveis
@@ -1991,8 +1985,6 @@ namespace PlotagemOpenGL
             Array.Copy(tempCodSelected, GlobVar.codSelected, tempCodSelected.Length);
             Array.Copy(tempScale, GlobVar.scale, tempScale.Length);
         }
-
-
         private void Play_OpenGl()
         {
             LeituraEmMatrizTeste.reorganize();
