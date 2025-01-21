@@ -23,6 +23,7 @@ namespace PlotagemOpenGL
         {
             InitializeComponent();
             LeitorDiretorio.LeituraDiretorio();
+            LeituraBanco.BancoConifg();
             AtualizarLabelsComArquivos();
             groupBox1.Paint += GroupBox1_Paint;
             groupBox2.Paint += GroupBox1_Paint;

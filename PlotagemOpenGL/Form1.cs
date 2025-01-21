@@ -35,6 +35,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
 using System.Threading;
+using PlotagemOpenGL.Hipnograma;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -206,17 +207,25 @@ namespace PlotagemOpenGL
         {
             try
             {
+                // Obtém as dimensões da tela principal
+                int larguraTela = Screen.PrimaryScreen.WorkingArea.Width;
+                int alturaTela = Screen.PrimaryScreen.WorkingArea.Height;
+
+                // Define o tamanho e a posição inicial do formulário
+                this.StartPosition = FormStartPosition.Manual;
+                this.Size = new Size((int)(larguraTela * 0.8), (int)(alturaTela * 0.8)); // 80% da largura e altura da tela
+                this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
+
                 using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
                     InitializeComponent();
                     ConfigurarTooltips(painelComando); // Configura os tooltips para todos os botões do painel principal
-                    toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 pagina");
+                    toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 página");
                 }
             }
-            catch (Exception e) 
-            {               
-                MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
-
+            catch (Exception e)
+            {
+                MessageBox.Show($"{e}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
             }
         }
 
@@ -237,7 +246,6 @@ namespace PlotagemOpenGL
 
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(20);
-                    LeituraBanco.BancoConifg();
 
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(30);
@@ -260,6 +268,7 @@ namespace PlotagemOpenGL
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(50);
 
+                    atualizaJanelaResumo();
                     SetStyle(ControlStyles.DoubleBuffer, true);
                     rectangleLoad();
                     await Task.Delay(25);
@@ -392,6 +401,66 @@ namespace PlotagemOpenGL
             {
                 MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
 
+            }
+        }
+
+        public void atualizaJanelaResumo()
+        {
+            try
+            {
+                // Limpa os itens existentes para evitar duplicações
+                JanelaSeparada.DropDownItems.Clear();
+                // Percorre todas as linhas da tabela tbl_JanelaResumo
+                foreach (DataRow row in GlobVar.tbl_JanelaResumo.Rows)
+                {
+                    // Cria um novo ToolStripMenuItem
+                    var menuItem = new ToolStripMenuItem
+                    {
+                        Name = $"menuItem_{row["DescrJanela"]}", // Define o nome com base no DescrJanela
+                        Text = row["DescrJanela"].ToString(),    // Define o texto do item
+                        Tag = Convert.ToInt32(row["CodJanela"])  // Armazena a linha como Tag para referência futura
+                    };
+
+                    JanelaSeparada.DropDownItems.Add(menuItem);
+
+                    menuItem.Click += JanelaSeparada_Click;
+                }
+
+                JanelaPrincipal.DropDownItems.Clear();
+                // Percorre todas as linhas da tabela tbl_JanelaResumo
+                foreach (DataRow row in GlobVar.tbl_JanelaResumo.Rows)
+                {
+                    // Cria um novo ToolStripMenuItem
+                    var menuItem = new ToolStripMenuItem
+                    {
+                        Name = $"menuItem_{row["DescrJanela"]}", // Define o nome com base no DescrJanela
+                        Text = row["DescrJanela"].ToString(),    // Define o texto do item
+                        Tag = Convert.ToInt32(row["CodJanela"])  // Armazena a linha como Tag para referência futura
+                    };
+
+                    // Adiciona o ToolStripMenuItem aos menus
+                    JanelaPrincipal.DropDownItems.Add(menuItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Exibe uma mensagem de erro caso algo dê errado
+                MessageBox.Show($"Erro ao atualizar o menu: {ex.Message}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
+            }
+        }
+        public void JanelaSeparada_Click(object sender, EventArgs e)
+        {
+            // Verifica se o sender é um ToolStripMenuItem
+            if (sender is ToolStripMenuItem menuItem)
+            {
+                // Obtém o valor do Tag do ToolStripMenuItem
+                if (menuItem.Tag is int a)
+                {
+                    HipnogramaForm Janela = new HipnogramaForm(a);
+                    Janela.Show();
+                }
+                else
+                {                }
             }
         }
         public void chamarTelinhaVid()
@@ -584,7 +653,7 @@ namespace PlotagemOpenGL
             GlobVar.tbl_SelImpressao.Clear();
             GlobVar.tbl_SeqEvento.Clear();
             GlobVar.tbl_ArqVideo.Clear();
-
+            GlobVar.tbl_Estagios.Clear();
 
             GlobVar.eventosUpdate.Reset();
             GlobVar.eventos.Reset();
@@ -606,6 +675,7 @@ namespace PlotagemOpenGL
             GlobVar.tbl_SelImpressao.Reset();
             GlobVar.tbl_SeqEvento.Reset();
             GlobVar.tbl_ArqVideo.Reset();
+            GlobVar.tbl_Estagios.Reset();
 
             GlobVar.eventosUpdate.Dispose();
             GlobVar.eventos.Dispose();
@@ -627,13 +697,41 @@ namespace PlotagemOpenGL
             GlobVar.tbl_SelImpressao.Dispose();
             GlobVar.tbl_SeqEvento.Dispose();
             GlobVar.tbl_ArqVideo.Dispose();
+            GlobVar.tbl_Estagios.Dispose();
+
+            GlobVar.tbl_CadCanal.Clear();
+            GlobVar.tbl_MontCanal.Clear();
+            GlobVar.tbl_Montagem.Clear();
+            GlobVar.tbl_TipoExame.Clear();
+            GlobVar.tbl_CadTipoCanal.Clear();
+            GlobVar.tbl_CadEvento.Clear();
+            GlobVar.tbl_EventoTipoCanal.Clear();
+            GlobVar.tbl_TipoCanal.Clear();
+
+            GlobVar.tbl_HipnoGrupos.Clear();
+            GlobVar.tbl_HipnoSubGrupos.Clear();
+            GlobVar.tbl_JanelaResumoItens.Clear();
+            GlobVar.tbl_JanelaResumo.Clear();
+
+            GlobVar.tbl_CadCanal.Dispose();
+            GlobVar.tbl_MontCanal.Dispose();
+            GlobVar.tbl_Montagem.Dispose();
+            GlobVar.tbl_TipoExame.Dispose();
+            GlobVar.tbl_CadTipoCanal.Dispose();
+            GlobVar.tbl_CadEvento.Dispose();
+            GlobVar.tbl_EventoTipoCanal.Dispose();
+            GlobVar.tbl_TipoCanal.Dispose();
+
+            GlobVar.tbl_HipnoGrupos.Dispose();
+            GlobVar.tbl_HipnoSubGrupos.Dispose();
+            GlobVar.tbl_JanelaResumoItens.Dispose();
+            GlobVar.tbl_JanelaResumo.Dispose();
 
             iCelera.telinha.Hide();
 
             iCelera ic = new iCelera();
             ic.Show();
         }
-
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
         {
@@ -872,8 +970,6 @@ namespace PlotagemOpenGL
 
             UpdateFilterStates();
         }
-
-
         public void UpdateFilterStates()
         {
             int panelIndex = 1;
@@ -897,7 +993,6 @@ namespace PlotagemOpenGL
                 panelIndex++;
             }
         }
-
         private void UpdateLowFilterState(Panel panel, double? lowHertz)
         {
             if (lowHertz.HasValue)
@@ -923,7 +1018,6 @@ namespace PlotagemOpenGL
                 panelLowFilterStates[panel]["NenhumLowGl"] = true;
             }
         }
-
         private void UpdateHighFilterState(Panel panel, double? highHertz)
         {
             if (highHertz.HasValue)
@@ -947,7 +1041,6 @@ namespace PlotagemOpenGL
                 panelHighFilterStates[panel]["NenhumHighGl"] = true;
             }
         }
-
         private void UpdateNotchFilterState(Panel panel, double? notchHertz)
         {
             if (notchHertz.HasValue)
@@ -965,6 +1058,7 @@ namespace PlotagemOpenGL
                 panelNotchFilterStates[panel]["NenhumNotch"] = true;
             }
         }
+
         private Panel movingPanel = null;
         private Panel tempLabel = null; // Usando Panel para a movimentação
         private const int borderWidth = 6; // Largura da borda sensível para redimensionamento
@@ -976,10 +1070,10 @@ namespace PlotagemOpenGL
         public bool isOnTopBorder = false;
         private bool mouseIsDown = false;
         private bool isResizing = false;
-
         private int originalHeight;
         private int originalTop;
         private int originalBut;
+
         private void painelExames_Paint(object sender, PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -992,9 +1086,7 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
         private OverlayForm overlayForm;
-
         private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -1042,7 +1134,6 @@ namespace PlotagemOpenGL
                 }
             }
         }
-
         private void Panel_MouseMove(object sender, MouseEventArgs e)
         {
             Control clickedControl = sender as Control;
@@ -1136,7 +1227,6 @@ namespace PlotagemOpenGL
                 overlayForm.Invalidate(); // Redesenha o retângulo no overlay
             }
         }
-
         private void Panel_MouseUp(object sender, MouseEventArgs e)
         {
             if (isResizing && overlayForm != null)
@@ -1202,7 +1292,6 @@ namespace PlotagemOpenGL
                 TelaClearAndReload();
             }
         }
-
         private void AdjustPanelsAfterResize(Panel resizedPanel)
         {
             int totalHeight = painelExames.ClientSize.Height; // Altura total do contêiner pai
@@ -1566,7 +1655,6 @@ namespace PlotagemOpenGL
 
             }
         }
-
         private void UpdatePanelHeightInDataTable()
         {
             float totalPercentage = 0;
@@ -2112,7 +2200,6 @@ namespace PlotagemOpenGL
             painelComando_Resize_Control(MontagemBox, box3);
             painelComando_Resize_Control(playSelect, mtg);
         }
-
         private void Tela_Plotagem_Resiz(object sender, EventArgs e)
         {
             resize_Control(painelComando, comando);
@@ -2155,7 +2242,6 @@ namespace PlotagemOpenGL
             painel_Resize_Control(panel23, pn23);
 
         }
-
         private void panelLb_Resiz(object sender, EventArgs e)
         {
             painel_Resize_Control(plusLb1, btPlusLb1);
@@ -2239,7 +2325,6 @@ namespace PlotagemOpenGL
         public static bool conc = true;
         private Task _backgroundTask;
         private CancellationTokenSource _cancellationTokenSource;
-
         private async void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!isInitialized || MontagemBox.SelectedIndex == -1)
@@ -2317,7 +2402,6 @@ namespace PlotagemOpenGL
                 }, token);
             }
         }
-
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
         {
             string texto = qtdGraficos.Text;
@@ -2368,12 +2452,10 @@ namespace PlotagemOpenGL
                 click = true;
             }
         }
-
         public static bool isDrawing = false;
         public static bool isDrawingRectangle = false;
         // Variável para rastrear o painel anterior
         private Panel previousPanel = null;
-
         //Metodo que faz a plotagem, e a replotagem quando precisa
         public static void TelaClearAndReload()
         {
@@ -2387,6 +2469,7 @@ namespace PlotagemOpenGL
 
             // Realize as operações gráficas no thread principal
             plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotComentatios.DesenhaComentario(gl);
@@ -2394,7 +2477,6 @@ namespace PlotagemOpenGL
             plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
         }
-
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -2491,11 +2573,9 @@ namespace PlotagemOpenGL
             }
             catch { }
         }
-
         private Point lastMousePosition;
         public Point initialMousePosition;
         public Point musezin;
-
         private Cursor originalCursor;
         private bool isMouseDown = false;
         public bool isAnEvent = false;
@@ -2512,7 +2592,7 @@ namespace PlotagemOpenGL
         public static bool isThereX1Y0Comment = false;
         public static bool isThereX1Y1Comment = false;
         public static bool isThereVideoPonteiro = false;
-        private bool isTelaClearAndReloadExecuted;
+        private bool isTelaClearAndReloadExecuted; 
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (click)
@@ -7423,7 +7503,9 @@ namespace PlotagemOpenGL
                     {
                         hertzSelect = Convert.ToInt16(rowNumerico["PassaBaixa"]);
                         GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])),
-                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt16(rowNumerico["CodCanal1"])))),
+                        (float)hertzSelect,
+                        (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
 
                     }
 

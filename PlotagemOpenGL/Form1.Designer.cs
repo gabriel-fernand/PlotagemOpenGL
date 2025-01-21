@@ -350,6 +350,11 @@ namespace PlotagemOpenGL
             ferramentasToolStripMenuItem = new ToolStripMenuItem();
             configuracaoToolStripMenuItem = new ToolStripMenuItem();
             cadastroToolStripMenuItem = new ToolStripMenuItem();
+            JanelaPrincipal = new ToolStripMenuItem();
+            JanelaSeparada = new ToolStripMenuItem();
+            NovaJanela = new ToolStripMenuItem();
+            ListaEventos = new ToolStripMenuItem();
+            RenomearExluirJanela = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             painelExames.SuspendLayout();
@@ -3666,10 +3671,11 @@ namespace PlotagemOpenGL
             // 
             toolStripMenuItem9.Name = "toolStripMenuItem9";
             toolStripMenuItem9.Size = new System.Drawing.Size(270, 26);
-            toolStripMenuItem9.Text = "Amplitude e filtro gerais";
+            toolStripMenuItem9.Text = "Amplitude e filtro EEG's";
             // 
             // janelaResumoToolStripMenuItem
             // 
+            janelaResumoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { JanelaPrincipal, JanelaSeparada, NovaJanela, ListaEventos, RenomearExluirJanela });
             janelaResumoToolStripMenuItem.Name = "janelaResumoToolStripMenuItem";
             janelaResumoToolStripMenuItem.Size = new System.Drawing.Size(121, 24);
             janelaResumoToolStripMenuItem.Text = "Janela Resumo";
@@ -3691,6 +3697,36 @@ namespace PlotagemOpenGL
             cadastroToolStripMenuItem.Name = "cadastroToolStripMenuItem";
             cadastroToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
             cadastroToolStripMenuItem.Text = "Cadastro";
+            // 
+            // JanelaPrincipal
+            // 
+            JanelaPrincipal.Name = "JanelaPrincipal";
+            JanelaPrincipal.Size = new System.Drawing.Size(330, 26);
+            JanelaPrincipal.Text = "Visualizar na janela principal";
+            // 
+            // JanelaSeparada
+            // 
+            JanelaSeparada.Name = "JanelaSeparada";
+            JanelaSeparada.Size = new System.Drawing.Size(330, 26);
+            JanelaSeparada.Text = "Abrir Janela Separada";
+            // 
+            // NovaJanela
+            // 
+            NovaJanela.Name = "NovaJanela";
+            NovaJanela.Size = new System.Drawing.Size(330, 26);
+            NovaJanela.Text = "Criar nova janela";
+            // 
+            // ListaEventos
+            // 
+            ListaEventos.Name = "ListaEventos";
+            ListaEventos.Size = new System.Drawing.Size(330, 26);
+            ListaEventos.Text = "Lista de Eventos";
+            // 
+            // RenomearExluirJanela
+            // 
+            RenomearExluirJanela.Name = "RenomearExluirJanela";
+            RenomearExluirJanela.Size = new System.Drawing.Size(330, 26);
+            RenomearExluirJanela.Text = "Renomear ou excluir Janela Resumo";
             // 
             // Tela_Plotagem
             // 
@@ -3790,6 +3826,11 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
         public static TextBox MouseLoc;
+        public static ToolStripMenuItem JanelaPrincipal;
+        public static ToolStripMenuItem JanelaSeparada;
+        public static ToolStripMenuItem NovaJanela;
+        public static ToolStripMenuItem ListaEventos;
+        public static ToolStripMenuItem RenomearExluirJanela;
         public static Button ApnEvento;
         public static Panel panelMontTmpTela;
         public static ToolStripMenuItem toolStripMenuItem2;

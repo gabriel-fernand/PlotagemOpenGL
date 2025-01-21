@@ -103,6 +103,12 @@ public class LeituraBanco
             string queryEventTipCanal = "SELECT * FROM tbl_EventoTipoCanal";
             string queryTipoCanal = "SELECT * FROM tbl_TipoCanal";
 
+            string queryTbl_HipnoGrupos = "SELECT * FROM tbl_HipnoGrupos";
+            string queryTbl_HipnoSubGrupos = "SELECT * FROM  tbl_HipnoSubGrupo";
+            string queryTbl_JanelaResumoItens = "SELECT * FROM tbl_JanelaResumoItens";
+            string queryTbl_JanelaResumo = "SELECT * FROM tbl_JanelaResumo";
+            string queryTbl_Estagios = "SELECT * FROM tbl_Estagios";
+
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
@@ -112,6 +118,12 @@ public class LeituraBanco
             using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
             using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
             using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
+
+            using var commandHipnoGruos = new OdbcCommand(queryTbl_HipnoGrupos, connectionConfigBd);
+            using var commandSubHipnoGrupos = new OdbcCommand(queryTbl_HipnoSubGrupos, connectionConfigBd);
+            using var commandItensJanela = new OdbcCommand(queryTbl_JanelaResumoItens, connectionConfigBd);
+            using var commandJanelaResumo = new OdbcCommand(queryTbl_JanelaResumo, connectionConfigBd);
+            using var commandTbl_Estagios = new OdbcCommand(queryTbl_Estagios, connectionConfigBd);
 
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
@@ -123,6 +135,12 @@ public class LeituraBanco
             using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
             using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
 
+            using var adapterHipnoGrupos = new OdbcDataAdapter(commandHipnoGruos);
+            using var adapterSubHipno = new OdbcDataAdapter(commandSubHipnoGrupos);
+            using var adapterItensJanela = new OdbcDataAdapter(commandItensJanela);
+            using var adapterJanelaResumo = new OdbcDataAdapter(commandJanelaResumo);
+            using var adapterTbl_Estagios = new OdbcDataAdapter(commandTbl_Estagios);
+
             adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
             adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
@@ -132,6 +150,11 @@ public class LeituraBanco
             adapterEventTipCanal.Fill(GlobVar.tbl_EventoTipoCanal);
             adapterTipoCanal.Fill(GlobVar.tbl_TipoCanal);
 
+            adapterHipnoGrupos.Fill(GlobVar.tbl_HipnoGrupos);
+            adapterSubHipno.Fill(GlobVar.tbl_HipnoSubGrupos);
+            adapterItensJanela.Fill(GlobVar.tbl_JanelaResumoItens);
+            adapterJanelaResumo.Fill(GlobVar.tbl_JanelaResumo);
+            adapterTbl_Estagios.Fill(GlobVar.tbl_Estagios);
 
             connectionConfigBd.Close();
 

@@ -126,6 +126,14 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_SeqEvento = new DataTable();
         public static DataTable tbl_ArqVideo = new DataTable();
 
+        public static DataTable tbl_HipnoGrupos = new DataTable();
+        public static DataTable tbl_HipnoSubGrupos = new DataTable();
+        public static DataTable tbl_JanelaResumoItens = new DataTable();
+        public static DataTable tbl_JanelaResumo = new DataTable();
+        public static DataTable tbl_Estagios = new DataTable();
+
+        public static int CodJanela;
+
         public static int ultimaPag;
 
         public static int DessatuDesconsiderar = 60;
