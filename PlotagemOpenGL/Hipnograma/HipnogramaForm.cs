@@ -453,6 +453,8 @@ namespace PlotagemOpenGL.Hipnograma
                             }
                             h++;
                         }
+
+
                         break;
 
                     // ------- Posi / Estagio -------
@@ -576,7 +578,13 @@ namespace PlotagemOpenGL.Hipnograma
                 ant--;
 
                 legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), margem, (int)Porcentagem);
+
+                gl.End();
+                gl.Flush();
                 desenhaGarficos(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), margem, (int)Porcentagem);
+
+                gl.End();
+                gl.Flush();
 
                 topPorcent -= (int)(espacox * (porc[i] / 100));
             }
@@ -754,14 +762,16 @@ namespace PlotagemOpenGL.Hipnograma
                 // ------- Sinais graafio -------
                 // SA02
                 case 6:
+                    var rows = GlobVar.tbl_JanelaResumoItens.AsEnumerable()
+                                .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
                     gl.Color( 0, 0, 0);
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     int sasa = 0;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = SA02[sasa];
-                        gl.Vertex(i, quasi + pontoZero);
+                        quasi = NormalizarValor(SA02[sasa], Convert.ToInt16(rows["LI"]), Convert.ToInt16(rows["LS"]), pontoZero, topPonto);
+                        gl.Vertex(i, quasi);
                         sasa++;
                     }
                     gl.End();
@@ -770,14 +780,16 @@ namespace PlotagemOpenGL.Hipnograma
                     break;
                 // Freq Card
                 case 12:
+                    var rowf = GlobVar.tbl_JanelaResumoItens.AsEnumerable()
+                                .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
                     gl.Color(0, 0, 0);
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     int feq = 0;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = FreqCard[feq];
-                        gl.Vertex(i, quasi + pontoZero);
+                        quasi = NormalizarValor(FreqCard[feq], Convert.ToInt16(rowf["LI"]), Convert.ToInt16(rowf["LS"]), pontoZero, topPonto);
+                        gl.Vertex(i, quasi);
                         feq++;
                     }
                     gl.End();
@@ -799,8 +811,8 @@ namespace PlotagemOpenGL.Hipnograma
                     int micmic = 0;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = Normalizar(Microfone[micmic], pontoZero, topPonto);// scala;
-                        gl.Vertex(i, quasi + meioleg);
+                        quasi = NormalizarValor(Microfone[micmic], Microfone.Min(), Microfone.Max(), pontoZero, topPonto);// scala;
+                        gl.Vertex(i, quasi);// + meioleg);
                         micmic++;
                     }
                     gl.End();
@@ -854,21 +866,16 @@ namespace PlotagemOpenGL.Hipnograma
                                     .FirstOrDefault(r => r.Field<int>("Estagio") == CodEstagio);
                             // Obtém os componentes RGB com base no campo "Estagio"
                         color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(row["Estagio"]));
-
                         // Procura o índice da linha correspondente ao CodEstagio no DataTable
                         int ind = GlobVar.tbl_Estagios.AsEnumerable()
                                      .Select((r, idx) => new { Row = r, Index = idx }) // Combina linha e índice
                                      .FirstOrDefault(x => x.Row.Field<int>("Estagio") == CodEstagio)?.Index ?? -1;
-
                         gl.Color(color[0], color[1], color[2]);
-
                         gl.Vertex(i, locyEstagio[ind]);
-
-                        //gl.Color(0, 0, 0);
+                        gl.Color(0, 0, 0);
                     }
                     gl.End();
                     gl.Flush();
-
                     break;
             }
         }
@@ -1047,7 +1054,7 @@ namespace PlotagemOpenGL.Hipnograma
             }
                     
         }
-        public static double Normalizar(int input, int pontoZero, int topPonto, double minOutput = 0, double maxOutput = 1f)
+        public static double Normalizar(int input, int pontoZero, int topPonto, double minOutput = 0, double maxOutput = 0.5f)
         {
             try
             {
@@ -1132,6 +1139,16 @@ namespace PlotagemOpenGL.Hipnograma
             tamanhoCalculado = Math.Max(tamanhoMinimo, Math.Min(tamanhoCalculado, tamanhoMaximo));
 
             return tamanhoCalculado;
+        }
+        public static double NormalizarValor(double valor, double minOriginal, double maxOriginal, double minY, double maxY)
+        {
+            if (maxOriginal == minOriginal) return 0;
+
+            if (valor < minOriginal) return minY;
+            if (valor > minOriginal) return maxY;
+
+            // Aplicando a fórmula de normalização
+            return minY + (valor - minOriginal) * (maxY - minY) / (maxOriginal - minOriginal);
         }
 
     }
