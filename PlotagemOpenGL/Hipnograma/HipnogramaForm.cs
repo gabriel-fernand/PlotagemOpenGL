@@ -545,7 +545,7 @@ namespace PlotagemOpenGL.Hipnograma
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
             gl.Translate(0, 0, 1);
-            gl.PointSize(3.0f);
+            gl.PointSize(1.0f);
             gl.Color(0.0f, 0.0f, 0.0f);
             gl.Scale(1, 1, 1);
 
@@ -776,7 +776,6 @@ namespace PlotagemOpenGL.Hipnograma
                     }
                     gl.End();
                     gl.Flush();
-
                     break;
                 // Freq Card
                 case 12:
@@ -794,7 +793,6 @@ namespace PlotagemOpenGL.Hipnograma
                     }
                     gl.End();
                     gl.Flush();
-
                     break;
                 // Microfone
                 case 19:
@@ -856,22 +854,34 @@ namespace PlotagemOpenGL.Hipnograma
                     qt = dte.Rows.Count;
                     float[] color = new float[3];
                     gl.Begin(OpenGL.GL_LINE_STRIP);
+                    int ultimoestagio = -1;
 
                     int esta = 0;
                     for(int i = xStart; i < xEnd; i++, esta++)
                     {
+
                         int CodEstagio = estagio[esta];
                         // Filtra a linha do DataTable
                         var row = GlobVar.tbl_Estagios.AsEnumerable()
                                     .FirstOrDefault(r => r.Field<int>("Estagio") == CodEstagio);
                             // Obtém os componentes RGB com base no campo "Estagio"
-                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(row["Estagio"]));
+                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(row["Cor"]));
+                        var dt = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+
                         // Procura o índice da linha correspondente ao CodEstagio no DataTable
-                        int ind = GlobVar.tbl_Estagios.AsEnumerable()
+                        int ind = dt.AsEnumerable()
                                      .Select((r, idx) => new { Row = r, Index = idx }) // Combina linha e índice
                                      .FirstOrDefault(x => x.Row.Field<int>("Estagio") == CodEstagio)?.Index ?? -1;
-                        gl.Color(color[0], color[1], color[2]);
+                        if(ultimoestagio != CodEstagio)
+                        {
+                            gl.Color(0, 0, 0);
+                        }
+                        else
+                        {
+                            gl.Color(color[0], color[1], color[2]);
+                        }
                         gl.Vertex(i, locyEstagio[ind]);
+                        ultimoestagio = CodEstagio;
                         gl.Color(0, 0, 0);
                     }
                     gl.End();
@@ -883,6 +893,7 @@ namespace PlotagemOpenGL.Hipnograma
         {
             DataTable dt = new DataTable();
             dt = GlobVar.tbl_HipnoGrupos.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
+            DataTable dtResumo = MontagemJanela.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
             DataTable dtSubGrupo = new DataTable();
 
             int espaco = Math.Abs(topPonto - pontoZero);
@@ -929,6 +940,126 @@ namespace PlotagemOpenGL.Hipnograma
                     indexHoraio++;
                 }
             }
+            else if (codGrupo == 6 || codGrupo == 12)
+            {
+                string li = dtResumo.Rows[0]["LI"].ToString();
+                string ls = dtResumo.Rows[0]["LS"].ToString();
+
+                int dif = Math.Abs(Convert.ToInt32(dtResumo.Rows[0]["LI"]) - Convert.ToInt32(dtResumo.Rows[0]["LS"]));
+
+                int font = CalcularTamanhoFonteIdeal(12, 14);
+                int fontalo = font - 2;
+                System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+
+                // Calculando tamanho do texto
+                SizeF tamanhoLi = CalcularTamanhoString(li, fonte);
+                SizeF tamanhoLs = CalcularTamanhoString(ls, fonte);
+
+                // Coordenadas do ponto final
+                int writeX = 0, writeY = 0;
+                ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
+
+                // Calculando o ponto inicial para escrita de trás para frente
+                float startXLi = writeX - (tamanhoLi.Width / 2);
+                float startXLs = writeX - (tamanhoLs.Width / 2);
+
+                int startYLs = (int)(topPonto - (tamanhoLs.Height / 2));
+                gl.Begin(OpenGL.GL_2D);
+                gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, li);
+                gl.End();
+                gl.Flush();
+
+                gl.Color(0.5f, 0.5f, 0.5f);
+                // Ativar o estilo de linha pontilhada
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                // Iniciar o desenho da linha
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Vertex(maxlegendx, pontoZero + (tamanhoLi.Height / 4));
+                gl.Vertex(endX, pontoZero + (tamanhoLi.Height / 4));
+                gl.End();
+                gl.Flush();
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+                gl.Color(0, 0, 0);
+                gl.Begin(OpenGL.GL_2D);
+                gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, ls);
+                gl.End();
+                gl.Flush();
+
+                gl.Color(0.5f, 0.5f, 0.5f);
+                // Ativar o estilo de linha pontilhada
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                // Iniciar o desenho da linha
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Vertex(maxlegendx, startYLs + (tamanhoLs.Height / 4));
+                gl.Vertex(endX, startYLs + (tamanhoLs.Height / 4));
+                gl.End();
+                gl.Flush();
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+                gl.Color(0, 0, 0);
+                int divsleg = Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]);
+                if (divsleg != 0 && Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]) < dif)
+                {
+                    int alo = dif / divsleg;
+                    int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                    int espacodiv = espaco / alo;
+                    int legdiv = Convert.ToInt32(dtResumo.Rows[0]["LI"]) + divsleg;
+                    SizeF tamanhoDiv = CalcularTamanhoString(legdiv.ToString(), fonte);
+                    float startXDiv = writeX - (tamanhoLi.Width / 2);
+
+                    while (legdiv < Convert.ToInt32(dtResumo.Rows[0]["LS"]))
+                    {
+                        gl.Begin(OpenGL.GL_2D);
+                        gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                        gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, legdiv.ToString());
+                        gl.End();
+                        gl.Flush();
+
+                        locdivs += espacodiv;
+                        legdiv += divsleg;
+                    }
+                }
+
+                int linhasint = Convert.ToInt32(dtResumo.Rows[0]["LinhasInternas"]);
+                if (linhasint != 0 && linhasint < dif)
+                {
+                    int alo = dif / linhasint;
+                    int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                    int espacodiv = espaco / alo;
+
+                    gl.Color(0.5f, 0.5f, 0.5f);
+                    gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                    // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                    gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+                    // Iniciar o desenho da linha
+                    gl.Begin(OpenGL.GL_LINES);
+
+                    while (locdivs < topPonto)
+                    {
+                        // Ativar o estilo de linha pontilhada
+                        gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
+                        gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
+                        locdivs += (int)(espacodiv);
+                    }
+                    gl.End();
+                    gl.Flush();
+                    gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                    gl.Color(0, 0, 0);
+
+                }
+            }
+
             if (!dt.Rows[0]["Legenda"].Equals("") && !dt.Rows[0]["Legenda"].Equals("ESTAGIO") && !dt.Rows[0]["Legenda"].Equals("Posição"))
             {
                 int meioleg = espaco / 2;
@@ -988,6 +1119,8 @@ namespace PlotagemOpenGL.Hipnograma
 
                     int qt = dte.Rows.Count;
                     locyEstagio = new int[qt];
+                    int font = CalcularTamanhoFonteIdeal(12, 14);
+                    System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
 
                     int espacosub = Math.Abs(pontoZero - topPonto);
                     int locLeg = espacosub / qt;
@@ -999,23 +1132,30 @@ namespace PlotagemOpenGL.Hipnograma
                     {
                         string leg = dte.Rows[aoi]["Legenda"].ToString();
                         locyEstagio[ao] = meioleg;
+
+
                         gl.Begin(OpenGL.GL_2D);
-                        int writeX = 0;
-                        int writeY = 0;
 
                         float[] color = new float[3];
 
                         color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(dte.Rows[ao]["Cor"]));
+                        // Calculando o ponto inicial para escrita de trás para frente
+                        SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
+                        // Coordenadas do ponto final
+                        int writeX = 0, writeY = 0;
+                        ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
 
-                        writeX += 12;
+                        // Calculando o ponto inicial para escrita de trás para frente
+                        float startXdiv = writeX - (tamanhoLi.Width / 2);
+                        if (startXdiv < 0) { startXdiv = 0; }
                         writeY = meioleg;
-                        gl.DrawText(writeX + 1, meioleg, color[0], color[1], color[2], "Arial Narrow", 12, "");
-                        gl.DrawText(writeX + 1, meioleg, color[0], color[1], color[2], "Arial Narrow", 14, leg);
+
+                        gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 12, "");
+                        gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 14, leg);
 
                         gl.Color(0, 0, 0);
                         gl.End();
                         gl.Flush();
-
                     }
                 }
                 else
@@ -1027,6 +1167,9 @@ namespace PlotagemOpenGL.Hipnograma
 
                     int qt = dtSubGrupo.Rows.Count;
 
+                    int font = CalcularTamanhoFonteIdeal(12, 14);
+                    System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+
                     int espacosub = Math.Abs(pontoZero - topPonto);
                     int locLeg = espacosub / qt;
 
@@ -1035,24 +1178,25 @@ namespace PlotagemOpenGL.Hipnograma
                     foreach (DataRow rw in dtSubGrupo.Rows)
                     {
                         string leg = rw["DescrSubGrupo"].ToString();
+                        SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
+                        // Coordenadas do ponto final
+                        int writeX = 0, writeY = 0;
+                        ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
+
+                        // Calculando o ponto inicial para escrita de trás para frente
+                        float startXdiv = writeX - (tamanhoLi.Width / 2);
+                        if(startXdiv < 0) { startXdiv = 0; }
 
                         gl.Begin(OpenGL.GL_2D);
-                        int writeX = 0;
-                        int writeY = 0;
-                        //plotEventos.ConvertToScreenCoordinates(inicio, 0, out writeX, out writeY);
-                        writeX += 12;
                         writeY = meioleg;
-                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
-                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
-
+                        gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
+                        gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
                         gl.End();
                         gl.Flush();
-
                             meioleg += locLeg;
-                        }
                     }
+                }
             }
-                    
         }
         public static double Normalizar(int input, int pontoZero, int topPonto, double minOutput = 0, double maxOutput = 0.5f)
         {
@@ -1140,16 +1284,24 @@ namespace PlotagemOpenGL.Hipnograma
 
             return tamanhoCalculado;
         }
+
         public static double NormalizarValor(double valor, double minOriginal, double maxOriginal, double minY, double maxY)
         {
             if (maxOriginal == minOriginal) return 0;
 
             if (valor < minOriginal) return minY;
-            if (valor > minOriginal) return maxY;
+            if (valor > maxOriginal) return maxY;
 
             // Aplicando a fórmula de normalização
             return minY + (valor - minOriginal) * (maxY - minY) / (maxOriginal - minOriginal);
         }
-
+        public static SizeF CalcularTamanhoString(string texto, System.Drawing.Font fonte)
+        {
+            using (Bitmap bitmap = new Bitmap(1, 1))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                return g.MeasureString(texto, fonte);
+            }
+        }
     }
 }

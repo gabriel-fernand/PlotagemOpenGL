@@ -429,7 +429,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
         }
         public static float[] ObterComponentesRGB(int formatoRGB)
-        {
+        { 
             string hexa = formatoRGB.ToString("X");
             int hexValue = int.Parse(hexa, System.Globalization.NumberStyles.HexNumber);
 
