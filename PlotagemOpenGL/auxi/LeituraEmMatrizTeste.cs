@@ -851,6 +851,31 @@ namespace PlotagemOpenGL.auxi
             return output;
             
         }
+        public static float[] IntToFloat(int[] input)
+        {
+            float[] output = new float[input.Length];
+
+            for (int i = 0; i < output.Length; i++)
+            {
+                output[i] = (short)input[i];
+            }
+
+            return output;
+
+        }
+        public static int[] FloatToInt(float[] input)
+        {
+            int[] output = new int[input.Length];
+
+            for (int i = 0; i < output.Length; i++)
+            {
+                output[i] = (int)input[i];
+            }
+
+            return output;
+
+        }
+
         public static string CodTipo(int Index)
         {
             string output = "";
