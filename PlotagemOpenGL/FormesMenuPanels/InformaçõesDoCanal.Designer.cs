@@ -805,7 +805,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         public static System.Windows.Forms.TextBox textLegenda;
         public static System.Windows.Forms.ComboBox comboPassaBaixa;
         public static System.Windows.Forms.ComboBox comboAmplitude;
-        public static System.Windows.Forms.ComboBox comboNotch;
+        public static System.Windows.Forms.ComboBox comboNotch;       
         public static System.Windows.Forms.ComboBox comboPassaAlta;
         public static System.Windows.Forms.Label HzNotch;
         public static System.Windows.Forms.Label HzAlta;

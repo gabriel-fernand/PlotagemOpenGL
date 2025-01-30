@@ -2,8 +2,11 @@
 using Accord.Math;
 using Accord.Math.Geometry;
 using Accord.Statistics;
+using Cyotek.Windows.Forms;
+using OpenTK.Compute.OpenCL;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
+using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.Filtros;
 using SharpGL;
 using SharpGL.SceneGraph;
@@ -16,6 +19,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -83,6 +87,7 @@ namespace PlotagemOpenGL.Hipnograma
             formOriginalSize = this.Size;
             recgl = new Rectangle(openglHipno.Location, openglHipno.Size);
             this.Resize += resiz;
+            buttonForm = new ButtonForm();
         }
         private void resize_Control(Control c, Rectangle r)
         {
@@ -109,6 +114,10 @@ namespace PlotagemOpenGL.Hipnograma
 
             MontagemJanela = GlobVar.tbl_JanelaResumoItens.AsEnumerable().Where(row => row.Field<int>("CodJanela") == codJanela).OrderBy(row => row.Field<int>("Ordem")).CopyToDataTable();
             //MontagemJanela.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem"));
+            reajustaPorc();
+        }
+        public static void reajustaPorc()
+        {
             porc = new float[MontagemJanela.Rows.Count];
             int i = 0;
             float totalPorc = 0;
@@ -137,6 +146,7 @@ namespace PlotagemOpenGL.Hipnograma
                 rw["Porc"] = porc[i];
                 i++;
             }
+
         }
         public static void PreparaOsArrays()
         {
@@ -557,12 +567,9 @@ namespace PlotagemOpenGL.Hipnograma
             gl.LoadIdentity();
             gl.Translate(0, 0, 1);
             gl.PointSize(1.0f);
-            gl.Color(0.0f, 0.0f, 0.0f);
+            gl.Color(0.5f, 0.5f, 0.5f);
             gl.Scale(1, 1, 1);
 
-            gl.Color(0.1f, 0.1f, 0.1f);
-
-            gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
 
             //----------
             gl.Begin(OpenGL.GL_LINE_STRIP);
@@ -579,6 +586,8 @@ namespace PlotagemOpenGL.Hipnograma
             int ant = MontagemJanela.Rows.Count;
             for (int i = 0; i < MontagemJanela.Rows.Count; i++)
             {
+                gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+
                 porcent -= (int)(espacox * (porc[i] / 100));
                 pontoZero[i] = porcent;
                 pontoTop[i] = topPorcent;
@@ -588,6 +597,7 @@ namespace PlotagemOpenGL.Hipnograma
                 gl.End();
                 gl.Flush();
                 ant--;
+                gl.Color(0.0f, 0.0f, 0.0f);
 
                 legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), margem, (int)Porcentagem);
 
@@ -610,7 +620,9 @@ namespace PlotagemOpenGL.Hipnograma
             int locLeg;
             int tanhamorisco;
             int index;
-
+            float[] Cor;
+            int eusla;
+            int cadEvent;
             switch (codGrupo)
             {
                 // ------- Do tipo Evento --------
@@ -633,20 +645,46 @@ namespace PlotagemOpenGL.Hipnograma
                     // Começa no ponto inicial
                     int locrisc = pontoZero + locLeg / 2;
                     index = 0;
+                    var rwr = MontagemJanela.AsEnumerable()
+                                             .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
+                    if (rwr["CorGrafico"] != DBNull.Value) 
+                    {
+                        if (Convert.ToInt32(rwr["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }else
+                        {
+                            eusla = 1;
+                        } 
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+                    
                     foreach (DataRow rw in dtSubGrupo.Rows)
                     {
+                        cadEvent = Convert.ToInt32(rw["Evento"]);
+                        var aoi = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") ==  cadEvent);
+
                         // Desenha as riscas correspondentes
                         for (int j = xStart; j < xEnd; j++)
                         {
                             if (eventosResp[j - xStart, index] != 0) // Verifica se há evento
                             {
-                                gl.Color(0, 0, 0); // Define a cor da linha
+                                if(eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoi["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
+
                                 gl.Begin(OpenGL.GL_LINES); // Use GL_LINES para linhas simples
                                 gl.Vertex(j, locrisc - tanhamorisco / 2); // Linha começa um pouco acima do texto
                                 gl.Vertex(j, locrisc + tanhamorisco / 2); // Linha termina um pouco abaixo do texto
                                 gl.End();
                                 gl.Flush();
+                                gl.Color(0, 0, 0); // Define a cor da linha
+
                             }
                         }
                         // Move para a próxima legenda
@@ -666,7 +704,25 @@ namespace PlotagemOpenGL.Hipnograma
 
                     locLeg = tamanho / qt;
                     tanhamorisco = (int)(locLeg * 0.8f);
+                    var rwd = MontagemJanela.AsEnumerable()
+                         .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
+                    if (rwd["CorGrafico"] != DBNull.Value)
+                    {
+                        if (Convert.ToInt32(rwd["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }
+                        else
+                        {
+                            eusla = 1;
+                        }
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+                    var aodes = dtSubGrupo.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodGrupo") == codGrupo);
+                    cadEvent = Convert.ToInt32(aodes["Evento"]);
+                    var aoid = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
 
                     for (int i = 0; i < qt; i++)
                     {
@@ -676,12 +732,19 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             if (Despertar[index] != 0)
                             {
-                                gl.Color(0, 0, 0);
+                                if (eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoid["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
+
                                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                                 gl.Vertex(j, pontoZero + tanhamorisco);
                                 gl.Vertex(j, topPonto - tanhamorisco);
                                 gl.End();
                                 gl.Flush();
+                                gl.Color(0, 0, 0); // Define a cor da linha
 
                             }
                             else
@@ -710,6 +773,25 @@ namespace PlotagemOpenGL.Hipnograma
                     locLeg = tamanho / qt;
                     tanhamorisco = (int)(locLeg * 0.8f);
 
+                    var rwp = MontagemJanela.AsEnumerable()
+                                         .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                    if (rwp["CorGrafico"] != DBNull.Value)
+                    {
+                        if (Convert.ToInt32(rwp["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }
+                        else
+                        {
+                            eusla = 1;
+                        }
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+                    var aoplm = dtSubGrupo.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodGrupo") == codGrupo);
+                    cadEvent = Convert.ToInt32(aoplm["Evento"]);
+                    var aoip = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
 
                     for (int i = 0; i < qt; i++)
                     {
@@ -719,13 +801,19 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             if (plm[index] != 0)
                             {
-                                gl.Color(0, 0, 0);
+                                if (eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoip["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
+
                                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                                 gl.Vertex(j, pontoZero + tanhamorisco);
                                 gl.Vertex(j, topPonto - tanhamorisco);
                                 gl.End();
                                 gl.Flush();
-
+                                gl.Color(0, 0, 0);
                             }
                             else
                             {
@@ -748,6 +836,25 @@ namespace PlotagemOpenGL.Hipnograma
 
                     locLeg = tamanho / qt;
                     tanhamorisco = (int)(locLeg * 0.8f);
+                    var rwronc = MontagemJanela.AsEnumerable()
+                     .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                    if (rwronc["CorGrafico"] != DBNull.Value)
+                    {
+                        if (Convert.ToInt32(rwronc["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }
+                        else
+                        {
+                            eusla = 1;
+                        }
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+                    var aornc = dtSubGrupo.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodGrupo") == codGrupo);
+                    cadEvent = Convert.ToInt32(aornc["Evento"]);
+                    var aorr = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
 
 
                     for (int i = 0; i < qt; i++)
@@ -758,13 +865,18 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             if (ronco[index] != 0)
                             {
-                                gl.Color(0, 0, 0);
+                                if (eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aorr["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
                                 gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                                 gl.Vertex(j, pontoZero + tanhamorisco);
                                 gl.Vertex(j, topPonto - tanhamorisco);
                                 gl.End();
                                 gl.Flush();
-
+                                gl.Color(0, 0, 0);
                             }
                             else
                             {
@@ -786,39 +898,77 @@ namespace PlotagemOpenGL.Hipnograma
                 case 6:
                     SA02Strip.Checked = true;
                     SA02Strip.Tag = 6;
-                    var rows = GlobVar.tbl_JanelaResumoItens.AsEnumerable()
+                    var rows = MontagemJanela.AsEnumerable()
                                 .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+                    if (rows["CorGrafico"] != DBNull.Value)
+                    {
+                        Cor = new float[3];
+                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rows["CorGrafico"]));
+                        gl.Color(Cor[0], Cor[1], Cor[2]);
+                    }
+                    else
+                    {
+                        gl.Color(0, 0, 0);
+                    }
 
-                    gl.Color( 0, 0, 0);
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     int sasa = 0;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = NormalizarValor(SA02[sasa], Convert.ToInt16(rows["LI"]), Convert.ToInt16(rows["LS"]), pontoZero, topPonto);
-                        gl.Vertex(i, quasi);
-                        sasa++;
+                        if (NaomostrarQuedasZero.Checked && SA02[sasa] <= Convert.ToInt32(rows["LI"]))
+                        {
+                            sasa++;
+                            i++;
+                        }
+                        else
+                        {
+                            quasi = NormalizarValor(SA02[sasa], Convert.ToInt16(rows["LI"]), Convert.ToInt16(rows["LS"]), pontoZero, topPonto);
+                            gl.Vertex(i, quasi);
+                            sasa++;
+                        }
                     }
                     gl.End();
                     gl.Flush();
+                    gl.Color(0, 0, 0);
+
                     break;
                 // Freq Card
                 case 12:
                     FreqCardStrip.Checked = true;
                     FreqCardStrip.Tag = 12;
-                    var rowf = GlobVar.tbl_JanelaResumoItens.AsEnumerable()
+                    var rowf = MontagemJanela.AsEnumerable()
                                 .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
-                    gl.Color(0, 0, 0);
+                    if (rowf["CorGrafico"] != DBNull.Value)
+                    {
+                        Cor = new float[3];
+                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowf["CorGrafico"]));
+                        gl.Color(Cor[0], Cor[1], Cor[2]);
+                    }
+                    else
+                    {
+                        gl.Color(0, 0, 0);
+                    }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     int feq = 0;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = NormalizarValor(FreqCard[feq], Convert.ToInt16(rowf["LI"]), Convert.ToInt16(rowf["LS"]), pontoZero, topPonto);
-                        gl.Vertex(i, quasi);
-                        feq++;
+                        if (NaomostrarQuedasZero.Checked && FreqCard[feq] <= Convert.ToInt32(rowf["LI"]))
+                        {
+                            feq++;
+                            i++;
+                        }
+                        else
+                        {
+                            quasi = NormalizarValor(FreqCard[feq], Convert.ToInt16(rowf["LI"]), Convert.ToInt16(rowf["LS"]), pontoZero, topPonto);
+                            gl.Vertex(i, quasi);
+                            feq++;
+                        }
                     }
                     gl.End();
                     gl.Flush();
+                    gl.Color(0, 0, 0);
+
                     break;
                 // Microfone
                 case 19:
@@ -831,8 +981,19 @@ namespace PlotagemOpenGL.Hipnograma
                     int codcanal = 5;
                     int codindex = GlobVar.codSelected.IndexOf(codcanal);
                     double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
+                    var rowm = MontagemJanela.AsEnumerable()
+                                .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
-                    gl.Color(0, 0, 0);
+                    if (rowm["CorGrafico"] != DBNull.Value)
+                    {
+                        Cor = new float[3];
+                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowm["CorGrafico"]));
+                        gl.Color(Cor[0], Cor[1], Cor[2]);
+                    }
+                    else
+                    {
+                        gl.Color(0, 0, 0);
+                    }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
                     int micmic = 0;
                     for (int i = xStart; i < xEnd; i++)
@@ -843,6 +1004,7 @@ namespace PlotagemOpenGL.Hipnograma
                     }
                     gl.End();
                     gl.Flush();
+                    gl.Color(0, 0, 0);
 
                     break;
 
@@ -1137,7 +1299,13 @@ namespace PlotagemOpenGL.Hipnograma
                 if (MarcaDAgua.Checked)
                 {
                     int locmarc = (int)(endX / 2);
+                    int font = CalcularTamanhoFonteIdeal(13, 15);
+                    int fontalo = font - 2;
+                    System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+
                     ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                    SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                    writeX = (int)(writeX - (tamanhoDiv.Width / 4));
 
                     gl.Begin(OpenGL.GL_2D);
 
@@ -1193,9 +1361,14 @@ namespace PlotagemOpenGL.Hipnograma
                         int writeX = 0;
                         int writeY = 0;
 
+                        int font = CalcularTamanhoFonteIdeal(13, 15);
+                        int fontalo = font - 2;
+                        System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+
                         int locmarc = (int)(endX / 2);
                         ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
-
+                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
                         gl.Begin(OpenGL.GL_2D);
 
                         gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
@@ -1259,8 +1432,14 @@ namespace PlotagemOpenGL.Hipnograma
                         int writeX = 0;
                         int writeY = 0;
 
+                        font = CalcularTamanhoFonteIdeal(13, 15);
+                        int fontalo = font - 2;
+                        fonte = new System.Drawing.Font("Arial Narrow", font);
+
                         int locmarc = (int)(endX / 2);
                         ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
 
                         gl.Begin(OpenGL.GL_2D);
 
@@ -1316,8 +1495,14 @@ namespace PlotagemOpenGL.Hipnograma
                         int writeX = 0;
                         int writeY = 0;
 
+                        font = CalcularTamanhoFonteIdeal(13, 15);
+                        int fontalo = font - 2;
+                        fonte = new System.Drawing.Font("Arial Narrow", font);
+
                         int locmarc = (int)(endX / 2);
                         ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
 
                         gl.Begin(OpenGL.GL_2D);
 
@@ -1421,8 +1606,10 @@ namespace PlotagemOpenGL.Hipnograma
         {
             if (maxOriginal == minOriginal) return 0;
 
-            if (valor < minOriginal) return minY;
-            if (valor > maxOriginal) return maxY;
+            if (valor < minOriginal) 
+                return minY;
+            if (valor > maxOriginal) 
+                return maxY;
 
             // Aplicando a fórmula de normalização
             return minY + (valor - minOriginal) * (maxY - minY) / (maxOriginal - minOriginal);
@@ -1492,17 +1679,868 @@ namespace PlotagemOpenGL.Hipnograma
             openGLX = (float)objX;
             openGLY = (float)objY;
         }
-
         private void ContextMenuStripOpenGl_Opening(object sender, CancelEventArgs e)
         {
             try
             {
                 //Toda vez que o context e aberto, ele "da um clear nos itens que ele tem e altera com base no que ele vai fazer"
-                //contextMenuStripHipno.Items.Clear();
+                contextMenuStripHipno.Items.Clear();
+
+                if(codJanela == 6 || codJanela == 12)
+                {
+                    contextMenuStripHipno.Items.AddRange(new ToolStripItem[] { Imprimir,
+                                                        separador, BruxismoStrip, CardioStrip, CO2_ExalStrip, CPAPStrip, cpapVazStrip, DespertarStrip, estagioStrip, FreqCardStrip, horarioStrip, MicrofoneStrip
+                                                      , MovimentodePernaStrip, posicaoStip, eventosRespStrip, roncoStip, SA02Strip, separador1
+                                                      , NaomostrarQuedasZero, ConsBnBd, LinhasHorarios, CorGraf, MarcaDAgua
+                                                      , separador2, LimSup, LimInf, LinInt, DivLeg});
+                }
+                else
+                {
+                    contextMenuStripHipno.Items.AddRange(new ToolStripItem[] { Imprimir,
+                                                        separador, BruxismoStrip, CardioStrip, CO2_ExalStrip, CPAPStrip, cpapVazStrip, DespertarStrip, estagioStrip, FreqCardStrip, horarioStrip, MicrofoneStrip
+                                                      , MovimentodePernaStrip, posicaoStip, eventosRespStrip, roncoStip, SA02Strip, separador1,
+                                                        NaomostrarQuedasZero, ConsBnBd, LinhasHorarios, CorGraf, MarcaDAgua});
+                }
 
             }
             catch { }
 
+        }
+
+        private void lmSup_Click(object sender, EventArgs e)
+        {
+            // Verifica se a DataTable existe
+            if (MontagemJanela == null || MontagemJanela.Rows.Count == 0)
+            {
+                MessageBox.Show("Tabela vazia ou não inicializada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Busca a linha onde CodGrupo é igual a codJanela
+            DataRow[] foundRows = MontagemJanela.Select($"CodGrupo = {codJanela}");
+
+            if (foundRows.Length > 0)
+            {
+                DataRow row = foundRows[0]; // Assume que há apenas uma linha correspondente
+
+                // Pega o valor atual da coluna LS
+                string valorAtual = row["LS"].ToString();
+
+                // Abre um input para entrada do novo valor
+                string novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Digite o novo Limite Superior:",
+                    "Alterar Limite Superior",
+                    valorAtual);
+
+                // Verifica se o usuário digitou algo
+                if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) <= 100 && Convert.ToInt32(novoValor) > Convert.ToInt32(row["LI"]))
+                {
+                    row["LS"] = novoValor; // Atualiza o valor na DataTable
+                    Desenha();
+                }
+                else
+                {
+                    MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhuma linha encontrada para o CodGrupo especificado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        private void lmInf_Click(object sender, EventArgs e)
+        {
+            // Verifica se a DataTable existe
+            if (MontagemJanela == null || MontagemJanela.Rows.Count == 0)
+            {
+                MessageBox.Show("Tabela vazia ou não inicializada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Busca a linha onde CodGrupo é igual a codJanela
+            DataRow[] foundRows = MontagemJanela.Select($"CodGrupo = {codJanela}");
+
+            if (foundRows.Length > 0)
+            {
+                DataRow row = foundRows[0]; // Assume que há apenas uma linha correspondente
+
+                // Pega o valor atual da coluna LS
+                string valorAtual = row["LI"].ToString();
+
+                // Abre um input para entrada do novo valor
+                string novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Digite o novo Limite Inferior:",
+                    "Alterar Limite Inferior",
+                    valorAtual);
+
+                // Verifica se o usuário digitou algo
+                if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) < Convert.ToInt32(row["LS"]))
+                {
+                    row["LI"] = novoValor; // Atualiza o valor na DataTable
+                    Desenha();
+                }
+                else
+                {
+                    MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhuma linha encontrada para o CodGrupo especificado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        private void LinhasInternas_Click(object sender, EventArgs e)
+        {
+            // Verifica se a DataTable existe
+            if (MontagemJanela == null || MontagemJanela.Rows.Count == 0)
+            {
+                MessageBox.Show("Tabela vazia ou não inicializada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Busca a linha onde CodGrupo é igual a codJanela
+            DataRow[] foundRows = MontagemJanela.Select($"CodGrupo = {codJanela}");
+
+            if (foundRows.Length > 0)
+            {
+                DataRow row = foundRows[0]; // Assume que há apenas uma linha correspondente
+
+                // Pega o valor atual da coluna LS
+                string valorAtual = row["LinhasInternas"].ToString();
+
+                // Abre um input para entrada do novo valor
+                string novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Digite o novo valor de Linhas Internas:",
+                    "Alterar Linhas Internas",
+                    valorAtual);
+
+                // Verifica se o usuário digitou algo
+                if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) >= 0)
+                {
+                    row["LinhasInternas"] = novoValor; // Atualiza o valor na DataTable
+                    Desenha();
+                }
+                else
+                {
+                    MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhuma linha encontrada para o CodGrupo especificado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        private void DivLegenda_Click(object sender, EventArgs e)
+        {
+            // Verifica se a DataTable existe
+            if (MontagemJanela == null || MontagemJanela.Rows.Count == 0)
+            {
+                MessageBox.Show("Tabela vazia ou não inicializada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Busca a linha onde CodGrupo é igual a codJanela
+            DataRow[] foundRows = MontagemJanela.Select($"CodGrupo = {codJanela}");
+
+            if (foundRows.Length > 0)
+            {
+                DataRow row = foundRows[0]; // Assume que há apenas uma linha correspondente
+
+                // Pega o valor atual da coluna LS
+                string valorAtual = row["DivisoesLegendas"].ToString();
+
+                // Abre um input para entrada do novo valor
+                string novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Digite o novo valor de Linhas Internas:",
+                    "Alterar Linhas Internas",
+                    valorAtual);
+
+                // Verifica se o usuário digitou algo
+                if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) >= 0)
+                {
+                    row["DivisoesLegendas"] = novoValor; // Atualiza o valor na DataTable
+                    Desenha();
+                }
+                else
+                {
+                    MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhuma linha encontrada para o CodGrupo especificado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        private ButtonForm buttonForm;
+        private void CorSinal_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(codJanela == 1 || codJanela == 3 || codJanela == 4 || codJanela == 5 || codJanela == 10 || codJanela == 40) 
+                {
+                    var rowNumerico = MontagemJanela.AsEnumerable()
+                                    .FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
+
+                    if (rowNumerico != null)
+                    {
+                        var titi = GlobVar.tbl_HipnoGrupos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
+                        string titulo = titi["DescrGrupo"].ToString();
+                        int valorAtual;
+                        if (rowNumerico["CorGrafico"] == DBNull.Value)
+                        {
+                            valorAtual = 0;
+                        }
+                        else
+                        {
+                            if (Convert.ToInt32(rowNumerico["CorGrafico"]) == 0)
+                            {
+                                valorAtual = 0;
+                            }
+                            else
+                            {
+                                valorAtual = 1;
+                            }
+                        }
+
+                        using (MiniFormCor miniForm = new MiniFormCor(titulo, valorAtual))
+                        {
+                            if (miniForm.ShowDialog() == DialogResult.OK)
+                            {
+                                rowNumerico["CorGrafico"] = miniForm.Resultado;
+                                MontagemJanela.AcceptChanges();
+                                Desenha();
+                            }
+                        }
+                    }
+                }
+                else{
+                    var rowNumerico = MontagemJanela.AsEnumerable()
+                                                .FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
+
+                    System.Drawing.Color c = System.Drawing.Color.Black;
+                    buttonForm.HideOverlay();
+                    ColorPickerDialog minhasCores = new ColorPickerDialog();
+                        if (minhasCores.ShowDialog() == DialogResult.OK)
+                        {
+                            c = minhasCores.Color;
+                            int cor = c.R | (c.G << 8) | (c.B << 16);
+                            rowNumerico["CorGrafico"] = cor;
+
+                            MontagemJanela.AcceptChanges();
+                            Desenha();
+                        }
+                }
+            }
+            catch { }
+        }
+        public bool VerificaDados(int codGrupo)
+        {
+            try
+            {
+                switch (codGrupo)
+                {
+                    // ------- Do tipo Evento --------
+                    case 1:  // Respiratório
+                        return eventosResp != null;
+
+                    case 3:  // Despertar
+                        return Despertar != null;
+
+                    case 4:  // Cardio
+                        CardioStrip.Checked = true;
+                        CardioStrip.Tag = 4;
+                        return false;
+
+                    case 5:  // PLM
+                        return plm != null;
+
+                    case 10: // Ronco
+                        return ronco != null;
+
+                    case 40: // Bruxismo
+                        BruxismoStrip.Checked = true;
+                        BruxismoStrip.Tag = 40;
+                        return false;
+
+                    // ------- Sinais gráficos -------
+                    case 6:  // SA02
+                        return SA02 != null;
+
+                    case 12: // Freq Card
+                        return FreqCard != null;
+
+                    case 19: // Microfone
+                        return Microfone != null;
+
+                    // ------- Posi / Estágio -------
+                    case 7:  // Posição
+                        return posicao != null;
+
+                    case 9:  // Estágios
+                        return estagio != null;
+
+                    case 21: // Horário
+                        horarioStrip.Checked = true;
+                        horarioStrip.Tag = 21;
+                        return horarioStrip.Checked;
+
+                    default:
+                        return false; // Retorno padrão para valores não mapeados
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro em VerificaDados: {ex.Message}");
+                return false;
+            }
+        }
+        public static void AdicionaOsDadosCasoNullo(int codGrupo)
+        {
+            int tamanho = GlobVar.matrizCanal.GetLength(1) / GlobVar.namos;
+            int codcanal;
+            int codindex;
+            int[] media;
+            int rw = 0;
+            int h;
+            DataTable subGrupos = new DataTable();
+
+            switch (codGrupo)
+            {
+                // ------- Do tipo Evento --------
+                // Respiratorio
+                case 1:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .OrderByDescending(row => row.Field<int>("Evento"))
+                                .CopyToDataTable();
+
+
+                    eventosResp = new int[tamanho, subGrupos.Rows.Count];
+
+                    // Preenche a matriz com zeros
+                    for (int i = 0; i < tamanho; i++)
+                    {
+                        for (int j = 0; j < subGrupos.Rows.Count; j++)
+                        {
+                            eventosResp[i, j] = 0;
+                        }
+                    }
+
+                    rw = 0;
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            DataTable EventosSub;
+
+                            // Verifica se há resultados antes de chamar CopyToDataTable
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            if (query.Any())
+                            {
+                                EventosSub = query.CopyToDataTable();
+                            }
+                            else
+                            {
+                                EventosSub = new DataTable(); // DataTable vazio
+                            }
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    eventosResp[Convert.ToInt32(eventRow["NumPag"]), rw] = 1;
+                                }
+                            }
+
+                            rw++;
+                        }
+                    }
+
+                    subGrupos.Dispose();
+                    break;
+                // Despertar
+                case 3:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .CopyToDataTable();
+                    subGrupos.AsEnumerable().OrderBy(row => row.Field<int>("CodSubGrupo"));
+
+                    Despertar = new int[tamanho];
+                    Array.Clear(Despertar, 0, Despertar.Length);
+
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            DataTable EventosSub = query.Any() ? query.CopyToDataTable() : new DataTable();
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    int index = Convert.ToInt32(eventRow["NumPag"]);
+                                    Despertar[index] = 1;
+                                }
+                            }
+                        }
+                    }
+                    subGrupos.Dispose();
+                    break;
+                // Cardio
+                case 4:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .CopyToDataTable();
+                    subGrupos.AsEnumerable().OrderBy(row => row.Field<int>("CodSubGrupo"));
+
+                    Cardio = new int[tamanho, subGrupos.Rows.Count];
+                    for (int i = 0; i < tamanho; i++)
+                    {
+                        for (int j = 0; j < subGrupos.Rows.Count; j++)
+                        {
+                            Cardio[i, j] = 0;
+                        }
+                    }
+
+                    rw = 0;
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            DataTable EventosSub = query.Any() ? query.CopyToDataTable() : new DataTable();
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    Cardio[Convert.ToInt32(eventRow["NumPag"]), rw] = 1;
+                                }
+                            }
+                            rw++;
+                        }
+                    }
+                    subGrupos.Dispose();
+                    break;
+                // PLM
+                case 5:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .CopyToDataTable();
+                    subGrupos.AsEnumerable().OrderBy(row => row.Field<int>("CodSubGrupo"));
+
+                    plm = new int[tamanho];
+                    Array.Clear(plm, 0, plm.Length);
+
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            DataTable EventosSub = query.Any() ? query.CopyToDataTable() : new DataTable();
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    plm[Convert.ToInt32(eventRow["NumPag"])] = 1;
+                                }
+                            }
+                        }
+                    }
+                    subGrupos.Dispose();
+                    break;
+                // Ronco
+                case 10:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .CopyToDataTable();
+                    subGrupos.AsEnumerable().OrderBy(row => row.Field<int>("CodSubGrupo"));
+
+                    ronco = new int[tamanho];
+                    Array.Clear(ronco, 0, ronco.Length);
+
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            DataTable EventosSub = query.Any() ? query.CopyToDataTable() : new DataTable();
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    ronco[Convert.ToInt32(eventRow["NumPag"])] = 1;
+                                }
+                            }
+                        }
+                    }
+                    subGrupos.Dispose();
+                    break;
+                // Bruxismo
+                case 40:
+                    subGrupos = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .CopyToDataTable();
+                    subGrupos.AsEnumerable().OrderBy(row => row.Field<int>("CodSubGrupo"));
+
+                    Bruxismo = new int[tamanho, subGrupos.Rows.Count];
+                    for (int i = 0; i < tamanho; i++)
+                    {
+                        for (int j = 0; j < subGrupos.Rows.Count; j++)
+                        {
+                            Bruxismo[i, j] = 0;
+                        }
+                    }
+
+                    rw = 0;
+                    if (subGrupos != null && subGrupos.Rows.Count > 0)
+                    {
+                        foreach (DataRow subRow in subGrupos.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(subRow["Evento"]);
+                            var query = GlobVar.eventos.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            DataTable EventosSub = query.Any() ? query.CopyToDataTable() : new DataTable();
+
+                            if (EventosSub.Rows.Count > 0)
+                            {
+                                foreach (DataRow eventRow in EventosSub.Rows)
+                                {
+                                    Bruxismo[Convert.ToInt32(eventRow["NumPag"]), rw] = 1;
+                                }
+                            }
+                            rw++;
+                        }
+                    }
+                    subGrupos.Dispose();
+                    break;
+
+                // ------- Sinais graafio -------
+                // SA02
+                case 6:
+                    SA02 = new int[tamanho];
+                    codcanal = 66;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+                    // Verifica se o índice existe
+                    if (codindex >= 0 && codindex < GlobVar.grafSelected.Length)
+                    {
+                        // Loop para acumular valores
+                        h = 0;
+                        for (int g = 0; g < GlobVar.matrizCanal.GetLength(1); g += GlobVar.namosNumerico)
+                        {
+                            if (h < tamanho)
+                            {
+                                // Acumula os valores correspondentes
+                                SA02[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                            }
+                            h++;
+                        }
+                    }
+                    break;
+                // Freq Card
+                case 12:
+                    FreqCard = new int[tamanho];
+                    codcanal = 67;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+
+                    h = 0;
+                    for (int g = 0; g < GlobVar.matrizCanal.GetLength(1);)
+                    {
+                        if (h < tamanho)
+                        {
+                            FreqCard[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                        }
+                        h++;
+                        g += GlobVar.namosNumerico;
+                    }
+                    break;
+                // Microfone
+                case 19:
+                    Microfone = new int[tamanho];
+                    codcanal = 5;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+                    media = new int[GlobVar.namos];
+                    // Aplica o filtro band-pass nos dados
+                    //float[] linhaFiltrada = LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
+                    float[] linhaFiltrada = BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
+                    //linhaFiltrada = PaissaBaixa.ApplyFilter(linhaFiltrada, 40f, 1);
+
+                    double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
+                    h = 0; // Índice para o array Microfone
+                    for (int g = 0; g < GlobVar.matrizCanal.GetLength(1);)
+                    {
+                        for (int a = 0; a < media.Length && g < GlobVar.matrizCanal.GetLength(1); a++)
+                        {
+                            // Garante que não ultrapasse os limites da matriz
+                            int valor = (int)(linhaFiltrada[g]);
+
+                            // Trata o caso de int.MinValue
+                            if (valor == int.MinValue)
+                            {
+                                media[a] = int.MaxValue; // Substitui por int.MaxValue ou outro valor adequado
+                            }
+                            else
+                            {
+                                media[a] = Math.Abs(valor);
+                            }
+                            g++;
+                        }
+
+                        // Verifica se existem valores válidos em 'media' antes de calcular a mediana
+                        if (media.Length > 0)
+                        {
+                            Microfone[h] = Convert.ToInt32(media.Median());
+                        }
+                        h++;
+                    }
+                    //Microfone = LeituraEmMatrizTeste.FloatToInt(BandPass.ApplyFilter(LeituraEmMatrizTeste.IntToFloat(Microfone), 40f, 120f, 1));
+
+                    break;
+
+                // ------- Posi / Estagio -------
+                // Posicao
+                case 7:
+                    posicao = new int[tamanho];
+                    codcanal = 14;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+
+                    h = 0;
+                    for (int g = 0; g < GlobVar.matrizCanal.GetLength(1);)
+                    {
+                        if (h < tamanho)
+                        {
+                            posicao[h] += (GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g] * -1);
+                        }
+                        h++;
+                        g += GlobVar.namosNumerico;
+                    }
+                    for (int aq = 0; aq < posicao.Length; aq++)
+                    {
+                        if (posicao[aq] >= (GlobVar.PosCima - GlobVar.PosIncremento) && posicao[aq] <= (GlobVar.PosCima + GlobVar.PosIncremento)) // CIMA
+                        {
+                            posicao[aq] = 3;
+                        }
+                        else if (posicao[aq] >= (GlobVar.PosDireita - GlobVar.PosIncremento) && posicao[aq] <= (GlobVar.PosDireita + GlobVar.PosIncremento)) // DIREITA
+                        {
+                            posicao[aq] = 2;
+                        }
+                        else if (posicao[aq] >= (GlobVar.PosEsquerda - GlobVar.PosIncremento) && posicao[aq] <= (GlobVar.PosEsquerda + GlobVar.PosIncremento)) // ESQUERDA
+                        {
+                            posicao[aq] = 1;
+                        }
+                        else if (posicao[aq] >= (GlobVar.PosBaixo - GlobVar.PosIncremento) && posicao[aq] <= (GlobVar.PosBaixo + GlobVar.PosIncremento)) //BAIXO
+                        {
+                            posicao[aq] = 0;
+                        }
+                        else
+                        {
+                            posicao[aq] = 3;
+                        }
+                    }
+                    break;
+                // Estagios
+                case 9:
+                    estagio = new int[tamanho];
+
+                    h = 0;
+                    foreach (DataRow rowEstagio in GlobVar.tbl_Paginas.Rows)
+                    {
+                        if (h < tamanho)
+                        {
+                            estagio[h] = Convert.ToInt32(rowEstagio["Estagio"]);
+                        }
+                        h++;
+                    }
+                    break;
+
+                // Horario
+                case 21:
+                    Horario = true;
+
+                    // Chama o método para filtrar horários completos
+                    DataTable horario = FiltrarHorariosCompletos(GlobVar.tbl_Paginas);
+
+                    // Agora o DataTable 'horario' contém apenas as linhas com horários completos
+                    break;
+            }
+
+        }
+        public void ClicaMostraGraf(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem)
+            {
+                if(menuItem.Tag != null)
+                {
+                    if (!menuItem.Checked)
+                    {
+                        int tag = Convert.ToInt32(menuItem.Tag);
+                        bool temograf = MontagemJanela.AsEnumerable().Any(row => row.Field<int>("CodGrupo") == tag);
+                        if (temograf)
+                        {
+                            // Encontra a linha correspondente
+                            DataRow rowParaRemover = MontagemJanela.AsEnumerable()
+                                                                   .FirstOrDefault(row => row.Field<int>("CodGrupo") == tag);
+
+                            if (rowParaRemover != null)
+                            {
+                                MontagemJanela.Rows.Remove(rowParaRemover); // Remove a linha
+                                reajustaPorc();
+                                Desenha();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int tag = Convert.ToInt32(menuItem.Tag);
+                        if (VerificaDados(tag))
+                        {
+                            // Criar uma nova linha no DataTable
+                            DataRow novaLinha = MontagemJanela.NewRow();
+
+                            // Preencher os valores conforme solicitado
+                            novaLinha["CodJanela"] = 2;
+                            novaLinha["CodGrupo"] = tag;
+
+                            int ultimaLinhaIndex = MontagemJanela.Rows.Count - 1;
+
+                            if (ultimaLinhaIndex >= 0) // Garante que há pelo menos uma linha no DataTable
+                            {
+                                int codUltimaLinha = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["CodGrupo"]);
+
+                                if (codUltimaLinha == 21)
+                                {
+                                    // Define a nova linha com a mesma ordem da última linha
+                                    novaLinha["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]);
+
+                                    // Atualiza a última linha, incrementando a ordem
+                                    MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]) + 1;
+
+                                }
+                                else
+                                {
+                                    // Se não for 21, apenas incrementa a ordem
+                                    novaLinha["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]) + 1;
+                                }
+                            }
+                            else
+                            {
+                                // Se for a primeira linha, define a ordem como 1
+                                novaLinha["Ordem"] = 1;
+                            }
+
+                            novaLinha["Porc"] = 7.50;
+
+                            int li = 0;
+                            if(tag == 6) { li = 80; }
+                            else if (tag == 12) { li = 40; }
+                            else { li = 0; }
+                            novaLinha["LI"] = li;
+
+                            int ls = 10;
+                            if (tag == 6 || tag == 12) { ls = 100; }
+                            else { ls = 0; }
+                            novaLinha["LS"] = ls;
+
+                            novaLinha["LinhasInternas"] = 0;
+                            novaLinha["DivisoesLegendas"] = 0;
+                            novaLinha["CorGrafico"] = 0;
+
+                            // Adicionar a nova linha ao DataTable
+                            MontagemJanela.Rows.Add(novaLinha);
+                            // Reordena o DataTable manualmente
+                            DataView dv = MontagemJanela.DefaultView;
+                            dv.Sort = "Ordem ASC"; // Ordena pela coluna "Ordem"
+                            MontagemJanela = dv.ToTable(); // Cria um novo DataTable ordenado
+
+                            reajustaPorc();
+                            Desenha();
+                        }
+                        else
+                        {
+                            AdicionaOsDadosCasoNullo(tag);
+                            // Criar uma nova linha no DataTable
+                            DataRow novaLinha = MontagemJanela.NewRow();
+
+                            // Preencher os valores conforme solicitado
+                            novaLinha["CodJanela"] = 2;
+                            novaLinha["CodGrupo"] = tag;
+
+                            int ultimaLinhaIndex = MontagemJanela.Rows.Count - 1;
+
+                            if (ultimaLinhaIndex >= 0) // Garante que há pelo menos uma linha no DataTable
+                            {
+                                int codUltimaLinha = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["CodGrupo"]);
+
+                                if (codUltimaLinha == 21)
+                                {
+                                    // Define a nova linha com a mesma ordem da última linha
+                                    novaLinha["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]);
+
+                                    // Atualiza a última linha, incrementando a ordem
+                                    MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]) + 1;
+
+                                }
+                                else
+                                {
+                                    // Se não for 21, apenas incrementa a ordem
+                                    novaLinha["Ordem"] = Convert.ToInt32(MontagemJanela.Rows[ultimaLinhaIndex]["Ordem"]) + 1;
+                                }
+                            }
+                            else
+                            {
+                                // Se for a primeira linha, define a ordem como 1
+                                novaLinha["Ordem"] = 1;
+                            }
+
+                            novaLinha["Porc"] = 7.50;
+
+                            int li = 0;
+                            if (tag == 6) { li = 80; }
+                            else if (tag == 12) { li = 40; }
+                            else { li = 0; }
+                            novaLinha["LI"] = li;
+
+                            int ls = 10;
+                            if (tag == 6 || tag == 12) { ls = 100; }
+                            else { ls = 0; }
+                            novaLinha["LS"] = ls;
+
+                            novaLinha["LinhasInternas"] = 0;
+                            novaLinha["DivisoesLegendas"] = 0;
+                            novaLinha["CorGrafico"] = 0;
+
+                            // Adicionar a nova linha ao DataTable
+                            MontagemJanela.Rows.Add(novaLinha);
+                            // Reordena o DataTable manualmente
+                            DataView dv = MontagemJanela.DefaultView;
+                            dv.Sort = "Ordem ASC"; // Ordena pela coluna "Ordem"
+                            MontagemJanela = dv.ToTable(); // Cria um novo DataTable ordenado
+
+                            reajustaPorc();
+                            Desenha();
+                        }
+                    }
+                }
+            }
         }
     }
 }
