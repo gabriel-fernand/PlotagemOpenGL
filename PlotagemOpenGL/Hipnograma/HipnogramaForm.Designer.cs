@@ -27,7 +27,7 @@ namespace PlotagemOpenGL.Hipnograma
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
+        /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -79,6 +79,8 @@ namespace PlotagemOpenGL.Hipnograma
             openglHipno.TabIndex = 0;
             openglHipno.ContextMenuStrip = contextMenuStripHipno;
             openglHipno.MouseMove += OpenGLHipno_MouseMove;
+            openglHipno.MouseDown += OpenGLHipno_MouseDown;
+            openglHipno.MouseUp += OpenGLHipno_MouseUp;
             // 
             // HipnogramaForm
             // 
@@ -118,11 +120,11 @@ namespace PlotagemOpenGL.Hipnograma
             // 
             // Imprimir
             // 
-            Imprimir.CheckOnClick = true;
+            Imprimir.CheckOnClick = false;
             Imprimir.Name = "Imprimir";
             Imprimir.Size = new System.Drawing.Size(148, 26);
             Imprimir.Text = "Imprimir";
-            //Imprimir.Click += MenuItem_Click;
+            Imprimir.Click += ImprimeTela_Click;
             // /
             // BruxismoStrip
             //
@@ -280,6 +282,7 @@ namespace PlotagemOpenGL.Hipnograma
             ConsBnBd.Name = "ConsBnBd";
             ConsBnBd.Size = new System.Drawing.Size(148, 26);
             ConsBnBd.Text = "Considerar Boa Noite e Bom dia";
+            ConsBnBd.Click += ConsBnBd_Clic;
             // 
             // LinhasHorarios
             // 

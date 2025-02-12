@@ -448,6 +448,8 @@ namespace PlotagemOpenGL
                 MessageBox.Show($"Erro ao atualizar o menu: {ex.Message}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
             }
         }
+        HipnogramaForm Janela;
+
         public void JanelaSeparada_Click(object sender, EventArgs e)
         {
             // Verifica se o sender é um ToolStripMenuItem
@@ -456,8 +458,8 @@ namespace PlotagemOpenGL
                 // Obtém o valor do Tag do ToolStripMenuItem
                 if (menuItem.Tag is int a)
                 {
-                    HipnogramaForm Janela = new HipnogramaForm(a);
-                    Janela.Show();
+                    Janela = new HipnogramaForm(a);
+                    Janela.Show(this);
                 }
                 else
                 {                }
@@ -2007,7 +2009,7 @@ namespace PlotagemOpenGL
                 GlobVar.desenhoLoc[i] = 0;
             }
         }
-        private void UpdateDataTableRow(Panel panel)
+        private void UpdateDataTableRow(Panel panel)   
         {
             var codCanal = panel.Tag.ToString();
             DataRow rowToMove = null;
@@ -4174,7 +4176,6 @@ namespace PlotagemOpenGL
                                 GlobVar.ponteiroVideo -= (int)GlobVar.namos * (int)GlobVar.SPEED;
 
                                 if (!conc) LeituraEmMatrizTeste.Resume();
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
                             break;
@@ -4202,7 +4203,6 @@ namespace PlotagemOpenGL
                                 GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.namos * (int)GlobVar.SPEED;
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
 
@@ -4262,7 +4262,6 @@ namespace PlotagemOpenGL
                                 //TelaClearAndReload();
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
 
@@ -4355,7 +4354,6 @@ namespace PlotagemOpenGL
                                 //TelaClearAndReload();
                                 if (!conc) LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
 
                             }
                             break;
@@ -4398,7 +4396,6 @@ namespace PlotagemOpenGL
                     foiencontradoumUltimo = false;
 
                     int alturaTela = (int)openglControl1.Height;
-                    //gl.Translate(camera.X, 0, 1);
                     TelaClearAndReload();
                     UpdateInicioTela();
 
@@ -4788,7 +4785,14 @@ namespace PlotagemOpenGL
                 iCelera.telinha.attLocVideo();
                 iCelera.telinha.videoPlayer.Ctlcontrols.pause();
             }
+            if(Janela != null)
+            {
+                Janela.Desenha();
+            }
             openglControl1.Focus();
+
+
+
         }
         public static async void OnVideoStateChanged(bool isPlaying)
         {
@@ -5346,9 +5350,9 @@ namespace PlotagemOpenGL
                                        GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
 
             // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 16), XBrushes.Black, new XPoint(40, 40));
-            gfx.DrawString(medicoSolicitante, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 70));
-            gfx.DrawString(modeloEquipamento, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 100));
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 12), XBrushes.Black, new XPoint(40, 20));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 40));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 60));
 
             // Converter a imagem Bitmap para XImage
             using (MemoryStream stream = new MemoryStream())
@@ -5359,11 +5363,11 @@ namespace PlotagemOpenGL
                 // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
                 double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 160) / xImage.PixelHeight);
                 double width = xImage.PixelWidth * scaleFactor;
-                double height = xImage.PixelHeight * scaleFactor;
+                double height = xImage.PixelHeight * scaleFactor; 
 
                 // Desenhar a imagem na página do PDF centralizada
                 double posX = (page.Width - width) / 2;
-                double posY = 140; // margem superior de 140 unidades
+                double posY = 100; // margem superior de 140 unidades
 
                 gfx.DrawImage(xImage, posX, posY, width, height);
             }
@@ -6808,7 +6812,7 @@ namespace PlotagemOpenGL
                 e.Handled = true;
             }
         }
-        private async void PtsEmTela_KeyDown(object sender, KeyEventArgs e)
+        public async void PtsEmTela_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {

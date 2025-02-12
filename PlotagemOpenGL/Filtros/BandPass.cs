@@ -26,30 +26,28 @@ namespace PlotagemOpenGL.Filtros
 
         public static float[] ApplyFilter(float[] input, float lowCutoffFrequency, float highCutoffFrequency, float samplingRate)
         {
-            Tela_Plotagem.cronometroBand.Start();
-
-            //BandPass bandPassFilter = new BandPass(lowCutoffFrequency, highCutoffFrequency, samplingRate);
-
-            //calcula o passa baixa ---
+            // Calcula os coeficientes para os filtros
             float baixaAlpha = PaissaBaixa.CalculateAlpha(lowCutoffFrequency, samplingRate);
-            float baixaPrevOut = 0;
-            //calcula o passa alta -----
             float altaAlpha = PaissaAlta.CalculateAlpha(highCutoffFrequency, samplingRate);
+
+            // Variáveis de estado para os filtros
+            float baixaPrevOut = 0;
             float altaPrevOut = 0;
             float altaPrevIn = 0;
 
             float[] output = new float[input.Length];
+
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = baixaAlpha * input[i] + (1 - baixaAlpha) * baixaPrevOut;
-                baixaPrevOut = input[i];
+                // Aplica o filtro passa-baixa primeiro
+                float passaBaixa = baixaAlpha * input[i] + (1 - baixaAlpha) * baixaPrevOut;
+                baixaPrevOut = passaBaixa; // Atualiza a saída anterior
 
-                output[i] = altaAlpha * (altaPrevOut + input[i] - altaPrevIn);
-                altaPrevOut = output[i];
-                altaPrevIn = input[i];
-
+                // Aplica o filtro passa-alta sobre a saída do passa-baixa
+                output[i] = altaAlpha * (altaPrevOut + passaBaixa - altaPrevIn);
+                altaPrevOut = output[i]; // Atualiza saída anterior
+                altaPrevIn = passaBaixa; // Atualiza entrada anterior
             }
-            Tela_Plotagem.cronometroBand.Stop();
             return output;
         }
     }

@@ -1,41 +1,41 @@
-﻿using Accord.Audio.Filters;
-using Accord.Math;
-using Accord.Math.Geometry;
+﻿using Accord.Math;
 using Accord.Statistics;
 using Cyotek.Windows.Forms;
-using OpenTK.Compute.OpenCL;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.Filtros;
 using SharpGL;
-using SharpGL.SceneGraph;
-using SharpGL.WPF;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using UnityEngine;
-using static OpenTK.Graphics.OpenGL.GL;
 
 namespace PlotagemOpenGL.Hipnograma
 {
     public partial class HipnogramaForm : Form
     {
         public static Rectangle recgl;
-        private Size formOriginalSize;
+        private System.Drawing.Size formOriginalSize;
         public static int codGrupMouse;
         public static DataTable MontagemJanela;
         public static OpenGL gl;
         public static int codJanela;
+        public static int codJanela_Click = -1;
+        public static bool mouseClicked = false;
+        public static int areaSelectpZero;
+        public static int areaSelectTop;
+        public static int marg;
+        public static float Porcentagem;
+        public static int NeEmarg;
+        public static float NeWPorcentagem;
+
         public static int[] pontoZero;
         public static int[] pontoTop;
 
@@ -62,6 +62,7 @@ namespace PlotagemOpenGL.Hipnograma
 
         public static bool Horario; //            cod 21
         public static DataTable horario;
+        public static int pagAtual;
 
         public HipnogramaForm(int cod)
         {
@@ -88,6 +89,12 @@ namespace PlotagemOpenGL.Hipnograma
             recgl = new Rectangle(openglHipno.Location, openglHipno.Size);
             this.Resize += resiz;
             buttonForm = new ButtonForm();
+            pagAtual = GlobVar.indice / GlobVar.namos;
+            var rw = GlobVar.tbl_JanelaResumo.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodJanela") == codJanela);
+            string name = rw["DescrJanela"].ToString();
+
+            this.Text = name;
+
         }
         private void resize_Control(Control c, Rectangle r)
         {
@@ -113,12 +120,16 @@ namespace PlotagemOpenGL.Hipnograma
             MontagemJanela = new DataTable();
 
             MontagemJanela = GlobVar.tbl_JanelaResumoItens.AsEnumerable().Where(row => row.Field<int>("CodJanela") == codJanela).OrderBy(row => row.Field<int>("Ordem")).CopyToDataTable();
+            
             //MontagemJanela.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem"));
             reajustaPorc();
         }
         public static void reajustaPorc()
         {
             porc = new float[MontagemJanela.Rows.Count];
+            pontoZero = new int[MontagemJanela.Rows.Count];
+            pontoTop = new int[MontagemJanela.Rows.Count];
+
             int i = 0;
             float totalPorc = 0;
 
@@ -151,12 +162,21 @@ namespace PlotagemOpenGL.Hipnograma
         public static void PreparaOsArrays()
         {
             int tamanho = GlobVar.matrizCanal.GetLength(1) / GlobVar.namos;
+            int inicio = 0;
             int codcanal;
             int codindex;
             int[] media;
             int rw = 0;
             int h;
             DataTable subGrupos = new DataTable();
+            int tamanhoa = GlobVar.matrizCanal.GetLength(1) / GlobVar.namos;
+            Porcentagem = (float)(tamanhoa * 1.05);
+            int margem = Math.Abs((int)Porcentagem - tamanhoa);
+            marg = margem;
+            NeEmarg = marg;
+            NeWPorcentagem = Porcentagem;
+            pontoZero = new int[MontagemJanela.Rows.Count];
+            pontoTop = new int[MontagemJanela.Rows.Count];
 
             foreach (DataRow row in MontagemJanela.Rows)
             {
@@ -436,7 +456,7 @@ namespace PlotagemOpenGL.Hipnograma
                         Microfone = new int[tamanho];
                         codcanal = 5;
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
-                        media = new int[GlobVar.namos];
+                        media = new int[512];
                         // Aplica o filtro band-pass nos dados
                         //float[] linhaFiltrada = LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
                         float[] linhaFiltrada = BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
@@ -542,15 +562,38 @@ namespace PlotagemOpenGL.Hipnograma
                 }
             }
         }
+        private bool desenhaMargLine = false;
+
+        public void ConsBnBd_Clic(object sender, EventArgs e)
+        {
+            if (ConsBnBd.Checked)
+            {
+                var rowBn = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 18);
+                int pagBn = Convert.ToInt32(rowBn["NumPag"]);
+
+                var rowBd = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 19);
+                int pagBd = Convert.ToInt32(rowBd["NumPag"]);
+
+                int tamanhoa = Math.Abs(pagBn - pagBd);
+                Porcentagem = (float)(tamanhoa * 1.05);
+                int margem = Math.Abs((int)Porcentagem - tamanhoa);
+                marg = margem;
+                NeEmarg = marg;
+                NeWPorcentagem = Porcentagem;
+            }
+            else
+            {
+                int tamanhoa = GlobVar.matrizCanal.GetLength(1) / GlobVar.namos;
+                Porcentagem = (float)(tamanhoa * 1.05);
+                int margem = Math.Abs((int)Porcentagem - tamanhoa);
+                marg = margem;
+                NeEmarg = marg;
+                NeWPorcentagem = Porcentagem;
+            }
+            Desenha();
+        }
         public void Desenha()
         {
-            int tamanho = GlobVar.matrizCanal.GetLength(1) / GlobVar.namos;
-            float Porcentagem = (float)(tamanho * 1.05);
-            int margem = Math.Abs((int)Porcentagem - tamanho);
-
-            pontoZero = new int[MontagemJanela.Rows.Count];
-            pontoTop = new int[MontagemJanela.Rows.Count];
-
             // Defina a cor de fundo com os valores RGB normalizados
             gl.ClearColor(1, 1, 1, 1); // A última variável é o alpha (opacidade), 1.0f para opaco
 
@@ -570,40 +613,126 @@ namespace PlotagemOpenGL.Hipnograma
             gl.Color(0.5f, 0.5f, 0.5f);
             gl.Scale(1, 1, 1);
 
+            // Desenhar a linha em marg se estiver sendo alterada
+            if (desenhaMargLine)
+            {
+                gl.Color(0f, 0f, 0f); // Define a cor das linhas (preto)
+                                      // Ativar o estilo de linha pontilhada
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
 
+                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                // Iniciar o desenho da linha
+                gl.Begin(OpenGL.GL_LINE_LOOP);
+                gl.Vertex(NeEmarg, 0);
+                gl.Vertex(NeEmarg, HipnogramaForm.openglHipno.Height);
+                gl.End();
+                gl.Flush();
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+            }
+            else
+            {
+                //----------
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                gl.Begin(OpenGL.GL_LINE_STRIP);
+                gl.Vertex(marg, 0);
+                gl.Vertex(marg, HipnogramaForm.openglHipno.Height);
+                gl.End();
+                gl.Flush();
+            }
             //----------
-            gl.Begin(OpenGL.GL_LINE_STRIP);
-            gl.Vertex(margem, 0);
-            gl.Vertex(margem, HipnogramaForm.openglHipno.Height);
+            if (GlobVar.indice / GlobVar.namos != pagAtual)
+            {
+                pagAtual = GlobVar.indice / GlobVar.namos;
+            }
+
+            //---------- ponteiro pag atual
+            gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+            // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+            gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+            gl.Color(231f, 0f, 0f);
+
+            // Iniciar o desenho da linha
+            gl.Begin(OpenGL.GL_LINE_LOOP);
+            gl.Vertex(marg + pagAtual, 0);
+            gl.Vertex(marg + pagAtual, HipnogramaForm.openglHipno.Height);
             gl.End();
             gl.Flush();
-            //----------
+            gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+            gl.Color(0f, 0f, 0f); 
 
             int espacox = HipnogramaForm.openglHipno.Height;
             int porcent = HipnogramaForm.openglHipno.Height;
             int topPorcent = HipnogramaForm.openglHipno.Height;
 
             int ant = MontagemJanela.Rows.Count;
+
+            if (mouseClicked && !movendoGraf)
+            {
+                gl.Color(0.3f, 0.3f, 0.3f); // Define a cor das linhas (preto)
+                                            // Ativar o estilo de linha pontilhada
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                // Iniciar o desenho da linha
+                gl.Begin(OpenGL.GL_LINE_LOOP);
+                gl.Vertex(50, areaSelectpZero);
+                gl.Vertex(Porcentagem - 10, areaSelectpZero);
+                gl.Vertex(Porcentagem - 10, areaSelectTop);
+                gl.Vertex(50, areaSelectTop);
+                gl.End();
+                gl.Flush();
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+            }
+            if (movendoGraf)
+            {
+                gl.Color(0.3f, 0.3f, 0.3f); // Define a cor das linhas (preto)
+                                            // Ativar o estilo de linha pontilhada
+                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                // Iniciar o desenho da linha
+                gl.Begin(OpenGL.GL_LINE_LOOP);
+                gl.Vertex(50, areaSelectpZero);
+                gl.Vertex(Porcentagem - 10, areaSelectpZero);
+                gl.Vertex(Porcentagem - 10, areaSelectTop);
+                gl.Vertex(50, areaSelectTop);
+                gl.End();
+                gl.Flush();
+                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+            }
+
             for (int i = 0; i < MontagemJanela.Rows.Count; i++)
             {
-                gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
 
                 porcent -= (int)(espacox * (porc[i] / 100));
                 pontoZero[i] = porcent;
                 pontoTop[i] = topPorcent;
-                gl.Begin(OpenGL.GL_LINE_STRIP);
-                gl.Vertex(0, porcent);
-                gl.Vertex(Porcentagem, porcent);
-                gl.End();
-                gl.Flush();
+
+                if (!mouseClicked)
+                {
+                    gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(0, porcent);
+                    gl.Vertex(Porcentagem, porcent);
+                    gl.End();
+                    gl.Flush();
+                }
                 ant--;
                 gl.Color(0.0f, 0.0f, 0.0f);
 
-                legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), margem, (int)Porcentagem);
+                legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
-                desenhaGarficos(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), margem, (int)Porcentagem);
+                desenhaGarficos(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
@@ -623,6 +752,16 @@ namespace PlotagemOpenGL.Hipnograma
             float[] Cor;
             int eusla;
             int cadEvent;
+            int pagBn = 0;
+            if (ConsBnBd.Checked)
+            {
+                var rowBn = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 18);
+                pagBn = Convert.ToInt32(rowBn["NumPag"]);
+               // var rowBd = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 19);
+               // int pagBd = Convert.ToInt32(rowBd["NumPag"]);
+               // xEnd = pagBd;
+            }
+
             switch (codGrupo)
             {
                 // ------- Do tipo Evento --------
@@ -669,7 +808,7 @@ namespace PlotagemOpenGL.Hipnograma
                         // Desenha as riscas correspondentes
                         for (int j = xStart; j < xEnd; j++)
                         {
-                            if (eventosResp[j - xStart, index] != 0) // Verifica se há evento
+                            if (eventosResp[j - xStart + pagBn, index] != 0) // Verifica se há evento
                             {
                                 if(eusla != 0)
                                 {
@@ -726,7 +865,7 @@ namespace PlotagemOpenGL.Hipnograma
 
                     for (int i = 0; i < qt; i++)
                     {
-                        index = 0;
+                        index = pagBn;
 
                         for (int j = xStart; j < xEnd; j++)
                         {
@@ -759,6 +898,72 @@ namespace PlotagemOpenGL.Hipnograma
                 case 4:
                     CardioStrip.Checked = true;
                     CardioStrip.Tag = 4;
+
+                    // Calcula tamanho e divisões
+                    tamanho = Math.Abs(topPonto - pontoZero);
+
+                    dtSubGrupo = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                        .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                        .OrderByDescending(row => row.Field<int>("Evento")) // Ordena corretamente
+                        .CopyToDataTable();
+
+                    qt = dtSubGrupo.Rows.Count;
+                    locLeg = tamanho / qt; // Espaçamento entre legendas
+                    tanhamorisco = (int)(locLeg * 0.9f); // Altura do risco (90% do espaçamento)
+
+                    // Começa no ponto inicial
+                    int locc = pontoZero + locLeg / 2;
+                    index = 0;
+                    var rwc = MontagemJanela.AsEnumerable()
+                                             .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                    if (rwc["CorGrafico"] != DBNull.Value)
+                    {
+                        if (Convert.ToInt32(rwc["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }
+                        else
+                        {
+                            eusla = 1;
+                        }
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+
+                    foreach (DataRow rw in dtSubGrupo.Rows)
+                    {
+                        cadEvent = Convert.ToInt32(rw["Evento"]);
+                        var aoi = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
+
+                        // Desenha as riscas correspondentes
+                        for (int j = xStart; j < xEnd; j++)
+                        {
+                            if (Cardio[j - xStart + pagBn, index] != 0) // Verifica se há evento
+                            {
+                                if (eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoi["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
+
+                                gl.Begin(OpenGL.GL_LINES); // Use GL_LINES para linhas simples
+                                gl.Vertex(j, locc - tanhamorisco / 2); // Linha começa um pouco acima do texto
+                                gl.Vertex(j, locc + tanhamorisco / 2); // Linha termina um pouco abaixo do texto
+                                gl.End();
+                                gl.Flush();
+                                gl.Color(0, 0, 0); // Define a cor da linha
+
+                            }
+                        }
+                        // Move para a próxima legenda
+                        locc += locLeg;
+                        index++;
+                    }
+
+
+
                     break;
                 // PLM
                 case 5:
@@ -795,7 +1000,7 @@ namespace PlotagemOpenGL.Hipnograma
 
                     for (int i = 0; i < qt; i++)
                     {
-                        index = 0;
+                        index = pagBn;
 
                         for (int j = xStart; j < xEnd; j++)
                         {
@@ -859,7 +1064,7 @@ namespace PlotagemOpenGL.Hipnograma
 
                     for (int i = 0; i < qt; i++)
                     {
-                        index = 0;
+                        index = pagBn;
 
                         for (int j = xStart; j < xEnd; j++)
                         {
@@ -891,6 +1096,70 @@ namespace PlotagemOpenGL.Hipnograma
                 case 40:
                     BruxismoStrip.Checked = true;
                     BruxismoStrip.Tag = 40;
+                    // Calcula tamanho e divisões
+                    tamanho = Math.Abs(topPonto - pontoZero);
+
+                    dtSubGrupo = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                        .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                        .OrderByDescending(row => row.Field<int>("Evento")) // Ordena corretamente
+                        .CopyToDataTable();
+
+                    qt = dtSubGrupo.Rows.Count;
+                    locLeg = tamanho / qt; // Espaçamento entre legendas
+                    tanhamorisco = (int)(locLeg * 0.9f); // Altura do risco (90% do espaçamento)
+
+                    // Começa no ponto inicial
+                    int locr = pontoZero + locLeg / 2;
+                    index = 0;
+                    var rwb = MontagemJanela.AsEnumerable()
+                                             .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                    if (rwb["CorGrafico"] != DBNull.Value)
+                    {
+                        if (Convert.ToInt32(rwb["CorGrafico"]) == 0)
+                        {
+                            eusla = 0;
+                        }
+                        else
+                        {
+                            eusla = 1;
+                        }
+                    }
+                    else { eusla = 0; }
+                    Cor = new float[3];
+
+                    foreach (DataRow rw in dtSubGrupo.Rows)
+                    {
+                        cadEvent = Convert.ToInt32(rw["Evento"]);
+                        var aoi = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
+
+                        // Desenha as riscas correspondentes
+                        for (int j = xStart; j < xEnd; j++)
+                        {
+                            if (Bruxismo[j - xStart + pagBn, index] != 0) // Verifica se há evento
+                            {
+                                if (eusla != 0)
+                                {
+                                    Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoi["CorFundo"]));
+                                    gl.Color(Cor[0], Cor[1], Cor[2]);
+                                }
+                                else { gl.Color(0, 0, 0); }
+
+                                gl.Begin(OpenGL.GL_LINES); // Use GL_LINES para linhas simples
+                                gl.Vertex(j, locr - tanhamorisco / 2); // Linha começa um pouco acima do texto
+                                gl.Vertex(j, locr + tanhamorisco / 2); // Linha termina um pouco abaixo do texto
+                                gl.End();
+                                gl.Flush();
+                                gl.Color(0, 0, 0); // Define a cor da linha
+
+                            }
+                        }
+                        // Move para a próxima legenda
+                        locr += locLeg;
+                        index++;
+                    }
+
+
                     break;
 
                 // ------- Sinais graafio -------
@@ -912,7 +1181,7 @@ namespace PlotagemOpenGL.Hipnograma
                     }
 
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                    int sasa = 0;
+                    int sasa = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
                         if (NaomostrarQuedasZero.Checked && SA02[sasa] <= Convert.ToInt32(rows["LI"]))
@@ -950,7 +1219,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.Color(0, 0, 0);
                     }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                    int feq = 0;
+                    int feq = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
                         if (NaomostrarQuedasZero.Checked && FreqCard[feq] <= Convert.ToInt32(rowf["LI"]))
@@ -995,7 +1264,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.Color(0, 0, 0);
                     }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                    int micmic = 0;
+                    int micmic = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
                         quasi = NormalizarValor(Microfone[micmic], Microfone.Min(), Microfone.Max(), pontoZero, topPonto);// scala;
@@ -1028,7 +1297,7 @@ namespace PlotagemOpenGL.Hipnograma
                         meiolegz += locz;
                     }
 
-                    int posiposi = 0;
+                    int posiposi = pagBn;
                     for (int a = xStart; a < xEnd; a++, posiposi++)
                     {
                         gl.Color(0, 0, 0);
@@ -1046,11 +1315,14 @@ namespace PlotagemOpenGL.Hipnograma
                     estagioStrip.Tag = 9;
                     var dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
                     qt = dte.Rows.Count;
+                    var rwest = MontagemJanela.AsEnumerable()
+                     .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
                     float[] color = new float[3];
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    int ultimoestagio = -1;
-
-                    int esta = 0;
+                    int esta = pagBn;
+                    int ultimoestagio = estagio[esta];
+                    int lasty = -1;
                     for(int i = xStart; i < xEnd; i++, esta++)
                     {
 
@@ -1058,23 +1330,50 @@ namespace PlotagemOpenGL.Hipnograma
                         // Filtra a linha do DataTable
                         var row = GlobVar.tbl_Estagios.AsEnumerable()
                                     .FirstOrDefault(r => r.Field<int>("Estagio") == CodEstagio);
-                            // Obtém os componentes RGB com base no campo "Estagio"
-                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(row["Cor"]));
+
                         var dt = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
 
                         // Procura o índice da linha correspondente ao CodEstagio no DataTable
                         int ind = dt.AsEnumerable()
                                      .Select((r, idx) => new { Row = r, Index = idx }) // Combina linha e índice
                                      .FirstOrDefault(x => x.Row.Field<int>("Estagio") == CodEstagio)?.Index ?? -1;
-                        if(ultimoestagio != CodEstagio)
+                        gl.Color(0, 0, 0);
+
+                        if (ultimoestagio != CodEstagio)
                         {
                             gl.Color(0, 0, 0);
+                            gl.Vertex(i, lasty);
+                            gl.Vertex(i, locyEstagio[ind]);
                         }
                         else
                         {
+                            if (Convert.ToInt32(rwest["CorGrafico"]) != 0)
+                            {
+                                // Obtém os componentes RGB com base no campo "Estagio"
+                                color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(row["Cor"]));
+
+                            }
+                            else
+                            {
+                                // Obtém os componentes RGB com base no campo "Estagio"
+                                color = [0f, 0f, 0f];
+
+                            }
                             gl.Color(color[0], color[1], color[2]);
+                            if(CodEstagio == 5)
+                            {
+                                gl.Vertex(i, locyEstagio[ind] - 2);
+                                gl.Vertex(i, locyEstagio[ind] - 1);
+                                gl.Vertex(i, locyEstagio[ind]);
+                                gl.Vertex(i, locyEstagio[ind] + 1);
+                                gl.Vertex(i, locyEstagio[ind] + 2);
+                            }
+                            else
+                            {
+                                gl.Vertex(i, locyEstagio[ind]);
+                            }
                         }
-                        gl.Vertex(i, locyEstagio[ind]);
+                        lasty = locyEstagio[ind];
                         ultimoestagio = CodEstagio;
                         gl.Color(0, 0, 0);
                     }
@@ -1189,7 +1488,7 @@ namespace PlotagemOpenGL.Hipnograma
                 gl.End();
                 gl.Flush();
 
-                gl.Color(0.5f, 0.5f, 0.5f);
+                gl.Color(0.7f, 0.7f, 0.7f);
                 // Ativar o estilo de linha pontilhada
                 gl.Enable(OpenGL.GL_LINE_STIPPLE);
 
@@ -1211,7 +1510,7 @@ namespace PlotagemOpenGL.Hipnograma
                 gl.End();
                 gl.Flush();
 
-                gl.Color(0.5f, 0.5f, 0.5f);
+                gl.Color(0.7f, 0.7f, 0.7f);
                 // Ativar o estilo de linha pontilhada
                 gl.Enable(OpenGL.GL_LINE_STIPPLE);
 
@@ -1256,7 +1555,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
                     int espacodiv = espaco / alo;
 
-                    gl.Color(0.5f, 0.5f, 0.5f);
+                    gl.Color(0.7f, 0.7f, 0.7f);
                     gl.Enable(OpenGL.GL_LINE_STIPPLE);
                     // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
                     gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
@@ -1277,7 +1576,7 @@ namespace PlotagemOpenGL.Hipnograma
                 }
             }
 
-            if (!dt.Rows[0]["Legenda"].Equals("") && !dt.Rows[0]["Legenda"].Equals("ESTAGIO") && !dt.Rows[0]["Legenda"].Equals("Posição"))
+            if (!dt.Rows[0]["Legenda"].Equals("") && !dt.Rows[0]["Legenda"].Equals("ESTAGIO") && !dt.Rows[0]["Legenda"].Equals("Posição") && codGrupo != 40)
             {
                 string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
                 int meioleg = espaco / 2;
@@ -1515,26 +1814,6 @@ namespace PlotagemOpenGL.Hipnograma
                 }
             }
         }
-        public static double Normalizar(int input, int pontoZero, int topPonto, double minOutput = 0, double maxOutput = 0.5f)
-        {
-            try
-            {
-                // Garante que pontoZero é o menor valor
-                int min = Math.Min(pontoZero, topPonto);
-                int max = Math.Max(pontoZero, topPonto);
-
-                // Evita divisão por zero
-                if (max == min)
-                    return 0;
-
-                // Normaliza o valor para o intervalo [0, 1]
-                double normalizado = (double)(input - min) / (max - min);
-
-                // Ajusta o valor para o intervalo desejado [minOutput, maxOutput]
-                return normalizado * (maxOutput - minOutput) + minOutput;
-            }
-            catch { return 0; }
-        }
         public static DataTable FiltrarHorariosCompletos(DataTable dataTable)
         {
             // Clona a estrutura do DataTable original
@@ -1631,28 +1910,321 @@ namespace PlotagemOpenGL.Hipnograma
 
         float mouseLocX;
         float mouseLocY;
+        static bool bordMargOn = false;
+        static bool mouseDown = false;
+        private Point lastMousePosition;
+        public Point initialMousePosition;
+        bool movendoGraf = false;
+        bool onTop = false;
+        bool onBut = false;
+        bool changingSize = false;
         private void OpenGLHipno_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e == null) return;
+
             try
             {
-                if(e != null)
+                if (MontagemJanela == null || MontagemJanela.Rows.Count == 0) return;
+                var dr = MontagemJanela.AsEnumerable().OrderBy(row => row.Field<int>("Ordem")).CopyToDataTable();
+
+                ConvertToOpenGLCoordinates(e.X, e.Y, out mouseLocX, out mouseLocY);
+                float outX = 0;
+                float outY = 0;
+
+                if (movendoGraf) 
                 {
-                    var dr = MontagemJanela.AsEnumerable().OrderBy(row => row.Field<int>("Ordem")).CopyToDataTable();
-                    ConvertToOpenGLCoordinates(e.X, e.Y, out mouseLocX, out mouseLocY);
-                    for(int i = 0; i < pontoZero.Length; i++)
+                    ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+
+                    float initialMouseY = initialMousePosition.Y;
+
+                    if (e.Y != lastMousePosition.Y)
+                    {
+                        float deltaY = outY - initialMouseY;
+                        float ddeltaY = e.Y - lastMousePosition.Y;
+
+                        areaSelectpZero -= (int)ddeltaY;
+                        areaSelectTop -= (int)ddeltaY;
+
+                        initialMousePosition.Y = (int)outY;
+                        openglHipno.Refresh();
+                        Desenha();
+                    }
+                    lastMousePosition.Y = e.Y;
+                }
+                else if (changingSize)
+                {
+                    if (onTop)
+                    {
+                        outX = 0;
+                        outY = 0;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+
+                        float initialMouseY = initialMousePosition.Y;
+
+                        if (e.Y != lastMousePosition.Y)
+                        {
+                            float ddeltaY = e.Y - lastMousePosition.Y;
+
+                            areaSelectTop -= (int)ddeltaY;
+
+                            initialMousePosition.Y = (int)outY;
+                            openglHipno.Refresh();
+                            Desenha();
+                        }
+                        lastMousePosition.Y = e.Y;
+                    }
+                    else if (onBut)
+                    {
+                        outX = 0;
+                        outY = 0;
+                        ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
+
+                        float initialMouseY = initialMousePosition.Y;
+
+                        if (e.Y != lastMousePosition.Y)
+                        {
+                            float ddeltaY = e.Y - lastMousePosition.Y;
+
+                            areaSelectpZero -= (int)ddeltaY;
+
+                            initialMousePosition.Y = (int)outY;
+                            openglHipno.Refresh();
+                            Desenha();
+                        }
+                        lastMousePosition.Y = e.Y;
+                    }
+                }
+                else{
+                    for (int i = 0; i < pontoZero.Length; i++)
                     {
                         if (mouseLocY > pontoZero[i] && mouseLocY < pontoTop[i])
                         {
                             codJanela = Convert.ToInt32(dr.Rows[i]["CodGrupo"]);
+
+                            // Verifica se o cursor está na borda superior ou inferior
+                            if (mouseClicked && mouseLocX < marg - 15 && ((mouseLocY >= areaSelectpZero - 3 && mouseLocY <= areaSelectpZero + 3) ||
+                                                            (mouseLocY >= areaSelectTop - 3 && mouseLocY <= areaSelectTop + 3)))
+                            {
+                                bordMargOn = false;
+                                this.Cursor = Cursors.SizeNS;
+                            }
+                            // Verifica se está na margem lateral
+                            else if ((mouseLocX > marg - 15 && mouseLocX < marg + 15) && !mouseDown)
+                            {
+                                bordMargOn = true;
+                                this.Cursor = Cursors.SizeWE;
+                            }
+                            // Se está segurando o mouse e movendo a margem
+                            else if (mouseDown)
+                            {
+                                ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out _);
+                                float deltaX = outX - initialMousePosition.X;
+
+                                if (e.X != lastMousePosition.X)
+                                {
+                                    NeEmarg += (int)deltaX;
+                                    NeWPorcentagem += (int)deltaX;
+
+                                    initialMousePosition.X = (int)outX;
+                                    Desenha();
+                                }
+                                lastMousePosition.X = e.X;
+                            }
+                            else
+                            {
+                                bordMargOn = false;
+                                this.Cursor = Cursors.Default;
+                            }
+                            break; // Sai do loop após encontrar a condição válida
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Erro em OpenGLHipno_MouseMove: " + ex.Message);
             }
         }
+
+        private void OpenGLHipno_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e?.Button != MouseButtons.Left) return;
+
+            try
+            {
+                if (MontagemJanela == null || MontagemJanela.Rows.Count == 0) return;
+                var dr = MontagemJanela.AsEnumerable().CopyToDataTable();
+
+                ConvertToOpenGLCoordinates(e.X, e.Y, out mouseLocX, out mouseLocY);
+                if (mouseClicked && (mouseLocY > areaSelectpZero + 4 && mouseLocY < areaSelectTop - 4) && !bordMargOn && mouseLocX < marg)
+                {
+                    movendoGraf = true;
+                }
+                if (mouseClicked && !bordMargOn && ((mouseLocY >= areaSelectpZero - 3 && mouseLocY <= areaSelectpZero + 3) ||
+                                                         (mouseLocY >= areaSelectTop - 3 && mouseLocY <= areaSelectTop + 3)) && mouseLocX < marg)
+                {
+                    changingSize = true;
+                    if ((mouseLocY >= areaSelectpZero - 3 && mouseLocY <= areaSelectpZero + 3))
+                    {
+                        onBut = true;
+                    }
+                    else if ((mouseLocY >= areaSelectTop - 3 && mouseLocY <= areaSelectTop + 3))
+                    {
+                        onTop = true;
+                    }
+                }
+                else if ((mouseClicked || !mouseClicked) && mouseLocX < marg)
+                {
+                    for (int i = 0; i < pontoZero.Length; i++)
+                    {
+                        if (bordMargOn)
+                        {
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out float aux, out _);
+                            initialMousePosition.X = (int)aux;
+                            lastMousePosition = e.Location;
+                            mouseDown = true;
+                            desenhaMargLine = true;
+                            openglHipno.Refresh();
+
+                            Desenha();
+                            break;
+                        }
+                        else if ((mouseLocY > pontoZero[i] && mouseLocY < pontoTop[i]) && mouseLocX < marg)
+                        {
+                            int codGrupoAtual = Convert.ToInt32(dr.Rows[i]["CodGrupo"]);
+
+                            if (codGrupoAtual != codJanela_Click)
+                            {
+                                codJanela_Click = codGrupoAtual;
+                                mouseClicked = true;
+                                areaSelectpZero = pontoZero[i];
+                                areaSelectTop = pontoTop[i];
+                            }
+                            else if (!movendoGraf && !changingSize)
+                            {
+                                mouseClicked = false;
+                                codJanela_Click = -1;
+                            }
+                            openglHipno.Refresh();
+
+                            Desenha();
+                            break;
+                        }
+                    }
+                }
+                else if (mouseLocX > marg)
+                {
+                    /*
+                    int newind = (int)((mouseLocX - marg) * GlobVar.namos);
+                    int newmax = newind + 130000;
+                    GlobVar.indice = newind;
+                    GlobVar.maximaVect = newmax;
+                    int newindNum = (int)((mouseLocX - marg) * GlobVar.numeroAmos);
+                    int newmaxNum = newind + (GlobVar.segundos * GlobVar.namosNumerico);
+                    GlobVar.indiceNumero = newindNum;
+                    GlobVar.maximaNumero = newmaxNum;
+                    */
+                    if (this.Owner is Tela_Plotagem pai)
+                    {
+                        int inicio = (int)((mouseLocX - marg) / GlobVar.segundos);
+
+                        Tela_Plotagem.ptsEmTela.Text = $"{inicio}";
+                        Tela_Plotagem.ptsEmTela.Focus();
+                        var enterKeyEvent = new KeyEventArgs(Keys.Enter); // '\r' representa o Enter
+                        pai.PtsEmTela_KeyDown(Tela_Plotagem.ptsEmTela, enterKeyEvent);
+                    }
+
+                    movendoGraf = false;
+                    mouseClicked = false;
+                    codJanela_Click = -1;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro em OpenGLHipno_MouseDown: " + ex.Message);
+            }
+        }
+
+        private void OpenGLHipno_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e?.Button != MouseButtons.Left) return;
+
+            try
+            {
+                if (movendoGraf && !changingSize)
+                {
+                    movendoGraf = false;
+                    mouseClicked = false;
+
+                    // Encontrar a linha pelo CodGrupo
+                    DataRow row = MontagemJanela.AsEnumerable().FirstOrDefault(r => r.Field<int>("CodGrupo") == codJanela_Click);
+
+                    if (row != null)
+                    {
+                        int currentIndex = MontagemJanela.Rows.IndexOf(row);
+                        int newIndex = -1;
+
+                        // Verificar onde a linha deve ser inserida
+                        for (int i = 0; i < MontagemJanela.Rows.Count; i++)
+                        {
+                            if (areaSelectpZero < pontoZero[i])
+                            {
+                                newIndex = i;
+                            }
+                        }
+                        // Se o índice mudou, mover a linha
+                        if (newIndex != currentIndex && newIndex != -1)
+                        {
+                            // Criar uma nova linha e copiar os dados antes de remover
+                            DataRow newRow = MontagemJanela.NewRow();
+                            newRow.ItemArray = row.ItemArray.Clone() as object[];
+
+                            // Remover a linha original
+                            MontagemJanela.Rows.Remove(row);
+
+                            // Inserir na nova posição
+                            MontagemJanela.Rows.InsertAt(newRow, newIndex);
+                            codJanela_Click = -1;
+                            reajustaPorc();
+                        }
+                    }
+
+                }
+                else if (changingSize && !movendoGraf)
+                {
+                    changingSize = false;
+                    onBut = false;
+                    onTop = false;
+                    mouseClicked = false;
+
+                    int newsize = Math.Abs(areaSelectpZero - areaSelectTop);
+                    float newsizePorc = (newsize * 100f) / openglHipno.Height; // Regra de três
+                    // Encontrar a linha pelo CodGrupo
+                    DataRow row = MontagemJanela.AsEnumerable().FirstOrDefault(r => r.Field<int>("CodGrupo") == codJanela_Click);
+                    row["Porc"] = newsizePorc;
+
+                    MontagemJanela.AcceptChanges();
+                    reajustaPorc();
+                    codJanela_Click = -1;
+                }
+                mouseDown = false;
+                lastMousePosition = e.Location;
+                if (desenhaMargLine)
+                {
+                    desenhaMargLine = false;
+                    marg = NeEmarg;
+                    Porcentagem = NeWPorcentagem;
+                }
+                openglHipno.Refresh();
+                Desenha();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro em OpenGLHipno_MouseUp: " + ex.Message);
+            }
+        }
+
         public static void ConvertToOpenGLCoordinates(int mouseX, int mouseY, out float openGLX, out float openGLY)
         {
             var gl = openglHipno.OpenGL;
@@ -1876,7 +2448,7 @@ namespace PlotagemOpenGL.Hipnograma
         {
             try
             {
-                if(codJanela == 1 || codJanela == 3 || codJanela == 4 || codJanela == 5 || codJanela == 10 || codJanela == 40) 
+                if(codJanela == 1 || codJanela == 3 || codJanela == 4 || codJanela == 5 || codJanela == 10 || codJanela == 40 || codJanela == 9) 
                 {
                     var rowNumerico = MontagemJanela.AsEnumerable()
                                     .FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
@@ -2403,13 +2975,14 @@ namespace PlotagemOpenGL.Hipnograma
                             if (rowParaRemover != null)
                             {
                                 MontagemJanela.Rows.Remove(rowParaRemover); // Remove a linha
-                                reajustaPorc();
+                                reajustaPorc(); 
                                 Desenha();
                             }
                         }
                     }
                     else
                     {
+
                         int tag = Convert.ToInt32(menuItem.Tag);
                         if (VerificaDados(tag))
                         {
@@ -2541,6 +3114,94 @@ namespace PlotagemOpenGL.Hipnograma
                     }
                 }
             }
+        }
+
+        private void ImprimeTela_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "PDF File (*.pdf)|*.pdf|Bitmap Image (*.bmp)|*.bmp";
+                saveFileDialog.Title = "Salvar como";
+                saveFileDialog.FileName = "Arquivo";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.Focus(); // Garante que o formulário esteja visível antes da captura
+                    System.Threading.Thread.Sleep(200); // Pequeno delay para evitar capturar a caixa de diálogo
+
+                    // Captura apenas a área do formulário, sem a barra de título
+                    Rectangle bounds = new Rectangle(this.Location, this.ClientSize);
+                    Bitmap bmp = new Bitmap(bounds.Width, bounds.Height);
+
+                    using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(this.PointToScreen(Point.Empty), Point.Empty, bounds.Size);
+                    }
+
+                    string fileExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
+
+                    if (fileExtension == ".pdf")
+                    { 
+                        SalvarComoPDF(saveFileDialog.FileName, bmp);
+                    }
+                    else if (fileExtension == ".bmp")
+                    {
+                        bmp.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    }
+
+                    bmp.Dispose();
+                    MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void SalvarComoPDF(string caminhoArquivo, Bitmap imagem)
+        {
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "Relatório";
+
+            PdfPage page = document.AddPage();
+            page.Orientation = PdfSharp.PageOrientation.Landscape;
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            // Coletando informações do exame com validação correta
+            string nome = GlobVar.tbl_DadosExame.Rows[0]["Nome"]?.ToString() ?? "Paciente";
+            string sexo = $"({GlobVar.tbl_DadosExame.Rows[0]["Sexo"]?.ToString() ?? "N/D"})";
+            string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"] ?? "?"} anos";
+            string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"]?.ToString() ?? "?"}m";
+            string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"]?.ToString().Substring(0, 10) ?? "Data não disponível";
+            string arquivo = $"{(GlobVar.textFile?.Length >= 24 ? GlobVar.textFile.Substring(12, 12) : "Arquivo N/D")}";
+
+            string tituloPrincipal = $"iCelera - {nome} {sexo} {idade} - {altura} - Realização: {realizacao} - Arquivo: {arquivo}";
+
+            string medicoSolicitante = GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != DBNull.Value && GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != null ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
+            string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value && GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null ?
+                                       GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+
+            // Desenhando textos no PDF
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 12), XBrushes.Black, new XPoint(40, 20));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 35));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 45));
+
+            // Converter a imagem para XImage e desenhar no PDF
+            using (MemoryStream stream = new MemoryStream())
+            {
+                imagem.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                XImage xImage = XImage.FromStream(stream);
+
+                double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 160) / xImage.PixelHeight);
+                double width = xImage.PixelWidth * scaleFactor;
+                double height = xImage.PixelHeight * scaleFactor;
+
+                double posX = (page.Width - width) / 2;
+                double posY = 100;
+
+                gfx.DrawImage(xImage, posX, posY, width, height);
+            }
+
+            document.Save(caminhoArquivo);
+            document.Close();
         }
     }
 }
