@@ -184,9 +184,12 @@ namespace PlotagemOpenGL.auxi
 
                 // Procurar pelo valor CodCanal1 no vetor GlobVar.codCanal
                 int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]));
+                if (Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 100 || Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 101 || Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 102)
+                {
 
+                }
                 // Se não encontrar o canal, pular para o próximo sem alterar os painéis
-                if (canalIndex == -1)
+                else if (canalIndex == -1)
                 {
                     j++; // Avança para a próxima linha
                     continue;
@@ -217,7 +220,7 @@ namespace PlotagemOpenGL.auxi
                                             .Where(row => row.Field<int>("CodCanal") == tag).CopyToDataTable();
                         int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
 
-                        if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31 || TipoCanal == 30)
+                        if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31 || TipoCanal == 30 || tag == 65)
                         {
                             scala.Location = new Point(-500, 0);
                             panel.Controls.Remove(scala);

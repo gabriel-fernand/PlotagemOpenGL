@@ -124,14 +124,127 @@ namespace PlotagemOpenGL.auxi
                 int segmentLength = GlobVar.matrizCanal.GetLength(1);
 
                 int linhaCanais = 0;
-                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows){
-                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal1"]));
-                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal2"]));
-                    if (canalIndex == -1) return;
+                int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+                if(codMont == 181)
+                {
+                    foreach(DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
+                    {
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
+                        if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
 
-                    int ponteiroI = GlobVar.ponteiroI[canalIndex];
-                    int ponteiroF = GlobVar.ponteiroF[canalIndex];
-                    int colunaCanalIndex = 0;
+                        int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
+
+                        int colunaCanalIndex = 0;
+
+                        if(canal2Index == -1)
+                        {
+                            int canal1Index = GlobVar.codCanal.IndexOf(19);
+                            int canal2bIndex = GlobVar.codCanal.IndexOf(43);
+
+                            int inicio_can1 = GlobVar.ponteiroI[canal1Index];
+                            int Fim_can1 = GlobVar.ponteiroF[canal1Index];
+
+                            int inicio_can2 = GlobVar.ponteiroI[canal2bIndex];
+                            int Fim_can2 = GlobVar.ponteiroF[canal2bIndex];
+
+                            if (canalIndex == 100)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] + GlobVar.matrizCompleta[linha, colunaComp2])/ 2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else if(canalIndex == 101)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) + GlobVar.matrizCompleta[linha, colunaComp]) / - 2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else if(canalIndex == 102)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) - GlobVar.matrizCompleta[linha, colunaComp2]) / 2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Caso sem segundo canal
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = ponteiroI;
+                                    while (colunaComp < ponteiroF)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                        colunaComp++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            int inicio_can1 = GlobVar.ponteiroI[canalIndex];
+                            int Fim_can1 = GlobVar.ponteiroF[canalIndex];
+
+                            int inicio_can2 = GlobVar.ponteiroI[canal2Index];
+                            int Fim_can2 = GlobVar.ponteiroF[canal2Index];
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = inicio_can1;
+                                int colunaComp2 = inicio_can2;
+                                while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]));
+                                    colunaComp++;
+                                    colunaComp2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+
+                        }
+                        linhaCanais++;
+                    }
+                }
+                else
+                {
+                    foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+                    {
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal2"]));
+                        if (canalIndex == -1) return;
+
+                        int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroF = GlobVar.ponteiroF[canalIndex];
+                        int colunaCanalIndex = 0;
 
                         if (canal2Index == -1)
                         {
@@ -170,7 +283,8 @@ namespace PlotagemOpenGL.auxi
                                 }
                             }
                         }
-                    linhaCanais++;
+                        linhaCanais++;
+                    }
                 }
                     reorganize();
                 foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
@@ -255,65 +369,185 @@ namespace PlotagemOpenGL.auxi
             Tela_Plotagem.cronometro1.Reset();
             Tela_Plotagem.cronometro1.Start();
 
-            // Paralelizar a cópia de dados para GlobVar.matrizCanal
-            Parallel.For(0, rowCount, linhaCanais =>
+            int linhaCanais = 0;
+            int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+            if (codMont == 181)
             {
-                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-                int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
-                if (canalIndex == -1) return;
-
-                int ponteiroI = GlobVar.ponteiroI[canalIndex];
-                int ponteiroF = GlobVar.ponteiroF[canalIndex];
-
-                int txPorCanal = GlobVar.txPorCanal[canalIndex];
-                segmentLength = txPorCanal * 600;
-
-                int Start = ((startLength / GlobVar.namos)) * (int)txPorCanal;
-                int colunaCanalIndex = Start;
-
-
-                if (canal2Index == -1)
+                foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
-                    // Caso sem segundo canal
-                    for (int linha = ln; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
+                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
+                    if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
+
+                    int ponteiroI = 0;
+                    int ponteiroF = 0;
+
+                    if (canalIndex != -1){
+                        ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        ponteiroF = GlobVar.ponteiroF[canalIndex];
+                    }
+
+                    int colunaCanalIndex = 0;
+
+                    if (canal2Index == -1)
                     {
-                        int colunaComp = ponteiroI;
-                        while (colunaComp < ponteiroF)
+                        int canal1Index = GlobVar.codCanal.IndexOf(19);
+                        int canal2bIndex = GlobVar.codCanal.IndexOf(43);
+
+                        int inicio_can1 = GlobVar.ponteiroI[canal1Index];
+                        int Fim_can1 = GlobVar.ponteiroF[canal1Index];
+
+                        int inicio_can2 = 0;
+                        int Fim_can2 = 0;
+                        if (canal2bIndex != -1){
+                            inicio_can2 = GlobVar.ponteiroI[canal2bIndex];
+                            Fim_can2 = GlobVar.ponteiroF[canal2bIndex];
+                        }
+                        if (Convert.ToInt16(rw["CodCanal1"]) == 100)
                         {
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
-                            colunaComp++;
-                            colunaCanalIndex++;
-                            if(colunaCanalIndex > startLength + segmentLength) break;
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = inicio_can1;
+                                int colunaComp2 = inicio_can2;
+                                while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] + GlobVar.matrizCompleta[linha, colunaComp2]) / 2);
+                                    colunaComp++;
+                                    colunaComp2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+                        }
+                        else if (Convert.ToInt16(rw["CodCanal1"]) == 101)
+                        {
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = inicio_can1;
+                                int colunaComp2 = inicio_can2;
+                                while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) + GlobVar.matrizCompleta[linha, colunaComp]) / -2);
+                                    colunaComp++;
+                                    colunaComp2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+                        }
+                        else if (Convert.ToInt16(rw["CodCanal1"]) == 102)
+                        {
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = inicio_can1;
+                                int colunaComp2 = inicio_can2;
+                                while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) - GlobVar.matrizCompleta[linha, colunaComp2]) / 2);
+                                    colunaComp++;
+                                    colunaComp2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Caso sem segundo canal
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = ponteiroI;
+                                while (colunaComp < ponteiroF)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                    colunaComp++;
+                                    colunaCanalIndex++;
+                                }
+                            }
                         }
                     }
-                }
-                else
-                {
-                    // Caso com segundo canal
-                    int ponteiroI2 = GlobVar.ponteiroI[canal2Index];
-                    for (int linha = ln; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                    else
                     {
-                        int colunaComp = ponteiroI;
-                        int colunaCan2 = ponteiroI2;
+                        int inicio_can1 = GlobVar.ponteiroI[canalIndex];
+                        int Fim_can1 = GlobVar.ponteiroF[canalIndex];
 
-                        while (colunaComp < ponteiroF)
+                        int inicio_can2 = GlobVar.ponteiroI[canal2Index];
+                        int Fim_can2 = GlobVar.ponteiroF[canal2Index];
+                        for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                         {
-                            // Calcular a diferença entre valores das colunas de canais
-                            short valorColunaComp = (short)GlobVar.matrizCompleta[linha, colunaComp];
-                            short valorColunaCan2 = (short)GlobVar.matrizCompleta[linha, colunaCan2];
+                            int colunaComp = inicio_can1;
+                            int colunaComp2 = inicio_can2;
+                            while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                            {
+                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]));
+                                colunaComp++;
+                                colunaComp2++;
+                                colunaCanalIndex++;
+                            }
+                        }
 
-                            // Atribuir a diferença para a matriz de destino
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
-                            //DoEvents em vb
-                            colunaComp++;
-                            colunaCan2++;
-                            colunaCanalIndex++;
-                            if (colunaCanalIndex > startLength + segmentLength) break;
+                    }
+                    linhaCanais++;
+                }
+            }
+            else{
+                // Paralelizar a cópia de dados para GlobVar.matrizCanal
+                Parallel.For(0, rowCount, linhaCanais =>
+                {
+                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
+                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
+                    if (canalIndex == -1) return;
 
+                    int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                    int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
+                    int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                    segmentLength = txPorCanal * 600;
+
+                    int Start = ((startLength / GlobVar.namos)) * (int)txPorCanal;
+                    int colunaCanalIndex = Start;
+
+
+                    if (canal2Index == -1)
+                    {
+                        // Caso sem segundo canal
+                        for (int linha = ln; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                        {
+                            int colunaComp = ponteiroI;
+                            while (colunaComp < ponteiroF)
+                            {
+                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                colunaComp++;
+                                colunaCanalIndex++;
+                                if (colunaCanalIndex > startLength + segmentLength) break;
+                            }
                         }
                     }
-                }
-            });
+                    else
+                    {
+                        // Caso com segundo canal
+                        int ponteiroI2 = GlobVar.ponteiroI[canal2Index];
+                        for (int linha = ln; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                        {
+                            int colunaComp = ponteiroI;
+                            int colunaCan2 = ponteiroI2;
+
+                            while (colunaComp < ponteiroF)
+                            {
+                                // Calcular a diferença entre valores das colunas de canais
+                                short valorColunaComp = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                short valorColunaCan2 = (short)GlobVar.matrizCompleta[linha, colunaCan2];
+
+                                // Atribuir a diferença para a matriz de destino
+                                GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
+                                //DoEvents em vb
+                                colunaComp++;
+                                colunaCan2++;
+                                colunaCanalIndex++;
+                                if (colunaCanalIndex > startLength + segmentLength) break;
+
+                            }
+                        }
+                    }
+                });
+            }
             Tela_Plotagem.cronometro1.Stop();
 
 
@@ -424,160 +658,274 @@ namespace PlotagemOpenGL.auxi
                 Tela_Plotagem.conc = false;
 
                 int rowCount = GlobVar.tbl_MontagemSelecionada.Rows.Count;
-            int segmentLength = GlobVar.matrizCanal.GetLength(1);
+                int segmentLength = GlobVar.matrizCanal.GetLength(1);
 
-            Tela_Plotagem.cronometro1.Reset();
-            Tela_Plotagem.cronometro1.Start();
-            GlobVar.LastRowLoaded = 0;
-            GlobVar.MatrizCompleta = false;
-            GlobVar.FiltroCompleto = false;
-            // Paralelizar a cópia de dados para GlobVar.matrizCanal
-            Parallel.For(0, rowCount, (linhaCanais, state) =>
-            {
-                _pauseEvent.Wait(token);
+                Tela_Plotagem.cronometro1.Reset();
+                Tela_Plotagem.cronometro1.Start();
+                GlobVar.LastRowLoaded = 0;
+                GlobVar.MatrizCompleta = false;
+                GlobVar.FiltroCompleto = false;
 
-                // Verificar o token no início do loop paralelo
-                if (token.IsCancellationRequested)
+                int linhaCanais = 0;
+                int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+                if (codMont == 181)
                 {
-                    state.Stop();
-                    return;
-                }
-
-                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-                int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
-                if (canalIndex == -1) return;
-
-                int ponteiroI = GlobVar.ponteiroI[canalIndex];
-                int ponteiroF = GlobVar.ponteiroF[canalIndex];
-                int colunaCanalIndex = 0;
-
-                if (canal2Index == -1)
-                {
-                    // Caso sem segundo canal
-                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                    foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                     {
-                        // Verificar o token dentro do loop de processamento mais intenso
-                        if (token.IsCancellationRequested)
-                            return;
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
+                        if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
 
-                        int colunaComp = ponteiroI;
-                        while (colunaComp < ponteiroF)
+                        int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
+
+                        int colunaCanalIndex = 0;
+
+                        if (canal2Index == -1)
                         {
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
-                            colunaComp++;
-                            colunaCanalIndex++;
-                        }
-                    }
-                }
-                else
-                {
-                    // Caso com segundo canal
-                    int ponteiroI2 = GlobVar.ponteiroI[canal2Index];
-                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
-                    {
-                        // Verificar o token dentro do loop de processamento mais intenso
-                        if (token.IsCancellationRequested)
-                            return;
+                            int canal1Index = GlobVar.codCanal.IndexOf(19);
+                            int canal2bIndex = GlobVar.codCanal.IndexOf(43);
 
-                        int colunaComp = ponteiroI;
-                        int colunaCan2 = ponteiroI2;
-                        while (colunaComp < ponteiroF)
-                        {
-                            // Calcular a diferença entre valores das colunas de canais
-                            short valorColunaComp = (short)GlobVar.matrizCompleta[linha, colunaComp];
-                            short valorColunaCan2 = (short)GlobVar.matrizCompleta[linha, colunaCan2];
+                            int inicio_can1 = GlobVar.ponteiroI[canal1Index];
+                            int Fim_can1 = GlobVar.ponteiroF[canal1Index];
 
-                            // Atribuir a diferença para a matriz de destino
-                            GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
+                            int inicio_can2 = GlobVar.ponteiroI[canal2bIndex];
+                            int Fim_can2 = GlobVar.ponteiroF[canal2bIndex];
 
-                            colunaComp++;
-                            colunaCan2++;
-                            colunaCanalIndex++;
-                        }
-                    }
-                }
-                GlobVar.LastRowLoaded++;
-
-            });
-            GlobVar.MatrizCompleta = true;
-            
-            // Mais uma verificação de cancelamento após a cópia
-            if (token.IsCancellationRequested)
-                return;
-
-            Tela_Plotagem.cronometro1.Stop();
-            reorganize();
-
-            _pauseEvent.Wait(token);
-            if (token.IsCancellationRequested)
-                return;
-            GlobVar.LastRowLoaded = 0;
-            // Aplicar filtros paralelamente
-            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
-            {
-                _pauseEvent.Wait(token);
-
-                if (token.IsCancellationRequested)
-                    return;
-
-                int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
-                int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
-                if (canalIndex == -1) return;
-
-                int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
-                if (selectedIndex == -1) return;
-
-                double? lowHertz = row.IsNull("PassaBaixa") ? (double?)null : row.Field<double>("PassaBaixa");
-                double? highHertz = row.IsNull("PassaAlta") ? (double?)null : row.Field<double>("PassaAlta");
-                double? notchHertz = row.IsNull("Notch") ? (double?)null : row.Field<double>("Notch");
-
-                if (lowHertz.HasValue || highHertz.HasValue || notchHertz.HasValue)
-                {
-                    var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
-                    int txPorCanal = GlobVar.txPorCanal[canalIndex];
-                    var dataToFilter = canalData;
-
-                    if (lowHertz.HasValue && lowHertz.Value != 0)
-                    {
-                        if (highHertz.HasValue && highHertz.Value != 0)
-                        {
-                            dataToFilter = ShortToFloat(
-                                BandPass.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, (float)highHertz.Value, txPorCanal)
-                            );
+                            if (Convert.ToInt16(rw["CodCanal1"]) == 100)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] + GlobVar.matrizCompleta[linha, colunaComp2]) / 2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else if (Convert.ToInt16(rw["CodCanal1"]) == 101)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) + GlobVar.matrizCompleta[linha, colunaComp]) / -2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else if (Convert.ToInt16(rw["CodCanal1"]) == 102)
+                            {
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = inicio_can1;
+                                    int colunaComp2 = inicio_can2;
+                                    while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]) - GlobVar.matrizCompleta[linha, colunaComp2]) / 2);
+                                        colunaComp++;
+                                        colunaComp2++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Caso sem segundo canal
+                                for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                                {
+                                    int colunaComp = ponteiroI;
+                                    while (colunaComp < ponteiroF)
+                                    {
+                                        GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                        colunaComp++;
+                                        colunaCanalIndex++;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
+                            int inicio_can1 = GlobVar.ponteiroI[canalIndex];
+                            int Fim_can1 = GlobVar.ponteiroF[canalIndex];
+
+                            int inicio_can2 = GlobVar.ponteiroI[canal2Index];
+                            int Fim_can2 = GlobVar.ponteiroF[canal2Index];
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                int colunaComp = inicio_can1;
+                                int colunaComp2 = inicio_can2;
+                                while (colunaComp < Fim_can1 && colunaComp2 < Fim_can2)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)((GlobVar.matrizCompleta[linha, colunaComp] - GlobVar.matrizCompleta[linha, colunaComp2]));
+                                    colunaComp++;
+                                    colunaComp2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+
+                        }
+                        linhaCanais++;
+                    }
+                }
+                else{
+                    // Paralelizar a cópia de dados para GlobVar.matrizCanal
+                    Parallel.For(0, rowCount, (linhaCanais, state) =>
+                    {
+                        _pauseEvent.Wait(token);
+
+                        // Verificar o token no início do loop paralelo
+                        if (token.IsCancellationRequested)
+                        {
+                            state.Stop();
+                            return;
+                        }
+
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
+                        if (canalIndex == -1) return;
+
+                        int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroF = GlobVar.ponteiroF[canalIndex];
+                        int colunaCanalIndex = 0;
+
+                        if (canal2Index == -1)
+                        {
+                            // Caso sem segundo canal
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                // Verificar o token dentro do loop de processamento mais intenso
+                                if (token.IsCancellationRequested)
+                                    return;
+
+                                int colunaComp = ponteiroI;
+                                while (colunaComp < ponteiroF)
+                                {
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                    colunaComp++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Caso com segundo canal
+                            int ponteiroI2 = GlobVar.ponteiroI[canal2Index];
+                            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                            {
+                                // Verificar o token dentro do loop de processamento mais intenso
+                                if (token.IsCancellationRequested)
+                                    return;
+
+                                int colunaComp = ponteiroI;
+                                int colunaCan2 = ponteiroI2;
+                                while (colunaComp < ponteiroF)
+                                {
+                                    // Calcular a diferença entre valores das colunas de canais
+                                    short valorColunaComp = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                    short valorColunaCan2 = (short)GlobVar.matrizCompleta[linha, colunaCan2];
+
+                                    // Atribuir a diferença para a matriz de destino
+                                    GlobVar.matrizCanal[linhaCanais, colunaCanalIndex] = (short)(valorColunaComp - valorColunaCan2);
+
+                                    colunaComp++;
+                                    colunaCan2++;
+                                    colunaCanalIndex++;
+                                }
+                            }
+                        }
+                        GlobVar.LastRowLoaded++;
+
+                    });
+                }
+                GlobVar.MatrizCompleta = true;
+            
+                // Mais uma verificação de cancelamento após a cópia
+                if (token.IsCancellationRequested)
+                    return;
+
+                Tela_Plotagem.cronometro1.Stop();
+                reorganize();
+
+                _pauseEvent.Wait(token);
+                if (token.IsCancellationRequested)
+                    return;
+                GlobVar.LastRowLoaded = 0;
+                // Aplicar filtros paralelamente
+                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    _pauseEvent.Wait(token);
+
+                    if (token.IsCancellationRequested)
+                        return;
+
+                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
+                    if (canalIndex == -1) return;
+
+                    int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
+                    if (selectedIndex == -1) return;
+
+                    double? lowHertz = row.IsNull("PassaBaixa") ? (double?)null : row.Field<double>("PassaBaixa");
+                    double? highHertz = row.IsNull("PassaAlta") ? (double?)null : row.Field<double>("PassaAlta");
+                    double? notchHertz = row.IsNull("Notch") ? (double?)null : row.Field<double>("Notch");
+
+                    if (lowHertz.HasValue || highHertz.HasValue || notchHertz.HasValue)
+                    {
+                        var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
+                        int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                        var dataToFilter = canalData;
+
+                        if (lowHertz.HasValue && lowHertz.Value != 0)
+                        {
+                            if (highHertz.HasValue && highHertz.Value != 0)
+                            {
+                                dataToFilter = ShortToFloat(
+                                    BandPass.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, (float)highHertz.Value, txPorCanal)
+                                );
+                            }
+                            else
+                            {
+                                dataToFilter = ShortToFloat(
+                                    PaissaBaixa.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, txPorCanal)
+                                );
+                            }
+                        }
+                        else if (highHertz.HasValue && highHertz.Value != 0)
+                        {
                             dataToFilter = ShortToFloat(
-                                PaissaBaixa.ApplyFilter(FloatToShort(dataToFilter), (float)lowHertz.Value, txPorCanal)
+                                PaissaAlta.ApplyFilter(FloatToShort(dataToFilter), (float)highHertz.Value, txPorCanal)
                             );
                         }
-                    }
-                    else if (highHertz.HasValue && highHertz.Value != 0)
-                    {
-                        dataToFilter = ShortToFloat(
-                            PaissaAlta.ApplyFilter(FloatToShort(dataToFilter), (float)highHertz.Value, txPorCanal)
-                        );
-                    }
 
-                    if (notchHertz.HasValue && notchHertz.Value != 0)
-                    {
-                        dataToFilter = ShortToFloat(
-                            Notch.ApplyFilter(FloatToShort(dataToFilter), (float)notchHertz.Value, 10, txPorCanal)
-                        );
-                    }
+                        if (notchHertz.HasValue && notchHertz.Value != 0)
+                        {
+                            dataToFilter = ShortToFloat(
+                                Notch.ApplyFilter(FloatToShort(dataToFilter), (float)notchHertz.Value, 10, txPorCanal)
+                            );
+                        }
 
-                    Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
-                    GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                        Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
+                        GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                    }
+                        GlobVar.LastRowLoaded++;
+
                 }
-                    GlobVar.LastRowLoaded++;
+                    GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+                    GlobVar.FiltroCompleto = true;
+                    Tela_Plotagem.conc = true;
 
-            }
-                GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
-                GlobVar.FiltroCompleto = true;
-                Tela_Plotagem.conc = true;
-
-                //Tela_Plotagem.TelaClearAndReload();
-            }
+                    //Tela_Plotagem.TelaClearAndReload();
+                }
             catch { return; }
         }
 

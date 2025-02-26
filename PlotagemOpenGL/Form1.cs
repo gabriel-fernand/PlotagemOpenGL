@@ -342,8 +342,26 @@ namespace PlotagemOpenGL
                         MontagemBox.Items.Add(row["DescrMontagem"].ToString());
                     }
                     string selecao = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
-                    MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+                    int intdex = MontagemBox.Items.IndexOf(selecao);
+                    if (intdex != -1) 
+                    {
+                        MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(selecao);
+                    }
+                    else
+                    {
+                        int codiguin = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+                        // Encontrar a linha correspondente na tabela
+                        DataRow rowmt = GlobVar.tbl_Montagem.AsEnumerable()
+                            .FirstOrDefault(row => row.Field<int>("CodMontagem") == codiguin);
 
+                        // Verificar se encontrou uma linha antes de acessar
+                        if (rowmt != null)
+                        {
+                            string seleca = rowmt["DescrMontagem"].ToString();
+                            MontagemBox.SelectedIndex = MontagemBox.Items.IndexOf(seleca);
+
+                        }
+                    }
                     foreach (Control panel in painelExames.Controls)
                     {
                         if (panel is Panel)
@@ -371,6 +389,7 @@ namespace PlotagemOpenGL
 
                     toolTip1.SetToolTip(openglControl1, "Teste");
                     this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
+
                     Play_OpenGl();
                     falsoClick();
                     AjustarFonteDosLabels();
@@ -1534,7 +1553,9 @@ namespace PlotagemOpenGL
                 int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
 
                 int meioPn = pn.Height;
-                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                if(indiot < GlobVar.desenhoLoc.Length){
+                    GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                }
                 indiot++;
             }
             UpdatePanelHeightInDataTable();
@@ -1839,7 +1860,9 @@ namespace PlotagemOpenGL
                 int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
 
                 int meioPn = pn.Height;
-                GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                if(indiot < GlobVar.desenhoLoc.Length){
+                    GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                }
                 indiot++;
             }
             UpdatePanelHeightInDataTable();
@@ -2113,6 +2136,11 @@ namespace PlotagemOpenGL
                 hScrollBar1.Maximum = maximoPossivel;
                 hScrollBar1.LargeChange = GlobVar.segundos;
                 hScrollBar1.Refresh();
+
+                if (GlobVar.ultimaPag != 0)
+                {
+                    abreUltimaPaginaFechada();
+                }
                 UpdateInicioTela();
                 click = true;
             }
@@ -2329,6 +2357,7 @@ namespace PlotagemOpenGL
         private CancellationTokenSource _cancellationTokenSource;
         private async void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            try{
             if (!isInitialized || MontagemBox.SelectedIndex == -1)
                 return;
 
@@ -2337,72 +2366,74 @@ namespace PlotagemOpenGL
             _cancellationTokenSource = new CancellationTokenSource();
             var token = _cancellationTokenSource.Token;
 
-            using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
-            {
-                // Processo principal
-                cronometro4.Reset();
-                concluido = "";
-                cronometro4.Start();
-                telaLoad.label1.Text = "Alterando Montagem";
-                telaLoad.realoctxt();
-                telaLoad.Show();
-                await Task.Delay(10, token);
-                telaLoad.AtualizarProgresso(10);
-
-                int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
-                LeituraBanco.AlteraMontagem(CodMont);
-                telaLoad.AtualizarProgresso(25);
-
-                LeituraEmMatrizTeste.montagemSelecionadaAlterada();
-                LeituraEmMatrizTeste.referencias();
-                await Task.Delay(2, token);
-                telaLoad.AtualizarProgresso(50);
-
-                canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
-                canais.RealocButton();
-                canais.PainelLb_Resize();
-                canais.reloc();
-                await Task.Delay(2, token);
-                telaLoad.AtualizarProgresso(75);
-
-                UpdatePanelHeightInDataTable();
-                AjustarFonteDosLabels();
-                AjustarBotoesMinusEPlus();
-                await Task.Delay(2, token);
-                telaLoad.AtualizarProgresso(90);
-                 
-                UpdateFilterStates();
-                UpdateInicioTela();
-                TelaClearAndReload();
-                await Task.Delay(2, token);
-                telaLoad.AtualizarProgresso(100);
-                cronometro4.Stop();
-
-                // Inicia uma nova tarefa em segundo plano, interrompida imediatamente se for cancelada
-                _backgroundTask = Task.Run(() =>
+                using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
-                    try
+                    // Processo principal
+                    cronometro4.Reset();
+                    concluido = "";
+                    cronometro4.Start();
+                    telaLoad.label1.Text = "Alterando Montagem";
+                    telaLoad.realoctxt();
+                    telaLoad.Show();
+                    await Task.Delay(10, token);
+                    telaLoad.AtualizarProgresso(10);
+
+                    int CodMont = Convert.ToInt16(GlobVar.tbl_Montagem.Rows[MontagemBox.Items.IndexOf(MontagemBox.Text)]["CodMontagem"]);
+                    LeituraBanco.AlteraMontagem(CodMont);
+                    telaLoad.AtualizarProgresso(25);
+
+                    LeituraEmMatrizTeste.montagemSelecionadaAlterada();
+                    LeituraEmMatrizTeste.referencias();
+                    await Task.Delay(2, token);
+                    telaLoad.AtualizarProgresso(50);
+
+                    canais = new Canais(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                    canais.RealocPanel(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                    canais.quantidadeGraf(GlobVar.tbl_MontagemSelecionada.Rows.Count);
+                    canais.RealocButton();
+                    canais.PainelLb_Resize();
+                    canais.reloc();
+                    await Task.Delay(2, token);
+                    telaLoad.AtualizarProgresso(75);
+
+                    UpdatePanelHeightInDataTable();
+                    AjustarFonteDosLabels();
+                    AjustarBotoesMinusEPlus();
+                    await Task.Delay(2, token);
+                    telaLoad.AtualizarProgresso(90);
+
+                    UpdateFilterStates();
+                    UpdateInicioTela();
+                    TelaClearAndReload();
+                    await Task.Delay(2, token);
+                    telaLoad.AtualizarProgresso(100);
+                    cronometro4.Stop();
+
+                    // Inicia uma nova tarefa em segundo plano, interrompida imediatamente se for cancelada
+                    _backgroundTask = Task.Run(() =>
                     {
-                        // Verifica o token constantemente para cancelar rapidamente
-                        if (token.IsCancellationRequested)
-                            token.ThrowIfCancellationRequested();
+                        try
+                        {
+                            // Verifica o token constantemente para cancelar rapidamente
+                            if (token.IsCancellationRequested)
+                                token.ThrowIfCancellationRequested();
 
-                        LeituraEmMatrizTeste.montagemSelecionadaAlteradaTudo(token);
+                            LeituraEmMatrizTeste.montagemSelecionadaAlteradaTudo(token);
 
-                        if (token.IsCancellationRequested)
-                            token.ThrowIfCancellationRequested();
+                            if (token.IsCancellationRequested)
+                                token.ThrowIfCancellationRequested();
 
-                        concluido = "Concluido";
-                        TelaClearAndReload();
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Console.WriteLine("A tarefa em segundo plano foi cancelada.");
-                    }
-                }, token);
+                            concluido = "Concluido";
+                            TelaClearAndReload();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            Console.WriteLine("A tarefa em segundo plano foi cancelada.");
+                        }
+                    }, token);
+                }
             }
+            catch { }
         }
         private void qtdGraficos_TextChanged(object sender, EventArgs e)
         {
@@ -2461,23 +2492,27 @@ namespace PlotagemOpenGL
         //Metodo que faz a plotagem, e a replotagem quando precisa
         public static void TelaClearAndReload()
         {
-            if (openglControl1.InvokeRequired)
+            try
             {
-                openglControl1.Invoke(new Action(TelaClearAndReload));
-                return;
+                if (openglControl1.InvokeRequired)
+                {
+                    openglControl1.Invoke(new Action(TelaClearAndReload));
+                    return;
+                }
+
+                openglControl1.DoRender();
+
+                // Realize as operações gráficas no thread principal
+                plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
+
+                plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                plotComentatios.DesenhaComentario(gl);
+                plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
             }
-
-            openglControl1.DoRender();
-
-            // Realize as operações gráficas no thread principal
-            plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
-
-            plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotGrafico.DesenhaGrafico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotComentatios.DesenhaComentario(gl);
-            plotNumerico.PlotNumerico(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotEventos.DrawTexts(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
-            plotNumerico.PlotSetas(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+            catch { }
         }
         private void openglControl1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -7157,7 +7192,13 @@ namespace PlotagemOpenGL
                 currentY += panel.Height;
             }
 
-            // Atualiza os valores de localização para GlobVar.desenhoLoc
+            // Ajustar o tamanho do array GlobVar.desenhoLoc para corresponder ao número de painéis visíveis
+            int visiblePanelsCount = painelExames.Controls.OfType<Panel>().Count(p => p.Visible);
+            if (GlobVar.desenhoLoc == null || GlobVar.desenhoLoc.Length != visiblePanelsCount)
+            {
+                GlobVar.desenhoLoc = new float[visiblePanelsCount];
+            }
+
             int index = 0;
             foreach (Panel panel in painelExames.Controls.OfType<Panel>())
             {
@@ -7813,13 +7854,16 @@ namespace PlotagemOpenGL
                     {
                         foreach (Label lb in pn.Controls.OfType<Label>())
                         {
-                            if (lb.Tag.Equals("min"))
-                            {
-                                lb.Hide();
-                            }
-                            else if (lb.Tag.Equals("max"))
-                            {
-                                lb.Hide();
+                            if (lb.Tag != null) 
+                            { 
+                                if (lb.Tag.Equals("min"))
+                                {
+                                    lb.Hide();
+                                }
+                                else if (lb.Tag.Equals("max"))
+                                {
+                                    lb.Hide();
+                                }
                             }
                         }
                     }

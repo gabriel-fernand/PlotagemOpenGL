@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using System.Linq.Expressions;
 using System.Windows.Forms;
+using SharpGL.SceneGraph;
+using System.Drawing;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -27,7 +29,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
 
                         int h = GlobVar.indice;
@@ -36,8 +38,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                         string txtEmTela = $"";
                         float espacoEntreNumeros = GlobVar.sizeOpenGl.X / (GlobVar.maximaNumero - GlobVar.indiceNumero);
+                        int codCanal1 = GlobVar.codSelected[i];
+                        int pont = 512;
+                        int taxa = GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(codCanal1)];
+                        if (taxa != 512)
+                        {
+                            pont = 512 / taxa;
+                        }
 
-                        for (int j = GlobVar.indiceNumero; j < GlobVar.maximaNumero; j++)
+                        int xOrient = (GlobVar.indice / pont);
+                        for (int j = (GlobVar.indice/ pont); j < (GlobVar.maximaVect / pont); j++)
                         {
                             int x = (int)((GlobVar.sizeOpenGl.X / GlobVar.segundos) / 3);
 
@@ -51,7 +61,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                                     bool HorizontalOuVertical = (bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["AutoEscala"];
 
-                                    int codCanal1 = GlobVar.codSelected[i];
+                                    codCanal1 = GlobVar.codSelected[i];
                                     int locaux;
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                                     {
@@ -90,6 +100,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     //}
                                     float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;
                                     x += (int)writeX;
+                                    int font = CalcularTamanhoFonteIdeal();
+                                    System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+                                    SizeF tamanhostring = CalcularTamanhoString(txtEmTela, fonte);
+
+                                    y -= (int)tamanhostring.Height / 2;
                                     if (HorizontalOuVertical) // if(GlobVar.segundos >= 60)
                                     {
                                         int yTop = y + 5;
@@ -159,6 +174,128 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     gl.End();
                                     gl.Flush();
                                     
+                                }
+                                else if (GlobVar.codSelected[i] == 65)
+                                {
+                                    gl.End();
+                                    int y = -7000;
+
+                                    bool HorizontalOuVertical = (bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["AutoEscala"];
+
+                                    int locaux;
+                                    foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                                    {
+                                        int tagCod = (int)pn.Tag;
+                                        if (tagCod == -1)
+                                        {
+                                            continue;
+                                        }
+                                        if (tagCod == codCanal1)
+                                        {
+                                            int topPn = pn.Top;
+                                            int auxloc = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                                            double meioPn = pn.Height / 2;
+                                            y = auxloc - (int)meioPn;
+                                        }
+                                    }
+
+
+                                    int aux = 0;
+                                    float me = 0;
+                                    for (int g = j; g < j + taxa;)
+                                    {
+                                        //if(GlobVar.matrizCanal[GlobVar.grafSelected[i], g] < 0) { GlobVar.matrizCanal[GlobVar.grafSelected[i], g] *= -1;  }
+                                        aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
+                                        g += taxa;
+                                    }
+                                    me = aux;
+                                    txtEmTela = $" {me} ";
+
+                                    int meh = 14;
+                                    int fontsize = 19;
+                                    //if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"])
+                                    //{
+                                    //    //meh += 2;
+                                    //    fontsize += 3;
+                                    //}
+                                    float writeX = (xOrient - (GlobVar.indice / pont)) * espacoEntreNumeros;
+                                    x += (int)writeX;
+                                    int font = CalcularTamanhoFonteIdeal();
+                                    System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+                                    SizeF tamanhostring = CalcularTamanhoString(txtEmTela, fonte);
+
+                                    y -= (int)tamanhostring.Height / 2;
+                                    if (HorizontalOuVertical) // if(GlobVar.segundos >= 60)
+                                    {
+                                        int yTop = y + 5;
+                                        int yBot = y - 5;
+                                        meh = 6;
+                                        fontsize = 12;
+
+                                        // Lógica para definir 'top' e 'bot' de acordo com o tamanho da string
+                                        string top, bot;
+                                        if (txtEmTela.Length > 4)
+                                        {
+                                            // Pega os dois primeiros caracteres para o 'top' e o último para o 'bot'
+                                            top = txtEmTela.Substring(1, 2); // dois primeiros caracteres
+                                            bot = txtEmTela.Substring(3, 1); // último caractere
+                                        }
+                                        else
+                                        {
+                                            // Caso tenha 3 caracteres ou menos, pega o primeiro e o último
+                                            top = txtEmTela.Substring(1, 1); // primeiro caractere
+                                            bot = txtEmTela.Substring(2, 1); // último caractere
+                                        }
+
+                                        if (GlobVar.segundos >= 60)
+                                        {
+                                            // Desenhar o texto no topo
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yTop, color[0], color[1], color[2], "Calibri", fontsize, top);
+
+                                            // Desenhar o texto no rodapé
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yBot, color[0], color[1], color[2], "Calibri", fontsize, bot);
+                                        }
+                                        else
+                                        {
+                                            yTop = y + 7;
+                                            yBot = y - 8;
+
+                                            meh = 14;
+                                            fontsize = 19;
+
+                                            // Desenhar o texto no topo
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yTop, color[0], color[1], color[2], "Calibri", fontsize, top);
+
+                                            // Desenhar o texto no rodapé
+                                            gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
+                                            gl.DrawText(x, yBot, color[0], color[1], color[2], "Calibri", fontsize, bot);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (GlobVar.segundos >= 60)
+                                        {
+                                            meh = 6;
+                                            fontsize = 12;
+                                            gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", meh, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                            gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", fontsize, txtEmTela);
+                                        }
+                                        else
+                                        {
+                                            gl.DrawText(0, y, color[0], color[1], color[2], "Arial Narrow", meh, ""); //Nao entendi o pq mas precisa desse para o outro mostrar na tela
+                                            gl.DrawText(x, y, color[0], color[1], color[2], "Arial Narrow", fontsize, txtEmTela);
+                                        }
+                                    }
+                                    h++; //aqui tem plotar 3 graficos diferentes                                
+                                    j += taxa - 1;
+                                    xOrient += 8;
+                                    gl.End();
+                                    gl.Flush();
+
                                 }
 
                             }
@@ -391,6 +528,29 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.PosIncremento = 2110;
             }
         }
+        public static int CalcularTamanhoFonteIdeal(int tamanhoMinimo = 9, int tamanhoMaximo = 14)
+        {
+            // Obtém as dimensões do formulário
+            int largura = Tela_Plotagem.openglControl1.Width;
+            int altura = Tela_Plotagem.openglControl1.Height;
+
+            // Calcula o tamanho base da fonte como uma média proporcional à área da tela
+            int tamanhoCalculado = (int)Math.Sqrt((largura * altura) / 1000.0);
+
+            // Garante que o tamanho esteja dentro dos limites mínimos e máximos
+            tamanhoCalculado = Math.Max(tamanhoMinimo, Math.Min(tamanhoCalculado, tamanhoMaximo));
+
+            return tamanhoCalculado;
+        }
+        public static SizeF CalcularTamanhoString(string texto, System.Drawing.Font fonte)
+        {
+            using (Bitmap bitmap = new Bitmap(1, 1))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                return g.MeasureString(texto, fonte);
+            }
+        }
+
     }
 
 }

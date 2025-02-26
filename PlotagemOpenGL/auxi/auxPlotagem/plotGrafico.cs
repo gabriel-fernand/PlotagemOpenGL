@@ -27,6 +27,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 bool text = false;
                 //gl.Color(0.0f, 0.0f, 0.0f);
                 int des = qtdGraf - 1;
+                int lastcod = -1;
                 for (int i = 0; i < qtdGraf; i++)
                 {
                     bool verTx = false;
@@ -43,7 +44,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
-                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
                     {
                         if (!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value) && GlobVar.codSelected[i] == 14)
                         {
@@ -191,10 +192,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
 
                     }
-                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 66))
+                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66))
                     {
                         int loc = -7000;
-
+                        int pnleg = 0;
                         int codCanal1 = GlobVar.codSelected[i];
                         int locaux;
                         foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
@@ -207,6 +208,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                             if (tagCod == codCanal1)
                             {
+                                pnleg = pn.Height;
                                 int topPn = pn.Top;
                                 int aux = Math.Abs((pn.Top + pn.Height) - Tela_Plotagem.painelExames.Height);
 
@@ -254,6 +256,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 {
                                     valormatriz = (int)((double)GlobVar.matrizCanal[GlobVar.grafSelected[i], h] - LimiteInferior);
                                 }
+                                if(codCanal1 == 65)
+                                {
+                                    valormatriz += LimiteInferior;
+                                    valormatriz = (int)NormalizarValor(valormatriz, LimiteInferior, LimiteSuperior, 0, pnleg);
+                                }
                                 gl.Vertex(j, (valormatriz + loc));
                                 h++; //aqui tem plotar 3 graficos diferentes
                                 j += ponteiroDesenho - 1;
@@ -278,7 +285,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             inverteSinal = -1;
                         }
                         int loc = -7000;
-
+                        string leged = GlobVar.tbl_MontagemSelecionada.Rows[i]["Legenda"].ToString();
                         int codCanal1 = GlobVar.codSelected[i];
                         int locaux;
                         foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
@@ -288,8 +295,23 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             {
                                 continue;
                             }
-
-                            if (tagCod == codCanal1)
+                            if(tagCod == codCanal1)
+                            {
+                                foreach (Label lb in pn.Controls.OfType<Label>())
+                                {
+                                    if (leged.Equals(lb.Text))
+                                    {
+                                        int topPn = pn.Top;
+                                        int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+                                        top = aux;
+                                        butt = aux - pn.Height;
+                                        double meioPn = pn.Height / 2;
+                                        loc = aux - (int)meioPn;
+                                    }
+                                }
+                            }
+                            /*
+                            if (tagCod == codCanal1)// && tagCod != lastcod)
                             {
                                 int topPn = pn.Top;
                                 int aux = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
@@ -297,7 +319,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 butt = aux - pn.Height;
                                 double meioPn = pn.Height / 2;
                                 loc = aux - (int)meioPn;
-                            }
+
+                                lastcod = tagCod;
+                            }*/
                         }
                         double scala = GlobVar.scale[i];
                         if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["AutoEscala"])
@@ -306,15 +330,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
 
 
-                        if (!GlobVar.codCanal.Contains(codCanal1))
+                        if (!GlobVar.codCanal.Contains(codCanal1) && (codCanal1 != 100 && codCanal1 != 101 && codCanal1 != 102))
                         {
                             // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
                             continue;
                         }
-
                         int index = GlobVar.codCanal.IndexOf(codCanal1);
 
-                        if (GlobVar.txPorCanal[index] != 512)
+                        if (codCanal1 == 100 || codCanal1 == 101 || codCanal1 == 102)
+                        {
+                            index = 512;
+                        }
+                        else if (GlobVar.txPorCanal[index] != 512)
                         {
                             verTx = true;
                             ponteiroDesenho = 512 / GlobVar.txPorCanal[index];
@@ -466,6 +493,32 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             // Converte para inteiro e retorna
             return (int)Math.Round(normalized);
+        }
+        public static double NormalizarValor(double valor, double minOriginal, double maxOriginal, double minY, double maxY)
+        {
+            if (maxOriginal == minOriginal) return 0;
+
+            if (valor < minOriginal)
+                return minY;
+            if (valor > maxOriginal)
+                return maxY;
+
+            // Aplicando a fórmula de normalização
+            return minY + (valor - minOriginal) * (maxY - minY) / (maxOriginal - minOriginal);
+        }
+
+        public static double ConverterYParaX(double y, double yMin, double yMax, double xMin, double xMax)
+        {
+            // Verifica se yMin e yMax são diferentes para evitar divisão por zero
+            if (yMin == yMax)
+            {
+                throw new ArgumentException("Erro: yMin e yMax não podem ser iguais, pois isso resultaria em uma divisão por zero.");
+            }
+
+            // Regra de três para mapear o valor de Y para X
+            double x = ((y - yMin) * (xMax - xMin) / (yMax - yMin)) + xMin;
+
+            return x;
         }
     }
 }

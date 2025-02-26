@@ -17,12 +17,12 @@ namespace PlotagemOpenGL.Filtros
             _lowPassFilter = new PaissaBaixa(lowCutoffFrequency, samplingRate);
             _highPassFilter = new PaissaAlta(highCutoffFrequency, samplingRate);
         }
-
+        /*
         public float Apply(float input)
         {
-            float lowPassOutput = _lowPassFilter.Apply(input);
-            return _highPassFilter.Apply(lowPassOutput);
-        }
+            //float lowPassOutput = _lowPassFilter.Apply(input);
+            //return _highPassFilter.Apply(lowPassOutput);
+        }*/
 
         public static float[] ApplyFilter(float[] input, float lowCutoffFrequency, float highCutoffFrequency, float samplingRate)
         {

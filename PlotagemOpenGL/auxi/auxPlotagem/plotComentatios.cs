@@ -31,58 +31,64 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             try
             {
-                int codMontagem = Convert.ToInt16(GlobVar.tbl_MontGrav.Rows[0]["CodMontagem"]);
-                color = plotGrafico.ObterComponentesRGB(cor);
-                GlobVar.tbl_Comentarios.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == codMontagem);
-                for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
-                {
-                    XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
-                    YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
-                    string comentario = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
-                    float xLoc = 0;
-                    float yLoc = 0;
+                if (GlobVar.tbl_MontGrav != null){
+                    int codMontagem = Convert.ToInt16(GlobVar.tbl_MontGrav.Rows[0]["CodMontagem"]);
+                    color = plotGrafico.ObterComponentesRGB(cor);
+                    GlobVar.tbl_Comentarios.AsEnumerable().Where(row => row.Field<int>("CodMontagem") == codMontagem);
 
-                    int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
-                    int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
-                    Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
-
-                    int pag = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]);
-                    int pagLoc = pag * GlobVar.namos;
-
-                    xLoc = pagLoc + Xi;
-
-                    // Desenha o quadrado de fundo
-                    gl.Begin(OpenGL.GL_QUADS);
-                    gl.Color(color[0], color[1], color[2], 0.44f);
-                    gl.Vertex(xLoc, yLoc, -1.8f);
-                    gl.Vertex(xLoc + XSize, yLoc, -1.8f);
-                    gl.Vertex(xLoc + XSize, yLoc - YSize, -1.8f);
-                    gl.Vertex(xLoc, yLoc - YSize, -1.8f);
-                    gl.End();
-                    gl.Flush();
-
-
-
-                    int writeXSize = 0;
-                    int sotaqy = 0;
-                    plotEventos.ConvertToScreenCoordinates(xLoc + XSize, yLoc, out writeXSize, out sotaqy);
-
-                    int writeX = 0;
-                    int writeY = 0;
-                    plotEventos.ConvertToScreenCoordinates(xLoc, yLoc, out writeX, out writeY);
-
-                    writeXSize = Math.Abs(writeXSize - writeX);
-                    writeX += 4;
-
-                    // Quebra o texto em linhas que cabem dentro do quadrado
-                    List<string> linhas = QuebraTexto(comentario, writeXSize, gl, "Calibri Negrito", 15);
-
-                    // Desenha cada linha de texto dentro do quadrado
-                    int alturaLinha = 15; // Ajuste conforme necessário
-                    for (int j = 0; j < linhas.Count; j++)
+                    if (GlobVar.tbl_Comentarios != null)
                     {
-                        gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 13, "");
-                        gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 15, linhas[j]);
+                        for (int i = 0; i < GlobVar.tbl_Comentarios.Rows.Count; i++)
+                        {
+                            XSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoX"]);
+                            YSize = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["DuracaoY"]);
+                            string comentario = GlobVar.tbl_Comentarios.Rows[i]["Comentario"].ToString();
+                            float xLoc = 0;
+                            float yLoc = 0;
+
+                            int Yi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Yi"]);
+                            int Xi = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["Xi"]);
+                            Tela_Plotagem.ConvertToOpenGLCoordinates(Xi, Yi, out xLoc, out yLoc);
+
+                            int pag = Convert.ToInt16(GlobVar.tbl_Comentarios.Rows[i]["NumPag"]);
+                            int pagLoc = pag * GlobVar.namos;
+
+                            xLoc = pagLoc + Xi;
+
+                            // Desenha o quadrado de fundo
+                            gl.Begin(OpenGL.GL_QUADS);
+                            gl.Color(color[0], color[1], color[2], 0.44f);
+                            gl.Vertex(xLoc, yLoc, -1.8f);
+                            gl.Vertex(xLoc + XSize, yLoc, -1.8f);
+                            gl.Vertex(xLoc + XSize, yLoc - YSize, -1.8f);
+                            gl.Vertex(xLoc, yLoc - YSize, -1.8f);
+                            gl.End();
+                            gl.Flush();
+
+
+
+                            int writeXSize = 0;
+                            int sotaqy = 0;
+                            plotEventos.ConvertToScreenCoordinates(xLoc + XSize, yLoc, out writeXSize, out sotaqy);
+
+                            int writeX = 0;
+                            int writeY = 0;
+                            plotEventos.ConvertToScreenCoordinates(xLoc, yLoc, out writeX, out writeY);
+
+                            writeXSize = Math.Abs(writeXSize - writeX);
+                            writeX += 4;
+
+                            // Quebra o texto em linhas que cabem dentro do quadrado
+                            List<string> linhas = QuebraTexto(comentario, writeXSize, gl, "Calibri Negrito", 15);
+
+                            // Desenha cada linha de texto dentro do quadrado
+                            int alturaLinha = 15; // Ajuste conforme necessário
+                            for (int j = 0; j < linhas.Count; j++)
+                            {
+                                gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 13, "");
+                                gl.DrawText(writeX, (int)yLoc - 15 - (j * alturaLinha), 0.0f, 0.0f, 0.0f, "Calibri Negrito", 15, linhas[j]);
+                            }
+                        }
                     }
                 }
             }

@@ -125,6 +125,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_SelImpressao = new DataTable();
         public static DataTable tbl_SeqEvento = new DataTable();
         public static DataTable tbl_ArqVideo = new DataTable();
+        public static DataTable tbl_CanaisAdquiridos = new DataTable();
 
         public static DataTable tbl_HipnoGrupos = new DataTable();
         public static DataTable tbl_HipnoSubGrupos = new DataTable();

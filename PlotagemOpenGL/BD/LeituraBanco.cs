@@ -8,6 +8,8 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Markup;
 using ClassesBDNano;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 public class LeituraBanco
 {
@@ -34,6 +36,7 @@ public class LeituraBanco
             string queryTbl_SelImpressao = "SELECT * FROM tbl_selImpressao";
             string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
             string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
+            string queryTbl_CanaisAdquiridos = "SELECT * FROM tbl_CanaisAdquiridos";
 
 
             using var command = new OdbcCommand(query, connectionDatBd);
@@ -46,6 +49,7 @@ public class LeituraBanco
             using var commanfTbl_SelImpressao = new OdbcCommand(queryTbl_SelImpressao, connectionDatBd);
             using var commandTbl_SeqEvento = new OdbcCommand(queryTbl_SeqEvento, connectionDatBd);
             using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
+            using var commandTbl_CanaisAdquiridos = new OdbcCommand(queryTbl_CanaisAdquiridos, connectionDatBd);
 
             using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
 
@@ -58,6 +62,7 @@ public class LeituraBanco
             using var adapterTbl_ResumoExame = new OdbcDataAdapter(commandTbl_ResumoExame);
             using var adapterTbl_SelImpressao = new OdbcDataAdapter(commanfTbl_SelImpressao);
             using var adapterTbl_SeqEvento = new OdbcDataAdapter(commandTbl_SeqEvento);
+            using var adapterTbl_CanaisAdquiridos = new OdbcDataAdapter(commandTbl_CanaisAdquiridos);
 
             // Preenche o DataTable com os dados retornados pela consulta
             adapterTbl_ArqVideo.Fill(GlobVar.tbl_ArqVideo);
@@ -70,7 +75,7 @@ public class LeituraBanco
             adapterTipoExame.Fill(sele);
             adapter.Fill(GlobVar.eventos);
             adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
-
+            adapterTbl_CanaisAdquiridos.Fill(GlobVar.tbl_CanaisAdquiridos);
             connectionDatBd.Close();
             
         }
@@ -228,35 +233,52 @@ public class LeituraBanco
                         GlobVar.tbl_Montagem.ImportRow(row);
                     }
 
-                        var matchingRows = GlobVar.tbl_Montagem.AsEnumerable()
-    .                                               Where(row => row.Field<string>("DescrMontagem") == GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString());
+                    var matchingRows = GlobVar.tbl_Montagem.AsEnumerable()
+.                                               Where(row => row.Field<string>("DescrMontagem") == GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString());
 
-                        if (matchingRows.Any())
-                        {
-                            // Existem linhas correspondentes
-                            var auxCodMont = matchingRows.CopyToDataTable();
-                            int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                    if (matchingRows.Any())
+                    {
+                        // Existem linhas correspondentes
+                        var auxCodMont = matchingRows.CopyToDataTable();
+                        int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                        GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
+                                .Where(row => row.Field<int>("CodMontagem") == CodMont)
+                                .CopyToDataTable();
+                    }
+                    else
+                    {
+                            System.Windows.Forms.MessageBox.Show(
+                                "Não foi localizada a montagem em que o exame foi realizado.\nO sistema ativou a montagem padrão",
+                                "Atenção!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                            int CodMont = 119;
                             GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
                                     .Where(row => row.Field<int>("CodMontagem") == CodMont)
                                     .CopyToDataTable();
                         }
-                        else
-                        {
-                            // Não existem linhas correspondentes
-                            GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontGrav;
-                        }
                         break;
                 }
                 }
+
+            foreach(DataRow dw in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (dw["CodCanal2"] == DBNull.Value)
+                {
+                    dw["CodCanal2"] = -1;
+                }
+            }
+            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
             }
         }
         catch (IOException e)
         {
-            MessageBox.Show(e.Message);
+            System.Windows.Forms.MessageBox.Show(e.Message);
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message);
+            System.Windows.Forms.MessageBox.Show(e.Message);
         }
     }
     public static void AlteraMontagem(int CodMont)
@@ -266,19 +288,55 @@ public class LeituraBanco
         var montagemFiltrada = GlobVar.tbl_Montagem.AsEnumerable()
             .Where(row => row.Field<int>("CodMontagem") == CodMont)
             .FirstOrDefault();
+        bool tem19 = GlobVar.codCanal.Contains(19);
+        bool tem43 = GlobVar.codCanal.Contains(43);
+
         // Certifique-se de que o vetor 'GlobVar.codCanal' e a tabela 'GlobVar.tbl_MontCanal' sejam não nulos
         if (GlobVar.codCanal != null && GlobVar.codCanal.Length > 0 && GlobVar.tbl_MontCanal != null)
         {
-            // Filtra as linhas do DataTable 'GlobVar.tbl_MontCanal' onde a coluna 'CodCanal1' possui valores presentes no vetor 'GlobVar.codCanal'
-            var linhasFiltradas = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
-                .Where(row => GlobVar.codCanal.Contains(row.Field<int>("CodCanal1"))).CopyToDataTable();
+            var linhasFiltradas = GlobVar.tbl_MontagemSelecionada;
+            if (CodMont != 181){
+                // Filtra as linhas do DataTable 'GlobVar.tbl_MontCanal' onde a coluna 'CodCanal1' possui valores presentes no vetor 'GlobVar.codCanal'
+                linhasFiltradas = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                    .Where(row => GlobVar.codCanal.Contains(row.Field<int>("CodCanal1"))).CopyToDataTable();
+            }
+            else
+            {
+                List<DataRow> linhasParaRemover = new List<DataRow>();
 
+                foreach (DataRow rw in linhasFiltradas.Rows)
+                {
+                    int cod = Convert.ToInt32(rw["CodCanal1"]);
+                    int cod2 = Convert.ToInt32(rw["CodCanal2"]);
+                    if (cod != 100 && cod != 101 && cod != 102)
+                    {
+                        if (!GlobVar.codCanal.Contains(cod) || (!GlobVar.codCanal.Contains(cod2) && cod2 != -1))
+                        {
+                            linhasParaRemover.Add(rw); // Adiciona a linha para remoção
+                        }
+                    }
+                    else
+                    {
+                        if (!tem19 || !tem43)
+                        {
+                            linhasParaRemover.Add(rw); // Adiciona a linha para remoção
+                        }
+                    }
+                }
+
+                // Remove as linhas marcadas fora do loop
+                foreach (DataRow rw in linhasParaRemover)
+                {
+                    linhasFiltradas.Rows.Remove(rw);
+                }
+            }
             // Atualiza o DataTable 'GlobVar.tbl_MontagemSelecionada' com as linhas filtradas
             GlobVar.tbl_MontagemSelecionada = linhasFiltradas;
             
             foreach(DataRow row in GlobVar.tbl_MontGrav.Rows)
             {
                 row["NomeMontagem"] = montagemFiltrada[1];
+
             }
         }
         else

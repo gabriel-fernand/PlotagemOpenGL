@@ -14,7 +14,7 @@ namespace PlotagemOpenGL.Filtros
 
         public PaissaBaixa()
         {
-
+            //versao 24/02/2025
         }
 
         public PaissaBaixa(float cutoffFrequency, float samplingRate)
@@ -23,39 +23,50 @@ namespace PlotagemOpenGL.Filtros
             _prevOutput = 0;
         }
 
+
         public static float CalculateAlpha(float cutoffFrequency, float samplingRate)
         {
-            float omega = 2 * (float)Math.PI * cutoffFrequency;
-            return omega / (omega + samplingRate);
+            float dt = 1.0f / samplingRate;
+            float rc = 1.0f / (2.0f * (float)Math.PI * cutoffFrequency);
+            return dt / (dt + rc);
         }
 
-        public float Apply(float input)
+        public static float Apply(float input)
         {
-            float output = _alpha * input + (1 - _alpha) * _prevOutput;
-            _prevOutput = output;
-            return output;
+            _prevOutput = _alpha * input + (1 - _alpha) * _prevOutput;
+            return _prevOutput;
         }
 
         public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            Tela_Plotagem.cronometroBaixa.Start();
-
-            //PaissaBaixa lowPassFilter = new PaissaBaixa(cutoffFrequency, samplingRate);
+            Tela_Plotagem.cronometroBaixa.Start();            
 
             _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
             _prevOutput = 0;
 
+            float[] outputa = new float[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                outputa[i] = Apply(input[i]);
+            }
+            float[] outputs = new float[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                outputs[i] = Apply(outputa[i]);
+            }
+            float[] outpute = new float[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                outpute[i] = Apply(outputs[i]);
+            }
 
             float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
-
-                float outputaaa = _alpha * input[i] + (1 - _alpha) * _prevOutput;
-                _prevOutput = outputaaa;
-
-                output[i] = outputaaa;
-
+                output[i] = Apply(outpute[i]);
             }
+
             Tela_Plotagem.cronometroBaixa.Stop();
 
             return output;

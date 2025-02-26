@@ -8,6 +8,7 @@ using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.Filtros;
 using SharpGL;
+using SharpGL.SceneGraph;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -494,6 +495,47 @@ namespace PlotagemOpenGL.Hipnograma
 
                         break;
 
+                    // CPAP e Familia
+                    case 11:
+                        CPAP = new int[tamanho];
+                        codcanal = 65;
+                        codindex = GlobVar.codSelected.IndexOf(codcanal);
+                        int canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+
+                        int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
+                        int indexx = GlobVar.codCanal.IndexOf(codcanal);
+                        int Taxa = GlobVar.txPorCanal[indexx];
+                        int aoh = 0;
+                        h = 0;
+                        /*
+                        // Loop para acumular valores
+                        h = 0;
+                        for (int g = 0; g < GlobVar.matrizCanal.GetLength(1); g += Taxa)
+                        {
+                            if (h < tamanho)
+                            {
+                                // Acumula os valores correspondentes
+                                CPAP[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                            }
+                            h++;
+                        }
+                        */
+                        // Caso sem segundo canal
+                        for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                        {
+                            int colunaComp = ponteiroI;
+                            while (colunaComp < ponteiroF)
+                            {
+                                CPAP[h] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                colunaComp += Taxa;
+                                h++;
+                            }
+                        }
+
+
+                        break;
                     // ------- Posi / Estagio -------
                     // Posicao
                     case 7:
@@ -1249,14 +1291,47 @@ namespace PlotagemOpenGL.Hipnograma
 
                     int codcanal = 5;
                     int codindex = GlobVar.codSelected.IndexOf(codcanal);
-                    double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
-                    var rowm = MontagemJanela.AsEnumerable()
+                    if(codindex != -1){
+                        double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
+                        var rowm = MontagemJanela.AsEnumerable()
+                                    .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                        if (rowm["CorGrafico"] != DBNull.Value)
+                        {
+                            Cor = new float[3];
+                            Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowm["CorGrafico"]));
+                            gl.Color(Cor[0], Cor[1], Cor[2]);
+                        }
+                        else
+                        {
+                            gl.Color(0, 0, 0);
+                        }
+                        gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
+                        int micmic = pagBn;
+                        for (int i = xStart; i < xEnd; i++)
+                        {
+                            quasi = NormalizarValor(Microfone[micmic], Microfone.Min(), Microfone.Max(), pontoZero, topPonto);// scala;
+                            gl.Vertex(i, quasi);// + meioleg);
+                            micmic++;
+                        }
+                        gl.End();
+                        gl.Flush();
+                            gl.Color(0, 0, 0);
+                    }
+                    break;
+
+                // --------- CPAP --------
+                // CPAP
+                case 11:
+                    CPAPStrip.Checked = true;
+                    CPAPStrip.Tag = 11;
+                    var rowsf = MontagemJanela.AsEnumerable()
                                 .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
-                    if (rowm["CorGrafico"] != DBNull.Value)
+                    if (rowsf["CorGrafico"] != DBNull.Value)
                     {
                         Cor = new float[3];
-                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowm["CorGrafico"]));
+                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowsf["CorGrafico"]));
                         gl.Color(Cor[0], Cor[1], Cor[2]);
                     }
                     else
@@ -1264,19 +1339,18 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.Color(0, 0, 0);
                     }
                     gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                    int micmic = pagBn;
+                    int cpap = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = NormalizarValor(Microfone[micmic], Microfone.Min(), Microfone.Max(), pontoZero, topPonto);// scala;
-                        gl.Vertex(i, quasi);// + meioleg);
-                        micmic++;
+                        quasi = NormalizarValor(CPAP[cpap], Convert.ToInt16(rowsf["LI"]), Convert.ToInt16(rowsf["LS"]), pontoZero, topPonto);
+                        gl.Vertex(i, quasi);
+                        cpap++;
                     }
                     gl.End();
                     gl.Flush();
                     gl.Color(0, 0, 0);
 
                     break;
-
                 // ------- Posi / Estagio -------
                 // Posicao
                 case 7:
@@ -1395,7 +1469,7 @@ namespace PlotagemOpenGL.Hipnograma
             bool linhahorario = LinhasHorarios.Checked;
 
             int espaco = Math.Abs(topPonto - pontoZero);
-            if(codGrupo == 21)
+            if (codGrupo == 21)
             {
                 int espacamento = Math.Abs(topPonto - pontoZero);
                 int meiohor = espacamento / 2;
@@ -1426,7 +1500,7 @@ namespace PlotagemOpenGL.Hipnograma
                             SizeF tamanhostring = CalcularTamanhoString(escreve, fonte);
                             ConvertToScreenCoordinates(i, 0, out writeX, out writeY);
                             int alo = font - 2;
-                            writeX = (int)(writeX - (tamanhostring.Width/4));
+                            writeX = (int)(writeX - (tamanhostring.Width / 4));
                             writeY = meiohor;
                             gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", alo, "");
                             gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, escreve);
@@ -1458,7 +1532,7 @@ namespace PlotagemOpenGL.Hipnograma
                     indexHoraio++;
                 }
             }
-            else if (codGrupo == 6 || codGrupo == 12)
+            else if (codGrupo == 6 || codGrupo == 12 || codGrupo == 11)
             {
                 string li = dtResumo.Rows[0]["LI"].ToString();
                 string ls = dtResumo.Rows[0]["LS"].ToString();
@@ -1549,30 +1623,60 @@ namespace PlotagemOpenGL.Hipnograma
                 }
 
                 int linhasint = Convert.ToInt32(dtResumo.Rows[0]["LinhasInternas"]);
-                if (linhasint != 0 && linhasint < dif)
+                if (codGrupo == 11)
                 {
-                    int alo = dif / linhasint;
-                    int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
-                    int espacodiv = espaco / alo;
-
-                    gl.Color(0.7f, 0.7f, 0.7f);
-                    gl.Enable(OpenGL.GL_LINE_STIPPLE);
-                    // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
-                    gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-                    // Iniciar o desenho da linha
-                    gl.Begin(OpenGL.GL_LINES);
-
-                    while (locdivs < topPonto)
+                    if (linhasint != 0 && linhasint < dif)
                     {
-                        // Ativar o estilo de linha pontilhada
-                        gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
-                        gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
-                        locdivs += (int)(espacodiv);
+                        int alo = dif / linhasint;
+                        int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                        int espacodiv = espaco / alo;
+
+                        gl.Color(0.7f, 0.7f, 0.7f);
+                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+                                                   // Iniciar o desenho da linha
+                        gl.Begin(OpenGL.GL_LINES);
+                        for(int i = 0; i < Convert.ToInt32(ls); i++)
+                        {
+                            // Ativar o estilo de linha pontilhada
+                            gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
+                            gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
+                            locdivs += (int)(espacodiv);
+                        }
+                        gl.End();
+                        gl.Flush();
+                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                        gl.Color(0, 0, 0);
                     }
-                    gl.End();
-                    gl.Flush();
-                    gl.Disable(OpenGL.GL_LINE_STIPPLE);
-                    gl.Color(0, 0, 0);
+                } 
+                else
+                {
+                    if (linhasint != 0 && linhasint < dif)
+                    {
+                        int alo = dif / linhasint;
+                        int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                        int espacodiv = espaco / alo;
+
+                        gl.Color(0.7f, 0.7f, 0.7f);
+                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+                        // Iniciar o desenho da linha
+                        gl.Begin(OpenGL.GL_LINES);
+
+                        while (locdivs < topPonto)
+                        {
+                            // Ativar o estilo de linha pontilhada
+                            gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
+                            gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
+                            locdivs += (int)(espacodiv);
+                        }
+                        gl.End();
+                        gl.Flush();
+                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                        gl.Color(0, 0, 0);
+                    } 
                 }
             }
 
@@ -2258,7 +2362,7 @@ namespace PlotagemOpenGL.Hipnograma
                 //Toda vez que o context e aberto, ele "da um clear nos itens que ele tem e altera com base no que ele vai fazer"
                 contextMenuStripHipno.Items.Clear();
 
-                if(codJanela == 6 || codJanela == 12)
+                if(codJanela == 6 || codJanela == 12 || codJanela == 11)
                 {
                     contextMenuStripHipno.Items.AddRange(new ToolStripItem[] { Imprimir,
                                                         separador, BruxismoStrip, CardioStrip, CO2_ExalStrip, CPAPStrip, cpapVazStrip, DespertarStrip, estagioStrip, FreqCardStrip, horarioStrip, MicrofoneStrip
@@ -2379,22 +2483,42 @@ namespace PlotagemOpenGL.Hipnograma
 
                 // Pega o valor atual da coluna LS
                 string valorAtual = row["LinhasInternas"].ToString();
-
-                // Abre um input para entrada do novo valor
-                string novoValor = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Digite o novo valor de Linhas Internas:",
-                    "Alterar Linhas Internas",
-                    valorAtual);
-
-                // Verifica se o usuário digitou algo
-                if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) >= 0)
+                string novoValor = "";
+                if (codJanela == 11)
                 {
-                    row["LinhasInternas"] = novoValor; // Atualiza o valor na DataTable
-                    Desenha();
+                    // Abre um input para entrada do novo valor
+                    novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Informe o espacamento entre as linhas. Para nao",
+                        "mostrar linhas internas digite '0'",
+                        valorAtual);
+                    // Verifica se o usuário digitou algo
+                    if (!string.IsNullOrEmpty(novoValor) && ( Convert.ToInt32(novoValor) > 1 || Convert.ToInt32(novoValor) < 0))
+                    {
+                        row["LinhasInternas"] = novoValor; // Atualiza o valor na DataTable
+                        Desenha();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Abre um input para entrada do novo valor
+                    novoValor = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Digite o novo valor de Linhas Internas:",
+                        "Alterar Linhas Internas",
+                        valorAtual);
+                    // Verifica se o usuário digitou algo
+                    if (!string.IsNullOrEmpty(novoValor) && Convert.ToInt32(novoValor) >= 0)
+                    {
+                        row["LinhasInternas"] = novoValor; // Atualiza o valor na DataTable
+                        Desenha();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Valor invalido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
             }
             else
@@ -2543,6 +2667,10 @@ namespace PlotagemOpenGL.Hipnograma
 
                     case 19: // Microfone
                         return Microfone != null;
+                    
+                    // ----------- Cpapi --------------,
+                    case 11:
+                        return CPAP != null;
 
                     // ------- Posi / Estágio -------
                     case 7:  // Posição
@@ -2888,6 +3016,49 @@ namespace PlotagemOpenGL.Hipnograma
 
                     break;
 
+                // ---------- Cpap Fami ---------
+                // CPAP
+                case 11:
+                    CPAP = new int[tamanho];
+                    codcanal = 65;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+                    int canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+
+                    int ponteiroI = GlobVar.ponteiroI[canalIndex];
+                    int ponteiroF = GlobVar.ponteiroF[canalIndex];
+
+                    int indexx = GlobVar.codCanal.IndexOf(codcanal);
+                    int Taxa = GlobVar.txPorCanal[indexx];
+                    int aoh = 0;
+                    h = 0;
+                    /*
+                    // Loop para acumular valores
+                    h = 0;
+                    for (int g = 0; g < GlobVar.matrizCanal.GetLength(1); g += Taxa)
+                    {
+                        if (h < tamanho)
+                        {
+                            // Acumula os valores correspondentes
+                            CPAP[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                        }
+                        h++;
+                    }
+                    */
+                    // Caso sem segundo canal
+                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                    {
+                        int colunaComp = ponteiroI;
+                        while (colunaComp < ponteiroF)
+                        {
+                            CPAP[h] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                            colunaComp += Taxa;
+                            h++;
+                        }
+                    }
+
+
+                    break;
+
                 // ------- Posi / Estagio -------
                 // Posicao
                 case 7:
@@ -3023,18 +3194,26 @@ namespace PlotagemOpenGL.Hipnograma
                             novaLinha["Porc"] = 7.50;
 
                             int li = 0;
-                            if(tag == 6) { li = 80; }
+                            if (tag == 6) { li = 80; }
                             else if (tag == 12) { li = 40; }
+                            else if (tag == 11) { li = 0; }
+
                             else { li = 0; }
                             novaLinha["LI"] = li;
 
                             int ls = 10;
                             if (tag == 6 || tag == 12) { ls = 100; }
+                            else if (tag == 11) { ls = 20; }
                             else { ls = 0; }
                             novaLinha["LS"] = ls;
 
-                            novaLinha["LinhasInternas"] = 0;
-                            novaLinha["DivisoesLegendas"] = 0;
+                            if (tag == 11)
+                            {
+                                novaLinha["LinhasInternas"] = 1;
+                                novaLinha["DivisoesLegendas"] = 2;
+                            }
+                            else { novaLinha["LinhasInternas"] = 0; novaLinha["DivisoesLegendas"] = 0; }
+
                             novaLinha["CorGrafico"] = 0;
 
                             // Adicionar a nova linha ao DataTable
@@ -3044,6 +3223,7 @@ namespace PlotagemOpenGL.Hipnograma
                             dv.Sort = "Ordem ASC"; // Ordena pela coluna "Ordem"
                             MontagemJanela = dv.ToTable(); // Cria um novo DataTable ordenado
 
+                            AdicionaOsDadosCasoNullo(tag);
                             reajustaPorc();
                             Desenha();
                         }
@@ -3089,17 +3269,24 @@ namespace PlotagemOpenGL.Hipnograma
                             int li = 0;
                             if (tag == 6) { li = 80; }
                             else if (tag == 12) { li = 40; }
+                            else if (tag == 11) { li = 0; }
                             else { li = 0; }
                             novaLinha["LI"] = li;
 
                             int ls = 10;
                             if (tag == 6 || tag == 12) { ls = 100; }
+                            else if (tag == 11) { ls = 20; }
                             else { ls = 0; }
                             novaLinha["LS"] = ls;
 
-                            novaLinha["LinhasInternas"] = 0;
-                            novaLinha["DivisoesLegendas"] = 0;
+                            if (tag == 11) { 
+                                novaLinha["LinhasInternas"] = 1;
+                                novaLinha["DivisoesLegendas"] = 2;
+                            }
+                            else { novaLinha["LinhasInternas"] = 0; novaLinha["DivisoesLegendas"] = 0; }
+
                             novaLinha["CorGrafico"] = 0;
+
 
                             // Adicionar a nova linha ao DataTable
                             MontagemJanela.Rows.Add(novaLinha);
@@ -3203,5 +3390,19 @@ namespace PlotagemOpenGL.Hipnograma
             document.Save(caminhoArquivo);
             document.Close();
         }
+        public static double ConverterYParaX(double y, double yMin, double yMax, double xMin, double xMax)
+        {
+            // Verifica se yMin e yMax são diferentes para evitar divisão por zero
+            if (yMin == yMax)
+            {
+                throw new ArgumentException("Erro: yMin e yMax não podem ser iguais, pois isso resultaria em uma divisão por zero.");
+            }
+
+            // Regra de três para mapear o valor de Y para X
+            double x = ((y - yMin) * (xMax - xMin) / (yMax - yMin)) + xMin;
+
+            return x;
+        }
+
     }
 }
