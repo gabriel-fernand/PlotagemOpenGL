@@ -36,6 +36,7 @@ using PdfSharp.Drawing;
 using PlotagemOpenGL.BD;
 using System.Threading;
 using PlotagemOpenGL.Hipnograma;
+using PlotagemOpenGL.LaudoForm;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -484,6 +485,13 @@ namespace PlotagemOpenGL
                 {                }
             }
         }
+        FormLaudo laudinho;
+        private void ImprimeLaudo_Click(object sender, EventArgs e)
+        {
+            laudinho = new FormLaudo();
+            laudinho.Show(this);
+        }
+
         public void chamarTelinhaVid()
         {
             // Verifica se telinha e tbl_ArqVideo não são nulos

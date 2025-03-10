@@ -7,20 +7,23 @@ using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.auxi.FormsAuxi;
 using PlotagemOpenGL.Filtros;
+using PlotagemOpenGL.Hipnograma;
 using SharpGL;
-using SharpGL.SceneGraph;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using UnityEngine;
 
-namespace PlotagemOpenGL.Hipnograma
+namespace PlotagemOpenGL.LaudoForm
 {
-    public partial class HipnogramaForm : Form
+    public partial class FormLaudo : Form
     {
         public static Rectangle recgl;
         private System.Drawing.Size formOriginalSize;
@@ -64,24 +67,29 @@ namespace PlotagemOpenGL.Hipnograma
         public static bool Horario; //            cod 21
         public static DataTable horario;
         public static int pagAtual;
-
-        public HipnogramaForm(int cod)
+        public static bool openned = false;
+        public FormLaudo()
         {
             // Obtém as dimensões da tela principal
             int larguraTela = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
             int alturaTela = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
 
-            // Define o tamanho e a posição inicial do formulário
-            this.StartPosition = FormStartPosition.Manual;
-            this.Size = new Size((int)(larguraTela * 0.8), (int)(alturaTela * 0.8)); // 80% da largura e altura da tela
-            this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
-
             InitializeComponent();
 
-            openglHipno.Location = new Point(0, 0); // Mantém o controle ancorado no canto superior esquerdo
-            openglHipno.Size = new Size(this.ClientSize.Width, this.ClientSize.Height); // Ajusta ao tamanho interno do formulário
+            foreach(DataRow roow in GlobVar.tbl_JanelaResumo.Rows)
+            {
+                HipnoMostrando.Items.Add(roow["DescrJanela"].ToString());
+            }
+            HipnoMostrando.SelectedIndex = 0;
+            var drw = GlobVar.tbl_JanelaResumo.AsEnumerable()
+                      .FirstOrDefault(row => row.Field<string>("DescrJanela").Equals(HipnoMostrando.Text));
 
-            codJanela = cod;
+            if (drw != null)
+            {
+                codJanela = Convert.ToInt32(drw["CodJanela"]);
+            }
+            openned = true;
+            
             AjustarDTJanela();
             PreparaOsArrays();
             gl = openglHipno.OpenGL;
@@ -92,11 +100,103 @@ namespace PlotagemOpenGL.Hipnograma
             buttonForm = new ButtonForm();
             pagAtual = GlobVar.indice / GlobVar.namos;
             var rw = GlobVar.tbl_JanelaResumo.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodJanela") == codJanela);
-            string name = rw["DescrJanela"].ToString();
 
-            this.Text = name;
+            this.Text = "Laudo e Relatório de Polissonografia";
+            comentarios();
+            CarregarArquivosNoComboBox();
+        }
+        private void CarregarArquivosNoComboBox()
+        {
+            string diretorio = @"C:\Temp\Laudos";
+
+            if (Directory.Exists(diretorio))
+            {
+                string[] arquivos = Directory.GetFiles(diretorio, "*.doc"); // Busca arquivos .doc
+
+                comboBox1.Items.Clear(); // Limpa o ComboBox
+                foreach (string arquivo in arquivos)
+                {
+                    comboBox1.Items.Add(Path.GetFileNameWithoutExtension(arquivo)); // Adiciona apenas o nome do arquivo
+                }
+            }
+            else
+            {
+                MessageBox.Show("O diretório não existe!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string diretorio = @"C:\Temp\Laudos";
+            string nomeSelecionado = comboBox1.SelectedItem.ToString();
+
+
+            string caminhoCompleto = Path.Combine(diretorio, nomeSelecionado + ".doc");
+            
+        }
+
+
+        private void comentarios()
+        {
+            string coments = "";
+            string observacao = "Observação:\n" + GlobVar.tbl_DadosExame.Rows[0]["Observacao"].ToString();
+            string nextline = "\n\n";
+            richTextBox1.Text += observacao;
+            richTextBox1.Text += nextline;
+
+            string horarioBn = "";
+            var boanoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
+            if(boanoite != null)
+            {
+                int numpag = Convert.ToInt32(boanoite["NumPag"]);
+                var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
+                DateTime dataHora = rwpg.Field<DateTime>("Horario");
+                string horario = dataHora.ToString("HH:mm:ss");
+                horarioBn = horario + " <<Boa Noite>>";
+                richTextBox1.Text += horarioBn;
+                richTextBox1.Text += nextline;
+            }
+            foreach(DataRow rw in GlobVar.tbl_Comentarios.Rows)
+            {
+                int numpag = Convert.ToInt32(rw["NumPag"]);
+                var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
+                DateTime dataHora = rwpg.Field<DateTime>("Horario");
+                string horario = dataHora.ToString("HH:mm:ss");
+
+                string coment = rw["Comentario"].ToString();
+
+                richTextBox1.Text += horario + " - " + coment;
+                richTextBox1.Text += nextline;
+            }
+            string horarioBd = "";
+            var badia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
+            if(badia != null)
+            {
+                int numpag = Convert.ToInt32(badia["NumPag"]);
+                var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
+                DateTime dataHora = rwpg.Field<DateTime>("Horario");
+                string horario = dataHora.ToString("HH:mm:ss");
+                horarioBd = horario + " <<Bom Dia>>";
+                richTextBox1.Text += horarioBd;
+                richTextBox1.Text += nextline;
+            }
 
         }
+        private void HipnoMostrando_TabIndexChanged(object sender, System.EventArgs e)
+        {
+            if (openned)
+            {
+                var drw = GlobVar.tbl_JanelaResumo.AsEnumerable()
+                          .FirstOrDefault(row => row.Field<string>("DescrJanela").Equals(HipnoMostrando.Text));
+                if (drw != null)
+                {
+                    codJanela = Convert.ToInt32(drw["CodJanela"]);
+                }
+                AjustarDTJanela();
+                PreparaOsArrays();
+                Desenha();
+            }
+        }
+
         private void resize_Control(Control c, Rectangle r)
         {
             // Define o novo tamanho e posição com base no tamanho atual do formulário
@@ -121,7 +221,7 @@ namespace PlotagemOpenGL.Hipnograma
             MontagemJanela = new DataTable();
 
             MontagemJanela = GlobVar.tbl_JanelaResumoItens.AsEnumerable().Where(row => row.Field<int>("CodJanela") == codJanela).OrderBy(row => row.Field<int>("Ordem")).CopyToDataTable();
-            
+
             //MontagemJanela.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem"));
             reajustaPorc();
         }
@@ -430,7 +530,7 @@ namespace PlotagemOpenGL.Hipnograma
                                 {
                                     // Acumula os valores correspondentes
                                     SA02[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
-                                }            
+                                }
                                 h++;
                             }
                         }
@@ -518,7 +618,6 @@ namespace PlotagemOpenGL.Hipnograma
                                 break;
                             }
 
-
                             codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
 
                             codindex = GlobVar.codSelected.IndexOf(codcanal);
@@ -587,6 +686,7 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             break;
                         }
+
                         codcanal = Convert.ToInt32(rwvz["CodCanal1"]);
 
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
@@ -638,7 +738,7 @@ namespace PlotagemOpenGL.Hipnograma
                             h++;
                             g += GlobVar.namosNumerico;
                         }
-                        for(int aq = 0; aq < posicao.Length; aq++)
+                        for (int aq = 0; aq < posicao.Length; aq++)
                         {
                             if (posicao[aq] >= (GlobVar.PosCima - GlobVar.PosIncremento) && posicao[aq] <= (GlobVar.PosCima + GlobVar.PosIncremento)) // CIMA
                             {
@@ -667,7 +767,7 @@ namespace PlotagemOpenGL.Hipnograma
                         estagio = new int[tamanho];
 
                         h = 0;
-                        foreach(DataRow rowEstagio in GlobVar.tbl_Paginas.Rows)
+                        foreach (DataRow rowEstagio in GlobVar.tbl_Paginas.Rows)
                         {
                             if (h < tamanho)
                             {
@@ -676,7 +776,7 @@ namespace PlotagemOpenGL.Hipnograma
                             h++;
                         }
                         break;
-                    
+
                     // Horario
                     case 21:
                         Horario = true;
@@ -726,12 +826,12 @@ namespace PlotagemOpenGL.Hipnograma
 
             // Continue com as configurações normais do OpenGL
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.Viewport(0, 0, (int)HipnogramaForm.openglHipno.Width, (int)HipnogramaForm.openglHipno.Height);
+            gl.Viewport(0, 0, (int)FormLaudo.openglHipno.Width, (int)FormLaudo.openglHipno.Height);
 
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
 
-            gl.Ortho(0, Porcentagem, 0, HipnogramaForm.openglHipno.Height, -2, 2);
+            gl.Ortho(0, Porcentagem, 0, FormLaudo.openglHipno.Height, -2, 2);
 
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
@@ -753,7 +853,7 @@ namespace PlotagemOpenGL.Hipnograma
                 // Iniciar o desenho da linha
                 gl.Begin(OpenGL.GL_LINE_LOOP);
                 gl.Vertex(NeEmarg, 0);
-                gl.Vertex(NeEmarg, HipnogramaForm.openglHipno.Height);
+                gl.Vertex(NeEmarg, FormLaudo.openglHipno.Height);
                 gl.End();
                 gl.Flush();
                 gl.Disable(OpenGL.GL_LINE_STIPPLE);
@@ -764,7 +864,7 @@ namespace PlotagemOpenGL.Hipnograma
                 gl.Disable(OpenGL.GL_LINE_STIPPLE);
                 gl.Begin(OpenGL.GL_LINE_STRIP);
                 gl.Vertex(marg, 0);
-                gl.Vertex(marg, HipnogramaForm.openglHipno.Height);
+                gl.Vertex(marg, FormLaudo.openglHipno.Height);
                 gl.End();
                 gl.Flush();
             }
@@ -784,16 +884,16 @@ namespace PlotagemOpenGL.Hipnograma
             // Iniciar o desenho da linha
             gl.Begin(OpenGL.GL_LINE_LOOP);
             gl.Vertex(marg + pagAtual, 0);
-            gl.Vertex(marg + pagAtual, HipnogramaForm.openglHipno.Height);
+            gl.Vertex(marg + pagAtual, FormLaudo.openglHipno.Height);
             gl.End();
             gl.Flush();
             gl.Disable(OpenGL.GL_LINE_STIPPLE);
 
-            gl.Color(0f, 0f, 0f); 
+            gl.Color(0f, 0f, 0f);
 
-            int espacox = HipnogramaForm.openglHipno.Height;
-            int porcent = HipnogramaForm.openglHipno.Height;
-            int topPorcent = HipnogramaForm.openglHipno.Height;
+            int espacox = FormLaudo.openglHipno.Height;
+            int porcent = FormLaudo.openglHipno.Height;
+            int topPorcent = FormLaudo.openglHipno.Height;
 
             int ant = MontagemJanela.Rows.Count;
 
@@ -884,9 +984,9 @@ namespace PlotagemOpenGL.Hipnograma
             {
                 var rowBn = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 18);
                 pagBn = Convert.ToInt32(rowBn["NumPag"]);
-               // var rowBd = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 19);
-               // int pagBd = Convert.ToInt32(rowBd["NumPag"]);
-               // xEnd = pagBd;
+                // var rowBd = GlobVar.eventos.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == 19);
+                // int pagBd = Convert.ToInt32(rowBd["NumPag"]);
+                // xEnd = pagBd;
             }
 
             switch (codGrupo)
@@ -914,30 +1014,31 @@ namespace PlotagemOpenGL.Hipnograma
                     var rwr = MontagemJanela.AsEnumerable()
                                              .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
 
-                    if (rwr["CorGrafico"] != DBNull.Value) 
+                    if (rwr["CorGrafico"] != DBNull.Value)
                     {
                         if (Convert.ToInt32(rwr["CorGrafico"]) == 0)
                         {
                             eusla = 0;
-                        }else
+                        }
+                        else
                         {
                             eusla = 1;
-                        } 
+                        }
                     }
                     else { eusla = 0; }
                     Cor = new float[3];
-                    
+
                     foreach (DataRow rw in dtSubGrupo.Rows)
                     {
                         cadEvent = Convert.ToInt32(rw["Evento"]);
-                        var aoi = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") ==  cadEvent);
+                        var aoi = GlobVar.tbl_CadEvento.AsEnumerable().FirstOrDefault(row => row.Field<int>("CodEvento") == cadEvent);
 
                         // Desenha as riscas correspondentes
                         for (int j = xStart; j < xEnd; j++)
                         {
                             if (eventosResp[j - xStart + pagBn, index] != 0) // Verifica se há evento
                             {
-                                if(eusla != 0)
+                                if (eusla != 0)
                                 {
                                     Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(aoi["CorFundo"]));
                                     gl.Color(Cor[0], Cor[1], Cor[2]);
@@ -1376,7 +1477,8 @@ namespace PlotagemOpenGL.Hipnograma
 
                     int codcanal = 5;
                     int codindex = GlobVar.codSelected.IndexOf(codcanal);
-                    if(codindex != -1){
+                    if (codindex != -1)
+                    {
                         double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
                         var rowm = MontagemJanela.AsEnumerable()
                                     .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
@@ -1401,7 +1503,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         gl.End();
                         gl.Flush();
-                            gl.Color(0, 0, 0);
+                        gl.Color(0, 0, 0);
                     }
                     break;
 
@@ -1513,7 +1615,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int esta = pagBn;
                     int ultimoestagio = estagio[esta];
                     int lasty = -1;
-                    for(int i = xStart; i < xEnd; i++, esta++)
+                    for (int i = xStart; i < xEnd; i++, esta++)
                     {
 
                         int CodEstagio = estagio[esta];
@@ -1550,7 +1652,7 @@ namespace PlotagemOpenGL.Hipnograma
 
                             }
                             gl.Color(color[0], color[1], color[2]);
-                            if(CodEstagio == 5)
+                            if (CodEstagio == 5)
                             {
                                 gl.Vertex(i, locyEstagio[ind] - 2);
                                 gl.Vertex(i, locyEstagio[ind] - 1);
@@ -1753,7 +1855,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
                                                    // Iniciar o desenho da linha
                         gl.Begin(OpenGL.GL_LINES);
-                        for(int i = 0; i < Convert.ToInt32(ls); i++)
+                        for (int i = 0; i < Convert.ToInt32(ls); i++)
                         {
                             // Ativar o estilo de linha pontilhada
                             gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
@@ -1765,7 +1867,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.Disable(OpenGL.GL_LINE_STIPPLE);
                         gl.Color(0, 0, 0);
                     }
-                } 
+                }
                 else
                 {
                     if (linhasint != 0 && linhasint < dif)
@@ -1792,7 +1894,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.Flush();
                         gl.Disable(OpenGL.GL_LINE_STIPPLE);
                         gl.Color(0, 0, 0);
-                    } 
+                    }
                 }
             }
 
@@ -1852,7 +1954,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int meioleg = locLeg / 2;
                     meioleg += pontoZero;
                     int aoi = 0;
-                    for(int ao = 0; ao < qt; ao++)
+                    for (int ao = 0; ao < qt; ao++)
                     {
                         string leg = posicoes[aoi];
 
@@ -1898,7 +2000,7 @@ namespace PlotagemOpenGL.Hipnograma
                     }
 
                 }
-                else if(codGrupo == 9) 
+                else if (codGrupo == 9)
                 {
                     var dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
 
@@ -1996,7 +2098,7 @@ namespace PlotagemOpenGL.Hipnograma
 
                         // Calculando o ponto inicial para escrita de trás para frente
                         float startXdiv = writeX - (tamanhoLi.Width / 2);
-                        if(startXdiv < 0) { startXdiv = 0; }
+                        if (startXdiv < 0) { startXdiv = 0; }
 
                         gl.Begin(OpenGL.GL_2D);
                         writeY = meioleg;
@@ -2004,7 +2106,7 @@ namespace PlotagemOpenGL.Hipnograma
                         gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
                         gl.End();
                         gl.Flush();
-                            meioleg += locLeg;
+                        meioleg += locLeg;
                     }
                     string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
                     if (MarcaDAgua.Checked)
@@ -2061,7 +2163,7 @@ namespace PlotagemOpenGL.Hipnograma
         }
         public static Vector2 ConvertToScreenCoordinates(float openGLX, float openGLY, out int screenX, out int screenY)
         {
-            var gl = HipnogramaForm.openglHipno.OpenGL;
+            var gl = FormLaudo.openglHipno.OpenGL;
 
             // Get the viewport and projection/modelview matrices
             int[] viewport = new int[4];
@@ -2105,9 +2207,9 @@ namespace PlotagemOpenGL.Hipnograma
         {
             if (maxOriginal == minOriginal) return 0;
 
-            if (valor < minOriginal) 
+            if (valor < minOriginal)
                 return minY;
-            if (valor > maxOriginal) 
+            if (valor > maxOriginal)
                 return maxY;
 
             // Aplicando a fórmula de normalização
@@ -2151,7 +2253,7 @@ namespace PlotagemOpenGL.Hipnograma
                 float outX = 0;
                 float outY = 0;
 
-                if (movendoGraf) 
+                if (movendoGraf)
                 {
                     ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out outY);
 
@@ -2214,7 +2316,8 @@ namespace PlotagemOpenGL.Hipnograma
                         lastMousePosition.Y = e.Y;
                     }
                 }
-                else{
+                else
+                {
                     for (int i = 0; i < pontoZero.Length; i++)
                     {
                         if (mouseLocY > pontoZero[i] && mouseLocY < pontoTop[i])
@@ -2478,7 +2581,7 @@ namespace PlotagemOpenGL.Hipnograma
                 //Toda vez que o context e aberto, ele "da um clear nos itens que ele tem e altera com base no que ele vai fazer"
                 contextMenuStripHipno.Items.Clear();
 
-                if(codJanela == 6 || codJanela == 12 || codJanela == 11 || codJanela == 18)
+                if (codJanela == 6 || codJanela == 12 || codJanela == 11 || codJanela == 18)
                 {
                     contextMenuStripHipno.Items.AddRange(new ToolStripItem[] { Imprimir,
                                                         separador, BruxismoStrip, CardioStrip, CO2_ExalStrip, CPAPStrip, cpapVazStrip, DespertarStrip, estagioStrip, FreqCardStrip, horarioStrip, MicrofoneStrip
@@ -2608,7 +2711,7 @@ namespace PlotagemOpenGL.Hipnograma
                         "mostrar linhas internas digite '0'",
                         valorAtual);
                     // Verifica se o usuário digitou algo
-                    if (!string.IsNullOrEmpty(novoValor) && ( Convert.ToInt32(novoValor) > 1 || Convert.ToInt32(novoValor) < 0))
+                    if (!string.IsNullOrEmpty(novoValor) && (Convert.ToInt32(novoValor) > 1 || Convert.ToInt32(novoValor) < 0))
                     {
                         row["LinhasInternas"] = novoValor; // Atualiza o valor na DataTable
                         Desenha();
@@ -2688,7 +2791,7 @@ namespace PlotagemOpenGL.Hipnograma
         {
             try
             {
-                if(codJanela == 1 || codJanela == 3 || codJanela == 4 || codJanela == 5 || codJanela == 10 || codJanela == 40 || codJanela == 9) 
+                if (codJanela == 1 || codJanela == 3 || codJanela == 4 || codJanela == 5 || codJanela == 10 || codJanela == 40 || codJanela == 9)
                 {
                     var rowNumerico = MontagemJanela.AsEnumerable()
                                     .FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
@@ -2725,22 +2828,23 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                     }
                 }
-                else{
+                else
+                {
                     var rowNumerico = MontagemJanela.AsEnumerable()
                                                 .FirstOrDefault(row => row.Field<int>("CodGrupo") == codJanela);
 
                     System.Drawing.Color c = System.Drawing.Color.Black;
                     buttonForm.HideOverlay();
                     ColorPickerDialog minhasCores = new ColorPickerDialog();
-                        if (minhasCores.ShowDialog() == DialogResult.OK)
-                        {
-                            c = minhasCores.Color;
-                            int cor = c.R | (c.G << 8) | (c.B << 16);
-                            rowNumerico["CorGrafico"] = cor;
+                    if (minhasCores.ShowDialog() == DialogResult.OK)
+                    {
+                        c = minhasCores.Color;
+                        int cor = c.R | (c.G << 8) | (c.B << 16);
+                        rowNumerico["CorGrafico"] = cor;
 
-                            MontagemJanela.AcceptChanges();
-                            Desenha();
-                        }
+                        MontagemJanela.AcceptChanges();
+                        Desenha();
+                    }
                 }
             }
             catch { }
@@ -2783,13 +2887,13 @@ namespace PlotagemOpenGL.Hipnograma
 
                     case 19: // Microfone
                         return Microfone != null;
-                    
+
                     // ----------- Cpapi --------------,
                     case 11:
                         return CPAP != null;
-
                     case 18:
                         return CPAPVaz != null;
+
                     // ------- Posi / Estágio -------
                     case 7:  // Posição
                         return posicao != null;
@@ -3144,7 +3248,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int LimiteSuperior = 0;
 
                     codindex = GlobVar.codSelected.IndexOf(codcanal);
-                    if(codindex != -1)
+                    if (codindex != -1)
                     {
                         canalIndex = GlobVar.codCanal.IndexOf(codcanal);
                     }
@@ -3157,7 +3261,6 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             break;
                         }
-
                         codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
 
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
@@ -3199,7 +3302,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                     }
 
-                    if(codcanal != 65)
+                    if (codcanal != 65)
                     {
                         var dataToFilter = CPAP;
                         int lmAnaloInf = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Anal"]);
@@ -3212,7 +3315,7 @@ namespace PlotagemOpenGL.Hipnograma
                     }
 
                     break;
-                
+
                 //cpap vazamento
                 case 18:
                     CPAPVaz = new int[tamanho];
@@ -3223,11 +3326,10 @@ namespace PlotagemOpenGL.Hipnograma
                     var rwvz = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
                                 .Where(row => row.Field<int>("CodTipoCanal") == 28)
                                 .FirstOrDefault(); // Pega a primeira linha correspondente
-                    if (rwvz == null)
+                    if(rwvz == null)
                     {
                         break;
                     }
-
                     codcanal = Convert.ToInt32(rwvz["CodCanal1"]);
 
                     codindex = GlobVar.codSelected.IndexOf(codcanal);
@@ -3335,7 +3437,7 @@ namespace PlotagemOpenGL.Hipnograma
         {
             if (sender is ToolStripMenuItem menuItem)
             {
-                if(menuItem.Tag != null)
+                if (menuItem.Tag != null)
                 {
                     if (!menuItem.Checked)
                     {
@@ -3350,7 +3452,7 @@ namespace PlotagemOpenGL.Hipnograma
                             if (rowParaRemover != null)
                             {
                                 MontagemJanela.Rows.Remove(rowParaRemover); // Remove a linha
-                                reajustaPorc(); 
+                                reajustaPorc();
                                 Desenha();
                             }
                         }
@@ -3536,7 +3638,7 @@ namespace PlotagemOpenGL.Hipnograma
                     string fileExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
 
                     if (fileExtension == ".pdf")
-                    { 
+                    {
                         SalvarComoPDF(saveFileDialog.FileName, bmp);
                     }
                     else if (fileExtension == ".bmp")
@@ -3626,6 +3728,7 @@ namespace PlotagemOpenGL.Hipnograma
                 // Correção: Pegando o valor correto de toUp[i]
                 toUp[i] *= -1;
                 double y;//= ((toUp[i] - lmAnaloInf) * (lmSup - lmInf) / (double)(lmAnaloSup - lmAnaloInf)) + lmInf;
+
                 y = lmInf + Math.Abs(toUp[i] - lmAnaloInf) / Math.Abs((lmAnaloSup - lmAnaloInf) / (lmSup - lmInf));
 
                 aoba[i] = (int)y;// (int)Math.Round(y, 4);
@@ -3635,4 +3738,6 @@ namespace PlotagemOpenGL.Hipnograma
         }
 
     }
+
+
 }

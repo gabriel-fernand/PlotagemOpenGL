@@ -1,28 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlotagemOpenGL.Filtros
 {
     public class PaissaBaixa
     {
-        public static int auxLow;
         public static float _alpha;
-        public static float _prevOutput;
-
-        public PaissaBaixa()
-        {
-            //versao 24/02/2025
-        }
+        public static float _prevOutput1;
+        public static float _prevOutput2;
+        public static float _prevOutput3;
+        public static float _prevOutput4;
+        public static float _prevOutput5;
+        public static float _prevOutput6;
+        public static float _prevOutput7;
+        public static float _prevOutput8;
+        public static float _prevOutput9;
+        public static float _prevOutput10;
 
         public PaissaBaixa(float cutoffFrequency, float samplingRate)
         {
             _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
-            _prevOutput = 0;
+            _prevOutput1 = _prevOutput2 = _prevOutput3 = 0;
+            _prevOutput4 = _prevOutput5 = _prevOutput6 = 0;
+            _prevOutput7 = _prevOutput8 = _prevOutput9 = 0;
+            _prevOutput10 = 0;
         }
-
 
         public static float CalculateAlpha(float cutoffFrequency, float samplingRate)
         {
@@ -33,44 +34,39 @@ namespace PlotagemOpenGL.Filtros
 
         public static float Apply(float input)
         {
-            _prevOutput = _alpha * input + (1 - _alpha) * _prevOutput;
-            return _prevOutput;
+            _prevOutput1 = _alpha * input + (1 - _alpha) * _prevOutput1;
+            _prevOutput2 = _alpha * _prevOutput1 + (1 - _alpha) * _prevOutput2;
+            _prevOutput3 = _alpha * _prevOutput2 + (1 - _alpha) * _prevOutput3;
+            _prevOutput4 = _alpha * _prevOutput3 + (1 - _alpha) * _prevOutput4;
+            _prevOutput5 = _alpha * _prevOutput4 + (1 - _alpha) * _prevOutput5;
+            _prevOutput6 = _alpha * _prevOutput5 + (1 - _alpha) * _prevOutput6;
+
+            _prevOutput7 = _alpha * _prevOutput6 + (1 - _alpha) * _prevOutput7;
+            _prevOutput8 = _alpha * _prevOutput7 + (1 - _alpha) * _prevOutput8;
+            _prevOutput9 = _alpha * _prevOutput8 + (1 - _alpha) * _prevOutput9;
+            _prevOutput10 = _alpha * _prevOutput9 + (1 - _alpha) * _prevOutput10;
+
+            return _prevOutput10;
         }
 
         public static float[] ApplyFilter(float[] input, float cutoffFrequency, float samplingRate)
         {
-            Tela_Plotagem.cronometroBaixa.Start();            
-
+            Tela_Plotagem.cronometroBaixa.Start();
             _alpha = CalculateAlpha(cutoffFrequency, samplingRate);
-            _prevOutput = 0;
-
-            float[] outputa = new float[input.Length];
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                outputa[i] = Apply(input[i]);
-            }
-            float[] outputs = new float[input.Length];
-            for (int i = 0; i < input.Length; i++)
-            {
-                outputs[i] = Apply(outputa[i]);
-            }
-            float[] outpute = new float[input.Length];
-            for (int i = 0; i < input.Length; i++)
-            {
-                outpute[i] = Apply(outputs[i]);
-            }
+            _prevOutput1 = _prevOutput2 = _prevOutput3 = 0;
+            _prevOutput4 = _prevOutput5 = _prevOutput6 = 0;
+            _prevOutput7 = _prevOutput8 = _prevOutput9 = 0;
+            _prevOutput10 = 0;
 
             float[] output = new float[input.Length];
+
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = Apply(outpute[i]);
+                output[i] = Apply(input[i]);
             }
 
             Tela_Plotagem.cronometroBaixa.Stop();
-
             return output;
         }
-
     }
 }

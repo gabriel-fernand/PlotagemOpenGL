@@ -29,7 +29,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                 for (int i = 0; i < qtdGraf; i++)
                 {
-                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28))
                     {
 
                         int h = GlobVar.indice;
@@ -66,7 +66,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                                     {
                                         int tagCod = (int)pn.Tag;
-                                        if(tagCod == -1)
+                                        if (tagCod == -1)
                                         {
                                             continue;
                                         }
@@ -127,7 +127,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                             bot = txtEmTela.Substring(2, 1); // último caractere
                                         }
 
-                                        if(GlobVar.segundos >= 60)
+                                        if (GlobVar.segundos >= 60)
                                         {
                                             // Desenhar o texto no topo
                                             gl.DrawText(0, yTop, color[0], color[1], color[2], "Calibri", meh, ""); // Necessário para o próximo texto aparecer
@@ -156,7 +156,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     }
                                     else
                                     {
-                                        if(GlobVar.segundos >= 60)
+                                        if (GlobVar.segundos >= 60)
                                         {
                                             meh = 6;
                                             fontsize = 12;
@@ -173,9 +173,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     j += 7;
                                     gl.End();
                                     gl.Flush();
-                                    
+
                                 }
-                                else if (GlobVar.codSelected[i] == 65)
+                                else if (GlobVar.codSelected[i] == 65 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28)
                                 {
                                     gl.End();
                                     int y = -7000;
@@ -209,9 +209,17 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
                                         g += taxa;
                                     }
-                                    me = aux;
-                                    txtEmTela = $" {me} ";
+                                    if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15)
+                                    {
+                                        me = aux;
+                                        txtEmTela = $" {me:F1} ";
 
+                                    }
+                                    else
+                                    {
+                                        me = aux;
+                                        txtEmTela = $" {me} ";
+                                    }
                                     int meh = 14;
                                     int fontsize = 19;
                                     //if ((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"])

@@ -44,7 +44,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
-                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 || GlobVar.codSelected[i] == 14))
                     {
                         if (!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value) && GlobVar.codSelected[i] == 14)
                         {
@@ -192,11 +192,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
 
                     }
-                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66))
+                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28))
                     {
                         int loc = -7000;
                         int pnleg = 0;
                         int codCanal1 = GlobVar.codSelected[i];
+                        int codTipoCan = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]);
                         int locaux;
                         foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                         {
@@ -216,9 +217,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 loc = aux;// - (int)meioPn;
                             }
                         }
-                        int LimiteInferior = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["LimiteInferior"]);
-                        int LimiteSuperior = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["LimiteSuperior"]);
+                        int LimiteInferior = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 29 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["LimiteInferior"]);
+                        int LimiteSuperior = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 29 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["LimiteSuperior"]);
 
+                        Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["LimiteSuperior"]);
                         if (!GlobVar.codCanal.Contains(codCanal1))
                         {
                             // Pula para a próxima iteração se codCanal1 não estiver em GlobVar.codCanal
@@ -256,7 +258,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 {
                                     valormatriz = (int)((double)GlobVar.matrizCanal[GlobVar.grafSelected[i], h] - LimiteInferior);
                                 }
-                                if(codCanal1 == 65)
+                                if(codCanal1 == 65 || codTipoCan == 15 || codTipoCan == 28)
                                 {
                                     valormatriz += LimiteInferior;
                                     valormatriz = (int)NormalizarValor(valormatriz, LimiteInferior, LimiteSuperior, 0, pnleg);

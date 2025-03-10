@@ -2561,6 +2561,7 @@ namespace PlotagemOpenGL
             ImprimeLaudo.Size = new System.Drawing.Size(47, 47);
             ImprimeLaudo.TabIndex = 62;
             ImprimeLaudo.UseVisualStyleBackColor = false;
+            ImprimeLaudo.Click += ImprimeLaudo_Click;
             // 
             // ImprimeSele
             // 
@@ -3818,6 +3819,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
         #endregion
         public static ToolStripItem item1ToolStripMenuItem;

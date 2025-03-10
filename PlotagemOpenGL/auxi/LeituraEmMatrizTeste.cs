@@ -287,6 +287,33 @@ namespace PlotagemOpenGL.auxi
                     }
                 }
                     reorganize();
+                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
+                    {
+                        int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                        int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
+                        if (canalIndex == -1) return;
+
+                        int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
+                        if (selectedIndex == -1) return;
+
+                        var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
+                        int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                        var dataToFilter = canalData;
+
+                        int lmAnaloInf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Anal"]);
+                        int lmAnaloSup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Anal"]);
+
+                        int lminf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Valor"]); ;
+                        int lmsup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Valor"]); ;
+
+                        dataToFilter = DigiToAnalo(canalData, lminf, lmsup, lmAnaloInf, lmAnaloSup, txPorCanal);
+
+                        Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
+                        GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                    }
+                }
                 foreach (var row in GlobVar.tbl_MontagemSelecionada.AsEnumerable())
                 {
                     if (row["CodCanal2"] == DBNull.Value)
@@ -348,7 +375,6 @@ namespace PlotagemOpenGL.auxi
                     }
                 }
 
-
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
                     float scala = (float)( Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i))) ;
@@ -356,6 +382,58 @@ namespace PlotagemOpenGL.auxi
                 }
                 
             }
+        }
+        public static short[] DigiToAnalo(short[] toUp, int lmInf, int lmSup, int lmAnaloInf, int lmAnaloSup, int taxa)
+        {
+            // Verifica se os limites analógicos são iguais para evitar divisão por zero
+            if (lmAnaloInf == lmAnaloSup)
+            {
+                throw new ArgumentException("Erro: lmAnaloInf e lmAnaloSup não podem ser iguais, pois isso resultaria em uma divisão por zero.");
+            }
+            int length = toUp.Length / taxa;
+            double[] medias = new double[length];
+            short[] aoba = new short[toUp.Length];
+            int pont = 0;
+            for (int i = 0; i < length; i++)
+            {
+                int med = 0;
+                for (int j = pont; j < pont + taxa && j < toUp.Length; j++) // Garante que j não ultrapasse o tamanho do vetor
+                {
+                    med += toUp[j];
+                }
+                med /= taxa;
+
+                med *= -1;
+                // Normaliza dentro dos limites fornecidos
+                medias[i] = lmInf + Math.Abs(med - lmAnaloInf) / Math.Abs((lmAnaloSup - lmAnaloInf) / (lmSup - lmInf));
+                pont += taxa;
+            }
+
+            // Preenchendo `aoba` corretamente sem pular índices
+            int index = 0;
+            for (int i = 0; i < length; i++)
+            {
+                for (int j = 0; j < taxa && index < aoba.Length; j++)
+                {
+                    aoba[index++] = (short)medias[i];
+                }
+            }/*
+            for (int i = 0; i < aoba.Length; i ++)
+            {
+                // Correção: Pegando o valor correto de toUp[i]
+                toUp[i] *= -1;
+                double y;//= ((toUp[i] - lmAnaloInf) * (lmSup - lmInf) / (double)(lmAnaloSup - lmAnaloInf)) + lmInf;
+                y = lmInf + Math.Abs(toUp[i] - lmAnaloInf) / Math.Abs((lmAnaloSup - lmAnaloInf) / (lmSup - lmInf));
+
+                //y = lmInf + Math.Abs((toUp[i] - lmAnaloInf)*(lmSup - lmInf)) / Math.Abs(lmAnaloSup - lmAnaloInf);
+
+                // Garantindo que o valor convertido caiba em um short
+                y = Math.Max(short.MinValue, Math.Min(short.MaxValue, y));
+
+                aoba[i] = (short)y;// (short)Math.Round( y , 4);
+            }
+            */
+            return aoba;
         }
         public static void montagemSelecionadaAlterada()
         {
@@ -571,6 +649,34 @@ namespace PlotagemOpenGL.auxi
             Tela_Plotagem.cronometroAlta.Reset();
             Tela_Plotagem.cronometroNotch.Reset();
             int ind = 0;
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
+                {
+                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
+                    if (canalIndex == -1) return;
+
+                    int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
+                    if (selectedIndex == -1) return;
+
+                    var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
+                    int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                    var dataToFilter = canalData;
+
+                    int lmAnaloInf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Anal"]);
+                    int lmAnaloSup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Anal"]);
+
+                    int lminf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Valor"]); ;
+                    int lmsup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Valor"]);;
+
+                    dataToFilter = DigiToAnalo(canalData, lminf, lmsup, lmAnaloInf, lmAnaloSup, txPorCanal);
+
+                    Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
+                    GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                }
+            }
+
             // Aplicar filtros paralelamente
             foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
             {
@@ -641,6 +747,32 @@ namespace PlotagemOpenGL.auxi
                     }
                 }
             }
+
+            foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+            {
+                if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
+                {
+                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
+                    if (canalIndex == -1) return;
+
+                    int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
+                    if (selectedIndex == -1) return;
+
+                    var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
+                    int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                    var dataToFilter = canalData;
+
+                    int lmAnaloInf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Anal"]);
+                    int lmAnaloSup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Anal"]);
+
+                    dataToFilter = DigiToAnalo(canalData, Convert.ToInt32(row["LimiteInferior"]), Convert.ToInt32(row["LimiteSuperior"]), lmAnaloInf, lmAnaloSup, txPorCanal);
+
+                    Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
+                    GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                }
+            }
+
             Tela_Plotagem.cronometro3.Stop();
 
             // Paralelizar a atualização do array GlobVar.scale
@@ -860,6 +992,34 @@ namespace PlotagemOpenGL.auxi
                 if (token.IsCancellationRequested)
                     return;
                 GlobVar.LastRowLoaded = 0;
+                foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
+                {
+                    if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
+                    {
+                        int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                        int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
+                        if (canalIndex == -1) return;
+
+                        int selectedIndex = GlobVar.codSelected.IndexOf(codCanal1);
+                        if (selectedIndex == -1) return;
+
+                        var canalData = GlobVar.matrizCanal.GetRow(selectedIndex);
+                        int txPorCanal = GlobVar.txPorCanal[canalIndex];
+                        var dataToFilter = canalData;
+
+                        int lmAnaloInf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Anal"]);
+                        int lmAnaloSup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Anal"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Anal"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Anal"]);
+
+                        int lminf = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteInf_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteInf_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteInf_Valor"]); ;
+                        int lmsup = Convert.ToInt32(row["CodTipoCanal"]) == 15 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Pressao_LimiteSup_Valor"]) : Convert.ToInt32(row["CodTipoCanal"]) == 28 ? Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Vazam_LimiteSup_Valor"]) : Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CPAP_Volume_LimiteSup_Valor"]); ;
+
+                        dataToFilter = DigiToAnalo(canalData, lminf, lmsup, lmAnaloInf, lmAnaloSup, txPorCanal);
+
+                        Array.Copy(dataToFilter, 0, canalData, 0, dataToFilter.Length);
+                        GlobVar.matrizCanal.SetRow(selectedIndex, canalData);
+                    }
+                }
+
                 // Aplicar filtros paralelamente
                 foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
@@ -920,7 +1080,8 @@ namespace PlotagemOpenGL.auxi
                         GlobVar.LastRowLoaded++;
 
                 }
-                    GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
+
+                GlobVar.areaCarregadaAltMont = GlobVar.matrizCanal.GetLength(1);
                     GlobVar.FiltroCompleto = true;
                     Tela_Plotagem.conc = true;
 
