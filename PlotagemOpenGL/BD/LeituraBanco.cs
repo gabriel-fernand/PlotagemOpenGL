@@ -244,6 +244,7 @@ public class LeituraBanco
                         GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
                                 .Where(row => row.Field<int>("CodMontagem") == CodMont)
                                 .CopyToDataTable();
+                            GlobVar.codMont = CodMont;
                     }
                     else
                     {
@@ -253,10 +254,10 @@ public class LeituraBanco
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information
                             );
-                            int CodMont = 119;
-                            GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
-                                    .Where(row => row.Field<int>("CodMontagem") == CodMont)
-                                    .CopyToDataTable();
+                            var auxCodMont = matchingRows.CopyToDataTable();
+                            int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+
+                            GlobVar.codMont = CodMont;
                         }
                         break;
                 }

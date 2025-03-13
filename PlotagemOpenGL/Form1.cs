@@ -265,6 +265,7 @@ namespace PlotagemOpenGL
                     await Task.Delay(25);
 
                     LeituraEmMatrizTeste.LeituraDat();
+
                     LeituraEmMatrizTeste.referencias();
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(50);
@@ -2429,7 +2430,7 @@ namespace PlotagemOpenGL
                             LeituraEmMatrizTeste.montagemSelecionadaAlteradaTudo(token);
 
                             if (token.IsCancellationRequested)
-                                token.ThrowIfCancellationRequested();
+                                 token.ThrowIfCancellationRequested();
 
                             concluido = "Concluido";
                             TelaClearAndReload();

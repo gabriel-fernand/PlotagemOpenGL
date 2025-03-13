@@ -261,6 +261,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 if(codCanal1 == 65 || codTipoCan == 15 || codTipoCan == 28)
                                 {
                                     valormatriz += LimiteInferior;
+                                    if(codCanal1 != 65)
+                                    {
+                                        valormatriz /= 100;
+                                    }
                                     valormatriz = (int)NormalizarValor(valormatriz, LimiteInferior, LimiteSuperior, 0, pnleg);
                                 }
                                 gl.Vertex(j, (valormatriz + loc));

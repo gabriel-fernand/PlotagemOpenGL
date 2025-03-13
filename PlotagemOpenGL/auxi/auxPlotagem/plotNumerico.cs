@@ -201,7 +201,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     }
 
 
-                                    int aux = 0;
+                                    double aux = 0;
                                     float me = 0;
                                     for (int g = j; g < j + taxa;)
                                     {
@@ -209,15 +209,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
                                         g += taxa;
                                     }
-                                    if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15)
+                                    if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 && GlobVar.codSelected[i] != 65)
                                     {
-                                        me = aux;
+                                        me = (float)aux / 100;
                                         txtEmTela = $" {me:F1} ";
 
                                     }
                                     else
                                     {
-                                        me = aux;
+                                        me = (int)aux;
                                         txtEmTela = $" {me} ";
                                     }
                                     int meh = 14;

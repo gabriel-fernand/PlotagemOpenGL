@@ -105,6 +105,7 @@ namespace PlotagemOpenGL.auxi
         public static cls_dbConfig obj_dbConfig;
         public static string AtualEvento;
 
+        public static int codMont;
         public static DataTable eventosUpdate = new DataTable();
         public static DataTable eventos = new DataTable();
         public static DataTable tbl_CadCanal = new DataTable();
