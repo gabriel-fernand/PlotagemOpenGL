@@ -236,7 +236,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             h = GlobVar.indice / ponteiroDesenho;
                         }
                         gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
-                        for (int j = GlobVar.indice; j < GlobVar.maximaVect; j++)
+                        for (int j = GlobVar.indice / ponteiroDesenho; j < GlobVar.maximaVect/ ponteiroDesenho; j++)
                         {
                             //if (j < 0 || j >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(j - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                             //else
@@ -246,28 +246,21 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                 //else
                                 //{
-                                int valormatriz = 0;
-                                if (GlobVar.matrizCanal[GlobVar.grafSelected[i], h] < LimiteInferior)
-                                {
-                                    valormatriz = 0;
-                                }
-                                else if(GlobVar.matrizCanal[GlobVar.grafSelected[i], h] > LimiteSuperior)
-                                {
-                                    valormatriz = LimiteSuperior - LimiteInferior;
-                                }else
-                                {
-                                    valormatriz = (int)((double)GlobVar.matrizCanal[GlobVar.grafSelected[i], h] - LimiteInferior);
-                                }
+                                int valormatriz = (int)((double)GlobVar.matrizCanal[GlobVar.grafSelected[i], h]);// - LimiteInferior);
                                 if(codCanal1 == 65 || codTipoCan == 15 || codTipoCan == 28)
                                 {
-                                    valormatriz += LimiteInferior;
-                                    if(codCanal1 != 65)
+                                    //valormatriz += LimiteInferior;
+                                    if(codCanal1 != 65 && codTipoCan == 15)
                                     {
                                         valormatriz /= 100;
                                     }
+                                    else
+                                    {
+
+                                    }
                                     valormatriz = (int)NormalizarValor(valormatriz, LimiteInferior, LimiteSuperior, 0, pnleg);
                                 }
-                                gl.Vertex(j, (valormatriz + loc));
+                                gl.Vertex((j * ponteiroDesenho), (valormatriz + loc));
                                 h++; //aqui tem plotar 3 graficos diferentes
                                 j += ponteiroDesenho - 1;
                                 //}

@@ -43,26 +43,30 @@ namespace PlotagemOpenGL.FormesMenuPanels.InferiorSuperior
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            // Lógica para quando o usuário confirmar
-            string limiteSuperior = textBoxLimiteSuperior.Text;
-            dt["LimiteSuperior"] = limiteSuperior;
-            foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
-            {
-                if ((int)pn.Tag == tagCodCanal)
+            try
+            {             // Lógica para quando o usuário confirmar
+                string limiteSuperior = textBoxLimiteSuperior.Text;
+                dt["LimiteSuperior"] = limiteSuperior;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                 {
-                    foreach (Label lb in pn.Controls.OfType<Label>())
+                    if ((int)pn.Tag == tagCodCanal)
                     {
-                        if (lb.Tag.Equals("max"))
+                        foreach (Label lb in pn.Controls.OfType<Label>())
                         {
-                            lb.Text = $"{limiteSuperior}";
+                            if (lb.Tag.Equals("max"))
+                            {
+                                lb.Text = $"{limiteSuperior}";
+                            }
                         }
                     }
                 }
+                GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+                this.DialogResult = DialogResult.OK;
+                Tela_Plotagem.TelaClearAndReload();
+                this.Close();
             }
-            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
-            this.DialogResult = DialogResult.OK;
-            Tela_Plotagem.TelaClearAndReload();
-            this.Close();
+            catch { }
+            // Lógica para quando o usuário confirmar
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
