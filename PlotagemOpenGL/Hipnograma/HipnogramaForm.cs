@@ -535,19 +535,6 @@ namespace PlotagemOpenGL.Hipnograma
                         int Taxa = GlobVar.txPorCanal[indexx];
                         int aoh = 0;
                         h = 0;
-                        /*
-                        // Loop para acumular valores
-                        h = 0;
-                        for (int g = 0; g < GlobVar.matrizCanal.GetLength(1); g += Taxa)
-                        {
-                            if (h < tamanho)
-                            {
-                                // Acumula os valores correspondentes
-                                CPAP[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
-                            }
-                            h++;
-                        }
-                        */
                         // Caso sem segundo canal
                         for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                         {
@@ -619,6 +606,58 @@ namespace PlotagemOpenGL.Hipnograma
                         dataToFiltervz = DigiToAnalo(CPAPVaz, LimiteInferiorvz, LimiteSuperiorvz, lmAnaloInfvz, lmAnaloSupvz);
 
                         Array.Copy(dataToFiltervz, 0, CPAPVaz, 0, dataToFiltervz.Length);
+
+                        break;
+
+                    case 39:
+                        CO2_Exal = new int[tamanho];
+                        codcanal = 73;
+
+                        int canalindexC02 = 0;
+                        int LimiteInferiorC02 = 0;
+                        int LimiteSuperiorC02 = 0;
+                        codindex = GlobVar.codSelected.IndexOf(codcanal);
+                        if (codindex != -1)
+                        {
+                            canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                        }
+                        else
+                        {
+                            var rwcp = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                        .Where(row => row.Field<int>("CodTipoCanal") == 31)
+                                        .FirstOrDefault(); // Pega a primeira linha correspondente
+                            if (rwcp == null)
+                            {
+                                break;
+                            }
+                            codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
+
+                            codindex = GlobVar.codSelected.IndexOf(codcanal);
+                            canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                            LimiteInferior = Convert.ToInt32(rwcp["LimiteInferior"]);
+                            LimiteSuperior = Convert.ToInt32(rwcp["LimiteSuperior"]);
+
+                        }
+
+                        int ponteiroIC = GlobVar.ponteiroI[canalIndex];
+                        int ponteiroFC = GlobVar.ponteiroF[canalIndex];
+
+                        int indexxC = GlobVar.codCanal.IndexOf(codcanal);
+                        int TaxaC = GlobVar.txPorCanal[indexxC];
+                        int aoC = 0;
+                        h = 0;
+
+                        for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                        {
+                            int colunaComp = ponteiroIC;
+                            while (colunaComp < ponteiroFC)
+                            {
+                                CO2_Exal[h] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                                colunaComp += TaxaC;
+                                h++;
+                            }
+                        }
+                        //Parte para conversar de dig para analo se precisar
 
                         break;
                     // ------- Posi / Estagio -------
@@ -1467,6 +1506,45 @@ namespace PlotagemOpenGL.Hipnograma
 
 
                     break;
+
+                case 39:
+                    CO2_ExalStrip.Checked = true;
+                    CO2_ExalStrip.Tag = 12;
+                    var rowc = MontagemJanela.AsEnumerable()
+                                .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
+
+                    if (rowc["CorGrafico"] != DBNull.Value)
+                    {
+                        Cor = new float[3];
+                        Cor = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowc["CorGrafico"]));
+                        gl.Color(Cor[0], Cor[1], Cor[2]);
+                    }
+                    else
+                    {
+                        gl.Color(0, 0, 0);
+                    }
+                    gl.Begin(OpenGL.GL_LINE_STRIP); // Inicia o desenho da linha
+                    int feqc = pagBn;
+                    for (int i = xStart; i < xEnd; i++)
+                    {
+                        if (NaomostrarQuedasZero.Checked && FreqCard[feqc] <= Convert.ToInt32(rowc["LI"]))
+                        {
+                            feqc++;
+                            i++;
+                        }
+                        else
+                        {
+                            quasi = NormalizarValor(FreqCard[feqc], Convert.ToInt16(rowc["LI"]), Convert.ToInt16(rowc["LS"]), pontoZero, topPonto);
+                            gl.Vertex(i, quasi);
+                            feqc++;
+                        }
+                    }
+                    gl.End();
+                    gl.Flush();
+                    gl.Color(0, 0, 0);
+
+
+                    break;
                 // ------- Posi / Estagio -------
                 // Posicao
                 case 7:
@@ -1648,7 +1726,7 @@ namespace PlotagemOpenGL.Hipnograma
                     indexHoraio++;
                 }
             }
-            else if (codGrupo == 6 || codGrupo == 12 || codGrupo == 11 || codGrupo == 18)
+            else if (codGrupo == 6 || codGrupo == 12 || codGrupo == 11 || codGrupo == 18 || codGrupo == 39)
             {
                 string li = dtResumo.Rows[0]["LI"].ToString();
                 string ls = dtResumo.Rows[0]["LS"].ToString();
@@ -2790,6 +2868,8 @@ namespace PlotagemOpenGL.Hipnograma
 
                     case 18:
                         return CPAPVaz != null;
+                    case 39:
+                        return CO2_ExalStrip != null;
                     // ------- Posi / Estágio -------
                     case 7:  // Posição
                         return posicao != null;
@@ -3263,6 +3343,58 @@ namespace PlotagemOpenGL.Hipnograma
 
                     break;
 
+                case 39:
+                    CO2_Exal = new int[tamanho];
+                    codcanal = 73;
+
+                    int canalindexC02 = 0;
+                    int LimiteInferiorC02 = 0;
+                    int LimiteSuperiorC02 = 0;
+                    codindex = GlobVar.codSelected.IndexOf(codcanal);
+                    if (codindex != -1)
+                    {
+                        canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                    }
+                    else
+                    {
+                        var rwcp = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
+                                    .Where(row => row.Field<int>("CodTipoCanal") == 15)
+                                    .FirstOrDefault(); // Pega a primeira linha correspondente
+                        if (rwcp == null)
+                        {
+                            break;
+                        }
+                        codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
+
+                        codindex = GlobVar.codSelected.IndexOf(codcanal);
+                        canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                        LimiteInferior = Convert.ToInt32(rwcp["LimiteInferior"]);
+                        LimiteSuperior = Convert.ToInt32(rwcp["LimiteSuperior"]);
+
+                    }
+
+                    int ponteiroIC = GlobVar.ponteiroI[canalIndex];
+                    int ponteiroFC = GlobVar.ponteiroF[canalIndex];
+
+                    int indexxC = GlobVar.codCanal.IndexOf(codcanal);
+                    int TaxaC = GlobVar.txPorCanal[indexxC];
+                    int aoC = 0;
+                    h = 0;
+
+                    for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+                    {
+                        int colunaComp = ponteiroIC;
+                        while (colunaComp < ponteiroFC)
+                        {
+                            CO2_Exal[h] = (short)GlobVar.matrizCompleta[linha, colunaComp];
+                            colunaComp += TaxaC;
+                            h++;
+                        }
+                    }
+                    //Parte para conversar de dig para analo se precisar
+
+                    break;
+
                 // ------- Posi / Estagio -------
                 // Posicao
                 case 7:
@@ -3402,6 +3534,7 @@ namespace PlotagemOpenGL.Hipnograma
                             else if (tag == 12) { li = 40; }
                             else if (tag == 11) { li = 0; }
                             else if (tag == 18) { li = 0; }
+                            else if (tag == 39) { li = 20; }
                             else { li = 0; }
                             novaLinha["LI"] = li;
 
@@ -3409,6 +3542,7 @@ namespace PlotagemOpenGL.Hipnograma
                             if (tag == 6 || tag == 12) { ls = 100; }
                             else if (tag == 11) { ls = 20; }
                             else if (tag == 18) { ls = 120; }
+                            else if (tag == 39) { ls = 60; }
                             else { ls = 0; }
                             novaLinha["LS"] = ls;
 
@@ -3476,6 +3610,7 @@ namespace PlotagemOpenGL.Hipnograma
                             else if (tag == 12) { li = 40; }
                             else if (tag == 11) { li = 0; }
                             else if (tag == 18) { li = 0; }
+                            else if (tag == 39) { li = 20; }
                             else { li = 0; }
                             novaLinha["LI"] = li;
 
@@ -3483,9 +3618,9 @@ namespace PlotagemOpenGL.Hipnograma
                             if (tag == 6 || tag == 12) { ls = 100; }
                             else if (tag == 11) { ls = 20; }
                             else if (tag == 18) { ls = 120; }
+                            else if (tag == 39) { ls = 60; }
                             else { ls = 0; }
                             novaLinha["LS"] = ls;
-
                             if (tag == 11 || tag == 18)
                             {
                                 novaLinha["LinhasInternas"] = 1;

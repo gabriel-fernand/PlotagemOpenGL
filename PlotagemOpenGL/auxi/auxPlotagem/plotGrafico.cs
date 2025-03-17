@@ -44,7 +44,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     color = ObterComponentesRGB(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["Cor"]));
                     gl.Color(color[0], color[1], color[2]);
-                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 || GlobVar.codSelected[i] == 14))
+                    if (((bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 30 || GlobVar.codSelected[i] == 14))
                     {
                         if (!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] && (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] == DBNull.Value) && GlobVar.codSelected[i] == 14)
                         {
@@ -192,7 +192,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         }
 
                     }
-                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28))
+                    else if ((!(bool)GlobVar.tbl_MontagemSelecionada.Rows[i]["InverteSinal"] || (GlobVar.tbl_MontagemSelecionada.Rows[i]["EliminaFreqInf"] != DBNull.Value)) && (GlobVar.codSelected[i] == 67 || GlobVar.codSelected[i] == 65 || GlobVar.codSelected[i] == 66 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 15 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 28 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == 30))
                     {
                         int loc = -7000;
                         int pnleg = 0;
@@ -247,7 +247,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 //else
                                 //{
                                 int valormatriz = (int)((double)GlobVar.matrizCanal[GlobVar.grafSelected[i], h]);// - LimiteInferior);
-                                if(codCanal1 == 65 || codTipoCan == 15 || codTipoCan == 28)
+                                if(codCanal1 == 65 || codTipoCan == 15 || codTipoCan == 28 || codTipoCan == 30)
                                 {
                                     //valormatriz += LimiteInferior;
                                     if(codCanal1 != 65 && codTipoCan == 15)
