@@ -19,7 +19,7 @@ namespace PlotagemOpenGL.auxi
                 // Iterando sobre as linhas do arquivo
                 foreach (string line in lines)
                 {
-                    // Separando os valores por vírgula
+                    //Separando os valores por vírgula
                     valoresStr = line.Split(',');
                     
                     GlobVar.textFile = valoresStr[0];

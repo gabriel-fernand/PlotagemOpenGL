@@ -629,6 +629,13 @@ namespace PlotagemOpenGL
             UpdateInicioTela();
 
         }
+        private void AnaliseAutomatica_Click(object sender, EventArgs e)
+        {
+            AnaliseAuto profileForm = new AnaliseAuto();
+            profileForm.Show();
+
+        }
+
         private void Tela_Plotagem_FormClosed(object sender, FormClosingEventArgs e)
         {
             GlobVar.ultimaPag = Convert.ToInt32(ptsEmTela.Text);
@@ -1749,7 +1756,7 @@ namespace PlotagemOpenGL
                                                     .Where(row => row.Field<int>("CodCanal") == Convert.ToInt32(pn.Tag)).CopyToDataTable();
                 int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
                 if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
-                    || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12)
+                    || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12 || TipoCanal == 38)
                 {
                     // Calcula um tamanho de fonte proporcional à altura do Panel
                     int novaFonteTamanho = Math.Max(minFontSize, Math.Min(maxFontSize, pn.Height / 3)); // Dividido por 3 como fator de ajuste
@@ -1925,7 +1932,7 @@ namespace PlotagemOpenGL
                                                         .Where(row => row.Field<int>("CodCanal") == tagCodCanal).CopyToDataTable();
                 int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
                 if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
-                        || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12)
+                        || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12 || TipoCanal == 38)
                 {
                     buttonForm.HideOverlay();
                 }
@@ -8127,7 +8134,7 @@ namespace PlotagemOpenGL
 
                     }
                     else if(TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
-                        || TipoCanal == 15 || TipoCanal == 30)
+                        || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 38)
                     {
                         contextMenuStrip1.Items.AddRange(new ToolStripItem[] { Descricao, CanalCor, Legenda, HorizontalOuVertical, GraficoENumero, ApenasNumero, LimiteSuperior, LimiteInferior, OcultarCanal });
                         var rowNumerico = GlobVar.tbl_MontagemSelecionada.AsEnumerable()

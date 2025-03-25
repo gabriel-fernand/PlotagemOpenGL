@@ -613,18 +613,18 @@ namespace PlotagemOpenGL.Hipnograma
                         CO2_Exal = new int[tamanho];
                         codcanal = 73;
 
-                        int canalindexC02 = 0;
-                        int LimiteInferiorC02 = 0;
-                        int LimiteSuperiorC02 = 0;
+                        int canalindexC = 0;
+                        int LimiteInferiorC = 0;
+                        int LimiteSuperiorC = 0;
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
                         if (codindex != -1)
                         {
-                            canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                            canalindexC = GlobVar.codCanal.IndexOf(codcanal);
                         }
                         else
                         {
                             var rwcp = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
-                                        .Where(row => row.Field<int>("CodTipoCanal") == 31)
+                                        .Where(row => row.Field<int>("CodTipoCanal") == 38)
                                         .FirstOrDefault(); // Pega a primeira linha correspondente
                             if (rwcp == null)
                             {
@@ -633,14 +633,14 @@ namespace PlotagemOpenGL.Hipnograma
                             codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
 
                             codindex = GlobVar.codSelected.IndexOf(codcanal);
-                            canalIndex = GlobVar.codCanal.IndexOf(codcanal);
-                            LimiteInferior = Convert.ToInt32(rwcp["LimiteInferior"]);
-                            LimiteSuperior = Convert.ToInt32(rwcp["LimiteSuperior"]);
+                            canalindexC = GlobVar.codCanal.IndexOf(codcanal);
+                            LimiteInferiorC = Convert.ToInt32(rwcp["LimiteInferior"]);
+                            LimiteSuperiorC = Convert.ToInt32(rwcp["LimiteSuperior"]);
 
                         }
 
-                        int ponteiroIC = GlobVar.ponteiroI[canalIndex];
-                        int ponteiroFC = GlobVar.ponteiroF[canalIndex];
+                        int ponteiroIC = GlobVar.ponteiroI[canalindexC];
+                        int ponteiroFC = GlobVar.ponteiroF[canalindexC];
 
                         int indexxC = GlobVar.codCanal.IndexOf(codcanal);
                         int TaxaC = GlobVar.txPorCanal[indexxC];
@@ -658,6 +658,17 @@ namespace PlotagemOpenGL.Hipnograma
                             }
                         }
                         //Parte para conversar de dig para analo se precisar
+                        if (codcanal != 73)
+                        {
+                            var dataToFilter = CO2_Exal;
+                            int lmAnaloInf = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CapnoEtCO2_LimiteInf_Anal"]);
+                            int lmAnaloSup = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CapnoEtCO2_LimiteSup_Anal"]);
+
+                            dataToFilter = DigiToAnalo(CO2_Exal, LimiteInferiorC, LimiteSuperiorC, lmAnaloInf, lmAnaloSup);
+
+                            Array.Copy(dataToFilter, 0, CO2_Exal, 0, dataToFilter.Length);
+
+                        }
 
                         break;
                     // ------- Posi / Estagio -------
@@ -3347,18 +3358,18 @@ namespace PlotagemOpenGL.Hipnograma
                     CO2_Exal = new int[tamanho];
                     codcanal = 73;
 
-                    int canalindexC02 = 0;
-                    int LimiteInferiorC02 = 0;
-                    int LimiteSuperiorC02 = 0;
+                    int canalindexC = 0;
+                    int LimiteInferiorC = 0;
+                    int LimiteSuperiorC = 0;
                     codindex = GlobVar.codSelected.IndexOf(codcanal);
                     if (codindex != -1)
                     {
-                        canalIndex = GlobVar.codCanal.IndexOf(codcanal);
+                        canalindexC = GlobVar.codCanal.IndexOf(codcanal);
                     }
                     else
                     {
                         var rwcp = GlobVar.tbl_MontagemSelecionada.AsEnumerable()
-                                    .Where(row => row.Field<int>("CodTipoCanal") == 15)
+                                    .Where(row => row.Field<int>("CodTipoCanal") == 38)
                                     .FirstOrDefault(); // Pega a primeira linha correspondente
                         if (rwcp == null)
                         {
@@ -3367,14 +3378,14 @@ namespace PlotagemOpenGL.Hipnograma
                         codcanal = Convert.ToInt32(rwcp["CodCanal1"]);
 
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
-                        canalIndex = GlobVar.codCanal.IndexOf(codcanal);
-                        LimiteInferior = Convert.ToInt32(rwcp["LimiteInferior"]);
-                        LimiteSuperior = Convert.ToInt32(rwcp["LimiteSuperior"]);
+                        canalindexC = GlobVar.codCanal.IndexOf(codcanal);
+                        LimiteInferiorC = Convert.ToInt32(rwcp["LimiteInferior"]);
+                        LimiteSuperiorC = Convert.ToInt32(rwcp["LimiteSuperior"]);
 
                     }
 
-                    int ponteiroIC = GlobVar.ponteiroI[canalIndex];
-                    int ponteiroFC = GlobVar.ponteiroF[canalIndex];
+                    int ponteiroIC = GlobVar.ponteiroI[canalindexC];
+                    int ponteiroFC = GlobVar.ponteiroF[canalindexC];
 
                     int indexxC = GlobVar.codCanal.IndexOf(codcanal);
                     int TaxaC = GlobVar.txPorCanal[indexxC];
@@ -3392,6 +3403,17 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                     }
                     //Parte para conversar de dig para analo se precisar
+                    if (codcanal != 73)
+                    {
+                        var dataToFilter = CO2_Exal;
+                        int lmAnaloInf = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CapnoEtCO2_LimiteInf_Anal"]);
+                        int lmAnaloSup = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CapnoEtCO2_LimiteSup_Anal"]);
+
+                        dataToFilter = DigiToAnalo(CO2_Exal, LimiteInferiorC, LimiteSuperiorC, lmAnaloInf, lmAnaloSup);
+
+                        Array.Copy(dataToFilter, 0, CO2_Exal, 0, dataToFilter.Length);
+
+                    }
 
                     break;
 

@@ -2509,6 +2509,7 @@ namespace PlotagemOpenGL
             AnaliseAutomatica.Size = new System.Drawing.Size(47, 47);
             AnaliseAutomatica.TabIndex = 65;
             AnaliseAutomatica.UseVisualStyleBackColor = false;
+            AnaliseAutomatica.Click += AnaliseAutomatica_Click;
             // 
             // Video
             // 
@@ -3819,6 +3820,7 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
+
 
 
         #endregion

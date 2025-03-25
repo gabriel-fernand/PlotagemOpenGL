@@ -156,7 +156,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 if (GlobVar.lastEvent != null){
                     DataTable eventos = GlobVar.eventosUpdate;
 
-                    int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+                    //int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
 
                     // Adicionar colunas ao DataTable se não existirem
                     if (eventos.Columns.Count == 0)

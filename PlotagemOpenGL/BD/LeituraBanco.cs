@@ -51,6 +51,7 @@ public class LeituraBanco
             using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
             using var commandTbl_CanaisAdquiridos = new OdbcCommand(queryTbl_CanaisAdquiridos, connectionDatBd);
 
+
             using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
 
             using var adapter = new OdbcDataAdapter(command);
@@ -113,6 +114,7 @@ public class LeituraBanco
             string queryTbl_JanelaResumoItens = "SELECT * FROM tbl_JanelaResumoItens";
             string queryTbl_JanelaResumo = "SELECT * FROM tbl_JanelaResumo";
             string queryTbl_Estagios = "SELECT * FROM tbl_Estagios";
+            string querytbl_ParametrosParaAnalise = "SELECT * FROM tbl_ParametrosParaAnalise";
 
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -123,6 +125,7 @@ public class LeituraBanco
             using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
             using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
             using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
+            using var commandtbl_ParametrosParaAnalise = new OdbcCommand(querytbl_ParametrosParaAnalise, connectionConfigBd);
 
             using var commandHipnoGruos = new OdbcCommand(queryTbl_HipnoGrupos, connectionConfigBd);
             using var commandSubHipnoGrupos = new OdbcCommand(queryTbl_HipnoSubGrupos, connectionConfigBd);
@@ -145,6 +148,7 @@ public class LeituraBanco
             using var adapterItensJanela = new OdbcDataAdapter(commandItensJanela);
             using var adapterJanelaResumo = new OdbcDataAdapter(commandJanelaResumo);
             using var adapterTbl_Estagios = new OdbcDataAdapter(commandTbl_Estagios);
+            using var adaptertbl_ParametrosParaAnalise = new OdbcDataAdapter(commandtbl_ParametrosParaAnalise);
 
             adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
@@ -160,7 +164,7 @@ public class LeituraBanco
             adapterItensJanela.Fill(GlobVar.tbl_JanelaResumoItens);
             adapterJanelaResumo.Fill(GlobVar.tbl_JanelaResumo);
             adapterTbl_Estagios.Fill(GlobVar.tbl_Estagios);
-
+            adaptertbl_ParametrosParaAnalise.Fill(GlobVar.tbl_ParametrosParaAnalisar);
             connectionConfigBd.Close();
 
         }
