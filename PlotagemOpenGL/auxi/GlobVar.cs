@@ -5,7 +5,6 @@ using System.Data;
 using System.Numerics;
 using Point = System.Drawing.Point;
 using System.Text;
-using ClassesBDNano;
 using System.Data;
 using System.Data.Odbc;
 using Connection = ADODB.Connection;
@@ -101,8 +100,6 @@ namespace PlotagemOpenGL.auxi
         public static Connection cnn_dbConfig = new Connection();
 
         //public static cls_dbExame obj_dbEventos = new ClassesBDNano.cls_dbExame();  //Nao esta funcionando, pois da um erro para estanciar
-        public static cls_DataSource obj_dbDataSource;
-        public static cls_dbConfig obj_dbConfig;
         public static string AtualEvento;
 
         public static int codMont;

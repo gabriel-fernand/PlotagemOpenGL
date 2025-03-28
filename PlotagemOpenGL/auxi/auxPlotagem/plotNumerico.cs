@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Windows.Forms;
 using SharpGL.SceneGraph;
 using System.Drawing;
+using System.Data;
 
 namespace PlotagemOpenGL.auxi.auxPlotagem
 {
@@ -88,8 +89,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
                                         g += GlobVar.namosNumerico;
                                     }
+                                    if(GlobVar.codSelected[i] == 66)
+                                    {
+                                        int pag = j / GlobVar.namosNumerico;
+                                        var row = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == pag).FirstOrDefault();
+                                        //aux = row["SatBasal"];
+                                        aux = Convert.ToInt32(row["SatBasal"]);
+                                    }
                                     me = aux;
-                                    txtEmTela = $" {me} ";
+                                    txtEmTela = $" {aux} ";
 
                                     int meh = 14;
                                     int fontsize = 19;

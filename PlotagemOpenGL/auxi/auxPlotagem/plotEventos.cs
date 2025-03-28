@@ -9,7 +9,6 @@ using System.Numerics;
 using System.Windows.Documents;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
-using ClassesBDNano;
 using ADODB;
 using PlotagemOpenGL.BD;
 using System.Windows.Forms;

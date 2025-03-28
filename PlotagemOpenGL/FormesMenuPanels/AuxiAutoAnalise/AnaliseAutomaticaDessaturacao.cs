@@ -1,5 +1,4 @@
 ﻿using Accord.Math;
-using ClassesBDNano;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.BD;
@@ -115,6 +114,106 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
             }
 
+            List<int> BasalDesatu = new List<int>();
+            int maiorDessatu = 0;
+            int[] quedasDessatu = new int[Sat_QuedaAbaixoDe];
+            int inter = 0;
+            int menorQueda = 0;
+            int EventoDetect = -1;
+
+            int pagIni = 0;
+            int pagFim = 0;
+            foreach (DataRow pag in GlobVar.tbl_Paginas.Rows)
+            {
+                int NumPag = Convert.ToInt32(pag["NumPag"]);
+                int SatBasal = Convert.ToInt32(pag["SatBasal"]);
+
+                if(SatBasal > despreza && SatBasal < 100)
+                {
+                    if (!PagDesprezadas.Contains(NumPag))
+                    {
+                        int Sat_Estagio = Convert.ToInt32(pag["estagio"]);
+                        if (Sat_Estagio >= 0 && Sat_Estagio <= 9)
+                        {
+                            if (NumPag < Sat_Segundos)
+                            {
+                                BasalDesatu.Add(SatBasal);
+                            }
+                            else if (NumPag == Sat_Segundos)
+                            {
+                                BasalDesatu.Add(SatBasal);
+                                maiorDessatu = BasalDesatu.Max();
+                                for (int ao = 1; ao <= quedasDessatu.Length; ao++)
+                                {
+                                    quedasDessatu[ao - 1] = maiorDessatu - ao;
+                                }
+                                menorQueda = quedasDessatu[quedasDessatu.Length - 1];
+
+                            }
+                            else
+                            {
+                                if (SatBasal > maiorDessatu)
+                                {
+                                    maiorDessatu = SatBasal;
+                                    for (int ao = 1; ao <= quedasDessatu.Length; ao++)
+                                    {
+                                        quedasDessatu[ao - 1] = maiorDessatu - ao;
+                                    }
+                                    menorQueda = quedasDessatu[quedasDessatu.Length - 1];
+
+                                }
+                                if (EventoDetect == -1)
+                                {
+                                    if (SatBasal < quedasDessatu[0])
+                                    {
+                                        for (int ao = 1; ao <= quedasDessatu.Length - 1; ao++)
+                                        {
+                                            if (SatBasal <= quedasDessatu[ao])
+                                            {
+                                                pagIni = NumPag;
+                                                menorQueda = SatBasal;
+                                                EventoDetect = 0;
+                                            }/*
+                                            if (SatBasal < menorQueda)
+                                            {
+                                                menorQueda = SatBasal;
+                                            }
+                                            if (SatBasal > menorQueda)
+                                            {                                                
+                                            }*/
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if(SatBasal < menorQueda)
+                                    {
+                                        menorQueda = SatBasal;
+                                    }
+                                    if(SatBasal > menorQueda)
+                                    {
+                                        pagFim = NumPag;
+
+                                        if(Math.Abs(pagFim - pagIni) > Sat_DuracaoMinima)
+                                        {
+                                            AdicionarEventoAoDataTable(pagIni, pagFim, CodEvento, CodAnalisar, menorQueda);
+                                        }
+
+                                        maiorDessatu = SatBasal;
+                                        for (int ao = 1; ao <= quedasDessatu.Length; ao++)
+                                        {
+                                            quedasDessatu[ao - 1] = maiorDessatu - ao;
+                                        }
+                                        menorQueda = quedasDessatu[quedasDessatu.Length - 1];
+                                        EventoDetect = -1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            /*
             foreach(DataRow tbl_Pagina in GlobVar.tbl_Paginas.Rows)// (int pag = pag_ini; pag <= pag_fim; pag++)
             {
                 int pag = Convert.ToInt32(tbl_Pagina["NumPag"]);
@@ -282,7 +381,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
             }
             // Após o loop, se necessário, calcular a média de saturação:
-            //media_sat = qtd > 0 ? acum / qtd : 0;
+            //media_sat = qtd > 0 ? acum / qtd : 0;\
+            */
         }
 
         private float F_Get1ValorDoCanalSAO2(int pag)
@@ -298,50 +398,46 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 return 0;
             }
         }
-        public static void AdicionarEventoAoDataTable(int inicio, int termino, int codEvento, int codcanal1)
+        public static void AdicionarEventoAoDataTable(int inicio, int termino, int codEvento, int codcanal1, int menorSatu)
         {
             try
             {
-                if (GlobVar.lastEvent != null)
+                DataTable eventos = GlobVar.eventosUpdate;
+
+                //int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
+
+                // Adicionar colunas ao DataTable se não existirem
+                if (eventos.Columns.Count == 0)
                 {
-                    DataTable eventos = GlobVar.eventosUpdate;
+                    eventos.Columns.Add("Seq", typeof(int));
+                    eventos.Columns.Add("NumPag", typeof(string));
+                    eventos.Columns.Add("CodEvento", typeof(int));
+                    eventos.Columns.Add("CodCanal1", typeof(int));
+                    eventos.Columns.Add("Inicio", typeof(int));
+                    eventos.Columns.Add("Duracao", typeof(int));
+                    eventos.Columns.Add("MenorSat", typeof(int));
+                    eventos.Columns.Add("Posicao", typeof(string));
 
-                    //int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
-
-                    // Adicionar colunas ao DataTable se não existirem
-                    if (eventos.Columns.Count == 0)
-                    {
-                        eventos.Columns.Add("Seq", typeof(int));
-                        eventos.Columns.Add("NumPag", typeof(string));
-                        eventos.Columns.Add("CodEvento", typeof(int));
-                        eventos.Columns.Add("CodCanal1", typeof(int));
-                        eventos.Columns.Add("Inicio", typeof(int));
-                        eventos.Columns.Add("Duracao", typeof(int));
-                        eventos.Columns.Add("MenorSat", typeof(int));
-                        eventos.Columns.Add("Posicao", typeof(string));
-
-                    }
-
-                    // Calcular NumPag para início e término
-                    int numPagInicio = inicio;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-                    int numPagTermino = termino;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-                    string numPag = $"{numPagInicio} -- {numPagTermino}";
-                    // Obter o próximo valor de Seq
-                    int seq = plotComentatios.AtualizarProxSeqEvento();
-
-                    plotEventos.minSaturacao(numPagInicio, numPagTermino);
-                    int minSat = GlobVar.minSat.Min();
-                    string posi = plotEventos.Posicao(numPagInicio, numPagTermino);
-                    inicio = inicio * 512;
-                    termino = termino * 512;
-                    // Adicionar dados ao DataTable
-                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, codcanal1, inicio, termino, minSat, posi);
-                    AlteraBD.GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
-                    // Exportar DataTable para Excel
-                    string excelFilePath = @"C:\Teste\Teste";
-                    //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
-                    eventos.Dispose();
                 }
+
+                // Calcular NumPag para início e término
+                int numPagInicio = inicio;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                int numPagTermino = termino;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                string numPag = $"{numPagInicio} -- {numPagTermino}";
+                // Obter o próximo valor de Seq
+                int seq = plotComentatios.AtualizarProxSeqEvento();
+
+                int minSat = menorSatu;
+                string posi = plotEventos.Posicao(numPagInicio, numPagTermino);
+                inicio = inicio * 512;
+                termino = termino * 512;
+                // Adicionar dados ao DataTable
+                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, codcanal1, inicio, termino, minSat, posi);
+                AlteraBD.GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                // Exportar DataTable para Excel
+                string excelFilePath = @"C:\Teste\Teste";
+                //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
+                eventos.Dispose();
             }
             catch { }
         }

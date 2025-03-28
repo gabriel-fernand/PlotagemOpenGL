@@ -1,5 +1,4 @@
 ﻿using Accord.Math;
-using ClassesBDNano;
 using MathNet.Numerics.LinearAlgebra.Factorization;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;

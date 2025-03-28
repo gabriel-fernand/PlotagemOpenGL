@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Mail;
 using System.Windows;
 using System.Windows.Markup;
-using ClassesBDNano;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
