@@ -199,6 +199,7 @@
             AmpliDessatu.TabIndex = 12;
             AmpliDessatu.Text = ">>";
             AmpliDessatu.UseVisualStyleBackColor = false;
+            AmpliDessatu.Click += AmpliDessatu_Click;
             // 
             // AmpliMovPPLM
             // 
@@ -210,6 +211,7 @@
             AmpliMovPPLM.TabIndex = 13;
             AmpliMovPPLM.Text = ">>";
             AmpliMovPPLM.UseVisualStyleBackColor = false;
+            AmpliMovPPLM.Click += AmpliMovPPLM_Click;
             // 
             // AmpliRonco
             // 
@@ -221,6 +223,7 @@
             AmpliRonco.TabIndex = 14;
             AmpliRonco.Text = ">>";
             AmpliRonco.UseVisualStyleBackColor = false;
+            AmpliRonco.Click += AmpliRonco_Click;
             // 
             // SatuBasal
             // 

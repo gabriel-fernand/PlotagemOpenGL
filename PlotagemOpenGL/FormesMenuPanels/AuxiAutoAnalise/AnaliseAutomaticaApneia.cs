@@ -102,10 +102,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
         private void captaDados()
         {
-            int ponteiroI = GlobVar.ponteiroI[AnalisarCanFluxo];
-            int ponteiroF = GlobVar.ponteiroF[AnalisarCanFluxo];
-
             int indexx = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
+
+            int ponteiroI = GlobVar.ponteiroI[indexx];
+            int ponteiroF = GlobVar.ponteiroF[indexx];
+
             int Taxa = GlobVar.txPorCanal[indexx];
 
             int h = 0;
