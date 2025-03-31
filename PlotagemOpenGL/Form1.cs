@@ -253,7 +253,6 @@ namespace PlotagemOpenGL
                     LeituraBanco.BancoRead();
                     LeituraBanco.AlteraTable();
                     LeituraBanco.AjustaMontagem();
-
                     //Canais.LerCanais();
                     //Leitura.LerArquivo();
                     await Task.Delay(25);
@@ -265,6 +264,7 @@ namespace PlotagemOpenGL
                     await Task.Delay(25);
 
                     LeituraEmMatrizTeste.LeituraDat();
+                    LeituraBanco.ArrumaTbl_Paginas();
 
                     LeituraEmMatrizTeste.referencias();
                     await Task.Delay(25);

@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Accord.Math;
 
 public class LeituraBanco
 {
@@ -403,6 +404,43 @@ public class LeituraBanco
 
             GlobVar.eventosUpdate.Rows.Add(newRow);
         }
+    }
+    public static void ArrumaTbl_Paginas()
+    {
+        int codSat = 66;
+        int[] sat;
+
+        int numColunas = GlobVar.matrizCanal.GetLength(1);
+        sat = new int[numColunas];
+
+        // Verifica se o código de referência existe
+        int indexCodReferencia = GlobVar.codCanal.IndexOf(codSat);
+        if (indexCodReferencia == -1)
+        {
+            return;
+        }
+
+        // Pega os índices de início e fim uma vez
+        int startCol = GlobVar.ponteiroI[indexCodReferencia];
+        int endCol = GlobVar.ponteiroF[indexCodReferencia];
+
+        // Copia os valores de matrizCompleta para o array referencia
+        int pontRef = 0;
+        for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0) && pontRef < numColunas; linhaComp++)
+        {
+            for (int colunaComp = startCol; colunaComp < endCol && pontRef < numColunas; colunaComp++)
+            {
+                sat[pontRef] = (int)GlobVar.matrizCompleta[linhaComp, colunaComp];
+                pontRef++;
+            }
+        }
+        int i = 0;
+        foreach(DataRow rw in GlobVar.tbl_Paginas.Rows)
+        {
+            rw["SatBasal"] = sat[i];
+            i += 8;
+        }
+
     }
     public static void AjustaCadEvent()// Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
     {

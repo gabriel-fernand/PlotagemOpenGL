@@ -16,6 +16,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
     {
         AnaliseAutomaticaApneia anApneiHipo;
         AnaliseAutomaticaDessaturacao anDessatu;
+        AnaliseAutomaticaRonco anRonco;
         Apneia ap;
         Dessaturacao desa;
         Ronco ronc;
@@ -56,6 +57,11 @@ namespace PlotagemOpenGL.FormesMenuPanels
             if(Dessatu.Checked)
             {
                 anDessatu = new AnaliseAutomaticaDessaturacao(DeleteDess.Checked, SatuBasal.Text);
+            }
+            if(Ronco.Checked)
+            {
+                int QualAnalisar = ronc.microfone.Checked ? 5 : 32;
+                anRonco = new AnaliseAutomaticaRonco(QualAnalisar, DeleteRonco.Checked);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Accord.Math;
+﻿using Accord.Audio;
+using Accord.Math;
 using MathNet.Numerics.LinearAlgebra.Factorization;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
@@ -33,7 +34,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
         bool excluirEvento = false;
 
-        public AnaliseAutomaticaApneia(int limiarAp = 0, int LimiarHip = 0, int DurMin = 0, int intervaloEvent = 0, int TamanhoJanBasal = 0, int TamanhoJanEventos = 0, int AbalisarCanFLuxo = 0, bool excluirEvento = false)
+        public AnaliseAutomaticaApneia(int limiarAp = 0, int LimiarHip = 0, int DurMin = 0, int intervaloEvent = 0, int TamanhoJanBasal = 0, int TamanhoJanEventos = 0, int AnalisarCanFluxo = 0, bool excluirEvento = false)
         {
             this.LimiarAp = limiarAp;
             this.LimiarHip = LimiarHip;
@@ -41,16 +42,16 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             this.intervaloEvent = intervaloEvent;
             this.TamanhoJanBasal = TamanhoJanBasal;
             this.TamanhoJanelaEventos = TamanhoJanEventos;
-            this.AnalisarCanFluxo = AbalisarCanFLuxo;
+            this.AnalisarCanFluxo = AnalisarCanFluxo;
             this.excluirEvento = excluirEvento;
 
-            if (!verificaExistenciaDoCanalNaMontagem(AbalisarCanFLuxo)) return;
+            if (!verificaExistenciaDoCanalNaMontagem(AnalisarCanFluxo)) return;
 
             dados = new float[GlobVar.indiceDat];
             verificaFiltroEPegaDados();
-
-            tbl_ParametrosParaAnalise();
+            
             this.excluirEvento = excluirEvento;
+            tbl_ParametrosParaAnalise();
         }
 
         private bool verificaExistenciaDoCanalNaMontagem(int CodCanFLuxo)
@@ -74,24 +75,20 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             }
             else
             {
-                int codcanal = AnalisarCanFluxo;
-                int codindex = GlobVar.codSelected.IndexOf(codcanal);
                 int indexx = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
                 int Taxa = GlobVar.txPorCanal[indexx];
-
                 // Verifica se o índice existe
-                if (codindex >= 0 && codindex < GlobVar.grafSelected.Length)
+                int startCol = GlobVar.ponteiroI[indexx];
+                int endCol = GlobVar.ponteiroF[indexx];
+
+                // Copia os valores de matrizCompleta para o array referencia
+                int pontRef = 0;
+                for (int linhaComp = 0; linhaComp < GlobVar.matrizCompleta.GetLength(0) && pontRef < dados.Length; linhaComp++)
                 {
-                    // Loop para acumular valores
-                    int h = 0;
-                    for (int g = 0; g < GlobVar.matrizCanal.GetLength(1); g += GlobVar.namosNumerico)
+                    for (int colunaComp = startCol; colunaComp < endCol && pontRef < dados.Length; colunaComp++)
                     {
-                        if (h < dados.Length)
-                        {
-                            // Acumula os valores correspondentes
-                            dados[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
-                        }
-                        h++;
+                        dados[pontRef] = (int)GlobVar.matrizCompleta[linhaComp, colunaComp];
+                        pontRef++;
                     }
                 }
                 dados = BandPass.ApplyFilter((dados), (float)low, (float)high, Taxa);
@@ -101,23 +98,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
         private void captaDados()
         {
-            int indexx = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
+            int indexx = GlobVar.codSelected.IndexOf(AnalisarCanFluxo);
 
-            int ponteiroI = GlobVar.ponteiroI[indexx];
-            int ponteiroF = GlobVar.ponteiroF[indexx];
-
-            int Taxa = GlobVar.txPorCanal[indexx];
-
-            int h = 0;
-            for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
+            for (int i = 0; i < dados.Length; i++)
             {
-                int colunaComp = ponteiroI;
-                while (colunaComp < ponteiroF)
-                {
-                    dados[h] = (short)GlobVar.matrizCompleta[linha, colunaComp];
-                    colunaComp ++;
-                    h++;
-                }
+                dados[i] = GlobVar.matrizCanal[indexx, i];
             }
         }
 
@@ -145,11 +130,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                 foreach(int a in codigosExcluir)
                 {
-                    ExcluiEvento(a);
+                    ExcluiEvento(a, AnalisarCanFluxo);
                 }
                 foreach (DataRow row in GlobVar.eventosUpdate.Rows.Cast<DataRow>().ToList())
                 {
-                    if (codigosExcluir.Contains(Convert.ToInt32(row["CodEvento"])))
+                    if (codigosExcluir.Contains(Convert.ToInt32(row["CodEvento"])) && Convert.ToInt16(row["CodCanal1"]) == AnalisarCanFluxo)
                     {
                         GlobVar.eventosUpdate.Rows.Remove(row);
                     }
@@ -215,8 +200,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             for (int i = Dur_Jan_Basal + Dur_Jan_Evento - 1; i < qtdDadosAux; i++)
             {
-                soma_evento = F_Somatoria(jan_evento, 0, Dur_Jan_Evento);
-                soma_basal = F_Somatoria(jan_basal, 0, Dur_Jan_Basal);
 
                 // Verificação de cancelamento se necessário (ex.: if (g_cancel) return;)
 
@@ -526,7 +509,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             return retorno;
         }
         private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-        public static int ExcluiEvento(int codEvento)
+        public static int ExcluiEvento(int codEvento, int codCanal)
         {
             try
             {
@@ -534,7 +517,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
                 connectionDatBd.Open();
 
-                string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodEvento = {codEvento};";
+                string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodCanal1 = {codCanal} AND CodEvento = {codEvento};";
 
                 using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
 

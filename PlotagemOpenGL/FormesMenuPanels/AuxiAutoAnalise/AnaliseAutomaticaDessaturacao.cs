@@ -113,6 +113,18 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     PagDesprezadas.Add(Convert.ToInt32(row["NumPag"]));
                 }
             }
+            int BoaNoite = 0;
+            int BomDia = 0;
+            var rwBoaNoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
+            var rwBomDia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
+
+            if(rwBoaNoite != null || rwBomDia != null)
+            {
+                BoaNoite = Convert.ToInt32(rwBoaNoite["NumPag"]);
+                BomDia = Convert.ToInt32(rwBomDia["NumPag"]);
+                Sat_Segundos += BoaNoite;
+            }
+
 
             List<int> BasalDesatu = new List<int>();
             int maiorDessatu = 0;
@@ -127,8 +139,18 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             {
                 int NumPag = Convert.ToInt32(pag["NumPag"]);
                 int SatBasal = Convert.ToInt32(pag["SatBasal"]);
-
-                if(SatBasal > despreza && SatBasal < 100)
+                if(BoaNoite != 0 || BomDia != 0)
+                {
+                    if(NumPag <= BoaNoite)
+                    {
+                        continue;
+                    }
+                    if(NumPag >= BomDia)
+                    {
+                        continue;
+                    }
+                }
+                if(SatBasal > despreza && SatBasal < 100 && NumPag > BoaNoite && NumPag < BomDia)
                 {
                     if (!PagDesprezadas.Contains(NumPag))
                     {
@@ -168,7 +190,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                                     {
                                         for (int ao = 1; ao <= quedasDessatu.Length - 1; ao++)
                                         {
-                                            if (SatBasal <= quedasDessatu[ao])
+                                            if (SatBasal <= quedasDessatu[quedasDessatu.Length - 1])
                                             {
                                                 pagIni = NumPag;
                                                 menorQueda = SatBasal;
@@ -194,7 +216,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                                     {
                                         pagFim = NumPag;
 
-                                        if(Math.Abs(pagFim - pagIni) > Sat_DuracaoMinima)
+                                        if(Math.Abs(pagFim - pagIni) >= Sat_DuracaoMinima)
                                         {
                                             AdicionarEventoAoDataTable(pagIni, pagFim, CodEvento, CodAnalisar, menorQueda);
                                         }
