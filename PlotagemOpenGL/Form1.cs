@@ -764,10 +764,13 @@ namespace PlotagemOpenGL
             GlobVar.tbl_JanelaResumoItens.Dispose();
             GlobVar.tbl_JanelaResumo.Dispose();
 
-            iCelera.telinha.Hide();
 
             iCelera ic = new iCelera();
             ic.Show();
+
+            iCelera.telinha.Hide();
+            this.Dispose();
+            this.Close();
         }
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
@@ -4765,7 +4768,7 @@ namespace PlotagemOpenGL
             string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"]} anos";
             string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"].ToString()}m";
             string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0, 10);
-            string arquivo = $"{GlobVar.textFile.Substring(12, 12)}";
+            string arquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}";
 
             this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}";
 
@@ -5296,7 +5299,7 @@ namespace PlotagemOpenGL
             string caminhoPasta = @"C:\Users\dev_i\source\repos\Dat";
 
             // Extrair o nome base do arquivo a partir de GlobVar.textFile
-            string nomeBaseArquivo = GlobVar.textFile.Substring(32, 8);
+            string nomeBaseArquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}";
 
             // Chamar o método para capturar a tela e salvar como BMP
             SalvarPrintTela(caminhoPasta, nomeBaseArquivo);
@@ -6971,7 +6974,7 @@ namespace PlotagemOpenGL
             if (GlobVar.eventosUpdate != null)
             {
                 int[] valoresProcurados = { 1, 2, 3};
-                string nomeArquivo = $"{GlobVar.textFile.Substring(12, 8)}_ApneiaEventos.txt";
+                string nomeArquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}_ApneiaEventos.txt";
                 string pastaDownloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
                 string caminhoArquivo = Path.Combine(pastaDownloads, nomeArquivo);
 
@@ -7016,7 +7019,7 @@ namespace PlotagemOpenGL
             if (GlobVar.eventosUpdate != null)
             {
                 int[] valoresProcurados = { 4, 5, 6};
-                string nomeArquivo = $"{GlobVar.textFile.Substring(12, 8)}_HipopneiaEventos.txt";
+                string nomeArquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}_HipopneiaEventos.txt";
                 string pastaDownloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
                 string caminhoArquivo = Path.Combine(pastaDownloads, nomeArquivo);
 

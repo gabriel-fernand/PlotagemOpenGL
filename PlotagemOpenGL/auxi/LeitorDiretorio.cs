@@ -22,7 +22,7 @@ namespace PlotagemOpenGL.auxi
                     //Separando os valores por vírgula
                     valoresStr = line.Split(',');
                     
-                    GlobVar.textFile = valoresStr[0];
+                    GlobVar.textFile = (valoresStr[0]);
                     GlobVar.bDataFile = valoresStr[1];
                     GlobVar.configBD = valoresStr[2];
 
