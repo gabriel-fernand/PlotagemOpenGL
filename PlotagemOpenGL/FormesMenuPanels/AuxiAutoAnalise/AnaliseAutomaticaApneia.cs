@@ -15,6 +15,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tensorflow.Operations;
 
 namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 {
@@ -46,8 +47,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             this.excluirEvento = excluirEvento;
 
             if (!verificaExistenciaDoCanalNaMontagem(AnalisarCanFluxo)) return;
+            int indexx = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
+            int Taxa = GlobVar.txPorCanal[indexx];
+            int qtdDados = Taxa * GlobVar.npagin; // Mesmo cálculo; ajuste se necessário
 
-            dados = new float[GlobVar.indiceDat];
+            dados = new float[qtdDados];
             verificaFiltroEPegaDados();
             
             this.excluirEvento = excluirEvento;
@@ -67,9 +71,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             var row = GlobVar.tbl_MontagemSelecionada.Rows[indexCod];
 
             int lowtab = row["PassaBaixa"] == DBNull.Value ? 0 : Convert.ToInt32(row["PassaBaixa"]);
-            int hightab = row["PassaAlta"] == DBNull.Value ? 0 : Convert.ToInt32(row["PassaAlta"]);
 
-            if(lowtab == low && hightab == high)
+            if(lowtab == low)
             {
                 captaDados();
             }
@@ -91,7 +94,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         pontRef++;
                     }
                 }
-                dados = BandPass.ApplyFilter((dados), (float)low, (float)high, Taxa);
+                dados = PaissaBaixa.ApplyFilter((dados), (float)low, Taxa);
 
             }
         }
@@ -110,7 +113,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         {
             int g_porc = 0;
             int porc_aux = 0;
-            int j;
             // Índice do canal a ser analisado
             int indexx = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
             int Taxa = GlobVar.txPorCanal[indexx];
@@ -149,6 +151,24 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 return;
             }
 
+            int BoaNoite = 0;
+            int BomDia = 0;
+            var rwBoaNoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
+            var rwBomDia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
+
+            if (rwBoaNoite != null)
+            {
+                BoaNoite = Convert.ToInt32(rwBoaNoite["NumPag"]) * Taxa;
+            }
+            if (rwBomDia != null)
+            {
+                BomDia = Convert.ToInt32(rwBomDia["NumPag"]) * Taxa;
+            }
+            else
+            {
+                BomDia = dados.Length;
+            }
+
             if (rs["ApHip_LimiarAp"] == DBNull.Value ||
                 rs["ApHip_LimiarHip"] == DBNull.Value ||
                 rs["ApHip_DuracaoMin"] == DBNull.Value ||
@@ -183,11 +203,12 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 if (dados[a] > 32000) dados[a] = 32000;
                 else dados[a] = Math.Abs(dados[a]);
             }
+            
             // Copia os dados para o buffer basal e para o buffer de evento
             // Assume-se que 'dados' é um array float[] previamente preenchido.
-            Array.Copy(dados, 0, jan_basal, 0, Dur_Jan_Basal);
+            Array.Copy(dados, BoaNoite, jan_basal, 0, Dur_Jan_Basal);
             // Copia a partir do índice Dur_Jan_Basal para o buffer de evento, iniciando no índice 1
-            Array.Copy(dados, Dur_Jan_Basal, jan_evento, 1, Dur_Jan_Evento - 1);
+            Array.Copy(dados,BoaNoite + Dur_Jan_Basal, jan_evento, 0, Dur_Jan_Evento);
 
             g_porc = 10;
 
@@ -198,47 +219,61 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             int desloc = 0; // Verifique se desloc precisa ser atualizado em outro momento
             int Evento = 0;
 
-            for (int i = Dur_Jan_Basal + Dur_Jan_Evento - 1; i < qtdDadosAux; i++)
+            for (int i = BoaNoite + Dur_Jan_Basal + Dur_Jan_Evento; i < BomDia; i++)
             {
-
-                // Verificação de cancelamento se necessário (ex.: if (g_cancel) return;)
 
                 // Atualize o buffer de evento: "shift" à esquerda
                 int evento_0 = (int)jan_evento[0];
-                Array.Copy(jan_evento, 1, jan_evento_aux, 0, jan_evento.Length - 1);
-                Array.Copy(jan_evento_aux, 0, jan_evento, 0, jan_evento.Length - 1);
+                Array.Copy(jan_evento, 1, jan_evento, 0, jan_evento.Length - 1);
                 // Preenche a última posição com o valor atual de 'dados'
                 jan_evento[Dur_Jan_Evento - 1] = (int)dados[i];
 
                 soma_evento = soma_evento - evento_0 + dados[i];
+                // Verificação de cancelamento se necessário (ex.: if (g_cancel) return;)
 
-                media_evento = (int)soma_evento / Dur_Jan_Evento;
-                media_basal = (int)(soma_basal / Dur_Jan_Basal);
+                media_evento = soma_evento / Dur_Jan_Evento;
+                media_basal = Math.Max(1, soma_basal / Dur_Jan_Basal);
+
+                float ValorLimiarHip = media_basal * LimiarHip;
+                float ValorLimiarAp = media_basal * LimiarAp;
+
                 if (media_basal == 0)
                     media_basal = 1;
 
                 // Detecta Apneia ou Hipopneia
-                if (media_evento < media_basal * LimiarHip || media_evento < media_basal * LimiarAp)
+                if (media_evento < ValorLimiarHip)
                 {
-                    if (media_evento < media_basal * LimiarAp)
+                    if (media_evento < ValorLimiarAp)
                         Evento = CodEventoApneia;
                     else
                         Evento = CodEventoHipopneia;
 
                     // Marca o evento para as amostras correspondentes
-                    for (int h = 0; h < Dur_Jan_Evento; h++)
+                    for (int h = i - ((int)Dur_Jan_Evento); h < i + Dur_Jan_Evento && h < eventos.Length; h++) // Garante que j esteja dentro do limite
                     {
-                        eventos[desloc + h + i - (Dur_Jan_Evento - 1)] = Evento;
+                        eventos[h] = Evento; // Altera corretamente a sequência de eventos
                     }
+
+
                 }
                 else
                 {
                     // "Shift" no buffer basal
-                    int basal_0 = (int)jan_basal[0];
-                    Array.Copy(jan_basal, 1, jan_basal_aux, 0, jan_basal.Length - 1);
-                    Array.Copy(jan_basal_aux, 0, jan_basal, 0, jan_basal.Length - 1);
-                    jan_basal[Dur_Jan_Basal - 1] = (int)dados[i];
+                    float basal_0 = jan_basal[0];
+                    Array.Copy(jan_basal, 1, jan_basal, 0, (int)Dur_Jan_Basal - 1);
+                    jan_basal[(int)Dur_Jan_Basal - 1] = dados[i];
+
+                    // Atualizar soma da janela basal
                     soma_basal = soma_basal - basal_0 + dados[i];
+                    /*
+                    // Atualize o buffer de evento: "shift" à esquerda
+                    int evento_0 = (int)jan_evento[0];
+                    Array.Copy(jan_evento, 1, jan_evento, 0, jan_evento.Length - 1);
+                    // Preenche a última posição com o valor atual de 'dados'
+                    jan_evento[Dur_Jan_Evento - 1] = (int)dados[i];
+
+                    soma_evento = soma_evento - evento_0 + dados[i];
+                    */
                 }
             }
 
@@ -250,15 +285,16 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             int fim1 = -1;
             bool busca_ini2 = false;
             porc_aux = 10;
-            for (int i = 0; i < qtdDadosAux; i++)
+            for (int i = BoaNoite + Dur_Jan_Basal; i < BomDia; i++)
             {
+                /*
                 // Atualiza o progresso (se necessário)
                 if (i % (qtdDadosAux / 10) == 0)
                 {
                     g_porc = 40 + (porc_aux / 11) * (i / (qtdDadosAux / 10));
                 }
-
-                if (eventos[desloc + i] > 0)
+                */
+                if (eventos[i] > 0)
                 {
                     if (busca_ini2)
                     {
@@ -273,42 +309,26 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                             if (i - fim1 < Taxa ||
                                 media_basal <= media_evento * 1.7 ||
-                                ((fim1 - ini1 > Dur_min_ev / 2) && (i - fim1 < Interv_Min_Entre_Ev / 2)))
+                                ((fim1 - ini1 > Dur_min_ev) && (i - fim1 < Interv_Min_Entre_Ev)))
                             {
-                                for (int b = 1; b <= i - fim1; b++)
+                                for (int b = fim1 - 1; b <= i; b++)
                                 {
-                                    eventos[desloc + b + fim1] = Evento;
+                                    eventos[b] = Evento;
                                 }
                                 fim1 = i;
                             }
                             else
                             {
-                                // Inicia um novo evento se a duração for inválida
-                                if (fim1 - ini1 < Dur_min_ev)
-                                {
-                                    for (int b = 0; b <= fim1 - ini1; b++)
-                                    {
-                                        eventos[desloc + b + ini1] = 0;
-                                    }
-                                }
                                 ini1 = i;
                                 fim1 = i;
-                                Evento = eventos[desloc + i];
+                                Evento = eventos[i];
                             }
                         }
                         else
                         {
-                            // Inicia um novo evento
-                            if (fim1 - ini1 < Dur_min_ev)
-                            {
-                                for (int b = 0; b <= fim1 - ini1; b++)
-                                {
-                                    eventos[desloc + b + ini1] = 0;
-                                }
-                            }
                             ini1 = i;
                             fim1 = i;
-                            Evento = eventos[desloc + i];
+                            Evento = eventos[i];
                         }
                     }
                     else if (ini1 < 0)
@@ -316,7 +336,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         // Primeira ocorrência de um evento
                         ini1 = i;
                         fim1 = i;
-                        Evento = eventos[desloc + i];
+                        Evento = eventos[i];
                     }
                     else
                     {
@@ -341,45 +361,41 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             ini1 = -1;
             fim1 = -1;
             porc_aux = 10;
-            for (int i = 0; i < qtdDados; i++)
+            for (int i = BoaNoite; i < BomDia; i++)
             {
+                /*
                 if (i % (qtdDados / 10) == 0)
                 {
                     g_porc = 60 + (porc_aux / 11) * (i / (qtdDados / 10));
                 }
+                */
 
-                if (eventos[i] == 0)
+                if (eventos[i] > 0)
                 {
-                    if (ini1 >= 0)
+                    if (ini1 > 0)
                     {
-                        if ((fim1 - ini1 < Dur_min_ev) || (fim1 - ini1 > Dur_Max_Ev))
+                        fim1 = i;
+                    }
+                    else
+                    {
+                        ini1 = i;
+                        fim1 = i;
+                    }
+                }
+                else
+                {
+                    if (ini1 > 0)
+                    {
+                        if ((Math.Abs(ini1 - fim1) < Dur_min_ev) || (Math.Abs(ini1 - fim1) > Dur_Max_Ev))
                         {
-                            for (int b = 0; b <= fim1 - ini1; b++)
+                            for (int j = ini1; j <= fim1; j++)
                             {
-                                eventos[b + ini1] = 0;
+                                eventos[j] = 0; // Elimina evento inválido
                             }
                         }
                         ini1 = -1;
                         fim1 = -1;
                     }
-                }
-                else if (ini1 < 0)
-                {
-                    ini1 = i;
-                    fim1 = i;
-                }
-                else
-                {
-                    fim1 = i;
-                }
-            }
-
-            // Verifica se há um último evento não finalizado
-            if (ini1 >= 0 && ((fim1 - ini1 < Dur_min_ev) || (fim1 - ini1 > Dur_Max_Ev)))
-            {
-                for (int b = 0; b <= fim1 - ini1; b++)
-                {
-                    eventos[b + ini1] = 0;
                 }
             }
 
@@ -392,15 +408,20 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             int qtd_ap = 0, qtd_hip = 0;
             bool Est_0 = false;
             int pag_ini = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[0]["NumPag"]);
-            for (int i = 0; i < qtdDados; i++)
+            int indexxs = GlobVar.codCanal.IndexOf(AnalisarCanFluxo);
+            int taxas = GlobVar.txPorCanal[indexxs];
+
+            List<(int inicio, int fim, int evento, int canal, int taxa)> eventosTemporarios = new();
+
+            for (int i = BoaNoite + Dur_Jan_Basal; i < BomDia; i++)
             {
                 Application.DoEvents();
                 //if (g_cancel)
                  //   return -1;  // Substituindo o GoTo ErrorHandler
-
+                /*
                 if (i % (qtdDados / 10) == 0)
                     g_porc = (int)(90 + porc_aux / 11 * (i / (qtdDados / 10.0)));
-
+                */
                 if (eventos[i] > 0)
                 {
                     if (eventos[i] == CodEventoApneia)
@@ -429,10 +450,10 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                     if (ini1 > 0)
                     {
-                        int inicio = ini1 * (GlobVar.namos / Taxa);
-                        int final = fim1 * (GlobVar.namos / Taxa);
+                        int inicio = ini1;
+                        int final = fim1;
 
-                        AdicionarEventoAoDataTable(inicio, final, Evento, AnalisarCanFluxo);
+                        eventosTemporarios.Add((inicio, final, Evento, AnalisarCanFluxo, Taxa));
                     }
 
                     ini1 = -1;
@@ -441,11 +462,36 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
             }
 
+            cnn = new OdbcConnection(connectionStringDatBd);
+            connectionDatBd = new OdbcConnection(connectionStringDatBd);
+            connectionDatBd.Open();
+
+            // Inserir todos os eventos no banco de uma vez
+            int aaa = 0;
+            // Inserir todos os eventos no banco de uma vez
+            foreach (var ev in eventosTemporarios)
+            {
+                aaa++;
+                AdicionarEventoAoDataTable(ev.inicio, ev.fim, ev.evento, ev.canal, ev.taxa);
+            }
+
+            string query = "SELECT * FROM tbl_Eventos";
+            using var command = new OdbcCommand(query, connectionDatBd);
+            using var adapterEventosDtNormal = new OdbcDataAdapter(command);
+            GlobVar.eventos.Clear();
+            adapterEventosDtNormal.Fill(GlobVar.eventos);
+            connectionDatBd.Close();
+
+
             g_porc = 100;
             Application.DoEvents();
 
         }
-        public static void AdicionarEventoAoDataTable(int inicio, int termino,int codEvento, int codcanal1)
+        static OdbcConnection cnn;
+        static OdbcConnection connectionDatBd;
+        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+
+        public static void AdicionarEventoAoDataTable(int inicio, int termino, int codEvento, int codcanal1, int taxa)
         {
             try
             {
@@ -470,9 +516,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     }
 
                     // Calcular NumPag para início e término
-                    int numPagInicio = inicio / 512;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
-                    int numPagTermino = termino / 512;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    int numPagInicio = inicio / taxa;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
+                    int numPagTermino = termino / taxa;//GlobVar.txPorCanal[GlobVar.grafSelected[YAdjusted]];
                     string numPag = $"{numPagInicio} -- {numPagTermino}";
+
+                    inicio = inicio * (GlobVar.namos / taxa);
+                    termino = termino * (GlobVar.namos / taxa);
+
                     // Obter o próximo valor de Seq
                     int seq = plotComentatios.AtualizarProxSeqEvento();
 
@@ -482,7 +532,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                     // Adicionar dados ao DataTable
                     GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, codcanal1, inicio, termino, minSat, posi);
-                    AlteraBD.GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
                     //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
@@ -490,6 +540,146 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
             }
             catch { }
+        }
+        public static long GravaEvento(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int MenorSat = 0, string Posicao = ".")
+        {
+            try
+            {
+                long seq_aux;
+                int codret = 0;
+                //string Posicao = ".";
+                duracao = (duracao - Inicio);// / LasPag;
+                int auxInicio = Inicio / sizepag;
+                Inicio = Inicio - (auxInicio * sizepag);
+
+                string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
+
+                // Cria e abre o DataAdapter
+                using (OdbcDataAdapter adapter = new OdbcDataAdapter(strSQL, cnn))
+                {
+                    DataTable rs = new DataTable();
+                    adapter.Fill(rs);
+
+                    if (seq == -1)
+                    {
+                        // Buscar o próximo sequencial de evento
+                        strSQL = "SELECT * FROM tbl_SeqEvento";
+                        DataTable rs_seq = new DataTable();
+                        using (OdbcDataAdapter seqAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        {
+                            seqAdapter.Fill(rs_seq);
+                            if (rs_seq.Rows.Count == 0)
+                            {
+                                seq_aux = 1;
+                                using (OdbcCommand cmdInsert = new OdbcCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", cnn))
+                                {
+                                    cmdInsert.ExecuteNonQuery();
+                                }
+                            }
+                            else
+                            {
+                                seq_aux = (long)rs_seq.Rows[0]["ProxSeqEvento"];
+                                using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
+                                {
+                                    cmdUpdate.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        // Verifica se não existe um evento idêntico ao que está sendo incluído
+                        strSQL = $"SELECT * FROM tbl_Eventos WHERE CodEvento = {CodEvento} AND CodCanal1 = {CodCanal1} AND CodCanal2 = {CodCanal2} AND NumPag = {NumPag} AND Inicio = {Inicio}";
+                        DataTable rs_aux = new DataTable();
+                        using (OdbcDataAdapter auxAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        {
+                            auxAdapter.Fill(rs_aux);
+                            if (rs_aux.Rows.Count > 0)
+                            {
+                                codret = ExcluiEventoSeq((int)rs_aux.Rows[0]["Seq"]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        seq_aux = seq;
+                        if (rs.Rows.Count > 0)
+                        {
+                            if (MenorSat != null)
+                            {
+                                MenorSat = Convert.ToInt16(rs.Rows[0]["MenorSat"]);
+                            }
+                            Posicao = rs.Rows[0]["Posicao"].ToString();
+                        }
+
+                        ExcluiEventoSeq(seq);
+                    }
+
+                    // Inserção de novos registros
+                    while (duracao > 0)
+                    {
+                        DataRow newRow = rs.NewRow();
+                        newRow["Seq"] = seq_aux;
+                        newRow["NumPag"] = NumPag;
+                        newRow["CodEvento"] = CodEvento;
+                        newRow["CodCanal1"] = CodCanal1;
+                        newRow["CodCanal2"] = CodCanal2;
+                        newRow["Inicio"] = Inicio;
+                        if (Inicio + duracao > sizepag)
+                        {
+                            newRow["Duracao"] = sizepag - Inicio;
+                        }
+                        else
+                        {
+                            newRow["Duracao"] = duracao;
+                        }
+                        if (MenorSat != 0) newRow["MenorSat"] = MenorSat;
+                        newRow["Posicao"] = Posicao;
+
+                        rs.Rows.Add(newRow);
+
+                        Inicio = 0;
+                        duracao -= (int)newRow["Duracao"];
+                        NumPag++;
+                    }
+
+                    // Atualiza o DataTable com as alterações
+                    OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
+                    adapter.Update(rs);
+                    /*
+                    string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+                    using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+                    string query = "SELECT * FROM tbl_Eventos";
+                    using var command = new OdbcCommand(query, connectionDatBd);
+                    using var adapterEventosDtNormal = new OdbcDataAdapter(command);
+                    GlobVar.eventos.Clear();
+                    adapterEventosDtNormal.Fill(GlobVar.eventos);
+                    connectionDatBd.Close();
+                    */
+                }
+
+                return seq_aux;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro: {ex.Message}");
+                return -1;
+            }
+        }
+
+        public static int ExcluiEventoSeq(int Seq)
+        {
+            try
+            {
+                int i = -1;
+
+                string queryDelete = $"DELETE FROM tbl_Eventos WHERE Seq = {Seq};";
+
+                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+
+                DeleteCommand.ExecuteNonQuery();
+
+                return i;
+            }
+            catch { int i = 0; return i; }
         }
 
         public int F_Somatoria(float[] dados, int start, int maximo)
@@ -508,7 +698,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             return retorno;
         }
-        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
         public static int ExcluiEvento(int codEvento, int codCanal)
         {
             try
