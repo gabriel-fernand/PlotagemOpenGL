@@ -1,12 +1,10 @@
-﻿using Accord.Math;
+﻿using Accord.Audio;
+using Accord.Math;
 using ADODB;
-using ClassesBDNano;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
-using PlotagemOpenGL.BD;
 using PlotagemOpenGL.Filtros;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -16,13 +14,15 @@ using System.Threading.Tasks;
 
 namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 {
-    internal class AnaliseAutomaticaRonco
+    internal class AutoAnalisePLM
     {
+        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+
         float[] sinal;
         int codCanal;
         bool excluirEvento;
-        int low = 40;
-        int high = 120;
+        int low = 10;
+        int high = 7;
         int notch = 60;
 
         float taxaAmos;
@@ -34,27 +34,29 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         float DurJanEvento;
         float IntervaloMinEntreEv;
         float FatorAmplituide;
+        bool Est_0 = false;
+        float QtdMinParaSerPLM;
         float NumVezesDurMinEv;
         float NumVezesAmplitudeBasal;
         float tipoAmplBasal;
         float FatorMultAmpEstagio;
 
-        public AnaliseAutomaticaRonco(int CodCanal, bool excluirEvento)
+
+        public AutoAnalisePLM(int codCanal, bool excluirEvento)
         {
             sinal = new float[GlobVar.matrizCanal.GetLength(1)];
-            this.codCanal = CodCanal;
-            if (!verificaExistenciaDoCanalNaMontagem(CodCanal)) return;
+            this.codCanal = codCanal;
+            this.excluirEvento = excluirEvento;
+            if (!verificaExistenciaDoCanalNaMontagem(codCanal)) return;
             verificaFiltroEPegaDados();
 
-
-            this.excluirEvento = excluirEvento;
             ParametrosParaAnalisar();
         }
         private void captaDados()
         {
             int indexx = GlobVar.codSelected.IndexOf(codCanal);
 
-            for(int i = 0; i < sinal.Length; i++)
+            for (int i = 0; i < sinal.Length; i++)
             {
                 sinal[i] = GlobVar.matrizCanal[indexx, i];
             }
@@ -93,8 +95,10 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         pontRef++;
                     }
                 }
+                //sinal = PaissaBaixa.ApplyFilter((sinal), (float)low, taxa);
+
                 sinal = BandPass.ApplyFilter(sinal, (float)low, (float)high, taxa);
-                sinal = Notch.ApplyFilter(sinal, (float)notch, 0, taxa);
+                //sinal = Notch.ApplyFilter(sinal, (float)notch, 0, taxa);
             }
         }
 
@@ -104,7 +108,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 .AsEnumerable()
                 .Any(row => row.Field<int>("CodCanal1") == CodCanFLuxo);
         }
-        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
         public static int ExcluiEvento(int codEvento, int codCanal)
         {
             try
@@ -128,11 +131,10 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         private void ParametrosParaAnalisar()
         {
             if (GlobVar.tbl_ParametrosParaAnalisar == null) { return; }
-
             if (excluirEvento)
             {
                 // Exclui eventos no DataTable `GlobVar.eventosUpdate`
-                List<int> codigosExcluir = new List<int> { 13 };
+                List<int> codigosExcluir = new List<int> { 12, 26 };
 
                 foreach (int a in codigosExcluir)
                 {
@@ -166,30 +168,32 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 BomDia = sinal.Length;
             }
 
-
             var row = GlobVar.tbl_ParametrosParaAnalisar.Rows[0];
 
-            if (row["Ronco_Dur_Min_Ev"] == DBNull.Value || row["Ronco_Dur_Max_Ev"] == DBNull.Value || row["Ronco_Dur_Jan_Basal"] == DBNull.Value
-                || row["Ronco_Dur_Jan_Evento"] == DBNull.Value || row["Ronco_Interv_Min_Entre_Ev"] == DBNull.Value || row["Ronco_Fator_Amplitude"] == DBNull.Value
-                || row["Ronco_Tipo_Ampl_Basal"] == DBNull.Value || row["Ronco_Num_Vezes_Dur_Min_Ev"] == DBNull.Value || row["Ronco_Num_Vezes_Amplitude_Basal"] == DBNull.Value) { return; }
+            int indexx = GlobVar.codCanal.IndexOf(codCanal);
+            int taxa = GlobVar.txPorCanal[indexx];
+
+            if (row["PLM_Dur_Min_Ev"] == DBNull.Value || row["PLM_Dur_Max_Ev"] == DBNull.Value || row["PLM_Distancia_Min"] == DBNull.Value
+                || row["PLM_Distancia_Max"] == DBNull.Value || row["PLM_Dur_Jan_Basal"] == DBNull.Value || row["PLM_Dur_Jan_Evento"] == DBNull.Value
+                || row["PLM_Interv_Min_Entre_Ev"] == DBNull.Value || row["PLM_Fator_Amplitude"] == DBNull.Value || row["PLM_Est_0"] == DBNull.Value || row["PLM_Qtd_Min_Para_Ser_PLM"] == DBNull.Value
+                || row["PLM_Tipo_Ampl_Basal"] == DBNull.Value || row["PLM_Num_Vezes_Dur_Min_Ev"] == DBNull.Value || row["PLM_Num_Vezes_Amplitude_Basal"] == DBNull.Value || row["PLM_Fator_Mult_Ampl_Estagio"] == DBNull.Value) { return; }
             else
             {
-                int indexx = GlobVar.codCanal.IndexOf(codCanal);
-                int taxa = GlobVar.txPorCanal[indexx];
 
-                DurMinEv = (float)Convert.ToDouble(row["Ronco_Dur_Min_Ev"]) * taxa;
-                DurMaxEv = Convert.ToInt32(row["Ronco_Dur_Max_Ev"]) * taxa;
-                //DistanciaMin = Convert.ToInt32(row["Ronco_Distancia_Min"]) * taxa;
-                //DistanciaMax = Convert.ToInt32(row["Ronco_Distancia_Max"]) * taxa;
-                DurJanBasal = Convert.ToInt32(row["Ronco_Dur_Jan_Basal"]) * taxa;
-                DurJanEvento = (float)Convert.ToDouble(row["Ronco_Dur_Jan_Evento"]) * taxa;
-                IntervaloMinEntreEv = Convert.ToInt32(row["Ronco_Interv_Min_Entre_Ev"]) * taxa;
-
-                FatorAmplituide = Convert.ToInt32(row["Ronco_Fator_Amplitude"]);
-                NumVezesDurMinEv = Convert.ToInt32(row["Ronco_Num_Vezes_Dur_Min_Ev"]); ;
+                DurMinEv = (float)Convert.ToDouble(row["PLM_Dur_Min_Ev"]) * taxa;
+                DurMaxEv = Convert.ToInt32(row["PLM_Dur_Max_Ev"]) * taxa;
+                DistanciaMin = Convert.ToInt32(row["PLM_Distancia_Min"]) * taxa;
+                DistanciaMax = Convert.ToInt32(row["PLM_Distancia_Max"]) * taxa;
+                DurJanBasal = Convert.ToInt32(row["PLM_Dur_Jan_Basal"]) * taxa;
+                DurJanEvento = (float)Convert.ToDouble(row["PLM_Dur_Jan_Evento"]) * taxa;
+                IntervaloMinEntreEv = Convert.ToInt32(row["PLM_Interv_Min_Entre_Ev"]) * taxa;
+                FatorAmplituide = Convert.ToInt32(row["PLM_Fator_Amplitude"]);
+                Est_0 = Convert.ToBoolean(row["PLM_Est_0"]);
+                QtdMinParaSerPLM = Convert.ToInt32(row["PLM_Qtd_Min_Para_Ser_PLM"]);
+                NumVezesDurMinEv = Convert.ToInt32(row["PLM_Num_Vezes_Dur_Min_Ev"]);
                 NumVezesAmplitudeBasal = Convert.ToInt32(row["Ronco_Num_Vezes_Amplitude_Basal"]); ;
-                tipoAmplBasal = Convert.ToInt32(row["Ronco_Tipo_Ampl_Basal"]);
-                //FatorMultAmpEstagio = Convert.ToInt32(row["Ronco_Fator_Mult_Ampl_Estagio"]);
+                tipoAmplBasal = Convert.ToInt32(row["PLM_Num_Vezes_Amplitude_Basal"]);
+                FatorMultAmpEstagio = Convert.ToInt32(row["PLM_Fator_Mult_Ampl_Estagio"]);
 
             }
 
@@ -206,10 +210,16 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             float soma_evento = jan_evento.Sum();
             float soma_basal = jan_Basal.Sum();
-
             //Passo 1 Percorrer os dados e detectar eventos
             for (int i = BoaNoite + (int)DurJanBasal + (int)DurJanEvento; i < BomDia; i++)
             {
+
+                float evento_0 = jan_evento[0];
+                Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
+                jan_evento[(int)DurJanEvento - 1] = sinal[i];
+
+                // Atualizar soma da janela do evento
+                soma_evento = soma_evento - evento_0 + sinal[i];
 
                 float media_evento = soma_evento / DurJanEvento;
                 float media_basal = soma_basal / DurJanBasal;
@@ -221,12 +231,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     {
                         eventos[j] = 1; // Altera corretamente a sequência de eventos
                     }
-                    float evento_0 = jan_evento[0];
-                    Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
-                    jan_evento[(int)DurJanEvento - 1] = sinal[i];
-
-                    // Atualizar soma da janela do evento
-                    soma_evento = soma_evento - evento_0 + sinal[i];
 
                 }
                 else
@@ -237,14 +241,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                     // Atualizar soma da janela basal
                     soma_basal = soma_basal - basal_0 + sinal[i];
-
-                    float evento_0 = jan_evento[0];
-                    Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
-                    jan_evento[(int)DurJanEvento - 1] = sinal[i];
-
-                    // Atualizar soma da janela do evento
-                    soma_evento = soma_evento - evento_0 + sinal[i];
-
                 }
             }
 
@@ -268,7 +264,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         busca_ini2 = false;
                         ini2 = i;
                         // Se o intervalo entre eventos for menor que o mínimo, une os eventos
-                        if ((fim1 + IntervaloMinEntreEv > i) && (fim1 - ini1 > DurMinEv / 2.5))
+                        if ((fim1 + IntervaloMinEntreEv > i) && (fim1 - ini1 < DurMinEv / 2.5))
                         {
                             for (int j = fim1 - 1; j <= i; j++)
                             {
@@ -301,16 +297,12 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         fim1 = i;
                     }
                 }
-                else if(ini1 > 0)
-                { 
-                        // Encontramos um zero depois de um evento, buscamos o próximo evento
-                        busca_ini2 = true;
+                else if (ini1 > 0)
+                {
+                    // Encontramos um zero depois de um evento, buscamos o próximo evento
+                    busca_ini2 = true;
                 }
             }
-
-            ini1 = -1; fim1 = -1;
-            int npag = 0, ultPagEv = -1;
-            int pos, duracao, Evento;
 
             // PASSO 3 - Remove eventos com duração menor que DurMinEv ou maior que DurMaxEv
             for (int i = BoaNoite + (int)DurJanBasal; i < BomDia; i++)
@@ -319,7 +311,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                 if (eventos[i] > 0)
                 {
-                    if(ini1 > 0)
+                    if (ini1 > 0)
                     {
                         fim1 = i;
                     }
@@ -346,13 +338,73 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
             }
 
+            ini1 = -1;
+            fim1 = -1;
+            bool buscaIni2 = false;
+            int qtd = 0;
+            int iniPrimEv = -1;
+            int porcAux = 10;
+
+            //PASSO 4 - verifica se   PLM ou apenas Movimento de Perna
+            for (int i = 0; i < BomDia; i++)
+            {
+
+                if (eventos[i] > 0)
+                {
+                    if (buscaIni2)
+                    {
+                        buscaIni2 = false;
+                        if ((i - ini1 > DistanciaMin) && (i - ini1 < DistanciaMax))
+                        {
+                            qtd++;
+                            ini1 = i;
+                            fim1 = i;
+                        }
+                        else
+                        {
+                            //se a qtd de eventos for >= Qtd_Min_Para_Ser_PLM os eventos ser o PLM (o valor 1   trocado p/ 2)
+                            if (qtd >= QtdMinParaSerPLM)
+                            {
+                                for (int j = iniPrimEv; j < i; j++)
+                                {
+                                    if (eventos[j] > 0) eventos[j] = 2;
+                                }
+                            }
+                            ini1 = i;
+                            fim1 = i;
+                            iniPrimEv = i;
+                            qtd = 1;
+                        }
+                    }
+                    else if (ini1 < 0)
+                    {
+                        ini1 = i;
+                        fim1 = i;
+                        iniPrimEv = i;
+                        qtd = 1;
+                    }
+                    else
+                    {
+                        fim1 = i;
+                    }
+                }
+                else if (ini1 >= 0)
+                {
+                    buscaIni2 = true;
+                }
+                else
+                {
+                    buscaIni2 = false;
+                }
+            }
+
             int indexxs = GlobVar.codCanal.IndexOf(codCanal);
             int taxas = GlobVar.txPorCanal[indexxs];
-            Evento = 13;
+            int Evento = 0;
 
             List<(int inicio, int fim, int evento, int canal, int taxa)> eventosTemporarios = new();
 
-            // PASSO 4 - Inclui eventos no banco de dados
+            // PASSO 5 - Inclui eventos no banco de dados
             ini1 = -1;
             for (int i = BoaNoite + (int)DurJanBasal; i < BomDia; i++)
             {
@@ -365,7 +417,15 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         ini1 = i;
                         fim1 = i;
                         //Evento = eventos[i];
-                        Evento = 13;
+
+                        if (eventos[i] == 1)
+                        {
+                            Evento = 22;
+                        }
+                        else
+                        {
+                            Evento = 12;
+                        }
 
                     }
                     else
@@ -373,7 +433,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         fim1 = i;
                     }
                 }
-                else if(ini1 > 0)
+                else if (ini1 > 0)
                 {
 
                     eventosTemporarios.Add((ini1, fim1, Evento, codCanal, taxas));
@@ -401,8 +461,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             adapterEventosDtNormal.Fill(GlobVar.eventos);
             connectionDatBd.Close();
 
-            ultPagEv = npag;
         }
+
         public static void AdicionarEventoAoDataTable(int inicio, int termino, int codEvento, int codcanal1, int taxa)
         {
             try

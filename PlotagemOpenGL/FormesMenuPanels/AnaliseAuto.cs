@@ -17,6 +17,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         AnaliseAutomaticaApneia anApneiHipo;
         AnaliseAutomaticaDessaturacao anDessatu;
         AnaliseAutomaticaRonco anRonco;
+        AutoAnalisePLM anPLM;
         Apneia ap;
         Dessaturacao desa;
         Ronco ronc;
@@ -62,6 +63,24 @@ namespace PlotagemOpenGL.FormesMenuPanels
             {
                 int QualAnalisar = ronc.microfone.Checked ? 5 : 32;
                 anRonco = new AnaliseAutomaticaRonco(QualAnalisar, DeleteRonco.Checked);
+            }
+            if (MovPernaPLM.Checked)
+            {
+                int QualAnalisar; // 13 Canula 8 Fluxo
+
+                if (plm.PnAmbas.Checked)
+                {
+                    QualAnalisar = 2;
+                    anPLM = new AutoAnalisePLM(QualAnalisar, DeleteMovPPLM.Checked);
+                    QualAnalisar = 26;
+                    anPLM = new AutoAnalisePLM(QualAnalisar, DeleteMovPPLM.Checked);
+
+                }
+                else
+                {
+                    QualAnalisar = plm.PnDireita.Checked ? 2 : 26;
+                    anPLM = new AutoAnalisePLM(QualAnalisar, DeleteMovPPLM.Checked);
+                }
             }
         }
 
