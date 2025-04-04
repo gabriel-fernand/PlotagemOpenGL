@@ -1,6 +1,5 @@
 ﻿using Accord.Math;
 using ADODB;
-using ClassesBDNano;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.BD;

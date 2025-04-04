@@ -22,7 +22,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         int codCanal;
         bool excluirEvento;
         int low = 10;
-        int high = 7;
+        int high = 100;
         int notch = 60;
 
         float taxaAmos;
@@ -186,12 +186,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 DistanciaMax = Convert.ToInt32(row["PLM_Distancia_Max"]) * taxa;
                 DurJanBasal = Convert.ToInt32(row["PLM_Dur_Jan_Basal"]) * taxa;
                 DurJanEvento = (float)Convert.ToDouble(row["PLM_Dur_Jan_Evento"]) * taxa;
-                IntervaloMinEntreEv = Convert.ToInt32(row["PLM_Interv_Min_Entre_Ev"]) * taxa;
+                IntervaloMinEntreEv = (float)Convert.ToDouble(row["PLM_Interv_Min_Entre_Ev"]) * taxa;
                 FatorAmplituide = Convert.ToInt32(row["PLM_Fator_Amplitude"]);
                 Est_0 = Convert.ToBoolean(row["PLM_Est_0"]);
                 QtdMinParaSerPLM = Convert.ToInt32(row["PLM_Qtd_Min_Para_Ser_PLM"]);
                 NumVezesDurMinEv = Convert.ToInt32(row["PLM_Num_Vezes_Dur_Min_Ev"]);
-                NumVezesAmplitudeBasal = Convert.ToInt32(row["Ronco_Num_Vezes_Amplitude_Basal"]); ;
                 tipoAmplBasal = Convert.ToInt32(row["PLM_Num_Vezes_Amplitude_Basal"]);
                 FatorMultAmpEstagio = Convert.ToInt32(row["PLM_Fator_Mult_Ampl_Estagio"]);
 
@@ -210,16 +209,12 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             float soma_evento = jan_evento.Sum();
             float soma_basal = jan_Basal.Sum();
+
+            List<(int inicio, int fim)> eventosEncontrados = new();
+
             //Passo 1 Percorrer os dados e detectar eventos
             for (int i = BoaNoite + (int)DurJanBasal + (int)DurJanEvento; i < BomDia; i++)
             {
-
-                float evento_0 = jan_evento[0];
-                Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
-                jan_evento[(int)DurJanEvento - 1] = sinal[i];
-
-                // Atualizar soma da janela do evento
-                soma_evento = soma_evento - evento_0 + sinal[i];
 
                 float media_evento = soma_evento / DurJanEvento;
                 float media_basal = soma_basal / DurJanBasal;
@@ -231,6 +226,12 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     {
                         eventos[j] = 1; // Altera corretamente a sequência de eventos
                     }
+                    float evento_0 = jan_evento[0];
+                    Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
+                    jan_evento[(int)DurJanEvento - 1] = sinal[i];
+
+                    // Atualizar soma da janela do evento
+                    soma_evento = soma_evento - evento_0 + sinal[i];
 
                 }
                 else
@@ -241,6 +242,14 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                     // Atualizar soma da janela basal
                     soma_basal = soma_basal - basal_0 + sinal[i];
+
+                    float evento_0 = jan_evento[0];
+                    Array.Copy(jan_evento, 1, jan_evento, 0, (int)DurJanEvento - 1);
+                    jan_evento[(int)DurJanEvento - 1] = sinal[i];
+
+                    // Atualizar soma da janela do evento
+                    soma_evento = soma_evento - evento_0 + sinal[i];
+
                 }
             }
 
@@ -264,7 +273,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         busca_ini2 = false;
                         ini2 = i;
                         // Se o intervalo entre eventos for menor que o mínimo, une os eventos
-                        if ((fim1 + IntervaloMinEntreEv > i) && (fim1 - ini1 < DurMinEv / 2.5))
+                        if ((fim1 + IntervaloMinEntreEv > i) && (fim1 - ini1 > DurMinEv / 2.5))
                         {
                             for (int j = fim1 - 1; j <= i; j++)
                             {
@@ -299,6 +308,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
                 else if (ini1 > 0)
                 {
+                    eventosEncontrados.Add((ini1, fim1));
                     // Encontramos um zero depois de um evento, buscamos o próximo evento
                     busca_ini2 = true;
                 }
