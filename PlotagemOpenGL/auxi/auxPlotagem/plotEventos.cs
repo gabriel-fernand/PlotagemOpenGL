@@ -295,7 +295,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
         public static void DeleteEvent(int inicio, int termino, int codCanal, float[] desenhoLoc, float startY, int seq, int codEvento)
         {
-            int loc = EncontrarValorMaisProximo(desenhoLoc, startY);
 
             DataView view = new DataView(GlobVar.eventosUpdate);
             view.RowFilter = $"Seq = {seq}";
