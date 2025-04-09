@@ -130,6 +130,7 @@ namespace PlotagemOpenGL.LaudoForm
             Fechar.TabIndex = 3;
             Fechar.Text = "Fechar";
             Fechar.UseVisualStyleBackColor = true;
+            Fechar.Click += Fechar_Click;
             // 
             // CriarLaudo
             // 
@@ -140,6 +141,7 @@ namespace PlotagemOpenGL.LaudoForm
             CriarLaudo.TabIndex = 2;
             CriarLaudo.Text = "Criar novo laudo";
             CriarLaudo.UseVisualStyleBackColor = true;
+            CriarLaudo.Click += CriarLaudo_Click;
             // 
             // comboBox1
             // 

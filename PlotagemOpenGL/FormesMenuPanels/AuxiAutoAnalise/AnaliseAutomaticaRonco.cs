@@ -12,6 +12,7 @@ using System.Data.Odbc;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 {
@@ -23,7 +24,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         int low = 40;
         int high = 120;
         int notch = 60;
-
+        AnaliseAuto owner;
         float taxaAmos;
         float DurMinEv;
         float DurMaxEv;
@@ -38,13 +39,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         float tipoAmplBasal;
         float FatorMultAmpEstagio;
 
-        public AnaliseAutomaticaRonco(int CodCanal, bool excluirEvento)
+        public AnaliseAutomaticaRonco(int CodCanal, bool excluirEvento,AnaliseAuto owner)
         {
+            this.owner = owner;
             sinal = new float[GlobVar.matrizCanal.GetLength(1)];
             this.codCanal = CodCanal;
             if (!verificaExistenciaDoCanalNaMontagem(CodCanal)) return;
             verificaFiltroEPegaDados();
-
 
             this.excluirEvento = excluirEvento;
             ParametrosParaAnalisar();
@@ -127,6 +128,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         private void ParametrosParaAnalisar()
         {
             if (GlobVar.tbl_ParametrosParaAnalisar == null) { return; }
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(3);
 
             if (excluirEvento)
             {
@@ -135,12 +138,14 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                 foreach (int a in codigosExcluir)
                 {
+                    if (owner.cancellationToken.IsCancellationRequested) return;
                     ExcluiEvento(a, codCanal);
                 }
                 foreach (DataRow rw in GlobVar.eventosUpdate.Rows.Cast<DataRow>().ToList())
                 {
                     if (codigosExcluir.Contains(Convert.ToInt32(rw["CodEvento"])) && Convert.ToInt16(rw["CodCanal1"]) == codCanal)
                     {
+                        if (owner.cancellationToken.IsCancellationRequested) return;
                         GlobVar.eventosUpdate.Rows.Remove(rw);
                     }
                 }
@@ -191,6 +196,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 //FatorMultAmpEstagio = Convert.ToInt32(row["Ronco_Fator_Mult_Ampl_Estagio"]);
 
             }
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(6);
 
             float[] jan_Basal = new float[(int)DurJanBasal];
             float[] jan_Basal_Aux = new float[(int)DurJanBasal];
@@ -202,6 +209,15 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             Array.Copy(sinal, BoaNoite, jan_Basal, 0, (int)DurJanBasal);
             Array.Copy(sinal, BoaNoite + (int)DurJanBasal, jan_evento, 0, (int)DurJanEvento);
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(9);
+            int total = Math.Abs((BoaNoite + (int)DurJanBasal + (int)DurJanEvento) - BomDia);
+            int loc = 0;
+            int ultimoValor = -1;
+
+            int totalEtapas = 5;
+            int tamanhoEtapa = (100 - 9) / totalEtapas;
+            int progressoAtual = 9;
 
             float soma_evento = jan_evento.Sum();
             float soma_basal = jan_Basal.Sum();
@@ -209,6 +225,14 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             //Passo 1 Percorrer os dados e detectar eventos
             for (int i = BoaNoite + (int)DurJanBasal + (int)DurJanEvento; i < BomDia; i++)
             {
+                loc++;
+                int progressoCalculado = progressoAtual + (int)(((double)loc / total) * tamanhoEtapa);
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
 
                 float media_evento = soma_evento / DurJanEvento;
                 float media_basal = soma_basal / DurJanBasal;
@@ -250,6 +274,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             int qtdDados = sinal.Length;
             int ini1 = -1, fim1 = -1, ini2 = -1, fim2 = -1;
             float min, max, ampl_evento;
+            total = Math.Abs((BoaNoite + (int)DurJanBasal) - BomDia); loc = 0; ultimoValor = -1; progressoAtual += tamanhoEtapa;
 
             // Passo 2: Unir eventos próximos
             ini1 = -1;
@@ -258,7 +283,14 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             for (int i = BoaNoite + (int)DurJanBasal; i < BomDia; i++)
             {
-                //if (g_cancel) return; // Interromper se necessário
+                loc++;
+                int progressoCalculado = progressoAtual + (int)(((double)loc / total) * tamanhoEtapa);
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
 
                 if (eventos[i] > 0)
                 {
@@ -310,11 +342,19 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             ini1 = -1; fim1 = -1;
             int npag = 0, ultPagEv = -1;
             int pos, duracao, Evento;
+            total = Math.Abs((BoaNoite + (int)DurJanBasal) - BomDia); loc = 0; ultimoValor = -1; progressoAtual += tamanhoEtapa;
 
             // PASSO 3 - Remove eventos com duração menor que DurMinEv ou maior que DurMaxEv
             for (int i = BoaNoite + (int)DurJanBasal; i < BomDia; i++)
             {
-                //if (g_cancel) return 0;
+                loc++;
+                int progressoCalculado = progressoAtual + (int)(((double)loc / total) * tamanhoEtapa);
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
 
                 if (eventos[i] > 0)
                 {
@@ -350,12 +390,20 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             Evento = 13;
 
             List<(int inicio, int fim, int evento, int canal, int taxa)> eventosTemporarios = new();
+            total = Math.Abs((BoaNoite + (int)DurJanBasal) - BomDia); loc = 0; ultimoValor = -1; progressoAtual += tamanhoEtapa;
 
             // PASSO 4 - Inclui eventos no banco de dados
             ini1 = -1;
             for (int i = BoaNoite + (int)DurJanBasal; i < BomDia; i++)
             {
-                //if (g_cancel) return 0;
+                loc++;
+                int progressoCalculado = progressoAtual + (int)(((double)loc / total) * tamanhoEtapa);
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
 
                 if (eventos[i] > 0)
                 {
@@ -384,12 +432,18 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             connectionDatBd = new OdbcConnection(connectionStringDatBd);
             connectionDatBd.Open();
 
-            // Inserir todos os eventos no banco de uma vez
-            int aaa = 0;
+            total = eventosTemporarios.Count; loc = 0; ultimoValor = -1; progressoAtual += tamanhoEtapa;
             // Inserir todos os eventos no banco de uma vez
             foreach (var ev in eventosTemporarios)
             {
-                aaa++;
+                loc++;
+                int progressoCalculado = progressoAtual + (int)(((double)loc / total) * tamanhoEtapa);
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
                 AdicionarEventoAoDataTable(ev.inicio, ev.fim, ev.evento, ev.canal, ev.taxa);
             }
 
@@ -399,6 +453,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             GlobVar.eventos.Clear();
             adapterEventosDtNormal.Fill(GlobVar.eventos);
             connectionDatBd.Close();
+            owner.AtualizarProgresso(99);
 
             ultPagEv = npag;
         }

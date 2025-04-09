@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.Odbc;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
@@ -27,9 +28,11 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
         string Sat_Media = "";
         string Sat_Media_Calc;
         private List<int> PagDesprezadas;
+        AnaliseAuto owner;
 
-        public AnaliseAutomaticaDessaturacao(bool exclui, string sat_val)
+        public AnaliseAutomaticaDessaturacao(bool exclui, string sat_val, AnaliseAuto owner)
         {
+            this.owner = owner;
 
             if (!verificaExistenciaDoCanalNaMontagem(CodAnalisar)) return;
             this.excluirEvento = exclui;
@@ -45,6 +48,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
         private void LerCodigo()
         {
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(3);
             int ini_evento = -1;
             int vPico = 0;
             int vVale = 0;
@@ -70,6 +75,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                 GlobVar.eventosUpdate.AcceptChanges();
             }
+            if (owner.cancellationToken.IsCancellationRequested) return;
 
             // Obtendo a primeira linha de tbl_DadosExame, se existir
             if (GlobVar.tbl_DadosExame.Rows.Count > 0)
@@ -78,6 +84,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 SaO2_100 = rw["SaO2_100"] != DBNull.Value ? Convert.ToInt32(rw["SaO2_100"]) : SaO2_100;
                 Sat_Basal_inicial = rw["SatBasal"] != DBNull.Value ? Convert.ToInt32(rw["SatBasal"]) : Sat_Basal_inicial;
             }
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(6);
 
             // Inicializa variáveis
             menor_sat = SaO2_100;
@@ -87,6 +95,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             double ref_90 = SaO2_100 * 0.9;
             double ref_80 = SaO2_100 * 0.8;
             double ref_70 = SaO2_100 * 0.7;
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(9);
 
             // Obtendo a primeira linha de tbl_ParametrosParaAnalisar, se existir
             if (GlobVar.tbl_ParametrosParaAnalisar.Rows.Count > 0)
@@ -99,15 +109,20 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 Sat_Segundos = rs["Sat_Tempo_Medio"] != DBNull.Value ? Convert.ToInt32(rs["Sat_Tempo_Medio"]) : Sat_Segundos;
                 Sat_Desvio = rs["Sat_Tolerancia_Desvio"] != DBNull.Value ? Convert.ToInt32(rs["Sat_Tolerancia_Desvio"]) : Sat_Desvio;
             }
+            if (owner.cancellationToken.IsCancellationRequested) return;
 
             Sat_Desvio = 100; // Definição fixa no código original
 
             double despreza = SaO2_100 / 100.0 * Sat_DesprezarAbaixo;
             double ref_queda = Sat_Basal_inicial / 100.0 * (100 - Sat_QuedaAbaixoDe);
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(12);
 
             // Buscar eventos já processados
             foreach (DataRow row in GlobVar.eventos.Rows)
             {
+                if (owner.cancellationToken.IsCancellationRequested) return;
+
                 if (row.Field<int>("CodEvento") == 100 && row.Field<int>("CodCanal1") == CodAnalisar)
                 {
                     PagDesprezadas.Add(Convert.ToInt32(row["NumPag"]));
@@ -124,6 +139,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 BomDia = Convert.ToInt32(rwBomDia["NumPag"]);
                 Sat_Segundos += BoaNoite;
             }
+            if (owner.cancellationToken.IsCancellationRequested) return;
+            owner.AtualizarProgresso(14);
 
 
             List<int> BasalDesatu = new List<int>();
@@ -135,8 +152,22 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
             int pagIni = 0;
             int pagFim = 0;
+
+            int loc = 0;
+            int ultimoValor = -1;
+            int total = GlobVar.tbl_Paginas.Rows.Count;
             foreach (DataRow pag in GlobVar.tbl_Paginas.Rows)
             {
+                loc++;
+                int progressoCalculado = 14 + (int)(((double)loc / total) * (100 - 14));
+
+                if (progressoCalculado != ultimoValor)
+                {
+                    owner.AtualizarProgresso(progressoCalculado);
+                    ultimoValor = progressoCalculado;
+                }
+                if (owner.cancellationToken.IsCancellationRequested) return;
+
                 int NumPag = Convert.ToInt32(pag["NumPag"]);
                 int SatBasal = Convert.ToInt32(pag["SatBasal"]);
                 if(BoaNoite != 0 || BomDia != 0)
@@ -235,6 +266,8 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     }
                 }
             }
+            owner.AtualizarProgresso(99);
+
             /*
             foreach(DataRow tbl_Pagina in GlobVar.tbl_Paginas.Rows)// (int pag = pag_ini; pag <= pag_fim; pag++)
             {

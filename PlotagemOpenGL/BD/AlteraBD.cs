@@ -381,6 +381,61 @@ namespace PlotagemOpenGL.BD
                 }
             }
         }
+        public static void SalvarAlteracoes()
+        {
+            if (GlobVar.tbl_DadosExame == null || GlobVar.tbl_DadosExame.Rows.Count == 0)
+                return;
+
+            using (OleDbConnection conn = new OleDbConnection(connectionStringDatBd))
+            {
+                conn.Open();
+
+                // Busca atual da tabela
+                string selectSql = "SELECT * FROM tbl_DadosExame";
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(selectSql, conn))
+                {
+                    OleDbCommandBuilder builder = new OleDbCommandBuilder(adapter);
+
+                    // Preenche um DataTable com os dados reais do banco
+                    DataTable dbTable = new DataTable();
+                    adapter.Fill(dbTable);
+
+                    // Garante que o DataTable do banco tem a coluna esperada
+                    foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
+                    {
+                        if (!dbTable.Columns.Contains(col.ColumnName))
+                        {
+                            string alterSql = $"ALTER TABLE tbl_DadosExame ADD COLUMN {col.ColumnName} {GetOleDbTypeFromSystemType(col.DataType)}";
+                            using (OleDbCommand cmd = new OleDbCommand(alterSql, conn))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    // Atualiza os dados do banco com base nas alterações feitas
+                    DataRow sourceRow = GlobVar.tbl_DadosExame.Rows[0];
+                    DataRow targetRow = dbTable.Rows[0];
+
+                    foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
+                    {
+                        targetRow[col.ColumnName] = sourceRow[col.ColumnName];
+                    }
+
+                    // Salva as alterações
+                    adapter.Update(dbTable);
+                }
+            }
+        }
+        private static string GetOleDbTypeFromSystemType(Type type)
+        {
+            if (type == typeof(string)) return "TEXT";
+            if (type == typeof(int)) return "INTEGER";
+            if (type == typeof(double) || type == typeof(float)) return "DOUBLE";
+            if (type == typeof(bool)) return "YESNO";
+            if (type == typeof(DateTime)) return "DATETIME";
+            return "TEXT"; // padrão
+        }
 
     }
 }

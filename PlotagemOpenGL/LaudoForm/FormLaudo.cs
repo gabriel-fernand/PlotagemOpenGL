@@ -1,11 +1,13 @@
 ﻿using Accord.Math;
 using Accord.Statistics;
+using ClassesBDNano;
 using Cyotek.Windows.Forms;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.auxi.FormsAuxi;
+using PlotagemOpenGL.BD;
 using PlotagemOpenGL.Filtros;
 using PlotagemOpenGL.Hipnograma;
 using SharpGL;
@@ -16,6 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -76,7 +79,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             InitializeComponent();
 
-            foreach(DataRow roow in GlobVar.tbl_JanelaResumo.Rows)
+            foreach (DataRow roow in GlobVar.tbl_JanelaResumo.Rows)
             {
                 HipnoMostrando.Items.Add(roow["DescrJanela"].ToString());
             }
@@ -89,7 +92,7 @@ namespace PlotagemOpenGL.LaudoForm
                 codJanela = Convert.ToInt32(drw["CodJanela"]);
             }
             openned = true;
-            
+
             AjustarDTJanela();
             PreparaOsArrays();
             gl = openglHipno.OpenGL;
@@ -131,7 +134,7 @@ namespace PlotagemOpenGL.LaudoForm
 
 
             string caminhoCompleto = Path.Combine(diretorio, nomeSelecionado + ".doc");
-            
+
         }
 
 
@@ -145,7 +148,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             string horarioBn = "";
             var boanoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
-            if(boanoite != null)
+            if (boanoite != null)
             {
                 int numpag = Convert.ToInt32(boanoite["NumPag"]);
                 var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
@@ -155,7 +158,7 @@ namespace PlotagemOpenGL.LaudoForm
                 richTextBox1.Text += horarioBn;
                 richTextBox1.Text += nextline;
             }
-            foreach(DataRow rw in GlobVar.tbl_Comentarios.Rows)
+            foreach (DataRow rw in GlobVar.tbl_Comentarios.Rows)
             {
                 int numpag = Convert.ToInt32(rw["NumPag"]);
                 var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
@@ -169,7 +172,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
             string horarioBd = "";
             var badia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
-            if(badia != null)
+            if (badia != null)
             {
                 int numpag = Convert.ToInt32(badia["NumPag"]);
                 var rwpg = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numpag).FirstOrDefault();
@@ -3889,7 +3892,104 @@ namespace PlotagemOpenGL.LaudoForm
 
             return aoba;
         }
+        public void CalculaCargaHipoxica()
+        {
+            string arq = @"C:\Temp\Retorno\Dessat.txt";
+            using (StreamWriter writer = new StreamWriter(arq, false, Encoding.Default))
+            {
+                // Leitura/Gravação no INI
+                IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+                string cargaHipo = ini.Read("CARGAHIPO", "DIRETORIOS");
+                if (string.IsNullOrWhiteSpace(cargaHipo))
+                {
+                    ini.Write("CARGAHIPO", "1", "DIRETORIOS");
+                }
 
+                double carga = 0;
+                double acum = 0;
+                //string sql = "SELECT * FROM tbl_Eventos WHERE CodEvento = 17 ORDER BY NumPag";
+                var eventosQuery = GlobVar.eventos.AsEnumerable()
+                    .Where(row => row.Field<int>("CodEvento") == 17)
+                    .OrderBy(row => row.Field<int>("NumPag"));
+
+                DataTable eventos = eventosQuery.Any() ? eventosQuery.CopyToDataTable() : GlobVar.eventos.Clone(); // ou new DataTable()
+                if (eventos.Rows.Count > 0)
+                {
+                    int idx = 0;
+                    int dur = 0;
+                    int iniValor = 0;
+                    int fim = 0;
+
+                    while (idx < eventos.Rows.Count)
+                    {
+                        int num = Convert.ToInt32(eventos.Rows[idx]["seq"]);
+
+                        // Reset antes de processar o grupo
+                        iniValor = 0;
+                        dur = 0;
+
+                        while (idx < eventos.Rows.Count && Convert.ToInt32(eventos.Rows[idx]["seq"]) == num)
+                        {
+                            int numPag = Convert.ToInt32(eventos.Rows[idx]["NumPag"]);
+                            int linhaSaturacao = GlobVar.codSelected.IndexOf(66);
+                            int ponteiro = numPag * 8;
+
+                            if (iniValor == 0)
+                            {
+                                // Primeiro valor do grupo (pegando página anterior)
+                                ponteiro = (numPag - 1) * 8;
+                                iniValor = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
+                            }
+                            else
+                            {
+                                fim = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
+                            }
+
+                            dur++;
+                            idx++;
+                        }
+
+                        if (iniValor != 0)
+                        {
+                            double calcCarga = 0.5 * (dur / 60.0) * Math.Abs(iniValor - fim);
+                            string linha = $"{iniValor} - {fim} - {dur} ====== {calcCarga:0.0000}";
+                            writer.WriteLine(linha);
+                            carga = calcCarga;
+                            acum += carga;
+                        }
+                    }
+                }
+
+                //sql = "SELECT * FROM tbl_Paginas";
+                //DataTable paginas = obj_dbconfig.ExecutaSQL(cnn_dbExame, sql);
+                int pags = GlobVar.tbl_Paginas.Rows.Count;
+                int totalMinutos = pags / 60;
+
+                //sql = "SELECT * FROM tbl_DadosExame";
+                //DataTable dadosExame = obj_dbconfig.ExecutaSQLParaAlteracao(cnn_dbExame, sql);
+                if (GlobVar.tbl_DadosExame != null)
+                {
+                    if (!GlobVar.tbl_DadosExame.Columns.Contains("CargaHipoxica"))
+                    {
+                        GlobVar.tbl_DadosExame.Columns.Add("CargaHipoxica", typeof(double)).DefaultValue = 0.0;
+                    }
+
+                    DataRow row = GlobVar.tbl_DadosExame.Rows[0];
+                    row["CargaHipoxica"] = (acum / totalMinutos) * 60;
+                    AlteraBD.SalvarAlteracoes(); // Método para alterar no Banco de Dados a tbl_DadosExame
+                }
+            }
+        }
+
+        private void CriarLaudo_Click(object sender, System.EventArgs e)
+        {
+            CalculaCargaHipoxica();
+        }
+
+        private void Fechar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 
 

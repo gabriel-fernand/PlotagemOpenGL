@@ -48,6 +48,8 @@
             label3 = new System.Windows.Forms.Label();
             Processar = new System.Windows.Forms.Button();
             Cancelar = new System.Windows.Forms.Button();
+            progresso = new System.Windows.Forms.ProgressBar();
+            Analisando = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // ApHipo
@@ -55,7 +57,7 @@
             ApHipo.AutoSize = true;
             ApHipo.BackColor = System.Drawing.Color.Transparent;
             ApHipo.Font = new System.Drawing.Font("Arial", 9F);
-            ApHipo.Location = new System.Drawing.Point(22, 99);
+            ApHipo.Location = new System.Drawing.Point(22, 65);
             ApHipo.Name = "ApHipo";
             ApHipo.Size = new System.Drawing.Size(236, 21);
             ApHipo.TabIndex = 0;
@@ -67,7 +69,7 @@
             Dessatu.AutoSize = true;
             Dessatu.BackColor = System.Drawing.Color.Transparent;
             Dessatu.Font = new System.Drawing.Font("Arial", 9F);
-            Dessatu.Location = new System.Drawing.Point(22, 143);
+            Dessatu.Location = new System.Drawing.Point(22, 109);
             Dessatu.Name = "Dessatu";
             Dessatu.Size = new System.Drawing.Size(122, 21);
             Dessatu.TabIndex = 1;
@@ -79,7 +81,7 @@
             MovPernaPLM.AutoSize = true;
             MovPernaPLM.BackColor = System.Drawing.Color.Transparent;
             MovPernaPLM.Font = new System.Drawing.Font("Arial", 9F);
-            MovPernaPLM.Location = new System.Drawing.Point(22, 187);
+            MovPernaPLM.Location = new System.Drawing.Point(22, 153);
             MovPernaPLM.Name = "MovPernaPLM";
             MovPernaPLM.Size = new System.Drawing.Size(194, 21);
             MovPernaPLM.TabIndex = 2;
@@ -91,7 +93,7 @@
             AplicaRegraPLM.AutoSize = true;
             AplicaRegraPLM.BackColor = System.Drawing.Color.Transparent;
             AplicaRegraPLM.Font = new System.Drawing.Font("Arial", 9F);
-            AplicaRegraPLM.Location = new System.Drawing.Point(22, 232);
+            AplicaRegraPLM.Location = new System.Drawing.Point(22, 198);
             AplicaRegraPLM.Name = "AplicaRegraPLM";
             AplicaRegraPLM.Size = new System.Drawing.Size(409, 21);
             AplicaRegraPLM.TabIndex = 3;
@@ -103,7 +105,7 @@
             Ronco.AutoSize = true;
             Ronco.BackColor = System.Drawing.Color.Transparent;
             Ronco.Font = new System.Drawing.Font("Arial", 9F);
-            Ronco.Location = new System.Drawing.Point(22, 282);
+            Ronco.Location = new System.Drawing.Point(22, 248);
             Ronco.Name = "Ronco";
             Ronco.Size = new System.Drawing.Size(73, 21);
             Ronco.TabIndex = 4;
@@ -115,7 +117,7 @@
             RecCPAP.AutoSize = true;
             RecCPAP.BackColor = System.Drawing.Color.Transparent;
             RecCPAP.Font = new System.Drawing.Font("Arial", 9F);
-            RecCPAP.Location = new System.Drawing.Point(22, 331);
+            RecCPAP.Location = new System.Drawing.Point(22, 297);
             RecCPAP.Name = "RecCPAP";
             RecCPAP.Size = new System.Drawing.Size(143, 21);
             RecCPAP.TabIndex = 5;
@@ -127,7 +129,7 @@
             DeleteRonco.AutoSize = true;
             DeleteRonco.BackColor = System.Drawing.Color.Transparent;
             DeleteRonco.Font = new System.Drawing.Font("Arial", 9F);
-            DeleteRonco.Location = new System.Drawing.Point(373, 286);
+            DeleteRonco.Location = new System.Drawing.Point(373, 252);
             DeleteRonco.Name = "DeleteRonco";
             DeleteRonco.Size = new System.Drawing.Size(18, 17);
             DeleteRonco.TabIndex = 6;
@@ -138,7 +140,7 @@
             DeleteApnHip.AutoSize = true;
             DeleteApnHip.BackColor = System.Drawing.Color.Transparent;
             DeleteApnHip.Font = new System.Drawing.Font("Arial", 9F);
-            DeleteApnHip.Location = new System.Drawing.Point(373, 103);
+            DeleteApnHip.Location = new System.Drawing.Point(373, 69);
             DeleteApnHip.Name = "DeleteApnHip";
             DeleteApnHip.Size = new System.Drawing.Size(18, 17);
             DeleteApnHip.TabIndex = 7;
@@ -149,7 +151,7 @@
             DeleteDess.AutoSize = true;
             DeleteDess.BackColor = System.Drawing.Color.Transparent;
             DeleteDess.Font = new System.Drawing.Font("Arial", 9F);
-            DeleteDess.Location = new System.Drawing.Point(373, 147);
+            DeleteDess.Location = new System.Drawing.Point(373, 113);
             DeleteDess.Name = "DeleteDess";
             DeleteDess.Size = new System.Drawing.Size(18, 17);
             DeleteDess.TabIndex = 8;
@@ -160,7 +162,7 @@
             DeleteMovPPLM.AutoSize = true;
             DeleteMovPPLM.BackColor = System.Drawing.Color.Transparent;
             DeleteMovPPLM.Font = new System.Drawing.Font("Arial", 9F);
-            DeleteMovPPLM.Location = new System.Drawing.Point(373, 191);
+            DeleteMovPPLM.Location = new System.Drawing.Point(373, 157);
             DeleteMovPPLM.Name = "DeleteMovPPLM";
             DeleteMovPPLM.Size = new System.Drawing.Size(18, 17);
             DeleteMovPPLM.TabIndex = 9;
@@ -171,7 +173,7 @@
             label1.AutoSize = true;
             label1.BackColor = System.Drawing.Color.Transparent;
             label1.Font = new System.Drawing.Font("Arial", 9F);
-            label1.Location = new System.Drawing.Point(327, 60);
+            label1.Location = new System.Drawing.Point(325, 21);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(104, 17);
             label1.TabIndex = 10;
@@ -181,7 +183,7 @@
             // 
             AmpliApneia.BackColor = System.Drawing.Color.Transparent;
             AmpliApneia.Font = new System.Drawing.Font("Arial", 9F);
-            AmpliApneia.Location = new System.Drawing.Point(408, 96);
+            AmpliApneia.Location = new System.Drawing.Point(408, 62);
             AmpliApneia.Name = "AmpliApneia";
             AmpliApneia.Size = new System.Drawing.Size(39, 29);
             AmpliApneia.TabIndex = 11;
@@ -193,7 +195,7 @@
             // 
             AmpliDessatu.BackColor = System.Drawing.Color.Transparent;
             AmpliDessatu.Font = new System.Drawing.Font("Arial", 9F);
-            AmpliDessatu.Location = new System.Drawing.Point(408, 140);
+            AmpliDessatu.Location = new System.Drawing.Point(408, 106);
             AmpliDessatu.Name = "AmpliDessatu";
             AmpliDessatu.Size = new System.Drawing.Size(39, 29);
             AmpliDessatu.TabIndex = 12;
@@ -205,7 +207,7 @@
             // 
             AmpliMovPPLM.BackColor = System.Drawing.Color.Transparent;
             AmpliMovPPLM.Font = new System.Drawing.Font("Arial", 9F);
-            AmpliMovPPLM.Location = new System.Drawing.Point(408, 184);
+            AmpliMovPPLM.Location = new System.Drawing.Point(408, 150);
             AmpliMovPPLM.Name = "AmpliMovPPLM";
             AmpliMovPPLM.Size = new System.Drawing.Size(39, 29);
             AmpliMovPPLM.TabIndex = 13;
@@ -217,7 +219,7 @@
             // 
             AmpliRonco.BackColor = System.Drawing.Color.Transparent;
             AmpliRonco.Font = new System.Drawing.Font("Arial", 9F);
-            AmpliRonco.Location = new System.Drawing.Point(408, 279);
+            AmpliRonco.Location = new System.Drawing.Point(408, 245);
             AmpliRonco.Name = "AmpliRonco";
             AmpliRonco.Size = new System.Drawing.Size(39, 29);
             AmpliRonco.TabIndex = 14;
@@ -228,7 +230,7 @@
             // SatuBasal
             // 
             SatuBasal.Font = new System.Drawing.Font("Arial", 9F);
-            SatuBasal.Location = new System.Drawing.Point(307, 141);
+            SatuBasal.Location = new System.Drawing.Point(307, 107);
             SatuBasal.Name = "SatuBasal";
             SatuBasal.Size = new System.Drawing.Size(35, 25);
             SatuBasal.TabIndex = 15;
@@ -240,7 +242,7 @@
             label2.AutoSize = true;
             label2.BackColor = System.Drawing.Color.Transparent;
             label2.Font = new System.Drawing.Font("Arial", 9F);
-            label2.Location = new System.Drawing.Point(187, 144);
+            label2.Location = new System.Drawing.Point(187, 110);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(114, 17);
             label2.TabIndex = 16;
@@ -251,7 +253,7 @@
             label3.AutoSize = true;
             label3.BackColor = System.Drawing.Color.Transparent;
             label3.Font = new System.Drawing.Font("Arial", 9F);
-            label3.Location = new System.Drawing.Point(348, 144);
+            label3.Location = new System.Drawing.Point(348, 110);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(21, 17);
             label3.TabIndex = 17;
@@ -260,7 +262,7 @@
             // Processar
             // 
             Processar.BackColor = System.Drawing.Color.Transparent;
-            Processar.Location = new System.Drawing.Point(22, 451);
+            Processar.Location = new System.Drawing.Point(22, 336);
             Processar.Name = "Processar";
             Processar.Size = new System.Drawing.Size(122, 29);
             Processar.TabIndex = 18;
@@ -271,19 +273,43 @@
             // Cancelar
             // 
             Cancelar.BackColor = System.Drawing.Color.Transparent;
-            Cancelar.Location = new System.Drawing.Point(325, 451);
+            Cancelar.Location = new System.Drawing.Point(325, 336);
             Cancelar.Name = "Cancelar";
             Cancelar.Size = new System.Drawing.Size(122, 29);
             Cancelar.TabIndex = 19;
             Cancelar.Text = "Cancelar";
             Cancelar.UseVisualStyleBackColor = false;
+            Cancelar.Click += Cancelar_Click;
+            // 
+            // progresso
+            // 
+            progresso.ForeColor = System.Drawing.Color.PaleTurquoise;
+            progresso.Location = new System.Drawing.Point(57, 382);
+            progresso.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            progresso.Name = "progresso";
+            progresso.Size = new System.Drawing.Size(364, 23);
+            progresso.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            progresso.TabIndex = 20;
+            // 
+            // Analisando
+            // 
+            Analisando.AutoSize = true;
+            Analisando.BackColor = System.Drawing.Color.Transparent;
+            Analisando.Font = new System.Drawing.Font("Arial", 9F);
+            Analisando.Location = new System.Drawing.Point(176, 348);
+            Analisando.Name = "Analisando";
+            Analisando.Size = new System.Drawing.Size(79, 17);
+            Analisando.TabIndex = 21;
+            Analisando.Text = "Analisando";
             // 
             // AnaliseAuto
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.Fundo_Recovered;
-            ClientSize = new System.Drawing.Size(460, 491);
+            ClientSize = new System.Drawing.Size(460, 372);
+            Controls.Add(Analisando);
+            Controls.Add(progresso);
             Controls.Add(Cancelar);
             Controls.Add(Processar);
             Controls.Add(label3);
@@ -333,5 +359,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Processar;
         private System.Windows.Forms.Button Cancelar;
+        public System.Windows.Forms.ProgressBar progresso;
+        private System.Windows.Forms.Label Analisando;
     }
 }

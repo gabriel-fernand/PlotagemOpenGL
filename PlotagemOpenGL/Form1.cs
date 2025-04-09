@@ -543,6 +543,9 @@ namespace PlotagemOpenGL
                 // Adicione aqui a lógica para simular o clique no botão A
                 var enterKeyEvent = new KeyEventArgs(Keys.A); // '\r' representa o Enter
 
+                //var fakeScroll = new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120);
+                //OpenglControl1_MouseWheel(openglControl1, fakeScroll);
+
                 TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
                 TelaClearAndReload();
 
@@ -554,6 +557,9 @@ namespace PlotagemOpenGL
                 tecla = "Seta direita.";
                 // Adicione aqui a lógica para simular o clique no botão D
                 var enterKeyEvent = new KeyEventArgs(Keys.D); // '\r' representa o Enter
+
+                //var fakeScroll = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120);
+                //OpenglControl1_MouseWheel(openglControl1, fakeScroll);
 
                 TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
                 TelaClearAndReload();  
@@ -631,8 +637,10 @@ namespace PlotagemOpenGL
         }
         private void AnaliseAutomatica_Click(object sender, EventArgs e)
         {
-            AnaliseAuto profileForm = new AnaliseAuto();
-            profileForm.Show();
+            AnaliseAuto autoAnalise = new AnaliseAuto();
+            autoAnalise.Owner = this;
+            autoAnalise.TopMost = true;
+            autoAnalise.Show();
 
         }
 
@@ -2620,7 +2628,17 @@ namespace PlotagemOpenGL
                     }
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
-                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                    if (hScrollBar1.InvokeRequired)
+                    {
+                        hScrollBar1.Invoke(new Action(() =>
+                        {
+                            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                        }));
+                    }
+                    else
+                    {
+                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                    }
 
                     int alturaTela = (int)openglControl1.Height;
                     TelaClearAndReload();
@@ -4285,7 +4303,17 @@ namespace PlotagemOpenGL
                                 GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
                                 LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                if (hScrollBar1.InvokeRequired)
+                                {
+                                    hScrollBar1.Invoke(new Action(() =>
+                                    {
+                                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                    }));
+                                }
+                                else
+                                {
+                                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                }
 
                             }
                             break;
@@ -4360,7 +4388,17 @@ namespace PlotagemOpenGL
                                 }
                                 if (!conc) LeituraEmMatrizTeste.Resume();
                                 GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
-                                hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                if (hScrollBar1.InvokeRequired)
+                                {
+                                    hScrollBar1.Invoke(new Action(() =>
+                                    {
+                                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                    }));
+                                }
+                                else
+                                {
+                                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                }
 
                             }
                             break;
