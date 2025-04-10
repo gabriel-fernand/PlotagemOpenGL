@@ -381,60 +381,82 @@ namespace PlotagemOpenGL.BD
                 }
             }
         }
+        public static string ConnectionAlterarStringDatBd = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Caminho\\seuarquivo.mdb;";
+
         public static void SalvarAlteracoes()
         {
             if (GlobVar.tbl_DadosExame == null || GlobVar.tbl_DadosExame.Rows.Count == 0)
                 return;
 
-            using (OleDbConnection conn = new OleDbConnection(connectionStringDatBd))
+            string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+
+            using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
                 conn.Open();
 
-                // Busca atual da tabela
-                string selectSql = "SELECT * FROM tbl_DadosExame";
-                using (OleDbDataAdapter adapter = new OleDbDataAdapter(selectSql, conn))
+                // Garante que as colunas existam no banco
+                string checkSql = "SELECT * FROM tbl_DadosExame";
+                using (OleDbCommand checkCmd = new OleDbCommand(checkSql, conn))
+                using (OleDbDataReader reader = checkCmd.ExecuteReader(CommandBehavior.SchemaOnly))
                 {
-                    OleDbCommandBuilder builder = new OleDbCommandBuilder(adapter);
+                    DataTable schemaTable = reader.GetSchemaTable();
+                    HashSet<string> existingColumns = new HashSet<string>();
 
-                    // Preenche um DataTable com os dados reais do banco
-                    DataTable dbTable = new DataTable();
-                    adapter.Fill(dbTable);
+                    foreach (DataRow rw in schemaTable.Rows)
+                    {
+                        existingColumns.Add(rw["ColumnName"].ToString());
+                    }
 
-                    // Garante que o DataTable do banco tem a coluna esperada
                     foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
                     {
-                        if (!dbTable.Columns.Contains(col.ColumnName))
+                        if (!existingColumns.Contains(col.ColumnName))
                         {
-                            string alterSql = $"ALTER TABLE tbl_DadosExame ADD COLUMN {col.ColumnName} {GetOleDbTypeFromSystemType(col.DataType)}";
+                            string columnType = GetOleDbTypeFromSystemType(col.DataType);
+                            string alterSql = $"ALTER TABLE tbl_DadosExame ADD COLUMN [{col.ColumnName}] {columnType}";
                             using (OleDbCommand cmd = new OleDbCommand(alterSql, conn))
                             {
                                 cmd.ExecuteNonQuery();
                             }
                         }
                     }
+                }
 
-                    // Atualiza os dados do banco com base nas alterações feitas
-                    DataRow sourceRow = GlobVar.tbl_DadosExame.Rows[0];
-                    DataRow targetRow = dbTable.Rows[0];
+                // Monta o UPDATE manualmente
+                DataRow row = GlobVar.tbl_DadosExame.Rows[0];
 
-                    foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
-                    {
-                        targetRow[col.ColumnName] = sourceRow[col.ColumnName];
-                    }
+                List<string> assignments = new List<string>();
+                List<OleDbParameter> parameters = new List<OleDbParameter>();
 
-                    // Salva as alterações
-                    adapter.Update(dbTable);
+                foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
+                {
+                    assignments.Add($"[{col.ColumnName}] = ?");
+                    parameters.Add(new OleDbParameter("@" + col.ColumnName, row[col.ColumnName] ?? DBNull.Value));
+                }
+
+                string updateSql = $"UPDATE tbl_DadosExame SET {string.Join(", ", assignments)}";
+
+                using (OleDbCommand updateCmd = new OleDbCommand(updateSql, conn))
+                {
+                    updateCmd.Parameters.AddRange(parameters.ToArray());
+                    updateCmd.ExecuteNonQuery();
                 }
             }
         }
         private static string GetOleDbTypeFromSystemType(Type type)
         {
-            if (type == typeof(string)) return "TEXT";
-            if (type == typeof(int)) return "INTEGER";
-            if (type == typeof(double) || type == typeof(float)) return "DOUBLE";
-            if (type == typeof(bool)) return "YESNO";
-            if (type == typeof(DateTime)) return "DATETIME";
-            return "TEXT"; // padrão
+            if (type == typeof(string))
+                return "TEXT";
+            if (type == typeof(int))
+                return "INTEGER";
+            if (type == typeof(double) || type == typeof(float))
+                return "DOUBLE";
+            if (type == typeof(bool))
+                return "YESNO";
+            if (type == typeof(DateTime))
+                return "DATETIME";
+
+            // Fallback
+            return "TEXT";
         }
 
     }

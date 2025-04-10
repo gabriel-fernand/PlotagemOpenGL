@@ -132,6 +132,8 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_Estagios = new DataTable();
         public static DataTable tbl_ParametrosParaAnalisar = new DataTable();
 
+        public static DataTable Cons_Eventos = new DataTable();
+
         public static int CodJanela;
 
         public static int ultimaPag;

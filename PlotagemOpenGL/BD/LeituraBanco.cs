@@ -38,6 +38,7 @@ public class LeituraBanco
             string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
             string queryTbl_CanaisAdquiridos = "SELECT * FROM tbl_CanaisAdquiridos";
 
+            string queryCons_Eventos = "SELECT * FROM Cons_Eventos";
 
             using var command = new OdbcCommand(query, connectionDatBd);
             using var commandTbl_MontGrav = new OdbcCommand(quaryTbl_MontGrav, connectionDatBd);
@@ -51,6 +52,7 @@ public class LeituraBanco
             using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
             using var commandTbl_CanaisAdquiridos = new OdbcCommand(queryTbl_CanaisAdquiridos, connectionDatBd);
 
+            using var commandCons_Eventos = new OdbcCommand(queryCons_Eventos, connectionDatBd);
 
             using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
 
@@ -65,6 +67,7 @@ public class LeituraBanco
             using var adapterTbl_SeqEvento = new OdbcDataAdapter(commandTbl_SeqEvento);
             using var adapterTbl_CanaisAdquiridos = new OdbcDataAdapter(commandTbl_CanaisAdquiridos);
 
+            using var adapterCons_Eventos = new OdbcDataAdapter(commandCons_Eventos);
             // Preenche o DataTable com os dados retornados pela consulta
             adapterTbl_ArqVideo.Fill(GlobVar.tbl_ArqVideo);
             adapterTbl_SeqEvento.Fill(GlobVar.tbl_SeqEvento);
@@ -77,6 +80,8 @@ public class LeituraBanco
             adapter.Fill(GlobVar.eventos);
             adapterTbl_MontGrav.Fill(GlobVar.tbl_MontGrav);
             adapterTbl_CanaisAdquiridos.Fill(GlobVar.tbl_CanaisAdquiridos);
+
+            adapterCons_Eventos.Fill(GlobVar.Cons_Eventos);
             connectionDatBd.Close();
             
         }

@@ -22,7 +22,9 @@ using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tensorflow.Operations.Losses;
 using UnityEngine;
+using Xceed.Words.NET;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -3981,16 +3983,337 @@ namespace PlotagemOpenGL.LaudoForm
             }
         }
 
+        bool laudosplitnight = false;
+        bool laudosegmentos = false;
+
+        int passagens = 0;
+        int ultimapassagem = 0;
+        int segmentos = 0;
+        List<object> lst_segmentos = new();
+        string g_variaveislaudo = "";
+
         private void CriarLaudo_Click(object sender, System.EventArgs e)
         {
-            CalculaCargaHipoxica();
+            try 
+            {
+                CalculaCargaHipoxica();
+
+                laudosplitnight = TextoComboContem("SPLIT NIGHT");
+                laudosegmentos = TextoComboContem("SEGMENTOS");
+
+                if (GlobVar.eventos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 50) && (TextoComboContem("SPLIT NIGHT") || TextoComboContem("SEGMENTOS")))
+                {
+                    passagens = 3;
+                    ultimapassagem = 3;
+                }
+                else
+                {
+                    passagens = 1;
+                }
+
+                lst_segmentos.Clear();
+                if (TextoComboContem("SEGMENTOS"))
+                {
+                    segmentos = 0;
+                    foreach (DataRow row in GlobVar.tbl_Comentarios.Rows)
+                    {
+                        string comentario = row["Comentario"]?.ToString();
+                        if (!string.IsNullOrEmpty(comentario) && comentario.StartsWith("#"))
+                        {
+                            string txt = comentario.Substring(1); // Remove o primeiro '#'
+                            int pos = txt.IndexOf("#");
+                            if (pos > 0)
+                            {
+                                txt = txt.Substring(0, pos);
+                                if (int.TryParse(txt, out int valorTexto))
+                                {
+                                    if (valorTexto > segmentos)
+                                        segmentos = valorTexto;
+
+                                    int numPag = Convert.ToInt32(row["NumPag"]);
+                                    lst_segmentos.Add(numPag.ToString("D7")); // "0000000" formato
+                                }
+                            }
+                        }
+                    }
+
+                    segmentos++; // segmentos = segmentos + 1;
+
+                    if (segmentos > passagens)
+                    {
+                        passagens = segmentos;
+                        ultimapassagem = segmentos;
+                    }
+                }
+
+                string g_arq_exame = @"C:\Temp\Exames\" + comboBox1.Text + " Laudo.DOC";
+
+                if (ExisteArquivo(g_arq_exame))
+                {
+                    if (ArquivoAberto(g_arq_exame))
+                    {
+                        MessageBox.Show(f_var("Var58073"), f_var("Var26063") + "!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else if (MessageBox.Show(f_var("Var58005"), f_var("Var26063") + "!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                g_variaveislaudo = "";
+                arrumaTbl();
+
+                if (!TextoComboContem("CALIBRACAO"))
+                {
+                    // Filtra os eventos com estagio = 0 na página, e CodEvento diferente dos listados
+                    var eventosEstagio0 = from evento in GlobVar.Cons_Eventos.AsEnumerable()
+                                          join pagina in GlobVar.tbl_Paginas.AsEnumerable()
+                                            on evento.Field<int>("Pag_Ini") equals pagina.Field<int>("NumPag")
+                                          where pagina.Field<int>("Estagio") == 0
+                                             && !new[] { 18, 19, 100, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119 }
+                                                 .Contains(evento.Field<int>("CodEvento"))
+                                          group evento by evento.Field<int>("CodEvento") into g
+                                          select new
+                                          {
+                                              CodEvento = g.Key,
+                                              Cont = g.Count()
+                                          };
+
+                    if (eventosEstagio0.Any())
+                    {
+                        Fechar.Enabled = false;
+
+                        string textoEventos = "";
+
+                        foreach (var item in eventosEstagio0)
+                        {
+                            var descricao = GlobVar.tbl_CadEvento.AsEnumerable()
+                                              .FirstOrDefault(c => c.Field<int>("CodEvento") == item.CodEvento)?
+                                              .Field<string>("DescrEvento");
+
+                            if (!string.IsNullOrEmpty(descricao))
+                                textoEventos += $"{descricao} - {item.Cont}\r\n";
+                        }
+
+                        lbl_VerEventos.Tag = textoEventos;
+
+                        CriarPainelMensagem();
+
+                        pnl_Msg2.Left = (this.Width - pnl_Msg2.Width) / 2;
+                        pnl_Msg2.Top = (this.Height - pnl_Msg2.Height) / 2;
+                        pnl_Msg2.Visible = true;
+
+                        while (pnl_Msg2.Visible)
+                            System.Windows.Forms.Application.DoEvents();
+
+                        int tag = (int)cmd_msg2.GetType().GetProperty("Tag").GetValue(cmd_msg2);
+
+                        if (tag == 1)
+                        {
+                            // Deleta eventos conforme critérios
+                            var eventosParaExcluir = from evento in GlobVar.Cons_Eventos.AsEnumerable()
+                                                     join pagina in GlobVar.tbl_Paginas.AsEnumerable()
+                                                       on evento.Field<int>("Pag_Ini") equals pagina.Field<int>("NumPag")
+                                                     where pagina.Field<int>("estagio") == 0
+                                                        && evento.Field<int>("CodEvento") != 18
+                                                        && evento.Field<int>("CodEvento") != 19
+                                                        && evento.Field<int>("CodEvento") != 110
+                                                        && evento.Field<int>("CodEvento") != 119
+                                                     select evento;
+
+                            foreach (var row in eventosParaExcluir.ToList())
+                            {
+                                GlobVar.Cons_Eventos.Rows.Remove(row);
+                            }
+                        }
+
+                        Fechar.Enabled = true;
+
+                        if (tag == 2)
+                            return;
+                    }
+                }
+
+                //Cursor.Current = Cursors.WaitCursor;
+
+                string g_dir_laudos = @"c:\Temp\Laudos\";
+                string nomeOrigem = Path.Combine(g_dir_laudos, comboBox1.Text + ".doc");
+
+                // Cria nome temporário com base na hora
+                string nomeTemp = "TMP" + DateTime.Now.ToString("HHmmss") + ".doc";
+                string caminhoTemp = Path.Combine(g_dir_laudos, nomeTemp);
+
+                // Copia o arquivo original para o temporário
+                File.Copy(nomeOrigem, caminhoTemp, true);
+
+                // Lê o conteúdo do arquivo temporário
+                string g_textolaudo;
+
+                using (var doc = DocX.Load(caminhoTemp))
+                {
+                    g_textolaudo = doc.Text;
+                }
+            }
+            catch { }
+        }
+        private void arrumaTbl()
+        {
+            foreach (DataRow rw in GlobVar.tbl_Paginas.Rows)
+            {
+                if (rw["Estagio"] == DBNull.Value)
+                {
+                    rw["Estagio"] = 0;
+                }
+            }
         }
 
+        private bool TextoComboContem(string termo)
+        {
+            return comboBox1.Text.ToUpper().Contains(termo.ToUpper());
+        }
+        public static bool ExisteArquivo(string path)
+        {
+            return File.Exists(path);
+        }
+        private string f_var(string key)
+        {
+            return key switch
+            {
+                "Var58073" => "O arquivo está aberto, feche-o para continuar.",
+                "Var58005" => "O laudo já existe. Deseja refazer o laudo?",
+                "Var26063" => "Atenção",
+                _ => ""
+            };
+        }
+
+        public static bool ArquivoAberto(string path)
+        {
+            try
+            {
+                using (FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    // Se conseguir abrir com exclusividade, não está aberto
+                    return false;
+                }
+            }
+            catch (IOException)
+            {
+                // Se der IOException, o arquivo provavelmente está sendo usado
+                return true;
+            }
+        }
         private void Fechar_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+        Panel pnl_Msg2 = new Panel();
+        Label lblMsg = new Label();
+        RadioButton rdoProcessarMesmoAssim = new RadioButton();
+        RadioButton rdoApagarEventos = new RadioButton();
+        RadioButton rdoCancelar = new RadioButton();
+        Button btnOkMsg2 = new Button();
+        LinkLabel lnkVerEventos = new LinkLabel();
+        Label lbl_VerEventos = new Label(); // Para armazenar os dados de texto
+        object cmd_msg2 = new { Tag = 0 }; // Simulando cmd_msg2
+
+        void CriarPainelMensagem()
+        {
+            pnl_Msg2.BorderStyle = BorderStyle.FixedSingle;
+            pnl_Msg2.Size = new Size(380, 170); // Aumentado para acomodar melhor o conteúdo
+            pnl_Msg2.Visible = false;
+            pnl_Msg2.BackColor = System.Drawing.Color.Transparent;
+
+            lblMsg.Text = "Existem eventos em estágio Zero que não serão mostrados no laudo.";
+            lblMsg.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
+            lblMsg.Size = new Size(360, 40); // Largura ajustada
+            lblMsg.Location = new Point(10, 10);
+
+            rdoProcessarMesmoAssim.Text = "Processar";
+            rdoProcessarMesmoAssim.Checked = true;
+            rdoProcessarMesmoAssim.Location = new Point(20, 60);
+
+            lnkVerEventos.Text = "(Ver eventos)";
+            lnkVerEventos.AutoSize = true;
+            lnkVerEventos.LinkColor = System.Drawing.Color.Blue;
+            lnkVerEventos.Location = new Point(190, 60);
+            lnkVerEventos.LinkClicked += (s, e) =>
+            {
+                string eventosTexto = lbl_VerEventos.Tag?.ToString();
+                if (!string.IsNullOrEmpty(eventosTexto))
+                {
+                    var form = new Form
+                    {
+                        Text = "Eventos encontrados",
+                        Size = new Size(250, 200),
+                        FormBorderStyle = FormBorderStyle.FixedDialog,
+                        StartPosition = FormStartPosition.CenterParent,
+                        MinimizeBox = false,
+                        MaximizeBox = false,
+                        ShowInTaskbar = false
+                    };
+
+                    var lblTexto = new Label
+                    {
+                        Text = eventosTexto,
+                        AutoSize = false,
+                        TextAlign = ContentAlignment.TopLeft,
+                        Dock = DockStyle.Fill,
+                        Padding = new Padding(10),
+                        Font = new System.Drawing.Font("Segoe UI", 9),
+                    };
+
+                    var btnOk = new Button
+                    {
+                        Text = "OK",
+                        DialogResult = DialogResult.OK,
+                        Anchor = AnchorStyles.Bottom,
+                        Width = 80,
+                        Height = 30,
+                        Left = (form.ClientSize.Width - 80) / 2,
+                        Top = form.ClientSize.Height - 50
+                    };
+
+                    form.Controls.Add(lblTexto);
+                    form.Controls.Add(btnOk);
+                    form.AcceptButton = btnOk;
+
+                    form.ShowDialog();
+                }
+            };
+
+            rdoApagarEventos.Text = "Apagar";
+            rdoApagarEventos.Location = new Point(20, 85);
+
+            rdoCancelar.Text = "Cancelar";
+            rdoCancelar.Location = new Point(20, 110);
+
+            btnOkMsg2.Text = "OK";
+            btnOkMsg2.Size = new Size(80, 30);
+            btnOkMsg2.Location = new Point(pnl_Msg2.Width - 90, pnl_Msg2.Height - 40); // canto inferior direito
+            btnOkMsg2.Click += (s, e) =>
+            {
+                if (rdoProcessarMesmoAssim.Checked)
+                    cmd_msg2 = new { Tag = 0 };
+                else if (rdoApagarEventos.Checked)
+                    cmd_msg2 = new { Tag = 1 };
+                else
+                    cmd_msg2 = new { Tag = 2 };
+
+                pnl_Msg2.Visible = false;
+            };
+
+            pnl_Msg2.Controls.Clear();
+            pnl_Msg2.Controls.Add(lblMsg);
+            pnl_Msg2.Controls.Add(rdoProcessarMesmoAssim);
+            pnl_Msg2.Controls.Add(lnkVerEventos);
+            pnl_Msg2.Controls.Add(rdoApagarEventos);
+            pnl_Msg2.Controls.Add(rdoCancelar);
+            pnl_Msg2.Controls.Add(btnOkMsg2);
+
+            Laudo.Controls.Add(pnl_Msg2);
+        }
+
+
     }
-
-
 }
