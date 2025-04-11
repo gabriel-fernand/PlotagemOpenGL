@@ -1,6 +1,5 @@
 ﻿using Accord.Math;
 using Accord.Statistics;
-using ClassesBDNano;
 using Cyotek.Windows.Forms;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -24,7 +23,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tensorflow.Operations.Losses;
 using UnityEngine;
-using Xceed.Words.NET;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -4137,22 +4135,30 @@ namespace PlotagemOpenGL.LaudoForm
 
                 //Cursor.Current = Cursors.WaitCursor;
 
-                string g_dir_laudos = @"c:\Temp\Laudos\";
+                string g_dir_laudos = @"C:\Temp\Laudos\";
                 string nomeOrigem = Path.Combine(g_dir_laudos, comboBox1.Text + ".doc");
-
-                // Cria nome temporário com base na hora
-                string nomeTemp = "TMP" + DateTime.Now.ToString("HHmmss") + ".doc";
-                string caminhoTemp = Path.Combine(g_dir_laudos, nomeTemp);
+                string nome_arq_temp = "TMP" + DateTime.Now.ToString("HHmmss");
+                string caminhoTemp = Path.Combine(g_dir_laudos, nome_arq_temp + ".doc");
 
                 // Copia o arquivo original para o temporário
                 File.Copy(nomeOrigem, caminhoTemp, true);
 
-                // Lê o conteúdo do arquivo temporário
-                string g_textolaudo;
+                // Inicializa o Word
+                Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                Microsoft.Office.Interop.Word.Document doc = null;
+                string g_textolaudo = "";
 
-                using (var doc = DocX.Load(caminhoTemp))
+                doc = wordApp.Documents.Open(caminhoTemp);
+                doc.Activate();
+
+                g_textolaudo = wordApp.Selection.Text;
+
+                if (!TextoComboContem("CALIBRACAO"))
                 {
-                    g_textolaudo = doc.Text;
+                    if(segmentos > 0)
+                    {
+
+                    }
                 }
             }
             catch { }
