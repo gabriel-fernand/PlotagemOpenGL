@@ -24,10 +24,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tensorflow.Operations.Losses;
 using UnityEngine;
-using PlotagemOpenGL.auxi;
-using ClassesBDNano;
-using System.Globalization;
-using PdfSharp.Quality;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -3997,8 +3994,12 @@ namespace PlotagemOpenGL.LaudoForm
 
         private void CriarLaudo_Click(object sender, System.EventArgs e)
         {
-            try 
+            try
             {
+                int pag_noite = 0;//Canais.Get_BoaNoite();
+                int pag_dia = 0;//Canais.Get_BomDia();
+
+
                 CalculaCargaHipoxica();
 
                 laudosplitnight = TextoComboContem("SPLIT NIGHT");
@@ -4160,12 +4161,98 @@ namespace PlotagemOpenGL.LaudoForm
 
                 if (!TextoComboContem("CALIBRACAO"))
                 {
-                    if(segmentos > 0)
+                    if (segmentos > 0)
                     {
                         PreparaRelatorioMDB();
                     }
                 }
+                for (int i = 1; i < passagens; i++)
+                {
+                    if (segmentos > 0 && passagens > 0)
+                    {
 
+                    }
+
+                    string origem = Path.Combine(g_dir_laudos, "Graficos para laudo.xls");
+                    string destino = Path.Combine(g_dir_laudos, nome_arq_temp + ".xls");
+                    File.Copy(origem, destino, overwrite: true); // overwrite se quiser sobrescrever o destino
+
+
+                    Excel.Application ObjExcel = new Excel.Application();
+
+                    Excel.Workbook workbook = ObjExcel.Workbooks.Open(destino);
+
+                    passagens = i;
+
+                    if (passagens == 1)
+                    {
+                        pag_dia = Canais.Get_BomDia();
+                        pag_noite = Canais.Get_BoaNoite();
+                    }
+                    else if (laudosplitnight)
+                    {
+                        if (passagens == 1)
+                        {
+                            pag_noite = Canais.Get_BoaNoite();
+                            pag_dia = Canais.Get_InicioCPAP();
+                        }
+                        else if (passagens == 2)
+                        {
+                            pag_noite = Canais.Get_InicioCPAP();
+                            pag_dia = Canais.Get_BomDia();
+                        }
+                        else if (passagens == ultimapassagem)
+                        {
+                            pag_noite = Canais.Get_BoaNoite();
+                            pag_dia = Canais.Get_BomDia();
+                        }
+                    }
+                    else if (laudosegmentos)
+                    {
+                        if (passagens == ultimapassagem)
+                        {
+                            pag_noite = Canais.Get_BoaNoite();
+                            pag_dia = Canais.Get_BomDia();
+                        }
+                        else
+                        {
+                            pag_noite = Convert.ToInt32(lst_segmentos[passagens - 1]);
+
+                            if (passagens == passagens - 1)
+                            {
+                                pag_dia = Canais.Get_BomDia();
+                            }
+                            else
+                            {
+                                pag_dia = Convert.ToInt32(lst_segmentos[passagens]) - 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (DataRow row in GlobVar.tbl_Comentarios.Rows)
+                        {
+                            string comentario = row["Comentario"]?.ToString() ?? "";
+
+                            if (!string.IsNullOrEmpty(comentario))
+                            {
+                                if (comentario.StartsWith(passagens.ToString()))
+                                {
+                                    pag_noite = Convert.ToInt32(row["NumPag"]);
+                                }
+                                else if (comentario.StartsWith((passagens + 1).ToString()))
+                                {
+                                    pag_dia = Convert.ToInt32(row["NumPag"]) - 1;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!TextoComboContem("CALIBRACAO"))
+                    {
+
+                    }
+                }
 
             }
             catch { }
@@ -4179,6 +4266,11 @@ namespace PlotagemOpenGL.LaudoForm
                     rw["Estagio"] = 0;
                 }
             }
+            string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+            OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
+            cnn_dbExame.Open();
+            ExecutaSQLParaAlteracao(cnn_dbExame, "UPDATE tbl_Paginas set estagio = 0 WHERE tbl_Paginas.Estagio is Null");
+            cnn_dbExame.Close();
         }
 
         private bool TextoComboContem(string termo)
@@ -4324,7 +4416,10 @@ namespace PlotagemOpenGL.LaudoForm
 
             Laudo.Controls.Add(pnl_Msg2);
         }
+        private static void VerificaDessaturacao()
+        {
 
+        }
         //Prepara Relatiorio MDB ----- Concluido
         private static void PreparaRelatorioMDB()
         {

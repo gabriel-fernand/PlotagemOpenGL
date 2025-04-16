@@ -315,6 +315,19 @@ namespace PlotagemOpenGL.auxi
 
             return BomDia;
         }
+        public static int Get_InicioCPAP()
+        {
+            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().OrderByDescending(row => row.Field<int>("NumPag")).CopyToDataTable();
+            int InicioCPAP = Convert.ToInt32(lastRow.Rows[0]["NumPag"]);
+
+            var Row_InicioCPAP = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 50).FirstOrDefault();
+            if (Row_InicioCPAP != null)
+            {
+                InicioCPAP = Convert.ToInt32(Row_InicioCPAP["NumPag"]);
+            }
+
+            return InicioCPAP;
+        }
 
         internal static int F_Get1ValorDoCanalFC(int codCanal, int pagina)
         {
