@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tensorflow.Operations.Losses;
 using UnityEngine;
+using PlotagemOpenGL.auxi;
+using ClassesBDNano;
+using System.Globalization;
+using PdfSharp.Quality;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -4157,9 +4162,11 @@ namespace PlotagemOpenGL.LaudoForm
                 {
                     if(segmentos > 0)
                     {
-
+                        PreparaRelatorioMDB();
                     }
                 }
+
+
             }
             catch { }
         }
@@ -4192,7 +4199,6 @@ namespace PlotagemOpenGL.LaudoForm
                 _ => ""
             };
         }
-
         public static bool ArquivoAberto(string path)
         {
             try
@@ -4222,7 +4228,6 @@ namespace PlotagemOpenGL.LaudoForm
         LinkLabel lnkVerEventos = new LinkLabel();
         Label lbl_VerEventos = new Label(); // Para armazenar os dados de texto
         object cmd_msg2 = new { Tag = 0 }; // Simulando cmd_msg2
-
         void CriarPainelMensagem()
         {
             pnl_Msg2.BorderStyle = BorderStyle.FixedSingle;
@@ -4320,6 +4325,726 @@ namespace PlotagemOpenGL.LaudoForm
             Laudo.Controls.Add(pnl_Msg2);
         }
 
+        //Prepara Relatiorio MDB ----- Concluido
+        private static void PreparaRelatorioMDB()
+        {
+            int[] fc_med = new int[10];
+            int[] fc_min = new int[10];
+            int[] fc_max = new int[10];
+            int[] fc_qtd = new int[10];
+            string g_adulto = GetAdinfo();
+            int freq_Segundos = GlobVar.tbl_ParametrosParaAnalisar.Rows[0]["FreqCardiaca_Tempo_Medio"] == DBNull.Value ? 0 : Convert.ToInt32(GlobVar.tbl_ParametrosParaAnalisar.Rows[0]["FreqCardiaca_Tempo_Medio"]);
+            int freq_Desvio = GlobVar.tbl_ParametrosParaAnalisar.Rows[0]["FreqCardiaca_Tolerancia_Desvio"] == DBNull.Value ? 0 : Convert.ToInt32(GlobVar.tbl_ParametrosParaAnalisar.Rows[0]["FreqCardiaca_Tolerancia_Desvio"]);
 
+            for (int i = 0; i < 10; i++)
+            {
+                fc_med[i] = 0;
+                fc_min[i] = 100;
+                fc_max[i] = 0;
+                fc_qtd[i] = 0;
+            }
+
+            int FC_MAIOR = 0;
+            int FC_MENOR = 100;
+            string freq_Media = "";
+            int freq_Valor = 0;
+
+            // --- Abrir conexão com Relatorios.mdb ---
+            string relatorioPath = Path.Combine("C:/Temp/", "Relatorios.mdb");
+            string connStringRelatorio = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={relatorioPath};Persist Security Info=False;";
+
+            OleDbConnection cnn_dbRelatorio = new OleDbConnection(connStringRelatorio);
+
+            string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+            OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
+            string connectionStringConfigBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};Persist Security Info=False;";
+            OleDbConnection cnn_Config = new OleDbConnection(connectionStringConfigBd);
+
+            cnn_Config.Open();
+            cnn_dbExame.Open();
+            cnn_dbRelatorio.Open(); // ou pode colocar em um método F_OpenConnection
+
+            // --- Obter Bom Dia e Boa Noite ---
+            int pag_dia = Canais.Get_BomDia();
+            int pag_noite = Canais.Get_BoaNoite();
+
+            var eventosDesprezar = GlobVar.eventos.AsEnumerable()
+                                                    .Where(row => row.Field<int>("CodEvento") == 100 && row.Field<int>("CodCanal1") == 67)
+                                                    .OrderBy(row => row.Field<int>("NumPag"));
+            List<int> PagDesprezadas = eventosDesprezar
+                .Select(row => row.Field<int>("NumPag"))
+                .ToList();
+
+            DataTable EventosCardiacos = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(row => row.Field<int>("CodTipoCanal") == 2).CopyToDataTable();
+
+            // Corrige o cálculo da diferença entre o total de páginas e o número de registros válidos
+            var pag_Registros = GlobVar.tbl_Paginas.AsEnumerable()
+                .Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia)
+                .OrderBy(row => row.Field<int>("NumPag"))
+                .ToList();
+
+            int qtd_Registros = (pag_dia - pag_noite + 1) - pag_Registros.Count;
+
+            int FC_MEDIA = 0;
+            int FC_REM_MEDIA = 0;
+            int FC_REM_MAIOR = 0;
+            int FC_NREM_MEDIA = 0;
+            int FC_NREM_MAIOR = 0;
+            int FC_VIGILIA_MEDIA = 0;
+            int FC_VIGILIA_MAIOR = 0;
+
+            int qtd_media = 0;
+            string freqMediaStr = "";
+
+            for (int i = 0; i < GlobVar.qtdCanais.Length; i++)
+            {
+                if (Convert.ToInt32(GlobVar.tbl_CanaisAdquiridos.Rows[i]["CodTipoCanal"]) == 21)
+                {
+                    int indexPag = 0;
+                    int cod = Convert.ToInt32(GlobVar.tbl_CanaisAdquiridos.Rows[i]["CodCanal1"]);
+                    for (int j = pag_noite; j <= pag_dia - qtd_Registros; j++)
+                    {
+                        if (!PagDesprezadas.Contains(j) && indexPag < pag_Registros.Count)
+                        {
+                            var pagina = pag_Registros[indexPag];
+                            indexPag++;
+
+                            int estagio = pagina["Estagio"] != DBNull.Value ? Convert.ToInt32(pagina["Estagio"]) : 0;
+                            int valor = Canais.F_Get1ValorDoCanalFC(cod, j);
+
+                            if (valor > 0 && valor < 200)
+                            {
+                                if (freqMediaStr.Length < freq_Segundos * 4)
+                                {
+                                    freqMediaStr += valor.ToString("000") + "#";
+                                }
+                                else
+                                {
+                                    string freqMediaCalc = freqMediaStr;
+                                    int freq_valor = 0;
+
+                                    while (freqMediaCalc.Length > 3)
+                                    {
+                                        freq_valor += Convert.ToInt32(freqMediaCalc.Substring(0, 3));
+                                        freqMediaCalc = freqMediaCalc.Substring(4);
+                                    }
+
+                                    double media = freq_valor / (double)freq_Segundos;
+                                    double margem = media * (freq_Desvio / 100.0);
+
+                                    if (valor >= (media - margem) && valor <= (media + margem))
+                                    {
+                                        if (estagio >= 0 && estagio <= 5)
+                                        {
+                                            // Atualiza freqMediaStr mantendo últimos (Freq_Segundos - 1) valores
+                                            freqMediaStr = freqMediaStr.Substring(4) + valor.ToString("000") + "#";
+
+                                            valor = (int)Math.Round(media , 0);
+
+                                            FC_MEDIA += valor;
+                                            qtd_media++;
+
+                                            if (valor > FC_MAIOR)
+                                                FC_MAIOR = valor;
+
+                                            if (valor > 20 && valor < FC_MENOR)
+                                                FC_MENOR = valor;
+                                        }
+                                        // Atualiza por estágio
+                                        fc_med[estagio] += valor;
+                                        fc_qtd[estagio]++;
+                                        if (valor > fc_max[estagio])
+                                            fc_max[estagio] = valor;
+                                        if (valor > 20 && valor < fc_min[estagio])
+                                            fc_min[estagio] = valor;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Cálculo final após varredura das páginas
+                    FC_MEDIA = qtd_media > 0 ? FC_MEDIA / qtd_media : 0;
+                    FC_REM_MEDIA = fc_qtd[5] > 0 ? (int)Math.Round((double)fc_med[5] / fc_qtd[5], 0) : 0;
+                    FC_REM_MAIOR = fc_max[5];
+
+                    int qtdNREM = fc_qtd[1] + fc_qtd[2] + fc_qtd[3];
+                    int somaNREM = fc_med[1] + fc_med[2] + fc_med[3];
+                    FC_NREM_MEDIA = qtdNREM > 0 ? (int)Math.Round((double)somaNREM / qtdNREM) : 0;
+                    FC_NREM_MAIOR = Math.Max(fc_max[1], Math.Max(fc_max[2], fc_max[3]));
+
+                    FC_VIGILIA_MEDIA = fc_qtd[0] > 0 ? (int)Math.Round((double)fc_med[0] / fc_qtd[0]) : 0;
+                    FC_VIGILIA_MAIOR = fc_max[0];
+
+                    break; // Canal de FC já processado
+                }
+            }
+
+            // Montagem do campo serializado
+            string g_dados_fc_separada = "";
+            for (int i = 0; i < 10; i++)
+            {
+                int media = fc_qtd[i] > 0 ? (int)Math.Round((double)fc_med[i] / fc_qtd[i]) : 0;
+                g_dados_fc_separada += media.ToString("D3");     // média
+                g_dados_fc_separada += fc_min[i].ToString("D3"); // mínima
+                g_dados_fc_separada += fc_max[i].ToString("D3"); // máxima
+            }
+
+            // Atualização no banco
+            string sql = $@"
+                            UPDATE tbl_ResumoExame 
+                            SET 
+                                FC_Menor = {FC_MENOR},
+                                FC_Maior = {FC_MAIOR},
+                                FC_REM_MEDIA = {FC_REM_MEDIA},
+                                FC_REM_MAIOR = {FC_REM_MAIOR},
+                                FC_NREM_MEDIA = {FC_NREM_MEDIA},
+                                FC_NREM_MAIOR = {FC_NREM_MAIOR},
+                                FC_VIGILIA_MEDIA = {FC_VIGILIA_MEDIA},
+                                FC_VIGILIA_MAIOR = {FC_VIGILIA_MAIOR},
+                                FC_MEDIA = {Convert.ToInt32(FC_MEDIA)}
+                        ";
+
+            ExecutaSQLParaAlteracao(cnn_dbExame, sql);
+
+            //Comentarios
+            ExecutaSQLParaAlteracao(cnn_dbRelatorio, "DELETE * FROM tbl_Comentarios");
+            if (GlobVar.tbl_Comentarios != null)
+            {
+                var listaComentarios = GlobVar.tbl_Comentarios.AsEnumerable()
+                                        .Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia)
+                                        .OrderBy(row => row.Field<int>("Seq"));
+                if (listaComentarios != null)
+                {
+                    foreach (DataRow row in listaComentarios)
+                    {
+                        int seq = Convert.ToInt32(row["seq"]);
+                        //DataRow comentarioRow = GetComentarioBySeq(cnn_dbExame, seq);
+
+                        if (row != null)
+                        {
+                            string comentario = row["Comentario"] == DBNull.Value ? "" : row["Comentario"].ToString();
+
+                            // Remove aspas simples
+                            string comentarioCorrigido = comentario.Replace("'", "");
+
+                            // Limita a 50 caracteres
+                            comentarioCorrigido = comentarioCorrigido.Length > 50 ? comentarioCorrigido.Substring(0, 50) : comentarioCorrigido;
+                            int numPag = Convert.ToInt32(row["NumPag"]);
+
+                            var rowpag = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == numPag).FirstOrDefault(); // ← adapta esse método conforme o seu uso
+
+                            int epoca = (int)(numPag / 30) + 1;
+                            string horario = DateTime.TryParse(rowpag["Horario"]?.ToString(), out DateTime dtHorario)
+                                ? dtHorario.ToString("HH:mm:ss")
+                                : "00:00:00";
+
+                            string sqlInsert = $@"INSERT INTO tbl_Comentarios (Pagina, Epoca, Horario, DescrComent) 
+                                            VALUES ({numPag}, {epoca}, '{horario}', '{comentarioCorrigido}')
+                                        ";
+
+                            ExecutaSQLParaAlteracao(cnn_dbRelatorio, sqlInsert);
+                        }
+                    }
+                }
+            }
+
+            // Verifica se retornou resultado e define o TTS
+            double TTS;
+            if (GlobVar.tbl_ResumoExame != null && GlobVar.tbl_ResumoExame.Rows.Count > 0)
+            {
+                double valorTTS = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+                TTS = valorTTS > 0 ? valorTTS : 1;
+            }
+            else
+            {
+                TTS = 1;
+            }
+
+            var deleteSql = "DELETE * FROM tbl_RelatResumoEventos";
+            ExecutaSQLParaAlteracao(cnn_dbExame, deleteSql);
+
+            sql = "";
+
+            if (g_adulto.Equals("A"))
+            {
+                sql = $"SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento, SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur " +
+                      $"FROM Cons_EventosComEstag " +
+                      $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                      $"AND (Estagio = 1 OR Estagio = 2 OR Estagio = 3 OR Estagio = 5) " +
+                      $"GROUP BY CodEvento";
+            }
+            else if (g_adulto.Equals("I"))
+            {
+                sql = $"SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento, SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur " +
+                      $"FROM Cons_EventosComEstag " +
+                      $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                      $"AND (Estagio >= 7 AND Estagio <= 9) " +
+                      $"GROUP BY CodEvento";
+            }
+            else if (g_adulto.Equals("C"))
+            {
+                sql = $"SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento, SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur " +
+                      $"FROM Cons_EventosComEstag " +
+                      $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                      $"AND (Estagio >= 1 AND Estagio <= 5) " +
+                      $"GROUP BY CodEvento";
+            }
+            else if (g_adulto.Equals("B"))
+            {
+                sql = $"SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento, SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur " +
+                      $"FROM Cons_EventosComEstag " +
+                      $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                      $"AND (Estagio >= 4 AND Estagio <= 6) " +
+                      $"GROUP BY CodEvento";
+            }
+
+            DataTable tbl = ExecutaSQL(cnn_dbExame, sql);
+            string descrEvento = ""; 
+            string corFundo = "";
+            string corTexto = "";// validar o codigo abaixo 
+            if(tbl != null)
+            {
+                GlobVar.tbl_RelatResumo = ExecutaSQL(cnn_Config, "SELECT * FROM tbl_RelatResumo");
+                foreach(DataRow tbl_RelatResumo in GlobVar.tbl_RelatResumo.Rows)
+                {
+                    int codGrupo = Convert.ToInt32(tbl_RelatResumo["CodGrupo"]);
+                    string descrGrupo = tbl_RelatResumo["DescrGrupo"].ToString();
+
+                    DataTable tbl_RelatResumoItem = ExecutaSQL(cnn_Config, "SELECT * FROM tbl_RelatResumoItem");
+                    // Filtra usando LINQ
+                    var itensFiltrados = GlobVar.tbl_RelatResumoItem.AsEnumerable()
+                        .Where(row => row.Field<int>("CodGrupo") == codGrupo);
+
+                    // Só tenta copiar se houver resultados
+                    if (itensFiltrados.Any())
+                    {
+                        tbl_RelatResumoItem = itensFiltrados.CopyToDataTable();
+                    }
+                    if(tbl_RelatResumoItem != null && tbl_RelatResumoItem.AsEnumerable().Any(row => row.Field<int>("CodGrupo") == codGrupo))
+                    {
+                        foreach (DataRow row_RelatResumoItem in tbl_RelatResumoItem.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(row_RelatResumoItem["CodEvento"]);
+                            GetDadosEvento(codEvento, out descrEvento, out corFundo, out corTexto);
+                            var filtrado = tbl.AsEnumerable()
+                                              .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            if (tbl != null && tbl.AsEnumerable().Any(row => row.Field<int>("CodEvento") == codEvento))
+                            {
+                                int index = tbl.Rows.IndexOf(tbl.AsEnumerable().Where(row => row.Field<int>("CodEvento") == codEvento).FirstOrDefault());
+                                DataRow rw = tbl.Rows[index];
+                                if (!EventosCardiacos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == codEvento))
+                                {
+                                    if (g_adulto.Equals("A"))
+                                    {
+                                        sql = $"SELECT FIRST(Posicao) AS Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                    $"AND (Estagio >= 1 AND Estagio <= 5) " +
+                                                    $"AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("I"))
+                                    {
+                                        sql = $"SELECT FIRST(Posicao) AS Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                    $"AND (Estagio >= 7 AND Estagio <= 9) " +
+                                                    $"AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("C"))
+                                    {
+                                        sql = $"SELECT FIRST(Posicao) AS Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                    $"AND (Estagio >= 1 AND Estagio <= 5) " +
+                                                    $"AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("B"))
+                                    {
+                                        sql = $"SELECT FIRST(Posicao) AS Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                    $"AND (Estagio >= 4 AND Estagio <= 6) " +
+                                                    $"AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    $"GROUP BY CodEvento";
+                                    }
+
+                                    DataTable tbl3 = ExecutaSQL(cnn_dbExame, sql); // 'sql' já foi montado no trecho anterior
+
+                                    int qtd_pos_c = 0;
+                                    if (tbl3.Rows.Count > 0)
+                                    {
+                                        qtd_pos_c = Convert.ToInt32(tbl3.Rows[0]["Qtd_Evento"]);
+                                    }
+                                    // Agora monta o SQL para os eventos em NREM conforme g_adulto
+                                    if (g_adulto.Equals("A"))
+                                    {
+                                        sql = $"SELECT Count(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                $"AND Estagio >= 1 AND Estagio <= 3 " +
+                                                $"AND CodEvento = {codEvento} " +
+                                                $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("I"))
+                                    {
+                                        sql = $"SELECT Count(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                $"AND Estagio >= 7 AND Estagio <= 9 " +
+                                                $"AND CodEvento = {codEvento} " +
+                                                $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("C"))
+                                    {
+                                        sql = $"SELECT Count(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                $"AND Estagio >= 1 AND Estagio <= 4 " +
+                                                $"AND CodEvento = {codEvento} " +
+                                                $"GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("B"))
+                                    {
+                                        sql = $"SELECT Count(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                $"WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} " +
+                                                $"AND (Estagio = 4 OR Estagio <= 6) " +
+                                                $"AND CodEvento = {codEvento} " +
+                                                $"GROUP BY CodEvento";
+                                    }
+
+                                    // Executa a segunda consulta SQL (NREM)
+                                    DataTable tbl4 = ExecutaSQL(cnn_dbExame, sql);
+
+                                    int qtd_nrem = 0;
+                                    if (tbl4.Rows.Count > 0)
+                                    {
+                                        qtd_nrem = Convert.ToInt32(tbl4.Rows[0]["Qtd_Evento"]);
+                                    }
+                                    // Consulta quantidade de eventos em REM (Estágio 5)
+                                    sql = $@"
+                                        SELECT COUNT(CodEvento) AS Qtd_Evento 
+                                        FROM Cons_EventosComEstag 
+                                        WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} 
+                                            AND Estagio = 5 
+                                            AND CodEvento = {codEvento}
+                                        GROUP BY CodEvento
+                                    ";
+                                    tbl4 = ExecutaSQL(cnn_dbExame, sql);
+                                    int qtd_rem = tbl4.Rows.Count > 0 ? Convert.ToInt32(tbl4.Rows[0]["Qtd_Evento"]) : 0;
+
+                                    int qtdEvento = Convert.ToInt32(rw["Qtd_Evento"]);
+                                    double durTotal = Convert.ToDouble(rw["Dur_Total"]);
+                                    double maiorDur = Convert.ToDouble(rw["Maior_Dur"]);
+
+                                    // Supondo que você tenha essas variáveis definidas:
+                                    double duracaoMedia = (durTotal / GlobVar.namos) / qtdEvento;
+                                    double maiorDurFormatada = maiorDur / GlobVar.namos;
+                                    double qtdHora = qtdEvento / (TTS / 3600.0);
+                                    double durTotalFormatada = durTotal / GlobVar.namos;
+                                    int qtdPosX = qtdEvento - qtd_pos_c;
+
+                                    // Formatar com ponto decimal
+                                    string ReplaceComma(double valor) => valor.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+
+                                    // Monta SQL de INSERT
+                                    string sqlInsert = $@"
+                                            INSERT INTO tbl_RelatResumoEventos 
+                                            (CodEvento, DescrGrupo, DescrEvento, Qtd, DuracaoMedia, MaiorDuracao, QtdHora, DuracaoTotal, QtdPosC, QtdPosX, QtdNREM, QtdREM)
+                                            VALUES (
+                                                {codEvento},
+                                                '{descrGrupo}',
+                                                '{descrEvento}',
+                                                {qtdEvento},
+                                                {ReplaceComma(duracaoMedia)},
+                                                {ReplaceComma(maiorDurFormatada)},
+                                                {ReplaceComma(qtdHora)},
+                                                {ReplaceComma(durTotalFormatada)},
+                                                {qtd_pos_c},
+                                                {qtdPosX},
+                                                {qtd_nrem},
+                                                {qtd_rem})";
+                                    using (OleDbCommand insertCommand = new OleDbCommand(sqlInsert, cnn_dbExame))
+                                    {
+                                        insertCommand.ExecuteNonQuery();
+                                    }
+                                }
+                                
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            sql = "";
+
+            if (g_adulto == "A")
+            {
+                sql = "SELECT Cons_EventosComEstag.CodEvento, COUNT(Cons_EventosComEstag.CodEvento) AS Qtd_Evento, " +
+                      "SUM(Cons_EventosComEstag.Duracao) AS Dur_Total, MAX(Cons_EventosComEstag.Duracao) AS Maior_Dur " +
+                      "FROM Cons_EventosComEstag " +
+                      "WHERE (Estagio = 0 OR Estagio = 1 OR Estagio = 2 OR Estagio = 3 OR Estagio = 5) " +
+                      "GROUP BY Cons_EventosComEstag.CodEvento";
+            }
+            else if (g_adulto == "I")
+            {
+                sql = "SELECT Cons_EventosComEstag.CodEvento, COUNT(Cons_EventosComEstag.CodEvento) AS Qtd_Evento, " +
+                      "SUM(Cons_EventosComEstag.Duracao) AS Dur_Total, MAX(Cons_EventosComEstag.Duracao) AS Maior_Dur " +
+                      "FROM Cons_EventosComEstag " +
+                      "WHERE ((Estagio >= 7 AND Estagio <= 9) OR (Estagio = 0)) " +
+                      "GROUP BY Cons_EventosComEstag.CodEvento";
+            }
+            else if (g_adulto == "C")
+            {
+                sql = "SELECT Cons_EventosComEstag.CodEvento, COUNT(Cons_EventosComEstag.CodEvento) AS Qtd_Evento, " +
+                      "SUM(Cons_EventosComEstag.Duracao) AS Dur_Total, MAX(Cons_EventosComEstag.Duracao) AS Maior_Dur " +
+                      "FROM Cons_EventosComEstag " +
+                      "WHERE (Estagio <= 5) " +
+                      "GROUP BY Cons_EventosComEstag.CodEvento";
+            }
+            else if (g_adulto == "B")
+            {
+                sql = "SELECT Cons_EventosComEstag.CodEvento, COUNT(Cons_EventosComEstag.CodEvento) AS Qtd_Evento, " +
+                      "SUM(Cons_EventosComEstag.Duracao) AS Dur_Total, MAX(Cons_EventosComEstag.Duracao) AS Maior_Dur " +
+                      "FROM Cons_EventosComEstag " +
+                      "WHERE (Estagio <= 6) " +
+                      "GROUP BY Cons_EventosComEstag.CodEvento";
+            }
+            tbl.Clear();
+            tbl = ExecutaSQL(cnn_dbExame, sql);
+            if (tbl != null)
+            {
+                GlobVar.tbl_RelatResumo = ExecutaSQL(cnn_Config, "SELECT * FROM tbl_RelatResumo");
+                foreach (DataRow tbl_RelatResumo in GlobVar.tbl_RelatResumo.Rows)
+                {
+                    int codGrupo = Convert.ToInt32(tbl_RelatResumo["CodGrupo"]);
+                    string descrGrupo = tbl_RelatResumo["DescrGrupo"].ToString();
+
+                    DataTable tbl_RelatResumoItem = ExecutaSQL(cnn_Config, "SELECT * FROM tbl_RelatResumoItem");
+                    // Filtra usando LINQ
+                    var itensFiltrados = GlobVar.tbl_RelatResumoItem.AsEnumerable()
+                        .Where(row => row.Field<int>("CodGrupo") == codGrupo);
+
+                    // Só tenta copiar se houver resultados
+                    if (itensFiltrados.Any())
+                    {
+                        tbl_RelatResumoItem = itensFiltrados.CopyToDataTable();
+                    }
+                    if (tbl_RelatResumoItem != null && itensFiltrados.Any())
+                    {
+                        foreach (DataRow row_RelatResumoItem in tbl_RelatResumoItem.Rows)
+                        {
+                            int codEvento = Convert.ToInt32(row_RelatResumoItem["CodEvento"]);
+                            GetDadosEvento(codEvento, out descrEvento, out corFundo, out corTexto);
+                            var filtrado = tbl.AsEnumerable()
+                                              .Where(row => row.Field<int>("CodEvento") == codEvento);
+
+                            if (filtrado.Any())
+                            {
+                                tbl = filtrado.CopyToDataTable();
+                            }
+                            if (tbl != null && filtrado.Any())
+                            {
+                                int index = tbl.Rows.IndexOf(tbl.AsEnumerable().Where(row => row.Field<int>("CodEvento") == codEvento).FirstOrDefault());
+                                DataRow rw = tbl.Rows[index];
+
+                                if (EventosCardiacos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == codEvento))
+                                {
+                                    if (g_adulto.Equals("A"))
+                                    {
+                                        sql = $"SELECT First(Posicao) As Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE (Estagio <= 5) AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    "GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("I"))
+                                    {
+                                        sql = $"SELECT First(Posicao) As Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE ((Estagio >= 7 AND Estagio <= 9) OR Estagio = 0) AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    "GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("C"))
+                                    {
+                                        sql = $"SELECT First(Posicao) As Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Estagio <= 5 AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    "GROUP BY CodEvento";
+                                    }
+                                    else if (g_adulto.Equals("B"))
+                                    {
+                                        sql = $"SELECT First(Posicao) As Posicao, COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag " +
+                                                    $"WHERE Estagio <= 6 AND CodEvento = {codEvento} AND Posicao = 'C' " +
+                                                    "GROUP BY CodEvento";
+                                    }
+
+                                    DataTable tbl3 = ExecutaSQL(cnn_dbExame, sql);
+                                    int qtd_pos_c = 0;
+                                    if (tbl3.Rows.Count == 0)
+                                        qtd_pos_c = 0;
+                                    else
+                                        qtd_pos_c = Convert.ToInt32(tbl3.Rows[0]["Qtd_Evento"]);
+                                    switch (g_adulto)
+                                    {
+                                        case "A":
+                                            sql = $"SELECT COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag WHERE Estagio <= 4 AND CodEvento = {codEvento} GROUP BY CodEvento";
+                                            break;
+
+                                        case "I":
+                                            sql = $"SELECT COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag WHERE (Estagio >= 7 AND Estagio <= 9) OR Estagio = 0 AND CodEvento = {codEvento} GROUP BY CodEvento";
+                                            break;
+
+                                        case "C":
+                                            sql = $"SELECT COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag WHERE Estagio <= 4 AND CodEvento = {codEvento} GROUP BY CodEvento";
+                                            break;
+
+                                        case "B":
+                                            sql = $"SELECT COUNT(CodEvento) AS Qtd_Evento FROM Cons_EventosComEstag WHERE (Estagio = 4 OR Estagio = 6 OR Estagio = 0) AND CodEvento = {codEvento} GROUP BY CodEvento";
+                                            break;
+                                    }
+                                    DataTable tbl4 = ExecutaSQL(cnn_dbExame, sql);
+                                    int qtd_nrem = 0;
+                                    if (tbl4.Rows.Count == 0)
+                                        qtd_nrem = 0;
+                                    else
+                                        qtd_nrem = Convert.ToInt32(tbl4.Rows[0]["Qtd_Evento"]);
+                                    int qtd_rem = 0;
+
+                                    // --- NREM já foi calculado anteriormente ---
+                                    // Agora calcula o REM
+                                    sql = $"SELECT COUNT(CodEvento) AS Qtd_Evento " +
+                                            $"FROM Cons_EventosComEstag " +
+                                            $"WHERE Estagio = 5 AND CodEvento = {codEvento} " +
+                                            $"GROUP BY CodEvento";
+                                    tbl4.Clear();
+                                    tbl4 = ExecutaSQL(cnn_dbExame, sql);
+
+                                    if (tbl4.Rows.Count == 0)
+                                        qtd_rem = 0;
+                                    else
+                                        qtd_rem = Convert.ToInt32(tbl4.Rows[0]["Qtd_Evento"]);
+
+                                    int qtdEvento = Convert.ToInt32(tbl.Rows[0]["Qtd_Evento"]);
+                                    double durTotal = Convert.ToDouble(tbl.Rows[0]["Dur_Total"]);
+                                    double maiorDur = Convert.ToDouble(tbl.Rows[0]["Maior_Dur"]);
+
+                                    double duracaoMedia = (durTotal / GlobVar.namos) / qtdEvento;
+                                    double maiorDuracao = maiorDur / GlobVar.namos;
+                                    double qtdHora = qtdEvento / (TTS / 3600.0);
+                                    double duracaoTotal = durTotal / GlobVar.namos;
+
+                                    int qtdPosX = qtdEvento - qtd_pos_c;
+
+                                    sql = $@"
+                                        INSERT INTO tbl_RelatResumoEventos 
+                                        (CodEvento, DescrGrupo, DescrEvento, Qtd, DuracaoMedia, MaiorDuracao, QtdHora, DuracaoTotal, QtdPosC, QtdPosX, QtdNREM, QtdREM)
+                                        VALUES (
+                                            {codEvento},
+                                            '{GlobVar.tbl_RelatResumo.Rows[codGrupo - 1]["DescrGrupo"]}',
+                                            '{descrEvento}',
+                                            {qtdEvento},
+                                            {duracaoMedia.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                                            {maiorDuracao.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                                            {qtdHora.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                                            {duracaoTotal.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                                            {qtd_pos_c},
+                                            {qtdPosX},
+                                            {qtd_nrem},
+                                            {qtd_rem}
+                                )";
+
+                                    using (OleDbCommand insertCommand = new OleDbCommand(sql, cnn_dbExame))
+                                    {
+                                        insertCommand.ExecuteNonQuery();
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+            cnn_dbExame.Close();
+            cnn_dbRelatorio.Close();
+            cnn_dbRelatorio.Close();
+        }
+        public static DataTable ExecutaSQL(OleDbConnection connection, string sql)
+        {
+            DataTable result = new DataTable();
+
+            try
+            {
+                using (OleDbCommand command = new OleDbCommand(sql, connection))
+                {
+                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
+                    {
+                        adapter.Fill(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Trate o erro conforme necessário (log, exceção customizada, etc.)
+                Console.WriteLine("Erro ao executar SQL: " + ex.Message);
+            }
+
+            return result;
+        }
+        public static void ExecutaSQLParaAlteracao(OleDbConnection conexao, string sql)
+        {
+            using (OleDbCommand comando = new OleDbCommand(sql, conexao))
+            {
+                comando.ExecuteNonQuery();
+            }
+        }
+        public static void GetDadosEvento(int codEvento, out string descrEvento, out string corFundo, out string corTexto)
+        {
+            descrEvento = string.Empty;
+            corFundo = string.Empty;
+            corTexto = string.Empty;
+
+            if (GlobVar.tbl_CadEvento == null)
+                return;
+
+            DataRow row = GlobVar.tbl_CadEvento.AsEnumerable()
+                .FirstOrDefault(r => Convert.ToInt32(r["CodEvento"]) == codEvento);
+
+            if (row != null)
+            {
+                descrEvento = row["DescrEvento"]?.ToString() ?? string.Empty;
+                corFundo = row["CorFundo"]?.ToString() ?? string.Empty;
+                corTexto = row["CorTexto"]?.ToString() ?? string.Empty;
+            }
+        }
+        public static string GetAdinfo()
+        {
+            string adInfo = "A";
+
+            if (GlobVar.tbl_DadosExame.Rows.Count > 0)
+            {
+                var row = GlobVar.tbl_DadosExame.Rows[0];
+
+                if (DateTime.TryParse(row["DataNascimento"].ToString(), out DateTime dataNascimento) &&
+                    DateTime.TryParse(row["DataRealizacao"].ToString(), out DateTime dataRealizacao))
+                {
+                    // Calcula a diferença total de meses
+                    int totalMeses = (dataRealizacao.Year - dataNascimento.Year) * 12 + (dataRealizacao.Month - dataNascimento.Month);
+
+                    if (dataRealizacao.Day < dataNascimento.Day)
+                    {
+                        // Ajusta se ainda não completou o mês
+                        totalMeses--;
+                    }
+
+                    // Classificação com base nos meses
+                    if (totalMeses > 12)
+                        adInfo = "A";
+                    else if (totalMeses >= 2)
+                        adInfo = "I";
+                    else
+                        adInfo = "B";
+                }
+            }
+
+            return adInfo;
+        }
     }
 }

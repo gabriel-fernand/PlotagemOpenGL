@@ -289,5 +289,47 @@ namespace PlotagemOpenGL.auxi
             Canal = "Teste";
             return Canal;
         }
+
+        public static int Get_BoaNoite()
+        {
+            int BoaNoite = 0;
+
+            var Row_BoaNoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
+            if(Row_BoaNoite != null)
+            {
+                BoaNoite = Convert.ToInt32(Row_BoaNoite["NumPag"]);
+            }
+
+            return BoaNoite;
+        }
+        public static int Get_BomDia()
+        {
+            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().OrderByDescending(row => row.Field<int>("NumPag")).CopyToDataTable();
+            int BomDia = Convert.ToInt32(lastRow.Rows[0]["NumPag"]);
+
+            var Row_BomDia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
+            if (Row_BomDia != null)
+            {
+                BomDia = Convert.ToInt32(Row_BomDia["NumPag"]);
+            }
+
+            return BomDia;
+        }
+
+        internal static int F_Get1ValorDoCanalFC(int codCanal, int pagina)
+        {
+            int valorCanalFC = 0;
+
+            // Verifica se o código de referência existe
+            int indexCod = GlobVar.codCanal.IndexOf(codCanal);
+
+            // Pega os índices de início e fim uma vez
+            int startCol = GlobVar.ponteiroI[indexCod];
+            int endCol = GlobVar.ponteiroF[indexCod];
+
+            valorCanalFC = (int)GlobVar.matrizCompleta[pagina, startCol];
+
+            return valorCanalFC;
+        }
     }
 }

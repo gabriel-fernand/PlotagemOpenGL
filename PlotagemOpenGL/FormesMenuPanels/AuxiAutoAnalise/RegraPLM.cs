@@ -440,7 +440,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 if (owner.cancellationToken.IsCancellationRequested) return;
                 if (ln.Table != null)
                 {
-                    ExcluiEventoSeq(Convert.ToInt32(ln["Seq"]));
+                    ExcluiEventoSeq(Convert.ToInt32(ln["Seq"])); // verificar errro
                 }
             }
             foreach (var ev in eventosAdicionar)
