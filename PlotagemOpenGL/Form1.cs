@@ -416,12 +416,26 @@ namespace PlotagemOpenGL
 
                     chamarTelinhaVid();
 
+                    F_Idioma();
                 }
             }
             catch (Exception e)
             {
                 MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
 
+            }
+        }
+        void F_Idioma()
+        {
+            string filename = @"C:\Temp\lngPortugues.txt";
+
+            if (File.Exists(filename))
+            {
+                GlobVar.g_Traducoes = File.ReadLines(filename).FirstOrDefault() ?? "";
+            }
+            else
+            {
+                GlobVar.g_Traducoes = "";
             }
         }
 

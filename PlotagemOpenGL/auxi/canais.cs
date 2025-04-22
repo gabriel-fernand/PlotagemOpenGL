@@ -344,5 +344,12 @@ namespace PlotagemOpenGL.auxi
 
             return valorCanalFC;
         }
+        public static int F_Get1ValorDoCanalSAO2(int pagina)
+        {
+            int SA02 = 0;
+
+            SA02 = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[pagina]["SatBasal"]);
+            return SA02;
+        }
     }
 }

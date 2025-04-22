@@ -363,9 +363,10 @@ public class LeituraBanco
     }
     public static void AlteraTable()
     {
+
         // Supondo que GlobVar.eventos seja o DataTable original
         DataTable eventos = GlobVar.eventos;
-
+        //DataTable eventosUpdate = new DataTable();
         // Crie um novo DataTable para armazenar os resultados
         GlobVar.eventosUpdate.Columns.Add("Seq", typeof(int));
         GlobVar.eventosUpdate.Columns.Add("NumPag", typeof(string));
@@ -415,6 +416,7 @@ public class LeituraBanco
 
             GlobVar.eventosUpdate.Rows.Add(newRow);
         }
+
     }
     public static void ArrumaTbl_Paginas()
     {

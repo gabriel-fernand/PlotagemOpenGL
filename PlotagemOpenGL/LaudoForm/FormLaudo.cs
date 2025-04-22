@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tensorflow.Operations.Losses;
 using UnityEngine;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -73,6 +72,26 @@ namespace PlotagemOpenGL.LaudoForm
         public static DataTable horario;
         public static int pagAtual;
         public static bool openned = false;
+
+        // Apneias
+        public static EventoResumo ev_ap = new EventoResumo();
+        public static EventoResumo ev_ap_obs = new EventoResumo();
+        public static EventoResumo ev_ap_cen = new EventoResumo();
+        public static EventoResumo ev_ap_mis = new EventoResumo();
+
+        // Hipopneias
+        public static EventoResumo ev_hipop = new EventoResumo();
+        public static EventoResumo ev_hipop_obs = new EventoResumo();
+        public static EventoResumo ev_hipop_cen = new EventoResumo();
+        public static EventoResumo ev_hipop_mis = new EventoResumo();
+
+        // RERA
+        public static EventoResumo ev_rera = new EventoResumo();
+        public static System.Collections.Generic.Dictionary<int, CPAPRelat> cpapRelatDict = new System.Collections.Generic.Dictionary<int, CPAPRelat>();
+        public static Dictionary<int, Dictionary<int, BPAPRelat>> g_BPAP_Relat = new Dictionary<int, Dictionary<int, BPAPRelat>>();
+
+        public NapResumo[] g_naps = new NapResumo[5];
+
         public FormLaudo()
         {
             // Obtém as dimensões da tela principal
@@ -109,6 +128,7 @@ namespace PlotagemOpenGL.LaudoForm
             this.Text = "Laudo e Relatório de Polissonografia";
             comentarios();
             CarregarArquivosNoComboBox();
+
         }
         private void CarregarArquivosNoComboBox()
         {
@@ -3991,7 +4011,7 @@ namespace PlotagemOpenGL.LaudoForm
         int segmentos = 0;
         List<object> lst_segmentos = new();
         string g_variaveislaudo = "";
-
+        string g_arq_exame = "";
         private void CriarLaudo_Click(object sender, System.EventArgs e)
         {
             try
@@ -4050,7 +4070,7 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                 }
 
-                string g_arq_exame = @"C:\Temp\Exames\" + comboBox1.Text + " Laudo.DOC";
+                g_arq_exame = @"C:\Temp\Exames\" + comboBox1.Text + " Laudo.DOC";
 
                 if (ExisteArquivo(g_arq_exame))
                 {
@@ -4166,7 +4186,7 @@ namespace PlotagemOpenGL.LaudoForm
                         PreparaRelatorioMDB();
                     }
                 }
-                for (int i = 1; i < passagens; i++)
+                for (int i = 0; i < passagens; i++)
                 {
                     if (segmentos > 0 && passagens > 0)
                     {
@@ -4178,11 +4198,11 @@ namespace PlotagemOpenGL.LaudoForm
                     File.Copy(origem, destino, overwrite: true); // overwrite se quiser sobrescrever o destino
 
 
-                    Excel.Application ObjExcel = new Excel.Application();
+                    Microsoft.Office.Interop.Excel.Application ObjExcel = new Microsoft.Office.Interop.Excel.Application();
 
-                    Excel.Workbook workbook = ObjExcel.Workbooks.Open(destino);
+                    Microsoft.Office.Interop.Excel.Workbook workbook = ObjExcel.Workbooks.Open(destino);
 
-                    passagens = i;
+                    passagens = i + 1;
 
                     if (passagens == 1)
                     {
@@ -4250,12 +4270,41 @@ namespace PlotagemOpenGL.LaudoForm
 
                     if (!TextoComboContem("CALIBRACAO"))
                     {
+                        VerificaDessaturacao();
 
+                        if(TextoComboContem("SPLIT-NIGHT") || TextoComboContem("SPLIT NIGHT"))
+                        {
+                            PreparaRelatorioMDB();
+
+                            InicializaEvRespDOC();
+
+                            //Latencia multipla
+                            if(passagens == 1)
+                            {
+                                CalculaResumoMultiplaLatencia();
+                            }
+                            if (TextoComboContem("RESUMO_CPAP"))
+                            {
+                                S_CPAP_Dados(passagens, pag_noite, pag_dia);
+                            }
+                            else if(TextoComboContem("RESUMO_EPAP"))
+                            {
+                                S_BPAP_Dados(passagens, pag_noite, pag_dia);
+                            }
+                        }
+
+                        if (TextoComboContem("&(FCX_"))
+                        {
+
+                        }
                     }
                 }
 
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void arrumaTbl()
         {
@@ -4272,24 +4321,643 @@ namespace PlotagemOpenGL.LaudoForm
             ExecutaSQLParaAlteracao(cnn_dbExame, "UPDATE tbl_Paginas set estagio = 0 WHERE tbl_Paginas.Estagio is Null");
             cnn_dbExame.Close();
         }
+        private void InicializaEvRespDOC()
+        {
+
+            // Zera os eventos
+            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera };
+            foreach (var ev in eventos)
+            {
+                ev.indice = 0;
+                ev.maior = 0;
+                ev.media = 0;
+                ev.qtd = 0;
+                ev.qtd_rem = 0;
+                ev.qtd_nrem = 0;
+                ev.qtd_pos_c = 0;
+                ev.qtd_pos_x = 0;
+            }
+            string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+            OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
+            cnn_dbExame.Open();
+
+            // Consulta e atribuição direta por código de evento
+            void Preenche(EventoResumo destino, int codEvento)
+            {
+                var rs = ExecutaSQL(cnn_dbExame, $"SELECT * FROM tbl_RelatResumoEventos WHERE CodEvento = {codEvento}");
+                if (rs.Rows.Count > 0)
+                {
+                    var row = rs.Rows[0];
+                    destino.qtd = Convert.ToInt32(row["Qtd"]);
+                    destino.indice = Convert.ToDouble(row["QtdHora"]);
+                    destino.maior = Convert.ToDouble(row["MaiorDuracao"]);
+                    destino.media = Convert.ToDouble(row["DuracaoMedia"]);
+                    destino.qtd_rem = Convert.ToInt32(row["QtdREM"]);
+                    destino.qtd_nrem = Convert.ToInt32(row["QtdNREM"]);
+                    destino.qtd_pos_c = Convert.ToInt32(row["QtdPosC"]);
+                    destino.qtd_pos_x = Convert.ToInt32(row["QtdPosX"]);
+                }
+            }
+
+            // Apneias
+            Preenche(ev_ap_cen, 1);
+            Preenche(ev_ap_obs, 2);
+            Preenche(ev_ap_mis, 3);
+
+            ev_ap.qtd = ev_ap_cen.qtd + ev_ap_obs.qtd + ev_ap_mis.qtd;
+            ev_ap.indice = ev_ap_cen.indice + ev_ap_obs.indice + ev_ap_mis.indice;
+            ev_ap.maior = Math.Max(ev_ap_cen.maior, Math.Max(ev_ap_obs.maior, ev_ap_mis.maior));
+            ev_ap.media = ev_ap.qtd > 0
+                ? ((ev_ap_cen.media * ev_ap_cen.qtd) + (ev_ap_obs.media * ev_ap_obs.qtd) + (ev_ap_mis.media * ev_ap_mis.qtd)) / ev_ap.qtd
+                : 0;
+            ev_ap.qtd_rem = ev_ap_cen.qtd_rem + ev_ap_obs.qtd_rem + ev_ap_mis.qtd_rem;
+            ev_ap.qtd_nrem = ev_ap_cen.qtd_nrem + ev_ap_obs.qtd_nrem + ev_ap_mis.qtd_nrem;
+            ev_ap.qtd_pos_c = ev_ap_cen.qtd_pos_c + ev_ap_obs.qtd_pos_c + ev_ap_mis.qtd_pos_c;
+            ev_ap.qtd_pos_x = ev_ap_cen.qtd_pos_x + ev_ap_obs.qtd_pos_x + ev_ap_mis.qtd_pos_x;
+
+            // Hipopneias
+            Preenche(ev_hipop_obs, 5);
+            // obs: ev_hipop_cen e ev_hipop_mis devem existir como no VB6, mesmo que não preenchidos aqui
+            ev_hipop.qtd = ev_hipop_cen.qtd + ev_hipop_obs.qtd + ev_hipop_mis.qtd;
+            ev_hipop.indice = ev_hipop_cen.indice + ev_hipop_obs.indice + ev_hipop_mis.indice;
+            ev_hipop.maior = Math.Max(ev_hipop_cen.maior, Math.Max(ev_hipop_obs.maior, ev_hipop_mis.maior));
+            ev_hipop.media = ev_hipop.qtd > 0
+                ? ((ev_hipop_cen.media * ev_hipop_cen.qtd) + (ev_hipop_obs.media * ev_hipop_obs.qtd) + (ev_hipop_mis.media * ev_hipop_mis.qtd)) / ev_hipop.qtd
+                : 0;
+            ev_hipop.qtd_rem = ev_hipop_cen.qtd_rem + ev_hipop_obs.qtd_rem + ev_hipop_mis.qtd_rem;
+            ev_hipop.qtd_nrem = ev_hipop_cen.qtd_nrem + ev_hipop_obs.qtd_nrem + ev_hipop_mis.qtd_nrem;
+            ev_hipop.qtd_pos_c = ev_hipop_cen.qtd_pos_c + ev_hipop_obs.qtd_pos_c + ev_hipop_mis.qtd_pos_c;
+            ev_hipop.qtd_pos_x = ev_hipop_cen.qtd_pos_x + ev_hipop_obs.qtd_pos_x + ev_hipop_mis.qtd_pos_x;
+
+            // RERA
+            Preenche(ev_rera, 101);
+
+        }
+        public void CalculaResumoMultiplaLatencia()
+        {
+            int[] est = new int[10];
+            int qtd_lat;
+            int Lat_Sono_Qtd = 1;
+            string Lat_Sono_Est = "1, 2, 3, 4, 5";
+
+            for (int i = 0; i < 5; i++)
+            {
+                g_naps[i] = new NapResumo
+                {
+                    Inicio = TimeSpan.Zero,
+                    fim = TimeSpan.Zero,
+                    Lat_Est1 = -1,
+                    Lat_Est2 = -1,
+                    Lat_Est3 = -1,
+                    Lat_Est4 = -1,
+                    Lat_Est5_BoaNoite = -1,
+                    Lat_Est5_SleepOnset = -1,
+                    Lat_Sono = -1,
+                    TempodeREM = 0,
+                    TempoEst0 = 0,
+                    TempoEst1 = 0,
+                    TempoEst2 = 0,
+                    TempoEst3 = 0,
+                    TTR = 0,
+                    TTS = 0,
+                    HorarioREM = TimeSpan.Zero,
+                    HorarioNREM = TimeSpan.Zero
+                };
+            }
+
+            var tbl_Paginas = (from row in GlobVar.tbl_Paginas.AsEnumerable()
+                               orderby row.Field<int>("NumPag")
+                               select row).ToList();
+
+            for (int pos = 0; pos < 5; pos++)
+            {
+                bool erro_pag = false;
+                qtd_lat = 0;
+                Array.Clear(est, 0, est.Length);
+
+                int pag_dia = F_GetFimLatencia(pos + 1);
+                int pag_noite = F_GetInicioLatencia(pos + 1);
+
+                if (pag_dia == -1 || pag_noite == -1)
+                {
+                    erro_pag = true;
+                }
+                else
+                {
+                    var linha_fim = tbl_Paginas.FirstOrDefault(r => r.Field<int>("NumPag") == pag_dia);
+                    if (linha_fim != null)
+                        g_naps[pos].fim = linha_fim.Field<DateTime>("Horario").TimeOfDay;
+
+                    var linha_ini = tbl_Paginas.FirstOrDefault(r => r.Field<int>("NumPag") == pag_noite);
+                    if (linha_ini != null)
+                        g_naps[pos].Inicio = linha_ini.Field<DateTime>("Horario").TimeOfDay;
+
+                    int i = tbl_Paginas.FindIndex(r => r.Field<int>("NumPag") == pag_noite);
+                    while (i < tbl_Paginas.Count && tbl_Paginas[i].Field<int>("NumPag") <= pag_dia)
+                    {
+                        var row = tbl_Paginas[i];
+                        int estagio = row.Field<int?>("estagio") ?? -1;
+
+                        if (estagio >= 0 && estagio <= 6)
+                        {
+                            if (estagio == 5 && est[5] == 0)
+                                g_naps[pos].HorarioREM = row.Field<DateTime>("Horario").TimeOfDay;
+
+                            if (estagio > 0 && estagio < 5 && g_naps[pos].HorarioNREM == TimeSpan.Zero)
+                                g_naps[pos].HorarioNREM = row.Field<DateTime>("Horario").TimeOfDay;
+
+                            est[estagio]++;
+                        }
+
+                        if (Lat_Sono_Est.Contains(estagio.ToString()))
+                            qtd_lat++;
+
+                        if (qtd_lat == Lat_Sono_Qtd && g_naps[pos].Lat_Sono == -1)
+                            g_naps[pos].Lat_Sono = g_naps[pos].TTR - (qtd_lat - 1);
+
+                        if (estagio == 1 && g_naps[pos].Lat_Est1 == -1)
+                            g_naps[pos].Lat_Est1 = g_naps[pos].TTR * GlobVar.segundos;
+                        if (estagio == 2 && g_naps[pos].Lat_Est2 == -1)
+                            g_naps[pos].Lat_Est2 = g_naps[pos].TTR * GlobVar.segundos;
+                        if (estagio == 3 && g_naps[pos].Lat_Est3 == -1)
+                            g_naps[pos].Lat_Est3 = g_naps[pos].TTR * GlobVar.segundos;
+                        if (estagio == 4 && g_naps[pos].Lat_Est4 == -1)
+                            g_naps[pos].Lat_Est4 = g_naps[pos].TTR * GlobVar.segundos;
+                        if (estagio == 5 && g_naps[pos].Lat_Est5_BoaNoite == -1)
+                            g_naps[pos].Lat_Est5_BoaNoite = g_naps[pos].TTR * GlobVar.segundos;
+                        if (estagio == 5 && g_naps[pos].Lat_Est5_SleepOnset == -1 && g_naps[pos].Lat_Sono > -1)
+                            g_naps[pos].Lat_Est5_SleepOnset = (g_naps[pos].TTR - g_naps[pos].Lat_Sono) * GlobVar.segundos;
+
+                        g_naps[pos].TTR++;
+                        i += GlobVar.segundos;
+                    }
+
+                    g_naps[pos].TTS = 0;
+                    for (int e = 1; e <= 5; e++)
+                        g_naps[pos].TTS += est[e];
+
+                    if (g_naps[pos].Lat_Sono > 0)
+                        g_naps[pos].Lat_Sono *= GlobVar.segundos;
+
+                    g_naps[pos].TTS *= GlobVar.segundos;
+                    g_naps[pos].TTR *= GlobVar.segundos;
+                    g_naps[pos].TempodeREM = est[5] * GlobVar.segundos;
+                    g_naps[pos].TempoEst0 = est[0] * GlobVar.segundos;
+                    g_naps[pos].TempoEst1 = est[1] * GlobVar.segundos;
+                    g_naps[pos].TempoEst2 = est[2] * GlobVar.segundos;
+                    g_naps[pos].TempoEst3 = est[3] * GlobVar.segundos;
+                }
+            }
+
+            int pagDiaFinal = Canais.Get_BomDia();// F_GetBomDia();
+            int pagNoiteFinal = Canais.Get_BoaNoite();// F_GetBoaNoite();
+        }
+        public int F_GetFimLatencia(int nap)
+        {
+            int cod_fim_periodo = 111 + (nap - 1) * 2;
+
+            var eventos = GlobVar.eventos.AsEnumerable()
+                .Where(r => r.Field<int>("CodEvento") == cod_fim_periodo)
+                .OrderByDescending(r => r.Field<int>("NumPag"))
+                .ToList();
+
+            int pag = -1;
+            if (eventos.Any())
+                pag = eventos.First().Field<int>("NumPag");
+
+            if (pag > GlobVar.tbl_Paginas.Rows.Count || pag == -1)
+                pag = GlobVar.tbl_Paginas.Rows.Count - 1;
+            return pag;
+        }
+        public int F_GetInicioLatencia(int nap)
+        {
+            int cod_ini_periodo = 110 + (nap - 1) * 2;
+
+            var eventos = GlobVar.eventos.AsEnumerable()
+                .Where(r => r.Field<int>("CodEvento") == cod_ini_periodo)
+                .OrderBy(r => r.Field<int>("NumPag"))
+                .ToList();
+
+            int pag = -1;
+            if (eventos.Any())
+                pag = eventos.First().Field<int>("NumPag");
+            if(pag == -1)
+            {
+                pag = 0;
+            }
+            return pag;
+        }
+        void S_CPAP_Dados(int passagem, int pag_noite, int pag_dia)
+        {
+            if (((passagens == 3 && passagem == 2) || passagens == 1) == false)
+                return;
+
+            for (int i = 0; i <= 30; i++)  // ajuste conforme o limite esperado
+                cpapRelatDict[i] = new CPAPRelat();
+
+            //int pos_can_SAO2 = frm_Principal.obj_DataSource.F_GetCanaldoTipo(20);
+            if (GlobVar.tbl_CanaisAdquiridos.AsEnumerable().Any(row => row.Field<int>("CodTipoCanal") == 15))
+                return;
+
+            var tbl_Paginas = GlobVar.tbl_Paginas.AsEnumerable()
+                .OrderBy(r => r.Field<double?>("Pressao_CPAP"))
+                .ToList();
+
+            if (!tbl_Paginas.Any() || tbl_Paginas.First().IsNull("Pressao_CPAP"))
+            {
+                MessageBox.Show(f_var("Var58074") + "\r\n" + f_var("Var58080"), f_var("Var26047"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            double CPAP_Min = tbl_Paginas.First().Field<double>("Pressao_CPAP");
+            double CPAP_Max = tbl_Paginas.Last().Field<double>("Pressao_CPAP");
+
+            int pressaomenor = 100, pressaomaior = 0;
+
+            foreach (var row in GlobVar.tbl_Paginas.AsEnumerable()
+                     .Where(r => r.Field<int>("NumPag") >= pag_noite && r.Field<int>("NumPag") < pag_dia)
+                     .OrderBy(r => r.Field<int>("NumPag")))
+            {
+                double pressao = row.Field<double>("Pressao_CPAP");
+                int pag = row.Field<int>("NumPag");
+                int valor = Canais.F_Get1ValorDoCanalSAO2(pag);
+
+                int rounded = (int)Math.Round(pressao);
+                if (valor > 40 && cpapRelatDict.ContainsKey(rounded))
+                {
+                    var rel = cpapRelatDict[rounded];
+                    if (valor < rel.Sat_Min)
+                        rel.Sat_Min = valor;
+
+                    rel.Sat_Med += valor;
+                    rel.qtd_pags++;
+
+                    if (pressao < pressaomenor && pressao != 0) pressaomenor = (int)pressao;
+                    if (pressao > pressaomaior) pressaomaior = (int)pressao;
+                }
+            }
+
+            for (int i = pressaomenor; i <= pressaomaior; i++)
+            {
+                if (cpapRelatDict[i].qtd_pags > 0)
+                    cpapRelatDict[i].Sat_Med = (int)Math.Round((double)cpapRelatDict[i].Sat_Med / cpapRelatDict[i].qtd_pags);
+            }
+
+            // Tempo por estágio
+            var agrupadosTempo = GlobVar.tbl_Paginas.AsEnumerable()
+                .Where(r => r.Field<int>("NumPag") > pag_noite && r.Field<int>("NumPag") < pag_dia)
+                .GroupBy(r => new { Pressao = (int)Math.Round(r.Field<double>("Pressao_CPAP")), Estagio = r.Field<int>("Estagio") })
+                .Select(g => new
+                {
+                    g.Key.Pressao,
+                    g.Key.Estagio,
+                    Tempo = g.Count()
+                });
+
+            foreach (var item in agrupadosTempo)
+            {
+                if (item.Pressao >= 0 && cpapRelatDict.ContainsKey(item.Pressao))
+                {
+                    var rel = cpapRelatDict[item.Pressao];
+                    switch (item.Estagio)
+                    {
+                        case 0: rel.tempo_Vigilia += item.Tempo; break;
+                        case 1 or 2 or 3 or 4: rel.tempo_NREM += item.Tempo; break;
+                        case 5: rel.tempo_REM += item.Tempo; break;
+                    }
+                }
+            }
+
+            // Eventos
+            var eventos = GlobVar.Cons_Eventos.AsEnumerable()
+                .Join(GlobVar.tbl_Paginas.AsEnumerable(),
+                      ev => ev.Field<int>("Pag_Ini"),
+                      pg => pg.Field<int>("NumPag"),
+                      (ev, pg) => new
+                      {
+                          CodEvento = ev.Field<int>("CodEvento"),
+                          Pressao = (int)Math.Round(pg.Field<double>("Pressao_CPAP"))
+                      })
+                .GroupBy(x => new { x.Pressao, x.CodEvento })
+                .Select(g => new
+                {
+                    g.Key.Pressao,
+                    g.Key.CodEvento,
+                    Qtde = g.Count()
+                });
+
+            foreach (var item in eventos)
+            {
+                if (item.Pressao >= 0 && cpapRelatDict.ContainsKey(item.Pressao))
+                {
+                    var rel = cpapRelatDict[item.Pressao];
+                    switch (item.CodEvento)
+                    {
+                        case 1: rel.Qtd_AC += item.Qtde; break;
+                        case 2: rel.Qtd_AO += item.Qtde; break;
+                        case 3: rel.qtd_am += item.Qtde; break;
+                        case 4 or 5 or 6: rel.Qtd_Hip += item.Qtde; break;
+                        case 17: rel.Qtd_Dessat += item.Qtde; break;
+                    }
+                }
+            }
+
+            CalculaSaturacaoCPAP();
+        }
+        public void CalculaSaturacaoCPAP()
+        {
+            int i, j;
+            int valor;
+            string SAT_MEDIA = "";
+            string Sat_Media_Calc;
+            int despreza;
+            int Sat_Segundos = 60;
+            int Sat_Desvio = 10;
+            int Sat_Valor;
+            double acum = 0;
+            int menor_sat, MAIOR_SAT = 0;
+            int media_sat;
+            int SaO2_100 = 511;
+            int Sat_Basal_inicial = 100;
+            float Sat_QuedaAbaixoDe = 4;
+            int Sat_DuracaoMinima = 10;
+            int Sat_Recalcular = 900;
+            int Sat_DesprezarAbaixo = 40;
+            int qtd;
+            int menor_CPAP, maior_CPAP, pag_ini;
+
+            // Recuperar parâmetros do exame
+            var dadosExame = GlobVar.tbl_DadosExame.Rows[0];
+            if (dadosExame["SaO2_100"] != DBNull.Value) SaO2_100 = Convert.ToInt32(dadosExame["SaO2_100"]);
+            Sat_Basal_inicial = Convert.ToInt32(dadosExame["SatBasal"]);
+
+            // Recuperar páginas a serem desprezadas
+            var paginas_desprezadas = new HashSet<int>(
+                GlobVar.eventos.AsEnumerable()
+                    .Where(r => r.Field<int>("CodEvento") == 100)
+                    .Select(r => r.Field<int>("NumPag"))
+            );
+
+            menor_sat = SaO2_100;
+            MAIOR_SAT = 0;
+            acum = 0;
+            qtd = 0;
+
+            // Parâmetros configuráveis
+            var parametros = GlobVar.tbl_ParametrosParaAnalisar.Rows[0];
+            Sat_QuedaAbaixoDe = Convert.ToSingle(parametros["Sat_QuedaAbaixoDe"]);
+            Sat_DuracaoMinima = Convert.ToInt32(parametros["Sat_DuracaoMinima"]);
+            Sat_Recalcular = Convert.ToInt32(parametros["Sat_Recalcular"]);
+            Sat_DesprezarAbaixo = Convert.ToInt32(parametros["Sat_DesprezarAbaixo"]);
+            Sat_Segundos = Convert.ToInt32(parametros["Sat_Tempo_Medio"]);
+            Sat_Desvio = Convert.ToInt32(parametros["Sat_Tolerancia_Desvio"]);
+
+            despreza = SaO2_100 * Sat_DesprezarAbaixo / 100;
+
+            // Faixa inicial para média basal
+            int pag_dia = Canais.Get_BomDia();
+            int pag_noite = Canais.Get_BoaNoite();
+            var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(r => Convert.ToDouble(r["Pressao_CPAP"]) > 0);
+            pag_ini = Math.Max(0, row != null ? Convert.ToInt32(row["NumPag"]) - 30 : 0);
+
+            for (i = pag_ini; i < pag_dia; i++)
+            {
+                if (!paginas_desprezadas.Contains(i))
+                {
+                    valor = Canais.F_Get1ValorDoCanalSAO2(i);
+                    if (valor > despreza && valor <= 100)
+                    {
+                        if (SAT_MEDIA.Length < Sat_Segundos * 4)
+                        {
+                            SAT_MEDIA += valor.ToString("D3") + "#";
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Calcula média basal
+            Sat_Media_Calc = SAT_MEDIA;
+            Sat_Valor = 0;
+            while (Sat_Media_Calc.Length > 1)
+            {
+                Sat_Valor += Convert.ToInt32(Sat_Media_Calc.Substring(0, 3));
+                Sat_Media_Calc = Sat_Media_Calc.Length >= 4 ? Sat_Media_Calc.Substring(4) : "";
+            }
+
+            // Determinar menor e maior pressão CPAP
+            menor_CPAP = GlobVar.tbl_Paginas.AsEnumerable().Min(r => Convert.ToInt32(r["Pressao_CPAP"]));
+            maior_CPAP = GlobVar.tbl_Paginas.AsEnumerable().Max(r => Convert.ToInt32(r["Pressao_CPAP"]));
+
+            for (j = menor_CPAP; j <= maior_CPAP; j++)
+            {
+                qtd = 0;
+                acum = 0;
+                menor_sat = 100;
+
+                for (i = pag_noite; i < pag_dia; i++)
+                {
+                    var linha = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(r => Convert.ToInt32(r["NumPag"]) == i);
+                    if (linha == null || Convert.ToInt32(linha["Pressao_CPAP"]) != j) continue;
+                    if (paginas_desprezadas.Contains(i)) continue;
+
+                    valor = Canais.F_Get1ValorDoCanalSAO2(i);
+                    if (valor > despreza && valor <= 100)
+                    {
+                        SAT_MEDIA = SAT_MEDIA.Length >= 4 ? SAT_MEDIA.Substring(4) : "" + valor.ToString("D3") + "#";
+
+                        Sat_Media_Calc = SAT_MEDIA;
+                        Sat_Valor = 0;
+                        while (Sat_Media_Calc.Length > 1)
+                        {
+                            Sat_Valor += Convert.ToInt32(Sat_Media_Calc.Substring(0, 3));
+                            Sat_Media_Calc = Sat_Media_Calc.Length >= 4 ? Sat_Media_Calc.Substring(4) : "";
+                        }
+
+                        var mediaAtual = Sat_Valor / Sat_Segundos;
+                        var tolerancia = mediaAtual * Sat_Desvio / 100.0;
+
+                        if (valor >= mediaAtual - tolerancia && valor <= mediaAtual + tolerancia)
+                        {
+                            acum += valor;
+                            qtd++;
+                            if (valor > MAIOR_SAT) MAIOR_SAT = valor;
+                            if (valor < menor_sat) menor_sat = valor;
+                        }
+                    }
+                }
+
+                if (menor_sat < 100)
+                    cpapRelatDict[j].Sat_Min = menor_sat;
+
+                if (qtd > 0)
+                    cpapRelatDict[j].Sat_Med = (int)(acum / qtd);
+            }
+        }
+        public void S_BPAP_Dados(int passagem, int pag_noite, int pag_dia)
+        {
+            if ((passagem == 3 && passagem == 2) || passagem == 1)
+            {
+                // Inicializa g_BPAP_Relat
+                for (int i = 0; i <= 30; i++) // Limite arbitrário
+                {
+                    if (!g_BPAP_Relat.ContainsKey(i))
+                        g_BPAP_Relat[i] = new Dictionary<int, BPAPRelat>();
+
+                    for (int j = 1; j <= 30; j++) // EPAP de 1 a 30
+                    {
+                        g_BPAP_Relat[i][j] = new BPAPRelat();
+                    }
+                }
+
+                // Se não adquiriu o canal tipo 15, sai
+                if (GlobVar.tbl_CanaisAdquiridos.AsEnumerable().Any(row => row.Field<int>("CodTipoCanal") == 15)) return;
+
+                //int pos_can_SAO2 = Canais.F_GetCanaldoTipo(20);
+
+                var tbl_Paginas = GlobVar.tbl_Paginas.AsEnumerable().OrderBy(r => Convert.ToDouble(r["Pressao_CPAP"])).ToList();
+
+                if (tbl_Paginas.Count == 0 || tbl_Paginas[0]["Pressao_CPAP"] == DBNull.Value)
+                {
+                    MessageBox.Show(f_var("Var58074") + "\n" + f_var("Var58080"), f_var("Var26047"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                double CPAP_Min = Convert.ToDouble(tbl_Paginas.First()["Pressao_CPAP"]);
+                double CPAP_Max = Convert.ToDouble(tbl_Paginas.Last()["Pressao_CPAP"]);
+
+                var paginasPorNum = GlobVar.tbl_Paginas.AsEnumerable().OrderBy(r => Convert.ToInt32(r["NumPag"])).ToList();
+                int pressaomenor = 100;
+                int pressaomaior = 0;
+
+                foreach (var row in paginasPorNum.Where(r => Convert.ToInt32(r["NumPag"]) >= pag_noite && Convert.ToInt32(r["NumPag"]) < pag_dia))
+                {
+                    int numPag = Convert.ToInt32(row["NumPag"]);
+                    int valor = Canais.F_Get1ValorDoCanalSAO2(numPag);
+                    int pressaoCPAP = (int)Math.Round(Convert.ToDouble(row["Pressao_CPAP"]));
+                    int pressaoEPAP = Convert.ToInt32(row["Pressao_EPAP"]);
+
+                    if (pressaoCPAP >= 0 && g_BPAP_Relat.ContainsKey(pressaoCPAP) && g_BPAP_Relat[pressaoCPAP].ContainsKey(pressaoEPAP))
+                    {
+                        if (valor > 40 && valor < g_BPAP_Relat[pressaoCPAP][pressaoEPAP].Sat_Min)
+                        {
+                            g_BPAP_Relat[pressaoCPAP][pressaoEPAP].Sat_Min = valor;
+                            g_BPAP_Relat[pressaoCPAP][pressaoEPAP].Sat_Med += valor;
+                            g_BPAP_Relat[pressaoCPAP][pressaoEPAP].qtd_pags++;
+
+                            double p = Convert.ToDouble(row["Pressao_CPAP"]);
+                            if (p < pressaomenor && p != 0) pressaomenor = (int)p;
+                            if (p > pressaomaior) pressaomaior = (int)p;
+                        }
+                    }
+                }
+
+                // Calcula média de saturação
+                for (int i = pressaomenor; i <= pressaomaior; i++)
+                {
+                    for (int j = 1; j <= 30; j++)
+                    {
+                        if (g_BPAP_Relat.ContainsKey(i) && g_BPAP_Relat[i].ContainsKey(j))
+                        {
+                            var relat = g_BPAP_Relat[i][j];
+                            if (relat.qtd_pags > 0)
+                                relat.Sat_Med = (int)Math.Round((double)relat.Sat_Med / relat.qtd_pags);
+                        }
+                    }
+                }
+
+                // Consulta CPAP por estágio
+                var consultaEstagio = from r in GlobVar.tbl_Paginas.AsEnumerable()
+                                      where Convert.ToInt32(r["NumPag"]) > pag_noite && Convert.ToInt32(r["NumPag"]) < pag_dia
+                                      group r by new
+                                      {
+                                          CPAP = (int)Math.Round(Convert.ToDouble(r["Pressao_CPAP"])),
+                                          EPAP = Convert.ToInt32(r["Pressao_EPAP"]),
+                                          Estagio = Convert.ToInt32(r["Estagio"])
+                                      } into g
+                                      select new
+                                      {
+                                          g.Key.CPAP,
+                                          g.Key.EPAP,
+                                          g.Key.Estagio,
+                                          Tempo = g.Count()
+                                      };
+
+                foreach (var row in consultaEstagio)
+                {
+                    if (g_BPAP_Relat.ContainsKey(row.CPAP) && g_BPAP_Relat[row.CPAP].ContainsKey(row.EPAP))
+                    {
+                        switch (row.Estagio)
+                        {
+                            case 0: g_BPAP_Relat[row.CPAP][row.EPAP].tempo_Vigilia += row.Tempo; break;
+                            case 1 or 2 or 3 or 4: g_BPAP_Relat[row.CPAP][row.EPAP].tempo_NREM += row.Tempo; break;
+                            case 5: g_BPAP_Relat[row.CPAP][row.EPAP].tempo_REM += row.Tempo; break;
+                        }
+                    }
+                }
+
+                // Consulta eventos
+                var eventos = from e in GlobVar.eventos.AsEnumerable()
+                              join p in GlobVar.tbl_Paginas.AsEnumerable()
+                              on e["Pag_Ini"] equals p["NumPag"]
+                              group e by new
+                              {
+                                  CPAP = (int)Math.Round(Convert.ToDouble(p["Pressao_CPAP"])),
+                                  EPAP = Convert.ToInt32(p["Pressao_EPAP"]),
+                                  CodEvento = Convert.ToInt32(e["CodEvento"])
+                              } into g
+                              select new
+                              {
+                                  g.Key.CPAP,
+                                  g.Key.EPAP,
+                                  g.Key.CodEvento,
+                                  Qtde = g.Count()
+                              };
+
+                foreach (var row in eventos)
+                {
+                    if (g_BPAP_Relat.ContainsKey(row.CPAP) && g_BPAP_Relat[row.CPAP].ContainsKey(row.EPAP))
+                    {
+                        switch (row.CodEvento)
+                        {
+                            case 1: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_AC += row.Qtde; break;
+                            case 2: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_AO += row.Qtde; break;
+                            case 3: g_BPAP_Relat[row.CPAP][row.EPAP].qtd_am += row.Qtde; break;
+                            case 4 or 5 or 6:g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_Hip += row.Qtde; break;
+                            case 17: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_Dessat += row.Qtde; break;
+                        }
+                    }
+                }
+            }
+        }
 
         private bool TextoComboContem(string termo)
         {
-            return comboBox1.Text.ToUpper().Contains(termo.ToUpper());
+            return comboBox1.Text?.ToUpperInvariant().Trim()
+                   .Contains(termo?.ToUpperInvariant().Trim()) ?? false;
         }
         public static bool ExisteArquivo(string path)
         {
             return File.Exists(path);
         }
-        private string f_var(string key)
+        public static string f_var(string variavel)
         {
-            return key switch
-            {
-                "Var58073" => "O arquivo está aberto, feche-o para continuar.",
-                "Var58005" => "O laudo já existe. Deseja refazer o laudo?",
-                "Var26063" => "Atenção",
-                _ => ""
-            };
+            string tag = $"#{variavel}#";
+            int start = GlobVar.g_Traducoes.IndexOf(tag);
+            if (start == -1) return ""; // não encontrou a variável
+
+            // Move o ponteiro 10 caracteres à frente do início
+            int innerStart = start + 10;
+            if (innerStart >= GlobVar.g_Traducoes.Length) return "";
+
+            string restante = GlobVar.g_Traducoes.Substring(innerStart);
+            int end = restante.IndexOf('#');
+            if (end == -1) return "";
+
+            return restante.Substring(0, end);
         }
         public static bool ArquivoAberto(string path)
         {
@@ -4418,7 +5086,167 @@ namespace PlotagemOpenGL.LaudoForm
         }
         private static void VerificaDessaturacao()
         {
+            string dim = "";
+            DataTable tbl = new DataTable();
+            string g_sao2 = "CINTA_ABDOM";
+            string g_sao2_ser = "FC_SERIAL";
+            string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+            OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
+            cnn_dbExame.Open();
 
+            int pagIni = Canais.Get_BoaNoite();
+
+            int pagFim = Canais.Get_BomDia();
+
+            foreach (DataRow rw in GlobVar.tbl_CanaisAdquiridos.Rows)
+            {
+                string SiglaTipoCanal = rw["SiglaTipoCanal"].ToString();
+                if(SiglaTipoCanal.Equals(g_sao2) || SiglaTipoCanal.Equals(g_sao2_ser))
+                {
+                    if (SiglaTipoCanal.Equals(g_sao2))
+                    {
+                        ExecutaSQL(cnn_dbExame, "UPDATE tbl_DadosExame SET SaO2_100 = 511");
+                    }
+                    else if (SiglaTipoCanal.Equals(g_sao2_ser))
+                    {
+                        ExecutaSQL(cnn_dbExame, "UPDATE tbl_DadosExame SET SaO2_100 = 100");
+                    }
+                    else
+                    {
+                        ResumoDessaturacao(cnn_dbExame, pagIni, pagFim, 17, Convert.ToInt32(rw["Ordem"]), Convert.ToInt32(rw["CodCanal1"]), Convert.ToInt32(rw["CodCanal2"]));
+                    }
+                }
+            }
+            cnn_dbExame.Close();
+        }
+        private static void ResumoDessaturacao(OleDbConnection cnn_dbExame, int pagIni, int pagFim, int codEvento, int canGrav, int codCanal1, int codCanal2)
+        {
+            var tbl_Pagina = GlobVar.tbl_Paginas;
+            var rsDadosExame = GlobVar.tbl_DadosExame;
+
+            int SaO2_100 = 511;
+            int Sat_Basal_inicial = 100;
+            if (rsDadosExame.Rows.Count > 0)
+            {
+                var row = rsDadosExame.Rows[0];
+                if (!Convert.IsDBNull(row["SaO2_100"]))
+                    SaO2_100 = Convert.ToInt32(row["SaO2_100"]);
+                Sat_Basal_inicial = Convert.ToInt32(row["SatBasal"]);
+            }
+
+            int menor_sat = SaO2_100, maior_sat = 0, valor, media_sat = 0;
+            decimal acum = 0, qtd = 0;
+            int abaixo90 = 0, abaixo80 = 0, abaixo70 = 0;
+            int ref90 = (int)(SaO2_100 * 0.9);
+            int ref80 = (int)(SaO2_100 * 0.8);
+            int ref70 = (int)(SaO2_100 * 0.7);
+            int SatSegundos = 60;
+            int SatDesvio = 10;
+            float SatQuedaAbaixoDe = 4;
+            int SatDuracaoMinima = 10;
+            int SatRecalcular = 900;
+            int SatDesprezarAbaixo = 40;
+
+            var rsParametros = GlobVar.tbl_ParametrosParaAnalisar;
+            if (rsParametros.Rows.Count > 0)
+            {
+                var row = rsParametros.Rows[0];
+                SatQuedaAbaixoDe = Convert.ToSingle(row["Sat_QuedaAbaixoDe"]);
+                SatDuracaoMinima = Convert.ToInt32(row["Sat_DuracaoMinima"]);
+                SatRecalcular = Convert.ToInt32(row["Sat_Recalcular"]);
+                SatDesprezarAbaixo = Convert.ToInt32(row["Sat_DesprezarAbaixo"]);
+                SatSegundos = Convert.ToInt32(row["Sat_Tempo_Medio"]);
+                SatDesvio = Convert.ToInt32(row["Sat_Tolerancia_Desvio"]);
+            }
+
+            int despreza = (int)(SaO2_100 * SatDesprezarAbaixo / 100.0);
+            int ref_queda = (int)(Sat_Basal_inicial * (100 - SatQuedaAbaixoDe) / 100.0);
+            int menor_sat_dessat = SaO2_100;
+
+            var PagDesprezadas = new HashSet<int>();
+            foreach (DataRow row in GlobVar.eventos.Select("CodEvento = 100 AND CodCanal1 = 66"))
+            {
+                PagDesprezadas.Add(Convert.ToInt32(row["NumPag"]));
+            }
+
+            string satMedia = "";
+
+            int indexPagina = 0;
+            for (int pag = pagIni; pag <= pagFim && indexPagina < tbl_Pagina.Rows.Count; pag++, indexPagina++)
+            {
+                valor = Canais.F_Get1ValorDoCanalSAO2(pag);
+                if (pag == pagIni) Sat_Basal_inicial = valor;
+
+                if (valor > despreza && valor <= 100 && !PagDesprezadas.Contains(pag))
+                {
+                    var estagio = Convert.ToInt32(tbl_Pagina.Rows[indexPagina]["estagio"]);
+                    if (estagio >= 0 && estagio <= 9)
+                    {
+                        if (satMedia.Length < SatSegundos * 4)
+                        {
+                            satMedia += valor.ToString("000") + "#";
+                        }
+                        else
+                        {
+                            satMedia = satMedia.Substring(4) + valor.ToString("000") + "#";
+                            string calc = satMedia;
+                            int satValor = 0, count = 0;
+                            while (calc.Length >= 4)
+                            {
+                                satValor += int.Parse(calc.Substring(0, 3));
+                                calc = calc.Substring(4);
+                                count++;
+                            }
+
+                            float media = satValor / (float)count;
+                            float desvio = media * SatDesvio / 100;
+
+                            if (valor >= media - desvio && valor <= media + desvio)
+                            {
+                                satMedia = satMedia.Substring(4) + valor.ToString("000") + "#";
+                                acum += valor;
+                                qtd += 1;
+                                maior_sat = Math.Max(maior_sat, valor);
+                                menor_sat = Math.Min(menor_sat, valor);
+
+                                if (valor < ref90)
+                                {
+                                    abaixo90 += GlobVar.txPorCanal[canGrav];
+                                    if (valor < ref80)
+                                    {
+                                        abaixo80 += GlobVar.txPorCanal[canGrav];
+                                        if (valor < ref70)
+                                        {
+                                            abaixo70 += GlobVar.txPorCanal[canGrav];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    media_sat++;
+                }
+            }
+
+            if (qtd > 0)
+                media_sat = (int)(acum / qtd);
+            else
+                media_sat = 0;
+
+            //GlobVar.dbExame.S_GravaResumoDessat(menor_sat, maior_sat, media_sat,
+                //abaixo90 / (double)GlobVar.txPorCanal[canGrav],
+                //abaixo80 / (double)GlobVar.txPorCanal[canGrav],
+                //abaixo70 / (double)GlobVar.txPorCanal[canGrav]);
+            
+            // Atualiza flag no resumo
+            foreach (DataRow row in GlobVar.tbl_ResumoExame.Rows)
+            {
+                row["Recalcula_Dessat"] = false;
+            }
+            ExecutaSQLParaAlteracao(cnn_dbExame, "UPDATE tbl_ResumoExame SET Recalcula_Dessat = ");
         }
         //Prepara Relatiorio MDB ----- Concluido
         private static void PreparaRelatorioMDB()
@@ -5141,5 +5969,213 @@ namespace PlotagemOpenGL.LaudoForm
 
             return adInfo;
         }
+
+        public static void F_PreencheLaudoDOC(string texto)
+        {
+            string hora_boa_noite = "";
+            string hora_bom_dia = "";
+            DataTable rs = new DataTable();
+            string texto_co2 = "";
+            int NroArq = 0;
+
+            string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+
+            if(GlobVar.tbl_DadosExame != null && GlobVar.tbl_ResumoExame != null)
+            {
+                if (GlobVar.tbl_DadosExame.Rows.Count > 0)
+                {
+                    var tbl_DadosExame = GlobVar.tbl_DadosExame.Rows[0];
+                    if (DateTime.TryParse(tbl_DadosExame["DataNascimento"].ToString(), out DateTime dataNascimento) &&
+                        DateTime.TryParse(tbl_DadosExame["DataRealizacao"].ToString(), out DateTime dataRealizacao))
+                    {
+                        if (dataNascimento < dataRealizacao)
+                        {
+                            // Subtrai um ano da data de nascimento para calcular a idade
+                            DateTime idade = dataNascimento.AddYears(-1);
+
+                            // Calcula a diferença em anos
+                            int idadeAno = dataRealizacao.Year - idade.Year;
+                            if (dataRealizacao < idade.AddYears(idadeAno))
+                            {
+                                idadeAno--;
+                            }
+
+                            // Calcula a diferença em meses
+                            int idadeMes = dataRealizacao.Month - idade.Month;
+                            if (idadeMes < 0)
+                            {
+                                idadeMes += 12;
+                            }
+
+                            // Calcula a diferença em dias
+                            int idadeDia = dataRealizacao.Day - idade.Day;
+                            if (idadeDia < 0)
+                            {
+                                DateTime tempDate = dataRealizacao.AddMonths(-1);
+                                idadeDia += DateTime.DaysInMonth(tempDate.Year, tempDate.Month);
+                            }
+
+                            // Ajusta o ano, se necessário (caso a idade seja maior que 100 anos)
+                            if (DateTime.Now.Year - idade.Year > 100)
+                            {
+                                idadeAno += 100;
+                            }
+
+                            // Converte DataNascimento para formato dd/MM/yyyy
+                            string dataNascimentoFormatada = dataNascimento.ToString("dd/MM/yyyy");
+
+                            // Manipulação de textos de Idade
+                            string IdadeAno = idadeAno == 0 ? "" : idadeAno == 1 ? "1 " + f_var("Var56292") : idadeAno + " " + f_var("Var56143");
+                            string IdadeMes = idadeMes == 0 ? "" : idadeMes == 1 ? "1 " + f_var("Var56201") : idadeMes + " " + f_var("Var56202");
+                            string IdadeDia = idadeDia == 0 ? "" : idadeDia == 1 ? "1 " + f_var("Var56300") : idadeDia + " " + f_var("Var56301");
+
+                            // IdadeAMD
+                            string IdadeAMD = "";
+                            if (IdadeAno != "" && IdadeMes != "" && IdadeDia != "")
+                            {
+                                IdadeAMD = IdadeAno + ", " + IdadeMes + " " + f_var("Var56160") + " " + IdadeDia;
+                            }
+                            else
+                            {
+                                if (IdadeAno != "" && IdadeMes != "")
+                                {
+                                    IdadeAMD = IdadeAno + " " + f_var("Var56160") + " " + IdadeMes;
+                                }
+                                else if (IdadeAno != "" && IdadeDia != "")
+                                {
+                                    IdadeAMD = IdadeAno + " " + f_var("Var56160") + " " + IdadeDia;
+                                }
+                                else if (IdadeMes != "" && IdadeDia != "")
+                                {
+                                    IdadeAMD = IdadeMes + " " + f_var("Var56160") + " " + IdadeDia;
+                                }
+                                else if (IdadeDia != "")
+                                {
+                                    IdadeAMD = IdadeDia;
+                                }
+                            }
+
+                            // IdadeAM
+                            string IdadeAM = "";
+                            if (IdadeAno != "")
+                            {
+                                IdadeAM = IdadeMes != "" ? IdadeAno + " " + f_var("Var56160") + " " + IdadeMes : IdadeAno;
+                            }
+
+                            // Atribui Idade
+                            string Idade = IdadeAno;
+
+                        }
+                        else
+                        {
+                            // Caso em que DataNascimento não é válida ou não é anterior a DataRealizacao
+                            string Idade = "";
+                            string IdadeAM = "";
+                            string IdadeAMD = "";
+
+                            // Se IdadeAno está presente na tabela
+                            if (Convert.ToInt32(tbl_DadosExame["IdadeAno"]) > 0)
+                            {
+                                Idade = tbl_DadosExame["IdadeAno"].ToString() + " " + f_var("Var56143");
+
+                                if (Convert.ToInt32(tbl_DadosExame["IdadeMes"]) > 0)
+                                {
+                                    if (Convert.ToInt32(tbl_DadosExame["IdadeMes"]) == 1)
+                                    {
+                                        Idade += " " + f_var("Var56160") + " 1 " + f_var("Var56201");
+                                    }
+                                    else
+                                    {
+                                        Idade += " " + f_var("Var56160") + " " + tbl_DadosExame["IdadeMes"] + " " + f_var("Var56202");
+                                    }
+                                }
+                            }
+                            else if (Convert.ToInt32(tbl_DadosExame["IdadeMes"]) > 0)
+                            {
+                                Idade = Convert.ToInt32(tbl_DadosExame["IdadeMes"]) == 1
+                                    ? "1 " + f_var("Var56201")
+                                    : tbl_DadosExame["IdadeMes"].ToString() + " " + f_var("Var56202");
+                            }
+                            else
+                            {
+                                Idade = "";
+                            }
+
+                            // Atribui IdadeAM e IdadeAMD
+                            IdadeAM = Idade;
+                            IdadeAMD = Idade;
+                        }
+                    }
+                }
+
+
+            }
+        }
     }
+}
+
+public class EventoResumo
+{
+    public int qtd;
+    public double indice;
+    public double maior;
+    public double media;
+    public int qtd_rem;
+    public int qtd_nrem;
+    public int qtd_pos_c;
+    public int qtd_pos_x;
+}
+
+public class NapResumo
+{
+    public TimeSpan Inicio { get; set; }
+    public TimeSpan fim { get; set; }
+    public int Lat_Est1 { get; set; }
+    public int Lat_Est2 { get; set; }
+    public int Lat_Est3 { get; set; }
+    public int Lat_Est4 { get; set; }
+    public int Lat_Est5_BoaNoite { get; set; }
+    public int Lat_Est5_SleepOnset { get; set; }
+    public int Lat_Sono { get; set; }
+    public int TempodeREM { get; set; }
+    public int TempoEst0 { get; set; }
+    public int TempoEst1 { get; set; }
+    public int TempoEst2 { get; set; }
+    public int TempoEst3 { get; set; }
+    public int TTR { get; set; }
+    public int TTS { get; set; }
+    public TimeSpan HorarioREM { get; set; }
+    public TimeSpan HorarioNREM { get; set; }
+}
+
+public class CPAPRelat
+{
+    public int Qtd_AC = 0;
+    public int qtd_am = 0;
+    public int Qtd_AO = 0;
+    public int Qtd_Dessat = 0;
+    public int Qtd_Hip = 0;
+    public int Sat_Min = 100;
+    public int tempo_NREM = 0;
+    public int tempo_REM = 0;
+    public int tempo_Vigilia = 0;
+    public int Sat_Med = 0;
+    public int Apn_Cen = 0;
+    public int qtd_pags = 0;
+}
+
+public class BPAPRelat
+{
+    public int Qtd_AC = 0;
+    public int qtd_am = 0;
+    public int Qtd_AO = 0;
+    public int Qtd_Dessat = 0;
+    public int Qtd_Hip = 0;
+    public int Sat_Min = 100;
+    public int tempo_NREM = 0;
+    public int tempo_REM = 0;
+    public int tempo_Vigilia = 0;
+    public int Sat_Med = 0;
+    public int qtd_pags = 0;
+    public int Apn_Cen = 0;
 }

@@ -56,6 +56,8 @@ namespace PlotagemOpenGL.auxi
         public static string diretorioEstagioAnteriorProximo3 =    @"C:\Temp\Icones\IcoNumericos\IcoN3.png";
         public static string diretorioEstagioAnteriorProximoR =    @"C:\Temp\Icones\IcoNumericos\IcoNR.png";
 
+        public static string g_Traducoes = "";
+
         //Variaveis para mexer nos eventos
         public static bool drawBordenInAnEvent;
         public static int iniEventoMove;
