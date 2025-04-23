@@ -4007,8 +4007,8 @@ namespace PlotagemOpenGL.LaudoForm
         bool laudosegmentos = false;
 
         int passagens = 0;
-        int ultimapassagem = 0;
-        int segmentos = 0;
+        static int ultimapassagem = 0;
+        static int segmentos = 0;
         List<object> lst_segmentos = new();
         string g_variaveislaudo = "";
         string g_arq_exame = "";
@@ -4016,8 +4016,8 @@ namespace PlotagemOpenGL.LaudoForm
         {
             try
             {
-                int pag_noite = 0;//Canais.Get_BoaNoite();
-                int pag_dia = 0;//Canais.Get_BomDia();
+                int pag_noite = Canais.Get_BoaNoite();
+                int pag_dia = Canais.Get_BomDia();
 
 
                 CalculaCargaHipoxica();
@@ -4297,6 +4297,8 @@ namespace PlotagemOpenGL.LaudoForm
                         {
 
                         }
+
+                        F_PreencheLaudoDOC(Path.Combine(@"C:\Temp\Dat\", comboBox1.Text + ".doc"), wordApp, doc, passagens);
                     }
                 }
 
@@ -4305,6 +4307,71 @@ namespace PlotagemOpenGL.LaudoForm
             {
                 MessageBox.Show($"Erro: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public static void SubstituiVar(string header, string data, Microsoft.Office.Interop.Word.Application wordApp, Microsoft.Office.Interop.Word.Document doc, int passagem)
+        {
+            // Simula g_textolaudo como texto do documento (ou parte dele)
+            string g_textolaudo = doc.Content.Text;
+
+            // Simula g_variaveislaudo e arqexporta como variáveis globais/acumuladoras
+            StringBuilder g_variaveislaudo = new StringBuilder();
+            StringBuilder arqexporta = new StringBuilder();
+
+            // Substitui quebras de linha por " - "
+            while (data.Contains("\r\n"))
+            {
+                int index = data.IndexOf("\r\n");
+                data = data.Substring(0, index) + " - " + data.Substring(index + 2);
+            }
+
+            // Lógica de ajuste do header
+            if (passagem == 2 && segmentos == 0)
+            {
+                header = "&(SP_" + header.Substring(2);
+            }
+            else if (passagem > 1 && passagem < ultimapassagem)
+            {
+                // Exemplo mostra que não faz nada com passagem == 3
+                if (passagem == 3)
+                {
+                    passagem = passagem; // provavelmente um placeholder ou breakpoint
+                }
+                header = "&(S" + passagem + "_" + header.Substring(2);
+            }
+
+            // Verifica se o header existe no texto do laudo
+            if (g_textolaudo.Contains(header.Trim()))
+            {
+                Microsoft.Office.Interop.Word.Find findObject = wordApp.Selection.Find;
+                findObject.ClearFormatting();
+                findObject.Replacement.ClearFormatting();
+
+                findObject.Text = header;
+                findObject.Replacement.Text = data.Length > 255 ? data.Substring(0, 255) : data;
+
+                findObject.Forward = true;
+                findObject.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                findObject.Format = false;
+                findObject.MatchCase = false;
+                findObject.MatchWholeWord = false;
+                findObject.MatchWildcards = false;
+                findObject.MatchSoundsLike = false;
+                findObject.MatchAllWordForms = false;
+
+                // Acumula no arqexporta
+                arqexporta.AppendLine($"{header}={data}");
+
+                // Executa a substituição
+                findObject.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+
+                // Acumula no g_variaveislaudo
+                g_variaveislaudo.AppendLine($"{header}{data};");
+            }
+
+            // Se quiser usar as strings acumuladas depois:
+            string resultadoVariaveis = g_variaveislaudo.ToString();
+            string resultadoExporta = arqexporta.ToString();
         }
         private void arrumaTbl()
         {
@@ -5970,13 +6037,19 @@ namespace PlotagemOpenGL.LaudoForm
             return adInfo;
         }
 
-        public static void F_PreencheLaudoDOC(string texto)
+        public static void F_PreencheLaudoDOC(string texto, Microsoft.Office.Interop.Word.Application wordApp, Microsoft.Office.Interop.Word.Document doc, int passagem)
         {
             string hora_boa_noite = "";
             string hora_bom_dia = "";
             DataTable rs = new DataTable();
             string texto_co2 = "";
             int NroArq = 0;
+            int pag_noite = Canais.Get_BoaNoite();
+            int pag_dia = Canais.Get_BomDia();
+
+            string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
+            OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
+            cnn_dbExame.Open();
 
             string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
 
@@ -5986,32 +6059,32 @@ namespace PlotagemOpenGL.LaudoForm
                 {
                     var tbl_DadosExame = GlobVar.tbl_DadosExame.Rows[0];
                     if (DateTime.TryParse(tbl_DadosExame["DataNascimento"].ToString(), out DateTime dataNascimento) &&
-                        DateTime.TryParse(tbl_DadosExame["DataRealizacao"].ToString(), out DateTime dataRealizacao))
+                        DateTime.TryParse(tbl_DadosExame["DataRealizacao"].ToString(), out DateTime dataRealizado))
                     {
-                        if (dataNascimento < dataRealizacao)
+                        if (dataNascimento < dataRealizado)
                         {
                             // Subtrai um ano da data de nascimento para calcular a idade
                             DateTime idade = dataNascimento.AddYears(-1);
 
                             // Calcula a diferença em anos
-                            int idadeAno = dataRealizacao.Year - idade.Year;
-                            if (dataRealizacao < idade.AddYears(idadeAno))
+                            int idadeAno = dataRealizado.Year - idade.Year;
+                            if (dataRealizado < idade.AddYears(idadeAno))
                             {
                                 idadeAno--;
                             }
 
                             // Calcula a diferença em meses
-                            int idadeMes = dataRealizacao.Month - idade.Month;
+                            int idadeMes = dataRealizado.Month - idade.Month;
                             if (idadeMes < 0)
                             {
                                 idadeMes += 12;
                             }
 
                             // Calcula a diferença em dias
-                            int idadeDia = dataRealizacao.Day - idade.Day;
+                            int idadeDia = dataRealizado.Day - idade.Day;
                             if (idadeDia < 0)
                             {
-                                DateTime tempDate = dataRealizacao.AddMonths(-1);
+                                DateTime tempDate = dataRealizado.AddMonths(-1);
                                 idadeDia += DateTime.DaysInMonth(tempDate.Year, tempDate.Month);
                             }
 
@@ -6107,6 +6180,76 @@ namespace PlotagemOpenGL.LaudoForm
                         }
                     }
                 }
+
+                string arq;
+                int pos1 = GlobVar.bDataFile.LastIndexOf("\\");
+                if (pos1 > 0)
+                    arq = GlobVar.bDataFile.Substring(pos1 + 1);
+                else
+                    arq = GlobVar.bDataFile;
+
+                // Carregando páginas para pegar horários
+                DataTable tbl_Paginas = ExecutaSQL(cnn_dbExame, "SELECT * FROM tbl_Paginas ORDER BY NumPag");
+                DateTime dataRealizacao = Convert.ToDateTime(GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"]);
+
+                DateTime inicio_grav = dataRealizacao.Date.Add(TimeSpan.Parse(tbl_Paginas.Rows[0]["horario"].ToString()));
+                DateTime fim_grav = dataRealizacao.Date.Add(TimeSpan.Parse(tbl_Paginas.Rows[^1]["horario"].ToString()));
+                if (fim_grav < inicio_grav)
+                    fim_grav = fim_grav.AddDays(1);
+
+                // Cálculo do tempo de ronco
+                string sql = $"SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento, SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur " +
+                             $"FROM Cons_EventosComEstag WHERE estagio > 0 AND Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} AND CodEvento = 13 " +
+                             $"GROUP BY CodEvento";
+                DataTable tbl = ExecutaSQL(cnn_dbExame, sql);
+                double tempo_ronco = tbl.Rows.Count == 0 ? 0 : Convert.ToDouble(tbl.Rows[0]["Dur_Total"]) / GlobVar.namos;
+
+                // Apneia e Hipopnéia com Dessaturação
+                int qtd_ap_cen_com_dessat = GetQtd("Cons_ApCen_Com_Dessat");
+                int qtd_ap_obs_com_dessat = GetQtd("Cons_ApObs_Com_Dessat");
+                int qtd_ap_mis_com_dessat = GetQtd("Cons_ApMis_Com_Dessat");
+                int qtd_hipop_com_dessat = GetQtd("Cons_Hipop_Com_Dessat");
+
+                // Com microdespertar
+                int qtd_ap_cen_com_mdesp = GetQtd("Cons_ApCen_Com_MDesp");
+                int qtd_ap_obs_com_mdesp = GetQtd("Cons_ApObs_Com_MDesp");
+                int qtd_ap_mis_com_mdesp = GetQtd("Cons_ApMis_Com_MDesp");
+                int qtd_hipop_com_mdesp = GetQtd("Cons_Hipop_Com_MDesp");
+
+                // Com Dessaturação e Microdespertar
+                int qtd_ap_cen_com_dessat_e_mdesp = GetQtdJoin("Cons_ApCen_Com_Dessat", "Cons_ApCen_Com_MDesp", "Cons_Eventos_ApCen");
+                int qtd_ap_obs_com_dessat_e_mdesp = GetQtdJoin("Cons_ApObs_Com_Dessat", "Cons_ApObs_Com_MDesp", "Cons_Eventos_ApObs");
+                int qtd_ap_mis_com_dessat_e_mdesp = GetQtdJoin("Cons_ApMis_Com_Dessat", "Cons_ApMis_Com_MDesp", "Cons_Eventos_ApMis");
+                int qtd_hipop_com_dessat_e_mdesp = GetQtdJoin("Cons_Hipop_Com_Dessat", "Cons_Hipop_Com_MDesp", "Cons_Eventos_Hipop");
+
+                // RERA
+                int qtd_RERA_com_dessat = GetQtd("Cons_RERA_Com_Dessat");
+                int qtd_RERA_com_mdesp = GetQtd("Cons_RERA_Com_MDesp");
+                int qtd_RERA_com_dessat_e_mdesp = GetQtdJoin("Cons_RERA_Com_Dessat", "Cons_RERA_Com_MDesp", "Cons_Eventos_RERA");
+
+                // PLM
+                int qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
+
+                // Funções auxiliares
+                int GetQtd(string table)
+                {
+                    string query = $"SELECT COUNT(CodEvento) AS Qtd_Evento FROM {table} WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}";
+                    DataTable result = ExecutaSQL(cnn_dbExame, query);
+                    return Convert.ToInt32(result.Rows[0]["Qtd_Evento"]);
+                }
+
+                int GetQtdJoin(string table1, string table2, string joinKey)
+                {
+                    string query = $"SELECT COUNT({table1}.{joinKey}.Seq) AS Qtd_Evento FROM {table1} " +
+                                   $"INNER JOIN {table2} ON {table1}.{joinKey}.Seq = {table2}.{joinKey}.Seq " +
+                                   $"WHERE {table1}.Pag_Ini >= {pag_noite} AND {table1}.Pag_Ini <= {pag_dia} " +
+                                   $"AND {table2}.Pag_Ini >= {pag_noite} AND {table2}.Pag_Ini <= {pag_dia}";
+                    DataTable result =ExecutaSQL(cnn_dbExame, query);
+                    return Convert.ToInt32(result.Rows[0]["Qtd_Evento"]);
+                }
+
+                SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"), wordApp, doc, passagem);
+                SubstituiVar("&(IND_PLM_DESP)&",(qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"), wordApp, doc, passagem);
 
 
             }
