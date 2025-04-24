@@ -16,8 +16,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
@@ -4006,12 +4008,18 @@ namespace PlotagemOpenGL.LaudoForm
         bool laudosplitnight = false;
         bool laudosegmentos = false;
 
-        int passagens = 0;
+        public static int passagem = 0;
         static int ultimapassagem = 0;
         static int segmentos = 0;
         List<object> lst_segmentos = new();
         string g_variaveislaudo = "";
         string g_arq_exame = "";
+        
+        public static Microsoft.Office.Interop.Word.Application wordApp;
+        public static Microsoft.Office.Interop.Word.Document doc;
+
+        public static Microsoft.Office.Interop.Excel.Application ObjExcel;
+        public static Microsoft.Office.Interop.Excel.Workbook planExcel;
         private void CriarLaudo_Click(object sender, System.EventArgs e)
         {
             try
@@ -4027,12 +4035,12 @@ namespace PlotagemOpenGL.LaudoForm
 
                 if (GlobVar.eventos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 50) && (TextoComboContem("SPLIT NIGHT") || TextoComboContem("SEGMENTOS")))
                 {
-                    passagens = 3;
+                    passagem = 3;
                     ultimapassagem = 3;
                 }
                 else
                 {
-                    passagens = 1;
+                    passagem = 1;
                 }
 
                 lst_segmentos.Clear();
@@ -4063,9 +4071,9 @@ namespace PlotagemOpenGL.LaudoForm
 
                     segmentos++; // segmentos = segmentos + 1;
 
-                    if (segmentos > passagens)
+                    if (segmentos > passagem)
                     {
-                        passagens = segmentos;
+                        passagem = segmentos;
                         ultimapassagem = segmentos;
                     }
                 }
@@ -4170,8 +4178,8 @@ namespace PlotagemOpenGL.LaudoForm
                 File.Copy(nomeOrigem, caminhoTemp, true);
 
                 // Inicializa o Word
-                Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
-                Microsoft.Office.Interop.Word.Document doc = null;
+                wordApp = new Microsoft.Office.Interop.Word.Application();
+                doc = null;
                 string g_textolaudo = "";
 
                 doc = wordApp.Documents.Open(caminhoTemp);
@@ -4186,9 +4194,9 @@ namespace PlotagemOpenGL.LaudoForm
                         PreparaRelatorioMDB();
                     }
                 }
-                for (int i = 0; i < passagens; i++)
+                for (int i = 0; i < passagem; i++)
                 {
-                    if (segmentos > 0 && passagens > 0)
+                    if (segmentos > 0 && passagem > 0)
                     {
 
                     }
@@ -4198,30 +4206,30 @@ namespace PlotagemOpenGL.LaudoForm
                     File.Copy(origem, destino, overwrite: true); // overwrite se quiser sobrescrever o destino
 
 
-                    Microsoft.Office.Interop.Excel.Application ObjExcel = new Microsoft.Office.Interop.Excel.Application();
+                    ObjExcel = new Microsoft.Office.Interop.Excel.Application();
 
-                    Microsoft.Office.Interop.Excel.Workbook workbook = ObjExcel.Workbooks.Open(destino);
+                    planExcel = ObjExcel.Workbooks.Open(destino);
 
-                    passagens = i + 1;
+                    passagem = i + 1;
 
-                    if (passagens == 1)
+                    if (passagem == 1)
                     {
                         pag_dia = Canais.Get_BomDia();
                         pag_noite = Canais.Get_BoaNoite();
                     }
                     else if (laudosplitnight)
                     {
-                        if (passagens == 1)
+                        if (passagem == 1)
                         {
                             pag_noite = Canais.Get_BoaNoite();
                             pag_dia = Canais.Get_InicioCPAP();
                         }
-                        else if (passagens == 2)
+                        else if (passagem == 2)
                         {
                             pag_noite = Canais.Get_InicioCPAP();
                             pag_dia = Canais.Get_BomDia();
                         }
-                        else if (passagens == ultimapassagem)
+                        else if (passagem == ultimapassagem)
                         {
                             pag_noite = Canais.Get_BoaNoite();
                             pag_dia = Canais.Get_BomDia();
@@ -4229,22 +4237,22 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                     else if (laudosegmentos)
                     {
-                        if (passagens == ultimapassagem)
+                        if (passagem == ultimapassagem)
                         {
                             pag_noite = Canais.Get_BoaNoite();
                             pag_dia = Canais.Get_BomDia();
                         }
                         else
                         {
-                            pag_noite = Convert.ToInt32(lst_segmentos[passagens - 1]);
+                            pag_noite = Convert.ToInt32(lst_segmentos[passagem - 1]);
 
-                            if (passagens == passagens - 1)
+                            if (passagem == passagem - 1)
                             {
                                 pag_dia = Canais.Get_BomDia();
                             }
                             else
                             {
-                                pag_dia = Convert.ToInt32(lst_segmentos[passagens]) - 1;
+                                pag_dia = Convert.ToInt32(lst_segmentos[passagem]) - 1;
                             }
                         }
                     }
@@ -4256,11 +4264,11 @@ namespace PlotagemOpenGL.LaudoForm
 
                             if (!string.IsNullOrEmpty(comentario))
                             {
-                                if (comentario.StartsWith(passagens.ToString()))
+                                if (comentario.StartsWith(passagem.ToString()))
                                 {
                                     pag_noite = Convert.ToInt32(row["NumPag"]);
                                 }
-                                else if (comentario.StartsWith((passagens + 1).ToString()))
+                                else if (comentario.StartsWith((passagem + 1).ToString()))
                                 {
                                     pag_dia = Convert.ToInt32(row["NumPag"]) - 1;
                                 }
@@ -4279,17 +4287,17 @@ namespace PlotagemOpenGL.LaudoForm
                             InicializaEvRespDOC();
 
                             //Latencia multipla
-                            if(passagens == 1)
+                            if(passagem == 1)
                             {
                                 CalculaResumoMultiplaLatencia();
                             }
                             if (TextoComboContem("RESUMO_CPAP"))
                             {
-                                S_CPAP_Dados(passagens, pag_noite, pag_dia);
+                                S_CPAP_Dados(passagem, pag_noite, pag_dia);
                             }
                             else if(TextoComboContem("RESUMO_EPAP"))
                             {
-                                S_BPAP_Dados(passagens, pag_noite, pag_dia);
+                                S_BPAP_Dados(passagem, pag_noite, pag_dia);
                             }
                         }
 
@@ -4298,7 +4306,7 @@ namespace PlotagemOpenGL.LaudoForm
 
                         }
 
-                        F_PreencheLaudoDOC(Path.Combine(@"C:\Temp\Dat\", comboBox1.Text + ".doc"), wordApp, doc, passagens);
+                        F_PreencheLaudoDOC(Path.Combine(@"C:\Temp\Dat\", comboBox1.Text + ".doc"));
                     }
                 }
 
@@ -4309,7 +4317,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
         }
 
-        public static void SubstituiVar(string header, string data, Microsoft.Office.Interop.Word.Application wordApp, Microsoft.Office.Interop.Word.Document doc, int passagem)
+        public static void SubstituiVar(string header, string data)
         {
             // Simula g_textolaudo como texto do documento (ou parte dele)
             string g_textolaudo = doc.Content.Text;
@@ -4616,7 +4624,7 @@ namespace PlotagemOpenGL.LaudoForm
         }
         void S_CPAP_Dados(int passagem, int pag_noite, int pag_dia)
         {
-            if (((passagens == 3 && passagem == 2) || passagens == 1) == false)
+            if (((passagem == 3 && passagem == 2) || passagem == 1) == false)
                 return;
 
             for (int i = 0; i <= 30; i++)  // ajuste conforme o limite esperado
@@ -6036,8 +6044,162 @@ namespace PlotagemOpenGL.LaudoForm
 
             return adInfo;
         }
+        static void IncluiComentarios()
+        {
+            int linha = 1;
 
-        public static void F_PreencheLaudoDOC(string texto, Microsoft.Office.Interop.Word.Application wordApp, Microsoft.Office.Interop.Word.Document doc, int passagem)
+            foreach (DataRow row in GlobVar.tbl_Comentarios.Rows)
+            {
+                string comentario = row["Comentario"]?.ToString()?.Trim() ?? "";
+
+                if (string.IsNullOrEmpty(comentario))
+                    continue;
+
+                // Verifica se o comentário começa com uma data no formato dd/MM/yy ou dd/MM/yyyy
+                string possivelData = comentario.Length >= 8 ? comentario.Substring(0, 8) : "";
+                bool temData = DateTime.TryParse(possivelData, out DateTime data);
+
+                if (temData)
+                {
+                    ObjExcel.Cells[linha, 1] = data.ToString("dd/MM/yy");
+                    ObjExcel.Cells[linha, 2] = comentario.Length > 11 ? comentario.Substring(11).Trim() : "";
+                }
+                else
+                {
+                    // Comentários longos são quebrados em blocos de até 250 caracteres
+                    while (comentario.Length > 0)
+                    {
+                        string parte;
+                        if (comentario.Length <= 250)
+                        {
+                            parte = comentario;
+                            comentario = "";
+                        }
+                        else
+                        {
+                            int corte = comentario.LastIndexOf(' ', 250);
+                            if (corte == -1) corte = 250;
+                            parte = comentario.Substring(0, corte).Trim();
+                            comentario = comentario.Substring(corte).Trim();
+                        }
+
+                        ObjExcel.Cells[linha, 2] = parte;
+                        linha++;
+                    }
+
+                    continue;
+                }
+
+                linha++;
+            }
+
+            ColaResumoEventos("&(COMENTARIOS)&", 1, linha - 1);
+        }
+        static void ColaResumoEventos(string header, int linhaIni, int linhaFim)
+        {
+            // Seleciona o intervalo no Excel e copia
+            string rangeStr = $"{linhaIni}:{linhaFim}";
+            ObjExcel.Range[rangeStr].Select();
+            ObjExcel.Selection.Copy();
+
+            // Acha o marcador no Word
+            var selection = wordApp.Selection;
+            selection.Find.ClearFormatting();
+
+            selection.Find.Text = header;
+            selection.Find.Replacement.Text = "";
+            selection.Find.Forward = true;
+            selection.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+            selection.Find.Format = false;
+            selection.Find.MatchCase = false;
+            selection.Find.MatchWholeWord = false;
+            selection.Find.MatchWildcards = false;
+            selection.Find.MatchSoundsLike = false;
+            selection.Find.MatchAllWordForms = false;
+
+            if (selection.Find.Execute())
+            {
+                // Cola a tabela do Excel no Word
+                selection.PasteExcelTable(false, false, false);
+            }
+        }
+        public static string AnaliseAutomaticaCO2Exalado()
+        {
+            IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+            int vlrAcima = int.Parse(ini.Read("LAUDO", "CO2", "50"));
+            int vlrAcima2 = int.Parse(ini.Read("LAUDO", "CO2B", "55"));
+            int CO2MINIMO = int.Parse(ini.Read("LAUDO", "CO2MINIMO", "30"));
+            int CO2MAXIMO = int.Parse(ini.Read("LAUDO", "CO2MAXIMO", "100"));
+
+            string paginasDesprezadas = "#";
+            foreach (DataRow evento in GlobVar.eventos.Select("CodEvento = 99", "NumPag"))
+            {
+                paginasDesprezadas += evento["NumPag"].ToString().Trim() + "#";
+            }
+
+            string arquivoCO2 = GlobVar.bDataFile + ".CO2";
+            if (!File.Exists(arquivoCO2)) return "";
+
+            string linha;
+            using (StreamReader reader = new StreamReader(arquivoCO2))
+            {
+                linha = reader.ReadLine();
+            }
+
+            int co2Menor = int.MaxValue;
+            int co2Maior = int.MinValue;
+            long somaCO2 = 0;
+            int qtde = 0, acima = 0, acima2 = 0;
+            int pos = 0;
+
+            for (int i = 0; i < GlobVar.tbl_Paginas.Rows.Count && (pos + 4 <= linha.Length); i++)
+            {
+                string registroStr = linha.Substring(pos, 4);
+                if (!int.TryParse(registroStr, out int registro)) break;
+
+                DataRow pagina = GlobVar.tbl_Paginas.Rows[i];
+                int estagio = Convert.ToInt32(pagina["estagio"]);
+                int numPag = Convert.ToInt32(pagina["NumPag"]);
+
+                if (estagio > 0 && registro >= CO2MINIMO && registro <= CO2MAXIMO &&
+                    !paginasDesprezadas.Contains("#" + numPag.ToString().Trim() + "#"))
+                {
+                    co2Menor = Math.Min(co2Menor, registro);
+                    co2Maior = Math.Max(co2Maior, registro);
+                    somaCO2 += registro;
+                    if (registro > vlrAcima) acima++;
+                    if (registro > vlrAcima2) acima2++;
+                    qtde++;
+                }
+
+                pos += 4;
+            }
+
+            if (qtde == 0)
+            {
+                co2Menor = 0;
+                co2Maior = 0;
+            }
+
+            double media = qtde > 0 ? (double)somaCO2 / qtde : 0;
+            double percAcima = qtde > 0 ? (double)acima / qtde : 0;
+            double percAcima2 = qtde > 0 ? (double)acima2 / qtde : 0;
+
+            string resultado =
+                media.ToString("000000") +
+                co2Maior.ToString("000000") +
+                co2Menor.ToString("000000") +
+                acima.ToString("000000") +
+                vlrAcima.ToString("000000") +
+                acima2.ToString("000000") +
+                vlrAcima2.ToString("000000") +
+                percAcima.ToString("00.0%") +
+                percAcima2.ToString("00.0%");
+
+            return resultado;
+        }
+
+        public static void F_PreencheLaudoDOC(string texto)
         {
             string hora_boa_noite = "";
             string hora_bom_dia = "";
@@ -6050,6 +6212,11 @@ namespace PlotagemOpenGL.LaudoForm
             string connectionStringDatBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
             OleDbConnection cnn_dbExame = new OleDbConnection(connectionStringDatBd);
             cnn_dbExame.Open();
+            string connectionStringConfigBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};Persist Security Info=False;";
+            OleDbConnection cnn_dbConfig = new OleDbConnection(connectionStringDatBd);
+            cnn_dbConfig.Open();
+
+
 
             string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
 
@@ -6248,11 +6415,443 @@ namespace PlotagemOpenGL.LaudoForm
                     return Convert.ToInt32(result.Rows[0]["Qtd_Evento"]);
                 }
 
-                SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"), wordApp, doc, passagem);
-                SubstituiVar("&(IND_PLM_DESP)&",(qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"), wordApp, doc, passagem);
+                SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"));
+                SubstituiVar("&(IND_PLM_DESP)&",(qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
+
+                if(File.Exists(GlobVar.bDataFile + ".C02"))
+                {
+                    texto_co2 = AnaliseAutomaticaCO2Exalado();
+
+                    SubstituiVar("&(CO2_MEDIA)&", int.Parse(texto_co2.Substring(0, 6)).ToString());
+                    SubstituiVar("&(CO2_MAIOR)&", int.Parse(texto_co2.Substring(6, 6)).ToString());
+                    SubstituiVar("&(CO2_MENOR)&", int.Parse(texto_co2.Substring(12, 6)).ToString());
+
+                    string unidade = f_var("Var56252").Substring(0, 3);
+                    string acimaLimite = FormataTempoMin(int.Parse(texto_co2.Substring(18, 6))) + " " + unidade + ".";
+                    SubstituiVar("&(CO2_ACIMALIMITE)&", acimaLimite);
+
+                    SubstituiVar("&(CO2_LIMITE)&", int.Parse(texto_co2.Substring(24, 6)).ToString());
+
+                    string acimaLimite2 = FormataTempoMin(int.Parse(texto_co2.Substring(30, 6))) + " " + unidade + ".";
+                    SubstituiVar("&(CO2_ACIMALIMITE2)&", acimaLimite2);
+
+                    SubstituiVar("&(CO2_LIMITE2)&", int.Parse(texto_co2.Substring(36, 6)).ToString());
+                    SubstituiVar("&(CO2_LIMITEPERC)&", texto_co2.Substring(42, 5));
+                    SubstituiVar("&(CO2_LIMITEPERC2)&", texto_co2.Substring(47, 5));
+                }
+
+                if(passagem != ultimapassagem)
+                {
+                    //Comentarios
+                    planExcel.Sheets.Select("Comentarios");
+
+                    if (texto.EndsWith("COMENTARIOS.DOC", StringComparison.OrdinalIgnoreCase))
+                    {
+                        IncluiComentarios();
+                    }
+
+                    planExcel.RefreshAll();
+                    planExcel.Sheets.Select("Sheet1");
+
+                    //Ressumo de Eventos
+
+
+                }
+            }
+        }
+
+        public void ResumoEventos(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
+        {
+            if (!ExisteVar("RESUMO_EVENTOS)&")) return;
+
+            string eventosCardiacos = "#";
+            string sql;
+            DataTable tbl;
+            DataTable tblResumoEventos2, tblGrupoEventos2;
+            DataTable tblResumoEventos, tblGrupoEventos;
+
+            try
+            {
+                // Coletar eventos cardíacos (CodTipoCanal = 2)
+                sql = "SELECT * FROM tbl_EventoTipoCanal WHERE CodTipoCanal = 2";
+                tbl = ExecutaSQL(cnn_dbConfig, sql);
+
+                foreach (DataRow row in tbl.Rows)
+                    eventosCardiacos += ((int)row["CodEvento"]).ToString("000") + "#";
+
+                // Estatísticas gerais com estagio 0 (eventos cardíacos)
+                sql = $@"
+                    SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento,
+                           SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur
+                    FROM Cons_EventosComEstag
+                    WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
+                    GROUP BY CodEvento";
+                tblResumoEventos2 = ExecutaSQL(cnn_dbExame, sql);
+
+                // Relacionar eventos com grupos
+                sql = @"
+                    SELECT a.CodGrupo, a.DescrGrupo, b.CodEvento, c.Descrevento
+                    FROM tbl_RelatResumo a
+                    JOIN tbl_RelatResumoItem b ON b.CodGrupo = a.CodGrupo
+                    JOIN tbl_CadEvento c ON c.CodEvento = b.CodEvento
+                    ORDER BY a.CodGrupo, b.Ordem";
+                tblGrupoEventos2 = ExecutaSQL(cnn_dbConfig, sql);
+
+                // Estatísticas gerais com estagio > 0 (outros eventos)
+                sql = $@"
+                    SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento,
+                           SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur
+                    FROM Cons_EventosComEstag
+                    WHERE estagio > 0 AND Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
+                    GROUP BY CodEvento";
+                tblResumoEventos = ExecutaSQL(cnn_dbExame, sql);
+
+                tblGrupoEventos = tblGrupoEventos2.Copy(); // Os grupos são os mesmos para ambos
+
+                // Continuação: gerar o Excel (na próxima parte)
+
+                // Supondo que todas as variáveis necessárias foram inicializadas anteriormente...
+                var grupo = "";
+                int linha = 40;
+
+                for (int iGrupo = 0; iGrupo < tblGrupoEventos2.Rows.Count; iGrupo++)
+                {
+                    DataRow grupoRow = tblGrupoEventos.Rows[iGrupo];
+                    DataRow grupoRow2 = tblGrupoEventos2.Rows[iGrupo];
+                    string codEvento = grupoRow["CodEvento"].ToString();
+
+                    // Filtra as tabelas de resumo
+                    DataRow[] resumoRows = tblResumoEventos.Select($"CodEvento = {codEvento}");
+                    DataRow[] resumoRows2 = tblResumoEventos2.Select($"CodEvento = {codEvento}");
+
+                    if (resumoRows2.Length > 0)
+                    {
+                        if (grupo != grupoRow["DescrGrupo"].ToString())
+                        {
+                            grupo = grupoRow["DescrGrupo"].ToString();
+                            for (int i = linha; i <= 140; i++)
+                            {
+                                var celula = ObjExcel.Application.Cells[i, 1].Value;
+                                if (celula == "Título")
+                                {
+                                    ObjExcel.Application.Cells[i, 1].Value = grupo;
+                                    linha = i + 1;
+                                    break;
+                                }
+                                else if (celula == "FIMFIM")
+                                {
+                                    goto Finaliza;
+                                }
+                            }
+                        }
+
+                        if (grupo != "Eventos Cardíacos" && resumoRows.Length > 0)
+                        {
+                            var resumo = resumoRows[0];
+                            ObjExcel.Application.Cells[linha, 1].Value = "     " + grupoRow["DescrEvento"];
+                            ObjExcel.Application.Cells[linha, 2].Value = resumo["Qtd_Evento"]; 
+                            ObjExcel.Application.Cells[linha, 3].Value = FormataTempoMin(Convert.ToInt32(resumo["Dur_Total"]) / GlobVar.namos);
+                            ObjExcel.Application.Cells[linha, 4].Value = FormataTempoMin((Convert.ToInt32(resumo["Dur_Total"]) / GlobVar.namos) / Convert.ToInt32(resumo["Qtd_Evento"]));
+                            ObjExcel.Application.Cells[linha, 5].Value = FormataTempoMin(Convert.ToInt32(resumo["Maior_Dur"]) / GlobVar.namos);
+                            ObjExcel.Application.Cells[linha, 6].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0.0" :
+                                (Convert.ToDouble(resumo["Qtd_Evento"]) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0");
+                        }
+                        else
+                        {
+                            var resumo2 = resumoRows2[0];
+                            ObjExcel.Application.Cells[linha, 1].Value = "     " + grupoRow2["DescrEvento"];
+                            ObjExcel.Application.Cells[linha, 2].Value = resumo2["Qtd_Evento"];
+                            ObjExcel.Application.Cells[linha, 3].Value = FormataTempoMin(Convert.ToInt32(resumo2["Dur_Total"]) / GlobVar.namos);
+                            ObjExcel.Application.Cells[linha, 4].Value = FormataTempoMin((Convert.ToInt32(resumo2["Dur_Total"]) / GlobVar.namos) / Convert.ToInt32(resumo2["Qtd_Evento"]));
+                            ObjExcel.Application.Cells[linha, 5].Value = FormataTempoMin(Convert.ToInt32(resumo2["Maior_Dur"]) / GlobVar.namos);
+                            ObjExcel.Application.Cells[linha, 6].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0.0" :
+                                (Convert.ToDouble(resumo2["Qtd_Evento"]) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0");
+                        }
+
+                        linha++;
+                    }
+                }
+
+            Finaliza:
+
+                // Limpeza de linhas "Título" ou em branco
+                for (int i = 40; i < 150 && ObjExcel.Application.Cells[i, 1].Value?.ToString() != "FIMFIM";)
+                {
+                    var val = ObjExcel.Application.Cells[i, 1].Value?.ToString();
+                    var nextVal = ObjExcel.Application.Cells[i + 1, 1].Value?.ToString();
+                    if (val == "Título" || (string.IsNullOrEmpty(val) && (string.IsNullOrEmpty(nextVal) || nextVal == "Título")))
+                    {
+                        ObjExcel.Application.Rows[i].Delete();
+                        // não incrementa, pois a linha desceu
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+
+                // Inserção do resumo
+                string marcador = passagem == 1 ? "&(RESUMO_EVENTOS)&" :
+                                 passagem == 2 ? "&(SP_RESUMO_EVENTOS)&" :
+                                 $"&(S{passagem}_RESUMO_EVENTOS)&";
+
+                Cola_Resumo_Eventos(marcador, 38, linha - 1);
+
+                // Gráfico de Estágios
+                ObjExcel.Application.Cells[1, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_0"]);// tblResumoExame_EST_0;
+                ObjExcel.Application.Cells[2, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_1"]);// tblResumoExame_Est_1;
+                ObjExcel.Application.Cells[3, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_2"]);// tblResumoExame_Est_2;
+                ObjExcel.Application.Cells[4, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_3"]);// tblResumoExame_Est_3;
+                ObjExcel.Application.Cells[5, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_4"]);// tblResumoExame_Est_5;
+                ObjExcel.Application.Cells[6, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_5"]);// tblResumoExame_Est_4;
+                ObjExcel.Application.Cells[7, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_6"]);// tblResumoExame_Est_6;
+
+                ObjExcel.Application.Cells[20, 2].Value = ev_ap_cen.qtd;
+                ObjExcel.Application.Cells[21, 2].Value = ev_ap_obs.qtd;
+                ObjExcel.Application.Cells[22, 2].Value = ev_ap_mis.qtd;
+                ObjExcel.Application.Cells[23, 2].Value = ev_hipop.qtd;
+                ObjExcel.Application.Cells[24, 2].Value = ev_rera.qtd;
+
+                // Remove linhas com 0
+                for (int i = 24; i >= 20; i--)
+                {
+                    if (Convert.ToDouble(ObjExcel.Application.Cells[i, 2].Value) == 0)
+                        ObjExcel.Application.Rows[i].Delete();
+                }
+                for (int i = 7; i >= 1; i--)
+                {
+                    if (Convert.ToDouble(ObjExcel.Application.Cells[i, 2].Value) == 0)
+                        ObjExcel.Application.Rows[i].Delete();
+                }
+
+                // Inserção de gráficos
+                if (passagem == 1)
+                {
+                    if (ExisteVar("&(GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                        Cola_Grafico("&(GRAF_ESTAG)&", "Chart 1");
+                    else
+                        Cola_Grafico("&(GRAF_ESTAG)&", "Chart 3");
+
+                    if (ExisteVar("&(GRAF_EV_RESP)&"))
+                        Cola_Grafico("&(GRAF_EV_RESP)&", "Chart 2");
+                }
+                else if (passagem == 2)
+                {
+                    if (ExisteVar("&(SP_GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                        Cola_Grafico("&(SP_GRAF_ESTAG)&", "Chart 1");
+                    else
+                        Cola_Grafico("&(SP_GRAF_ESTAG)&", "Chart 3");
+
+                    if (ExisteVar("&(SP_GRAF_EV_RESP)&"))
+                        Cola_Grafico("&(SP_GRAF_EV_RESP)&", "Chart 2");
+                }
+                else if (passagem > 2)
+                {
+                    if (ExisteVar($"&(S{passagem}_GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                        Cola_Grafico($"&(S{passagem}_GRAF_ESTAG)&", "Chart 1");
+                    else
+                        Cola_Grafico($"&(S{passagem}_GRAF_ESTAG)&", "Chart 3");
+
+                    if (ExisteVar($"&(S{passagem}_GRAF_EV_RESP)&"))
+                        Cola_Grafico($"&(S{passagem}_GRAF_EV_RESP)&", "Chart 2");
+                }
+
+                // Inserção de hipnogramas
+                //stab_Doc.Tab = 1;
+                //F_Timer(1);
+
+                if (ExisteVar("&(HIPNOGRAMA)&"))
+                    Cola_Hipnograma("&(HIPNOGRAMA)&");
+
+                if (lst_multiplo2.Visible)
+                {
+                    if (ExisteVar("&(HIPNOGRAMA0)&"))
+                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA0)&", 0);
+                    if (ExisteVar("&(HIPNOGRAMA1)&"))
+                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA1)&", 1);
+                    if (ExisteVar("&(HIPNOGRAMA2)&"))
+                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA2)&", 2);
+                }
+
+                stab_Doc.Tab = 0;
 
 
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao gerar resumo de eventos: " + ex.Message);
+            }
+        }
+        public static Bitmap CaptureOpenGLControl()
+        {
+            var gl = openglHipno.OpenGL; 
+            int width = openglHipno.Width;
+            int height = openglHipno.Height;
+
+            // Lê os pixels da área de renderização
+            byte[] pixelData = new byte[width * height * 3];
+            gl.ReadPixels(0, 0, width, height, OpenGL.GL_RGB, OpenGL.GL_UNSIGNED_BYTE, pixelData);
+
+            // Cria o bitmap para armazenar a imagem
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+
+            int stride = bmpData.Stride;
+            IntPtr ptr = bmpData.Scan0;
+
+            // Cria um array que respeita o formato do bitmap (invertendo eixo Y)
+            byte[] flipped = new byte[stride * height];
+            for (int y = 0; y < height; y++)
+            {
+                int srcIndex = (height - y - 1) * width * 3;
+                int dstIndex = y * stride;
+                Array.Copy(pixelData, srcIndex, flipped, dstIndex, width * 3);
+            }
+
+            // Copia para memória do bitmap
+            Marshal.Copy(flipped, 0, ptr, flipped.Length);
+            bitmap.UnlockBits(bmpData);
+
+            return bitmap;
+        }
+        public static void Cola_Hipnograma(string header)
+        {
+            Bitmap bmp = CaptureOpenGLControl();
+            Control areaReferencia = FormLaudo.openglHipno;
+            // Copia para a área de transferência
+            Clipboard.Clear();
+            Clipboard.SetImage(bmp);
+
+            // Cola no Word na posição do header
+            var selection = FormLaudo.wordApp.Selection;
+            selection.Find.ClearFormatting();
+            selection.Find.Text = header;
+            selection.Find.Replacement.ClearFormatting();
+            selection.Find.Replacement.Text = "";
+            selection.Find.Forward = true;
+            selection.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+            selection.Find.Format = false;
+            selection.Find.MatchCase = false;
+            selection.Find.MatchWholeWord = false;
+            selection.Find.MatchWildcards = false;
+            selection.Find.MatchSoundsLike = false;
+            selection.Find.MatchAllWordForms = false;
+            selection.Find.Execute();
+
+            selection.Paste();
+
+            // Redimensiona a imagem colada com base na área de referência (ex: GrafResumoDoc)
+            if (selection.InlineShapes.Count > 0)
+            {
+                var shape = selection.InlineShapes[selection.InlineShapes.Count];
+
+                // Converte pixels para pontos (1 ponto = 1/72 polegada, pixels geralmente = 96 dpi)
+                float widthInPoints = areaReferencia.Width * 72f / 96f;
+                float heightInPoints = areaReferencia.Height * 72f / 96f;
+
+                shape.Width = widthInPoints;
+                shape.Height = heightInPoints;
+            }
+        }
+
+        public static void Cola_Grafico(string header, string chartName)
+        {
+            // Ativa o gráfico no Excel
+            Microsoft.Office.Interop.Excel.ChartObject chartObj = (Microsoft.Office.Interop.Excel.ChartObject)ObjExcel.ActiveSheet.ChartObjects(chartName);
+            chartObj.Activate();
+            ObjExcel.ActiveChart.ChartArea.Select();
+            ObjExcel.ActiveChart.ChartArea.Copy();
+
+            // Localiza o texto no Word
+            wordApp.Selection.Find.ClearFormatting();
+
+            Microsoft.Office.Interop.Word.Find find = wordApp.Selection.Find;
+            find.Text = header;
+            find.Replacement.Text = "";
+            find.Forward = true;
+            find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+            find.Format = false;
+            find.MatchCase = false;
+            find.MatchWholeWord = false;
+            find.MatchWildcards = false;
+            find.MatchSoundsLike = false;
+            find.MatchAllWordForms = false;
+
+            if (find.Execute())
+            {
+                // Cola o gráfico como imagem
+                wordApp.Selection.PasteAndFormat(Microsoft.Office.Interop.Word.WdRecoveryType.wdChartPicture);
+            }
+        }
+        private bool ExisteVar(string header)
+        {
+            string g_textolaudo = wordApp.Selection.Text;
+            if (g_textolaudo.Contains(header))
+            {
+                var find = wordApp.Selection.Find;
+                find.ClearFormatting();
+                find.Replacement.ClearFormatting();
+                find.Text = header;
+                find.Replacement.Text = "";
+                find.Forward = true;
+                find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                find.Format = false;
+                find.MatchCase = false;
+                find.MatchWholeWord = false;
+                find.MatchWildcards = false;
+                find.MatchSoundsLike = false;
+                find.MatchAllWordForms = false;
+
+                return find.Execute();
+            }
+
+            return false;
+        }
+        private void Cola_Resumo_Eventos(string header, int linhaIni, int linhaFim)
+        {
+            try
+            {
+                // Seleciona e copia o intervalo no Excel
+                Microsoft.Office.Interop.Excel.Range range = ObjExcel.Range[$"{linhaIni}:{linhaFim}"];
+                range.Copy();
+
+                // Atribui o objeto Selection do Word
+                var selection = wordApp.Selection;
+
+                // Configura a busca no documento Word
+                selection.Find.ClearFormatting();
+                selection.Find.Text = header;
+                selection.Find.Replacement.ClearFormatting();
+                selection.Find.Replacement.Text = "";
+                selection.Find.Forward = true;
+                selection.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                selection.Find.Format = false;
+                selection.Find.MatchCase = false;
+                selection.Find.MatchWholeWord = false;
+                selection.Find.MatchWildcards = false;
+                selection.Find.MatchSoundsLike = false;
+                selection.Find.MatchAllWordForms = false;
+
+                // Executa a busca e cola a tabela do Excel
+                if (selection.Find.Execute())
+                {
+                    selection.PasteExcelTable(false, false, false); // Corrigido: sem nomes nomeados
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show($"Marcador \"{header}\" não encontrado no documento Word.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Erro ao colar resumo de eventos: " + ex.Message);
+            }
+        }
+
+        public static string FormataTempoMin(int valor)
+        {
+            // Supondo que valor representa minutos, você pode ajustar:
+            return valor + " min"; // ou uma formatação mais elaborada
         }
     }
 }
