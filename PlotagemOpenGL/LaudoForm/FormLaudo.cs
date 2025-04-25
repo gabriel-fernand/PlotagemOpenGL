@@ -6673,7 +6673,6 @@ namespace PlotagemOpenGL.LaudoForm
                         Cola_HipnogramaMultiplo("&(HIPNOGRAMA2)&", 2);
                 }
 
-                stab_Doc.Tab = 0;
 
 
             }
