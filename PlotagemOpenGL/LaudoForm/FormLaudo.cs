@@ -94,6 +94,10 @@ namespace PlotagemOpenGL.LaudoForm
 
         public NapResumo[] g_naps = new NapResumo[5];
 
+        public static DataTable tbl_HipnoLaudo = new DataTable();
+
+        private static TaskCompletionSource<bool> tcsTabIndexChanged;
+
         public FormLaudo()
         {
             // Obtém as dimensões da tela principal
@@ -221,6 +225,7 @@ namespace PlotagemOpenGL.LaudoForm
                 AjustarDTJanela();
                 PreparaOsArrays();
                 Desenha();
+                tcsTabIndexChanged?.TrySetResult(true);
             }
         }
 
@@ -4175,7 +4180,7 @@ namespace PlotagemOpenGL.LaudoForm
                 string caminhoTemp = Path.Combine(g_dir_laudos, nome_arq_temp + ".doc");
 
                 // Copia o arquivo original para o temporário
-                File.Copy(nomeOrigem, caminhoTemp, true);
+                File.Copy(nomeOrigem, caminhoTemp, overwrite: true);
 
                 // Inicializa o Word
                 wordApp = new Microsoft.Office.Interop.Word.Application();
@@ -5009,7 +5014,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
         }
 
-        private bool TextoComboContem(string termo)
+        private static bool TextoComboContem(string termo)
         {
             return comboBox1.Text?.ToUpperInvariant().Trim()
                    .Contains(termo?.ToUpperInvariant().Trim()) ?? false;
@@ -5981,7 +5986,7 @@ namespace PlotagemOpenGL.LaudoForm
             catch (Exception ex)
             {
                 // Trate o erro conforme necessário (log, exceção customizada, etc.)
-                Console.WriteLine("Erro ao executar SQL: " + ex.Message);
+                Console.WriteLine("Erro ao executar SQL: " + ex.Message + "Codigo usado" + sql);
             }
 
             return result;
@@ -6123,81 +6128,6 @@ namespace PlotagemOpenGL.LaudoForm
                 selection.PasteExcelTable(false, false, false);
             }
         }
-        public static string AnaliseAutomaticaCO2Exalado()
-        {
-            IniFile ini = new IniFile(@"C:\Temp\Config.ini");
-            int vlrAcima = int.Parse(ini.Read("LAUDO", "CO2", "50"));
-            int vlrAcima2 = int.Parse(ini.Read("LAUDO", "CO2B", "55"));
-            int CO2MINIMO = int.Parse(ini.Read("LAUDO", "CO2MINIMO", "30"));
-            int CO2MAXIMO = int.Parse(ini.Read("LAUDO", "CO2MAXIMO", "100"));
-
-            string paginasDesprezadas = "#";
-            foreach (DataRow evento in GlobVar.eventos.Select("CodEvento = 99", "NumPag"))
-            {
-                paginasDesprezadas += evento["NumPag"].ToString().Trim() + "#";
-            }
-
-            string arquivoCO2 = GlobVar.bDataFile + ".CO2";
-            if (!File.Exists(arquivoCO2)) return "";
-
-            string linha;
-            using (StreamReader reader = new StreamReader(arquivoCO2))
-            {
-                linha = reader.ReadLine();
-            }
-
-            int co2Menor = int.MaxValue;
-            int co2Maior = int.MinValue;
-            long somaCO2 = 0;
-            int qtde = 0, acima = 0, acima2 = 0;
-            int pos = 0;
-
-            for (int i = 0; i < GlobVar.tbl_Paginas.Rows.Count && (pos + 4 <= linha.Length); i++)
-            {
-                string registroStr = linha.Substring(pos, 4);
-                if (!int.TryParse(registroStr, out int registro)) break;
-
-                DataRow pagina = GlobVar.tbl_Paginas.Rows[i];
-                int estagio = Convert.ToInt32(pagina["estagio"]);
-                int numPag = Convert.ToInt32(pagina["NumPag"]);
-
-                if (estagio > 0 && registro >= CO2MINIMO && registro <= CO2MAXIMO &&
-                    !paginasDesprezadas.Contains("#" + numPag.ToString().Trim() + "#"))
-                {
-                    co2Menor = Math.Min(co2Menor, registro);
-                    co2Maior = Math.Max(co2Maior, registro);
-                    somaCO2 += registro;
-                    if (registro > vlrAcima) acima++;
-                    if (registro > vlrAcima2) acima2++;
-                    qtde++;
-                }
-
-                pos += 4;
-            }
-
-            if (qtde == 0)
-            {
-                co2Menor = 0;
-                co2Maior = 0;
-            }
-
-            double media = qtde > 0 ? (double)somaCO2 / qtde : 0;
-            double percAcima = qtde > 0 ? (double)acima / qtde : 0;
-            double percAcima2 = qtde > 0 ? (double)acima2 / qtde : 0;
-
-            string resultado =
-                media.ToString("000000") +
-                co2Maior.ToString("000000") +
-                co2Menor.ToString("000000") +
-                acima.ToString("000000") +
-                vlrAcima.ToString("000000") +
-                acima2.ToString("000000") +
-                vlrAcima2.ToString("000000") +
-                percAcima.ToString("00.0%") +
-                percAcima2.ToString("00.0%");
-
-            return resultado;
-        }
 
         public static void F_PreencheLaudoDOC(string texto)
         {
@@ -6216,8 +6146,30 @@ namespace PlotagemOpenGL.LaudoForm
             OleDbConnection cnn_dbConfig = new OleDbConnection(connectionStringDatBd);
             cnn_dbConfig.Open();
 
+            tbl_HipnoLaudo = GlobVar.tbl_HipnoLaudo.AsEnumerable().CopyToDataTable();
+            // Verifica se existe alguma linha com o "Laudo" igual ao texto do comboBox
+            if (tbl_HipnoLaudo.AsEnumerable().Any(row => row.Field<string>("Laudo") == comboBox1.Text))
+            {
+                // Filtra a tabela apenas para as linhas correspondentes
+                var linhasFiltradas = tbl_HipnoLaudo.AsEnumerable()
+                                                    .Where(row => row.Field<string>("Laudo") == comboBox1.Text);
 
+                tbl_HipnoLaudo = linhasFiltradas.CopyToDataTable();
 
+                var hipnograma = tbl_HipnoLaudo.Rows[0]["Hipnogramas"]?.ToString();
+
+                if (!string.IsNullOrEmpty(hipnograma))
+                {
+                    if (!hipnograma.Equals(HipnoMostrando.Text))
+                    {
+                        int index = HipnoMostrando.Items.IndexOf(hipnograma);
+                        if (index >= 0)
+                        {
+                            HipnoMostrando.TabIndex = index;
+                        }
+                    }
+                }
+            }
             string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
 
             if(GlobVar.tbl_DadosExame != null && GlobVar.tbl_ResumoExame != null)
@@ -6357,10 +6309,27 @@ namespace PlotagemOpenGL.LaudoForm
 
                 // Carregando páginas para pegar horários
                 DataTable tbl_Paginas = ExecutaSQL(cnn_dbExame, "SELECT * FROM tbl_Paginas ORDER BY NumPag");
-                DateTime dataRealizacao = Convert.ToDateTime(GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"]);
+                object valorData = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"];
 
-                DateTime inicio_grav = dataRealizacao.Date.Add(TimeSpan.Parse(tbl_Paginas.Rows[0]["horario"].ToString()));
-                DateTime fim_grav = dataRealizacao.Date.Add(TimeSpan.Parse(tbl_Paginas.Rows[^1]["horario"].ToString()));
+                DateTime dataRealizacao = new DateTime();
+
+                if (valorData != null && valorData != DBNull.Value)
+                {
+                    if (DateTime.TryParse(valorData.ToString(), out dataRealizacao))
+                    {
+                        // Ok, dataRealizacao foi parseada com sucesso
+                    }
+                    else
+                    {
+                        // Aqui você pode decidir: ou joga uma exceção, ou define um valor padrão
+                        dataRealizacao = DateTime.MinValue; // ou qualquer data padrão
+                    }
+                }
+                DateTime horarioPrimeiraPagina = Convert.ToDateTime(tbl_Paginas.Rows[0]["horario"]);
+                DateTime horarioUltimaPagina = Convert.ToDateTime(tbl_Paginas.Rows[^1]["horario"]);
+
+                DateTime inicio_grav = dataRealizacao.Date.Add(horarioPrimeiraPagina.TimeOfDay);
+                DateTime fim_grav = dataRealizacao.Date.Add(horarioUltimaPagina.TimeOfDay);
                 if (fim_grav < inicio_grav)
                     fim_grav = fim_grav.AddDays(1);
 
@@ -6418,9 +6387,40 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"));
                 SubstituiVar("&(IND_PLM_DESP)&",(qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
 
-                if(File.Exists(GlobVar.bDataFile + ".C02"))
+                // DESPERTAR COM DESSAT
+                sql = $"SELECT COUNT(Cons_Desp_Com_Dessat.CodEvento) AS Qtd_Evento FROM Cons_Desp_Com_Dessat WHERE Cons_Desp_Com_Dessat.Pag_Ini >= {pag_noite} AND Cons_Desp_Com_Dessat.Pag_Ini <= {pag_dia}";
+                tbl = ExecutaSQL(cnn_dbExame, sql);
+
+                int qtd_Desp_com_dessat = 0;
+                if (tbl.Rows.Count > 0)
                 {
-                    texto_co2 = AnaliseAutomaticaCO2Exalado();
+                    qtd_Desp_com_dessat = Convert.ToInt32(tbl.Rows[0]["Qtd_Evento"]);
+                }
+
+                // Verifica passagens
+                if ((passagem == 3 && passagem == ultimapassagem) || passagem == 1)
+                {
+                    if (TextoComboContem("RESUMO_CPAP"))
+                    {
+                        s_resumo_CPAP();
+                    }
+                    else if (TextoComboContem("RESUMO_EPAP"))
+                    {
+                        s_resumo_BPAP();
+                    }
+
+                    s_ResumoHipoVentilacao();
+                }
+
+                s_dados_PTT(cnn_dbExame);
+
+
+                string direct = Path.GetDirectoryName(GlobVar.textFile);
+                string co2File = Path.Combine(direct, Path.GetFileNameWithoutExtension(GlobVar.textFile) + ".CO2");
+
+                if (File.Exists(co2File))
+                {
+                    texto_co2 = AnaliseCO2.AnaliseAutomatica();
 
                     SubstituiVar("&(CO2_MEDIA)&", int.Parse(texto_co2.Substring(0, 6)).ToString());
                     SubstituiVar("&(CO2_MAIOR)&", int.Parse(texto_co2.Substring(6, 6)).ToString());
@@ -6453,14 +6453,14 @@ namespace PlotagemOpenGL.LaudoForm
                     planExcel.RefreshAll();
                     planExcel.Sheets.Select("Sheet1");
 
-                    //Ressumo de Eventos
+                    ResumoEventos(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
 
 
                 }
             }
         }
 
-        public void ResumoEventos(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
+        public static async void ResumoEventos(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
         {
             if (!ExisteVar("RESUMO_EVENTOS)&")) return;
 
@@ -6627,30 +6627,24 @@ namespace PlotagemOpenGL.LaudoForm
                 // Inserção de gráficos
                 if (passagem == 1)
                 {
-                    if (ExisteVar("&(GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                    if (ExisteVar("&(GRAF_ESTAG)&"))
                         Cola_Grafico("&(GRAF_ESTAG)&", "Chart 1");
-                    else
-                        Cola_Grafico("&(GRAF_ESTAG)&", "Chart 3");
 
                     if (ExisteVar("&(GRAF_EV_RESP)&"))
                         Cola_Grafico("&(GRAF_EV_RESP)&", "Chart 2");
                 }
                 else if (passagem == 2)
                 {
-                    if (ExisteVar("&(SP_GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                    if (ExisteVar("&(SP_GRAF_ESTAG)&"))
                         Cola_Grafico("&(SP_GRAF_ESTAG)&", "Chart 1");
-                    else
-                        Cola_Grafico("&(SP_GRAF_ESTAG)&", "Chart 3");
 
                     if (ExisteVar("&(SP_GRAF_EV_RESP)&"))
                         Cola_Grafico("&(SP_GRAF_EV_RESP)&", "Chart 2");
                 }
                 else if (passagem > 2)
                 {
-                    if (ExisteVar($"&(S{passagem}_GRAF_ESTAG)&") && frm_Celera.mnu_ConfigItem[22].Checked)
+                    if (ExisteVar($"&(S{passagem}_GRAF_ESTAG)&"))
                         Cola_Grafico($"&(S{passagem}_GRAF_ESTAG)&", "Chart 1");
-                    else
-                        Cola_Grafico($"&(S{passagem}_GRAF_ESTAG)&", "Chart 3");
 
                     if (ExisteVar($"&(S{passagem}_GRAF_EV_RESP)&"))
                         Cola_Grafico($"&(S{passagem}_GRAF_EV_RESP)&", "Chart 2");
@@ -6663,18 +6657,57 @@ namespace PlotagemOpenGL.LaudoForm
                 if (ExisteVar("&(HIPNOGRAMA)&"))
                     Cola_Hipnograma("&(HIPNOGRAMA)&");
 
-                if (lst_multiplo2.Visible)
+                if (ExisteVar("&(HIPNOGRAMA0)&") || ExisteVar("&(HIPNOGRAMA1)&") || ExisteVar("&(HIPNOGRAMA2)&"))
                 {
-                    if (ExisteVar("&(HIPNOGRAMA0)&"))
-                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA0)&", 0);
-                    if (ExisteVar("&(HIPNOGRAMA1)&"))
-                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA1)&", 1);
-                    if (ExisteVar("&(HIPNOGRAMA2)&"))
-                        Cola_HipnogramaMultiplo("&(HIPNOGRAMA2)&", 2);
+                    if (ExisteVar("&(HIPNOGRAMA0)&") && tbl_HipnoLaudo.Rows.Count >= 2)
+                    {
+                        if (tbl_HipnoLaudo.Rows[1]["Hipnogramas"] != DBNull.Value)
+                        {
+                            if (!(tbl_HipnoLaudo.Rows[1]["Hipnogramas"].Equals(HipnoMostrando.Text)))
+                            {
+                                int index = HipnoMostrando.Items.IndexOf(tbl_HipnoLaudo.Rows[1]["Hipnogramas"]);
+                                if (index >= 0)
+                                {
+                                    HipnoMostrando.TabIndex = index;
+                                    await tcsTabIndexChanged.Task;
+                                }
+                            }
+                            Cola_Hipnograma("&(HIPNOGRAMA0)&");
+                        }
+                    }
+                    if (ExisteVar("&(HIPNOGRAMA1)&") && tbl_HipnoLaudo.Rows.Count >= 3)
+                    {
+                        if (tbl_HipnoLaudo.Rows[2]["Hipnogramas"] != DBNull.Value)
+                        {
+                            if (!(tbl_HipnoLaudo.Rows[2]["Hipnogramas"].Equals(HipnoMostrando.Text)))
+                            {
+                                int index = HipnoMostrando.Items.IndexOf(tbl_HipnoLaudo.Rows[2]["Hipnogramas"]);
+                                if (index >= 0)
+                                {
+                                    HipnoMostrando.TabIndex = index;
+                                    await tcsTabIndexChanged.Task;
+                                }
+                            }
+                            Cola_Hipnograma("&(HIPNOGRAMA1)&");
+                        }
+                    }
+                    if (ExisteVar("&(HIPNOGRAMA2)&") && tbl_HipnoLaudo.Rows.Count >= 4)
+                    {
+                        if (tbl_HipnoLaudo.Rows[3]["Hipnogramas"] != DBNull.Value)
+                        {
+                            if (!(tbl_HipnoLaudo.Rows[3]["Hipnogramas"].Equals(HipnoMostrando.Text)))
+                            {
+                                int index = HipnoMostrando.Items.IndexOf(tbl_HipnoLaudo.Rows[3]["Hipnogramas"]);
+                                if (index >= 0)
+                                {
+                                    HipnoMostrando.TabIndex = index;
+                                    await tcsTabIndexChanged.Task;
+                                }
+                            }
+                            Cola_Hipnograma("&(HIPNOGRAMA2)&");
+                        }
+                    }
                 }
-
-
-
             }
             catch (Exception ex)
             {
@@ -6782,7 +6815,7 @@ namespace PlotagemOpenGL.LaudoForm
                 wordApp.Selection.PasteAndFormat(Microsoft.Office.Interop.Word.WdRecoveryType.wdChartPicture);
             }
         }
-        private bool ExisteVar(string header)
+        private static bool ExisteVar(string header)
         {
             string g_textolaudo = wordApp.Selection.Text;
             if (g_textolaudo.Contains(header))
@@ -6806,7 +6839,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             return false;
         }
-        private void Cola_Resumo_Eventos(string header, int linhaIni, int linhaFim)
+        private static void Cola_Resumo_Eventos(string header, int linhaIni, int linhaFim)
         {
             try
             {
@@ -6852,6 +6885,223 @@ namespace PlotagemOpenGL.LaudoForm
             // Supondo que valor representa minutos, você pode ajustar:
             return valor + " min"; // ou uma formatação mais elaborada
         }
+
+        private static void s_resumo_CPAP()
+        {
+            planExcel.Sheets.Select("CPAP_0");
+
+            if (ExisteVar("&(RESUMO_CPAP)&"))
+            {
+                int linha = 2;
+
+                for (int i = 4; i < cpapRelatDict.Count; i++)
+                {
+                    var relatorio = cpapRelatDict[i];
+
+                    if ((relatorio.tempo_NREM + relatorio.tempo_REM + relatorio.tempo_Vigilia) > 0)
+                    {
+                        ObjExcel.Cells[linha, 1].Value = i;
+                        ObjExcel.Cells[linha, 2].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_REM));
+                        ObjExcel.Cells[linha, 3].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_NREM));
+                        ObjExcel.Cells[linha, 4].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_Vigilia));
+                        ObjExcel.Cells[linha, 5].Value = relatorio.Qtd_AC;
+                        ObjExcel.Cells[linha, 6].Value = relatorio.Qtd_AO;
+                        ObjExcel.Cells[linha, 7].Value = relatorio.qtd_am;
+                        ObjExcel.Cells[linha, 8].Value = relatorio.Qtd_Hip;
+                        ObjExcel.Cells[linha, 9].Value = relatorio.Qtd_Dessat;
+                        ObjExcel.Cells[linha, 10].Value = relatorio.Sat_Min;
+                        ObjExcel.Cells[linha, 11].Value = relatorio.Sat_Med;
+                        ObjExcel.Cells[linha, 12].Value = relatorio.Apn_Cen;
+
+                        linha++;
+                    }
+                }
+
+                planExcel.RefreshAll();
+
+                linha = 35;
+                while (linha < 66 && ObjExcel.Cells[linha, 1].Value?.ToString() != "FIMFIM")
+                {
+                    var valorCelula1 = ObjExcel.Cells[linha, 1].Value?.ToString();
+                    var valorCelula2 = ObjExcel.Cells[linha, 2].Value?.ToString();
+                    var valorCelulaProx1 = ObjExcel.Cells[linha + 1, 1].Value?.ToString();
+
+                    if (valorCelula2 == "0" || (string.IsNullOrEmpty(valorCelula1) && (string.IsNullOrEmpty(valorCelulaProx1) || valorCelulaProx1 == "Título")))
+                    {
+                        var linhaExcluir = ObjExcel.Rows[linha];
+                        if (linhaExcluir != null)
+                        {
+                            linhaExcluir.Delete();
+                        }
+                    }
+                    else
+                    {
+                        linha++;
+                    }
+                }
+
+                // Colar resumo de eventos
+                Cola_Resumo_Eventos("&(RESUMO_CPAP)&", 35, linha - 1);
+            }
+        }
+
+        private static void s_resumo_BPAP()
+        {
+            planExcel.Sheets.Select("BPAP_0");
+
+            if (ExisteVar("&(RESUMO_EPAP)&"))
+            {
+                int linha = 2;
+
+                for (int i = 4; i < g_BPAP_Relat.Count; i++) // g_BPAP_Relat em C# é um array 2D ou estrutura equivalente
+                {
+                    for (int j = 4; j < g_BPAP_Relat[i].Count; j++)
+                    {
+                        var relatorio = g_BPAP_Relat[i][j];
+
+                        if ((relatorio.tempo_NREM + relatorio.tempo_REM + relatorio.tempo_Vigilia) > 2)
+                        {
+                            ObjExcel.Cells[linha, 1].Value = i;
+                            ObjExcel.Cells[linha, 2].Value = j;
+                            ObjExcel.Cells[linha, 3].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_REM));
+                            ObjExcel.Cells[linha, 4].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_NREM));
+                            ObjExcel.Cells[linha, 5].Value = Convert.ToDouble(FormataTempoMin(relatorio.tempo_Vigilia));
+                            ObjExcel.Cells[linha, 6].Value = relatorio.Qtd_AC;
+                            ObjExcel.Cells[linha, 7].Value = relatorio.Qtd_AO;
+                            ObjExcel.Cells[linha, 8].Value = relatorio.qtd_am;
+                            ObjExcel.Cells[linha, 9].Value = relatorio.Qtd_Hip;
+                            ObjExcel.Cells[linha, 10].Value = relatorio.Qtd_Dessat;
+                            ObjExcel.Cells[linha, 11].Value = relatorio.Sat_Min;
+                            ObjExcel.Cells[linha, 12].Value = relatorio.Sat_Med;
+                            ObjExcel.Cells[linha, 13].Value = relatorio.Apn_Cen;
+
+                            linha++;
+                        }
+                    }
+                }
+
+                planExcel.RefreshAll();
+
+                linha = 266;
+                while (linha < 517 && ObjExcel.Cells[linha, 1].Value?.ToString() != "FIMFIM")
+                {
+                    var valorCelula1 = ObjExcel.Cells[linha, 1].Value?.ToString();
+                    var valorCelula2 = ObjExcel.Cells[linha, 2].Value?.ToString();
+                    var valorCelulaProx1 = ObjExcel.Cells[linha + 1, 1].Value?.ToString();
+
+                    if (valorCelula2 == "0" || (string.IsNullOrEmpty(valorCelula1) && (string.IsNullOrEmpty(valorCelulaProx1) || valorCelulaProx1 == "Título")))
+                    {
+                        var linhaExcluir = ObjExcel.Rows[linha];
+                        if (linhaExcluir != null)
+                        {
+                            linhaExcluir.Delete();
+                        }
+                    }
+                    else
+                    {
+                        linha++;
+                    }
+                }
+
+                Cola_Resumo_Eventos("&(RESUMO_bpap)&", 266, linha - 1);
+            }
+        }
+
+        private static void s_ResumoHipoVentilacao()
+        {
+
+            if (ExisteVar("&(HIPOVENTILACAO)&"))
+            {
+                planExcel.Sheets.Select("Hipo");
+
+                /* Codigo original em VB6 que esta comentado, caso seja preciso utilizar ele futuramente
+                 *       'For i = 1 To frm_Principal.grd_HipoVent.Rows - 1            
+                          '   frm_Principal.grd_HipoVent.Row = i
+                          '   frm_Principal.grd_HipoVent.col = 0
+                          '   If frm_Principal.grd_HipoVent.Text = "" Then Exit For
+                          '   ObjExcel.Application.Cells(linha, 1) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 1
+                          '   ObjExcel.Application.Cells(linha, 2) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 2
+                          '   ObjExcel.Application.Cells(linha, 3) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 3
+                          '   ObjExcel.Application.Cells(linha, 4) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 4
+                          '   ObjExcel.Application.Cells(linha, 5) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 5
+                          '   ObjExcel.Application.Cells(linha, 6) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 6
+                          '   ObjExcel.Application.Cells(linha, 7) = frm_Principal.grd_HipoVent.Text
+                          '   frm_Principal.grd_HipoVent.col = 7
+                          '   ObjExcel.Application.Cells(linha, 8) = frm_Principal.grd_HipoVent.Text
+                          '   linha = linha + 1
+                          'Next
+                          'planExcel.RefreshAll
+                */
+
+                int linha = 1;
+
+                while (linha < 91 && ObjExcel.Cells[linha, 1].Value?.ToString() != "FIMFIM")
+                {
+                    var valorCelula1 = ObjExcel.Cells[linha, 1].Value?.ToString();
+                    var valorCelula2 = ObjExcel.Cells[linha, 2].Value?.ToString();
+                    var valorCelulaProx1 = ObjExcel.Cells[linha + 1, 1].Value?.ToString();
+
+                    if (valorCelula2 == "0" || (string.IsNullOrEmpty(valorCelula1) && (string.IsNullOrEmpty(valorCelulaProx1) || valorCelulaProx1 == "Título")))
+                    {
+                        var linhaExcluir = ObjExcel.Rows[linha];
+                        if (linhaExcluir != null)
+                        {
+                            linhaExcluir.Delete();
+                        }
+                        // NÃO incrementa linha aqui porque as linhas sobem após deletar
+                    }
+                    else
+                    {
+                        linha++;
+                    }
+                }
+
+                Cola_Resumo_Eventos("&(HIPOVENTILACAO)&", 1, linha - 2);
+
+            }
+        }
+
+        private static void s_dados_PTT(OleDbConnection cnn_dbExame)
+        {
+            DataTable tbl_EventosPTT = new DataTable();
+            double X = 0;
+
+            string sql = "SELECT Estagio, Count(SumOfDuracao) AS qtd_PTT, Max(SumOfDuracao) AS Max_PTT, Sum(SumOfDuracao) AS Duracao_PTT From Cons_Eventos_PTT GROUP BY Estagio";
+
+            tbl_EventosPTT = ExecutaSQL(cnn_dbExame, sql);
+            if(tbl_EventosPTT != null)
+            {
+                for(int i = 0; i <= 9; i++)
+                {
+                    if(tbl_EventosPTT.AsEnumerable().Any(row => row.Field<int>("Estagio") == i))
+                    {
+                        DataRow rw_EventosPTT = tbl_EventosPTT.AsEnumerable().Where(row => row.Field<int>("Estagio") == i).FirstOrDefault();
+
+                        SubstituiVar("&(QTD_PTT_" + i + ")&", rw_EventosPTT["qtd_PTT"].ToString());
+                        SubstituiVar("&(MAIOR_PTT_" + i + ")&", FormataTempoMin(Convert.ToInt32(rw_EventosPTT["max_PTT"]) / 512));
+                        SubstituiVar("&(DUR_PTT_" + i + ")&", FormataTempoMin(Convert.ToInt32(rw_EventosPTT["Duracao_PTT"]) / 512));
+                    }
+                }
+            }
+            else
+            {
+                for(int i = 0; i <= 9; i++)
+                {
+                    SubstituiVar("&(QTD_PTT_" + i + ")&", "0");
+                    SubstituiVar("&(MAIOR_PTT_" + i + ")&", "-");
+                    SubstituiVar("&(DUR_PTT_" + i + ")&", "-");
+                }
+            }
+
+        }
+
+
     }
 }
 

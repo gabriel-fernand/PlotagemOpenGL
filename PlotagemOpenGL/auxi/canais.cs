@@ -351,5 +351,7 @@ namespace PlotagemOpenGL.auxi
             SA02 = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[pagina]["SatBasal"]);
             return SA02;
         }
+
+
     }
 }

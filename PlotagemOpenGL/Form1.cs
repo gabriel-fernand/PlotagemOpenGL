@@ -415,7 +415,7 @@ namespace PlotagemOpenGL
                     telaLoad.AtualizarProgresso(100);
 
                     chamarTelinhaVid();
-
+                    AnaliseCO2.GetPrimeiroCO2(Path.GetFileNameWithoutExtension(GlobVar.textFile));
                     F_Idioma();
                 }
             }

@@ -135,6 +135,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_ParametrosParaAnalisar = new DataTable();
         public static DataTable tbl_RelatResumo = new DataTable();
         public static DataTable tbl_RelatResumoItem = new DataTable();
+        public static DataTable tbl_HipnoLaudo = new DataTable();
 
 
         public static DataTable Cons_Eventos = new DataTable();
