@@ -4020,7 +4020,7 @@ namespace PlotagemOpenGL.LaudoForm
         List<object> lst_segmentos = new();
         string g_variaveislaudo = "";
         string g_arq_exame = "";
-        
+
         public static Microsoft.Office.Interop.Word.Application wordApp;
         public static Microsoft.Office.Interop.Word.Document doc;
 
@@ -4287,14 +4287,14 @@ namespace PlotagemOpenGL.LaudoForm
                     {
                         VerificaDessaturacao();
 
-                        if(TextoComboContem("SPLIT-NIGHT") || TextoComboContem("SPLIT NIGHT"))
+                        if (TextoComboContem("SPLIT-NIGHT") || TextoComboContem("SPLIT NIGHT"))
                         {
                             PreparaRelatorioMDB();
 
                             InicializaEvRespDOC();
 
                             //Latencia multipla
-                            if(passagem == 1)
+                            if (passagem == 1)
                             {
                                 CalculaResumoMultiplaLatencia();
                             }
@@ -4302,7 +4302,7 @@ namespace PlotagemOpenGL.LaudoForm
                             {
                                 S_CPAP_Dados(passagem, pag_noite, pag_dia);
                             }
-                            else if(TextoComboContem("RESUMO_EPAP"))
+                            else if (TextoComboContem("RESUMO_EPAP"))
                             {
                                 S_BPAP_Dados(passagem, pag_noite, pag_dia);
                             }
@@ -4408,7 +4408,7 @@ namespace PlotagemOpenGL.LaudoForm
         {
 
             // Zera os eventos
-            var eventos = new[] {ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera};
+            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera };
             foreach (var ev in eventos)
             {
                 ev.indice = 0;
@@ -4624,7 +4624,7 @@ namespace PlotagemOpenGL.LaudoForm
             int pag = -1;
             if (eventos.Any())
                 pag = eventos.First().Field<int>("NumPag");
-            if(pag == -1)
+            if (pag == -1)
             {
                 pag = 0;
             }
@@ -5009,7 +5009,7 @@ namespace PlotagemOpenGL.LaudoForm
                             case 1: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_AC += row.Qtde; break;
                             case 2: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_AO += row.Qtde; break;
                             case 3: g_BPAP_Relat[row.CPAP][row.EPAP].qtd_am += row.Qtde; break;
-                            case 4 or 5 or 6:g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_Hip += row.Qtde; break;
+                            case 4 or 5 or 6: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_Hip += row.Qtde; break;
                             case 17: g_BPAP_Relat[row.CPAP][row.EPAP].Qtd_Dessat += row.Qtde; break;
                         }
                     }
@@ -5184,7 +5184,7 @@ namespace PlotagemOpenGL.LaudoForm
             foreach (DataRow rw in GlobVar.tbl_CanaisAdquiridos.Rows)
             {
                 string SiglaTipoCanal = rw["SiglaTipoCanal"].ToString();
-                if(SiglaTipoCanal.Equals(g_sao2) || SiglaTipoCanal.Equals(g_sao2_ser))
+                if (SiglaTipoCanal.Equals(g_sao2) || SiglaTipoCanal.Equals(g_sao2_ser))
                 {
                     if (SiglaTipoCanal.Equals(g_sao2))
                     {
@@ -5320,10 +5320,10 @@ namespace PlotagemOpenGL.LaudoForm
                 media_sat = 0;
 
             //GlobVar.dbExame.S_GravaResumoDessat(menor_sat, maior_sat, media_sat,
-                //abaixo90 / (double)GlobVar.txPorCanal[canGrav],
-                //abaixo80 / (double)GlobVar.txPorCanal[canGrav],
-                //abaixo70 / (double)GlobVar.txPorCanal[canGrav]);
-            
+            //abaixo90 / (double)GlobVar.txPorCanal[canGrav],
+            //abaixo80 / (double)GlobVar.txPorCanal[canGrav],
+            //abaixo70 / (double)GlobVar.txPorCanal[canGrav]);
+
             // Atualiza flag no resumo
             foreach (DataRow row in GlobVar.tbl_ResumoExame.Rows)
             {
@@ -5445,7 +5445,7 @@ namespace PlotagemOpenGL.LaudoForm
                                             // Atualiza freqMediaStr mantendo últimos (Freq_Segundos - 1) valores
                                             freqMediaStr = freqMediaStr.Substring(4) + valor.ToString("000") + "#";
 
-                                            valor = (int)Math.Round(media , 0);
+                                            valor = (int)Math.Round(media, 0);
 
                                             FC_MEDIA += valor;
                                             qtd_media++;
@@ -5606,13 +5606,13 @@ namespace PlotagemOpenGL.LaudoForm
             }
 
             DataTable tbl = ExecutaSQL(cnn_dbExame, sql);
-            string descrEvento = ""; 
+            string descrEvento = "";
             string corFundo = "";
             string corTexto = "";// validar o codigo abaixo 
-            if(tbl != null)
+            if (tbl != null)
             {
                 GlobVar.tbl_RelatResumo = ExecutaSQL(cnn_Config, "SELECT * FROM tbl_RelatResumo");
-                foreach(DataRow tbl_RelatResumo in GlobVar.tbl_RelatResumo.Rows)
+                foreach (DataRow tbl_RelatResumo in GlobVar.tbl_RelatResumo.Rows)
                 {
                     int codGrupo = Convert.ToInt32(tbl_RelatResumo["CodGrupo"]);
                     string descrGrupo = tbl_RelatResumo["DescrGrupo"].ToString();
@@ -5627,7 +5627,7 @@ namespace PlotagemOpenGL.LaudoForm
                     {
                         tbl_RelatResumoItem = itensFiltrados.CopyToDataTable();
                     }
-                    if(tbl_RelatResumoItem != null && tbl_RelatResumoItem.AsEnumerable().Any(row => row.Field<int>("CodGrupo") == codGrupo))
+                    if (tbl_RelatResumoItem != null && tbl_RelatResumoItem.AsEnumerable().Any(row => row.Field<int>("CodGrupo") == codGrupo))
                     {
                         foreach (DataRow row_RelatResumoItem in tbl_RelatResumoItem.Rows)
                         {
@@ -5772,7 +5772,7 @@ namespace PlotagemOpenGL.LaudoForm
                                         insertCommand.ExecuteNonQuery();
                                     }
                                 }
-                                
+
                             }
                         }
 
@@ -6175,7 +6175,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
             string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
 
-            if(GlobVar.tbl_DadosExame != null && GlobVar.tbl_ResumoExame != null)
+            if (GlobVar.tbl_DadosExame != null && GlobVar.tbl_ResumoExame != null)
             {
                 if (GlobVar.tbl_DadosExame.Rows.Count > 0)
                 {
@@ -6383,12 +6383,12 @@ namespace PlotagemOpenGL.LaudoForm
                                    $"INNER JOIN {table2} ON {table1}.{joinKey}.Seq = {table2}.{joinKey}.Seq " +
                                    $"WHERE {table1}.Pag_Ini >= {pag_noite} AND {table1}.Pag_Ini <= {pag_dia} " +
                                    $"AND {table2}.Pag_Ini >= {pag_noite} AND {table2}.Pag_Ini <= {pag_dia}";
-                    DataTable result =ExecutaSQL(cnn_dbExame, query);
+                    DataTable result = ExecutaSQL(cnn_dbExame, query);
                     return Convert.ToInt32(result.Rows[0]["Qtd_Evento"]);
                 }
 
                 SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"));
-                SubstituiVar("&(IND_PLM_DESP)&",(qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_PLM_DESP)&", (qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
 
                 // DESPERTAR COM DESSAT
                 sql = $"SELECT COUNT(Cons_Desp_Com_Dessat.CodEvento) AS Qtd_Evento FROM Cons_Desp_Com_Dessat WHERE Cons_Desp_Com_Dessat.Pag_Ini >= {pag_noite} AND Cons_Desp_Com_Dessat.Pag_Ini <= {pag_dia}";
@@ -6443,7 +6443,7 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(CO2_LIMITEPERC2)&", texto_co2.Substring(47, 5));
                 }
 
-                if(passagem != ultimapassagem)
+                if (passagem != ultimapassagem)
                 {
                     //Comentarios
                     foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
@@ -6470,12 +6470,469 @@ namespace PlotagemOpenGL.LaudoForm
                         }
                     }
 
+                    //' RESUMO DE EVENTOS
 
                     ResumoEventos(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
 
+                    //' NOVOS RESUMOS DE EVENTOS RESPIRATORIOS
 
+                    S_PreparaEventosRespiratorios(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
+
+                    //'rotina de calculo da saturação por estágio
+
+                    s_Calcula_Saturacao_Estagio(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
                 }
             }
+        }
+        public static void s_Calcula_Saturacao_Estagio(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
+        {
+
+        }
+
+        public static void S_PreparaEventosRespiratorios(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
+        {
+            int? Lat_N1 = null;
+            int? Lat_N2 = null;
+            int? Lat_N3 = null;
+            int j = 0;
+            var paginas = GlobVar.tbl_Paginas.AsEnumerable()
+                .OrderBy(row => row.Field<int>("NumPag"))
+                .ToList();
+
+            for (int i = 0; i < paginas.Count; i++)
+            {
+                int estagio = paginas[i].Field<int>("estagio");
+                int numPag = paginas[i].Field<int>("NumPag");
+
+                if (estagio != 0)
+                {
+                    if (estagio == 1 && Lat_N1 == null)
+                        Lat_N1 = numPag;
+
+                    if (estagio == 2 && Lat_N2 == null)
+                        Lat_N2 = numPag;
+
+                    if (estagio == 3 && Lat_N3 == null)
+                    {
+                        j = i + 1000;
+                        if (j >= paginas.Count) j = paginas.Count - 1;
+                        Lat_N3 = paginas[j].Field<int>("NumPag");
+                    }
+
+                    if (Lat_N1.HasValue && Lat_N2.HasValue && Lat_N3.HasValue)
+                        break;
+                }
+            }
+
+            // Substitui variáveis
+            SubstituiVar("&(LAT_SONO_N1)&", ((Lat_N1.GetValueOrDefault() - pag_noite) / 60.0).ToString("00"));
+            SubstituiVar("&(LAT_SONO_N2)&", ((Lat_N2.GetValueOrDefault() - pag_noite) / 60.0).ToString("00"));
+            SubstituiVar("&(LAT_SONO_N3)&", ((Lat_N3.GetValueOrDefault() - pag_noite) / 60.0).ToString("00"));
+
+            // Se a variável não existe, encerra
+            if (!ExisteVar("&(DUR_MAX_REM_APNEIA_CEN)&"))
+                return;
+
+            // HIPOPNEIA - REM
+            string sql = "SELECT * FROM Cons_Eventos_Hipop WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
+            var eventosRemHipop = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosRemHipop.Rows.Count > 0 ? eventosRemHipop.Rows.Count : 1;
+            double dur_max = 0;
+            double dur_tot = 0;
+
+            foreach (DataRow ev in eventosRemHipop.Rows)
+            {
+                double dur = Convert.ToDouble(ev["duracao"]);
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_rem_hip = dur_max / GlobVar.namos;
+            double dur_med_rem_hip = dur_tot / j / GlobVar.namos;
+            double dur_tot_rem_hip = dur_tot / GlobVar.namos;
+            int qtd_rem_hip = eventosRemHipop.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_REM_HIPOPNEIA)&", dur_max_rem_hip.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_REM_HIPOPNEIA)&", dur_med_rem_hip.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_REM_HIPOPNEIA)&", TimeSpan.FromSeconds(dur_tot_rem_hip).ToString(@"hh\:mm\:ss"));
+
+            // HIPOPNEIA - NREM
+            sql = "SELECT * FROM Cons_Eventos_Hipop WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
+            var eventosNremHipop = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosNremHipop.Rows.Count > 0 ? eventosNremHipop.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosNremHipop.Rows)
+            {
+                double dur = Convert.ToDouble(ev["duracao"]);
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_nrem_hip = dur_max / GlobVar.namos;
+            double dur_med_nrem_hip = dur_tot / j / GlobVar.namos;
+            double dur_tot_nrem_hip = dur_tot / GlobVar.namos;
+            int qtd_nrem_hip = eventosNremHipop.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_NREM_HIPOPNEIA)&", dur_max_nrem_hip.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_NREM_HIPOPNEIA)&", dur_med_nrem_hip.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_NREM_HIPOPNEIA)&", TimeSpan.FromSeconds(dur_tot_nrem_hip).ToString(@"hh\:mm\:ss"));
+
+
+            // RERA - REM
+            sql = "SELECT * FROM Cons_Eventos_RERA WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
+            var eventosRemRera = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosRemRera.Rows.Count > 0 ? eventosRemRera.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosRemRera.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_rem_rera = dur_max / GlobVar.namos;
+            double dur_med_rem_rera = dur_tot / j / GlobVar.namos;
+            double dur_tot_rem_rera = dur_tot / GlobVar.namos;
+            int QTD_REM_RERA = eventosRemRera.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_REM_RERA)&", dur_max_rem_rera.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_REM_RERA)&", dur_med_rem_rera.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_REM_RERA)&", TimeSpan.FromSeconds(dur_tot_rem_rera).ToString(@"hh\:mm\:ss"));
+
+            // RERA - NREM
+            sql = "SELECT * FROM Cons_Eventos_RERA WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
+            var eventosNremRera = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosNremRera.Rows.Count > 0 ? eventosNremRera.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosNremRera.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_nrem_rera = dur_max / GlobVar.namos;
+            double dur_med_nrem_rera = dur_tot / j / GlobVar.namos;
+            double dur_tot_nrem_rera = dur_tot / GlobVar.namos;
+            int QTD_NREM_RERA = eventosNremRera.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_NREM_RERA)&", dur_max_nrem_rera.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_NREM_RERA)&", dur_med_nrem_rera.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_NREM_RERA)&", TimeSpan.FromSeconds(dur_tot_nrem_rera).ToString(@"hh\:mm\:ss"));
+
+
+            // APNEIA CENTRAL - REM
+
+            sql = "SELECT * FROM Cons_Eventos_ApCen WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
+            var eventosRemApCen = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosRemApCen.Rows.Count > 0 ? eventosRemApCen.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosRemApCen.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_rem_ap_cen = dur_max / GlobVar.namos;
+            double dur_med_rem_ap_cen = dur_tot / j / GlobVar.namos;
+            double dur_tot_rem_ap_cen = dur_tot / GlobVar.namos;
+            int qtd_rem_ap_cen = eventosRemApCen.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_REM_APNEIA_CEN)&", dur_max_rem_ap_cen.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_REM_APNEIA_CEN)&", dur_med_rem_ap_cen.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_REM_APNEIA_CEN)&",  TimeSpan.FromSeconds(dur_tot_rem_ap_cen).ToString(@"hh\:mm\:ss"));
+
+            // APNEIA CENTRAL - NREM
+            sql = "SELECT * FROM Cons_Eventos_ApCen WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
+            var eventosNremApCen = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosNremApCen.Rows.Count > 0 ? eventosNremApCen.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosNremApCen.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_nrem_ap_cen = dur_max / GlobVar.namos;
+            double dur_med_nrem_ap_cen = dur_tot / j / GlobVar.namos;
+            double dur_tot_nrem_ap_cen = dur_tot / GlobVar.namos;
+            int qtd_nrem_ap_cen = eventosNremApCen.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_NREM_APNEIA_CEN)&", dur_max_nrem_ap_cen.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_NREM_APNEIA_CEN)&", dur_med_nrem_ap_cen.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_NREM_APNEIA_CEN)&",  TimeSpan.FromSeconds(dur_tot_nrem_ap_cen).ToString(@"hh\:mm\:ss"));
+
+            // APNEIA MISTA - REM
+            sql = "SELECT * FROM Cons_Eventos_ApMis WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
+            var eventosRemApMis = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosRemApMis.Rows.Count > 0 ? eventosRemApMis.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosRemApMis.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_rem_ap_mis = dur_max / GlobVar.namos;
+            double dur_med_rem_ap_mis = dur_tot / j / GlobVar.namos;
+            double dur_tot_rem_ap_mis = dur_tot / GlobVar.namos;
+            int qtd_rem_ap_mis = eventosRemApMis.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_REM_APNEIA_MIS)&", dur_max_rem_ap_mis.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_REM_APNEIA_MIS)&", dur_med_rem_ap_mis.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_REM_APNEIA_MIS)&", TimeSpan.FromSeconds(dur_tot_rem_ap_mis).ToString(@"hh\:mm\:ss"));
+
+            // APNEIA MISTA - NREM
+            sql = "SELECT * FROM Cons_Eventos_ApMis WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
+            var eventosNremApMis = ExecutaSQL(cnn_dbConfig, sql);
+
+            j = eventosNremApMis.Rows.Count > 0 ? eventosNremApMis.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosNremApMis.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_nrem_ap_mis = dur_max / GlobVar.namos;
+            double dur_med_nrem_ap_mis = dur_tot / j / GlobVar.namos;
+            double dur_tot_nrem_ap_mis = dur_tot / GlobVar.namos;
+            int qtd_nrem_ap_mis = eventosNremApMis.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_NREM_APNEIA_MIS)&", dur_max_nrem_ap_mis.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_NREM_APNEIA_MIS)&", dur_med_nrem_ap_mis.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_NREM_APNEIA_MIS)&", TimeSpan.FromSeconds(dur_tot_nrem_ap_mis).ToString(@"hh\:mm\:ss"));
+
+
+            // APNEIA OBSTRUTIVA - REM
+            sql = "SELECT * FROM Cons_Eventos_ApObs WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
+            var eventosRemApObs = ExecutaSQL(cnn_dbExame, sql);
+
+            j = eventosRemApObs.Rows.Count > 0 ? eventosRemApObs.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosRemApObs.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_rem_ap_obs = dur_max / GlobVar.namos;
+            double dur_med_rem_ap_obs = dur_tot / j / GlobVar.namos;
+            double dur_tot_rem_ap_obs = dur_tot / GlobVar.namos;
+            int qtd_rem_ap_obs = eventosRemApObs.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_REM_APNEIA_OBS)&", dur_max_rem_ap_obs.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_REM_APNEIA_OBS)&", dur_med_rem_ap_obs.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_REM_APNEIA_OBS)&", TimeSpan.FromSeconds(dur_tot_rem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+            // APNEIA OBSTRUTIVA - NREM
+            sql = "SELECT * FROM Cons_Eventos_ApObs WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
+            var eventosNremApObs = ExecutaSQL(cnn_dbExame,sql);
+
+            j = eventosNremApObs.Rows.Count > 0 ? eventosNremApObs.Rows.Count : 1;
+            dur_max = 0;
+            dur_tot = 0;
+
+            foreach (DataRow ev in eventosNremApObs.Rows)
+            {
+                double dur = ev.Field<double>("duracao");
+                if (dur > dur_max) dur_max = dur;
+                dur_tot += dur;
+            }
+
+            double dur_max_nrem_ap_obs = dur_max / GlobVar.namos;
+            double dur_med_nrem_ap_obs = dur_tot / j / GlobVar.namos;
+            double dur_tot_nrem_ap_obs = dur_tot / GlobVar.namos;
+            int qtd_nrem_ap_obs = eventosNremApObs.Rows.Count;
+
+            SubstituiVar("&(DUR_MAX_NREM_APNEIA_OBS)&", dur_max_nrem_ap_obs.ToString("0.0"));
+            SubstituiVar("&(DUR_MED_NREM_APNEIA_OBS)&", dur_med_nrem_ap_obs.ToString("0.0"));
+            SubstituiVar("&(DUR_TOT_NREM_APNEIA_OBS)&", TimeSpan.FromSeconds(dur_tot_nrem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+            //   'SUBSTITUICAO DAS SOMAS
+            // REM APNEIA
+            // DUR_MAX_REM_APNEIA
+            dur_max = dur_max_rem_ap_cen;
+            if (dur_max_rem_ap_mis > dur_max) dur_max = dur_max_rem_ap_mis;
+            if (dur_max_rem_ap_obs > dur_max) dur_max = dur_max_rem_ap_obs;
+            SubstituiVar("&(DUR_MAX_REM_APNEIA)&", dur_max.ToString("0.0"));
+
+            // DUR_MED_REM_APNEIA
+            int total_qtd_rem_apneia = qtd_rem_ap_cen + qtd_rem_ap_mis + qtd_rem_ap_obs;
+            if (total_qtd_rem_apneia > 0)
+            {
+                double dur_med = (dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs) / total_qtd_rem_apneia;
+                SubstituiVar("&(DUR_MED_REM_APNEIA)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(DUR_MED_REM_APNEIA)&", "0.0");
+            }
+
+            // DUR_TOT_REM_APNEIA
+            SubstituiVar("&(DUR_TOT_REM_APNEIA)&", TimeSpan.FromSeconds(dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+
+            // NREM APNEIA
+            // DUR_MAX_NREM_APNEIA
+            dur_max = dur_max_nrem_ap_cen;
+            if (dur_max_nrem_ap_mis > dur_max) dur_max = dur_max_nrem_ap_mis;
+            if (dur_max_nrem_ap_obs > dur_max) dur_max = dur_max_nrem_ap_obs;
+            SubstituiVar("&(DUR_MAX_NREM_APNEIA)&", dur_max.ToString("0.0"));
+
+            // DUR_MED_NREM_APNEIA
+            int total_qtd_nrem_apneia = qtd_nrem_ap_cen + qtd_nrem_ap_mis + qtd_nrem_ap_obs;
+            if (total_qtd_nrem_apneia > 0)
+            {
+                double dur_med = (dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs) / total_qtd_nrem_apneia;
+                SubstituiVar("&(DUR_MED_NREM_APNEIA)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(DUR_MED_NREM_APNEIA)&", "0.0");
+            }
+
+            // DUR_TOT_NREM_APNEIA
+            SubstituiVar("&(DUR_TOT_NREM_APNEIA)&", TimeSpan.FromSeconds(dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+
+            // REM APNEIA_HIPOP
+            // MAX_REM_APNEIA_HIPOP
+            dur_max = dur_max_rem_ap_cen;
+            if (dur_max_rem_ap_mis > dur_max) dur_max = dur_max_rem_ap_mis;
+            if (dur_max_rem_ap_obs > dur_max) dur_max = dur_max_rem_ap_obs;
+            if (dur_max_rem_hip > dur_max) dur_max = dur_max_rem_hip;
+            SubstituiVar("&(MAX_REM_APNEIA_HIPOP)&", dur_max.ToString("0.0"));
+
+            if (dur_max_nrem_rera > dur_max) dur_max = dur_max_nrem_rera;
+            SubstituiVar("&(MAX_REM_AHR)&", dur_max.ToString("0.0"));
+
+            // MED_REM_APNEIA_HIPOP
+            int total_qtd_rem_ahr = qtd_rem_hip + qtd_rem_ap_cen + qtd_rem_ap_mis + qtd_rem_ap_obs;
+            if (total_qtd_rem_ahr > 0)
+            {
+                double dur_med = (dur_tot_rem_hip + dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs) / total_qtd_rem_ahr;
+                SubstituiVar("&(MED_REM_APNEIA_HIPOP)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(MED_REM_APNEIA_HIPOP)&", "0.0");
+            }
+
+            // TOT_REM_APNEIA_HIPOP
+            SubstituiVar("&(TOT_REM_APNEIA_HIPOP)&", TimeSpan.FromSeconds(dur_tot_rem_hip + dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+
+            // NREM APNEIA_HIPOP
+            // MAX_NREM_APNEIA_HIPOP
+            dur_max = dur_max_nrem_ap_cen;
+            if (dur_max_nrem_ap_mis > dur_max) dur_max = dur_max_nrem_ap_mis;
+            if (dur_max_nrem_ap_obs > dur_max) dur_max = dur_max_nrem_ap_obs;
+            if (dur_max_nrem_hip > dur_max) dur_max = dur_max_nrem_hip;
+            SubstituiVar("&(MAX_NREM_APNEIA_HIPOP)&", dur_max.ToString("0.0"));
+
+            if (dur_max_nrem_rera > dur_max) dur_max = dur_max_nrem_rera;
+            SubstituiVar("&(MAX_NREM_AHR)&", dur_max.ToString("0.0"));
+
+            // MED_NREM_APNEIA_HIPOP
+            int total_qtd_nrem_ahr = qtd_nrem_hip + qtd_nrem_ap_cen + qtd_nrem_ap_mis + qtd_nrem_ap_obs;
+            if (total_qtd_nrem_ahr > 0)
+            {
+                double dur_med = (dur_tot_nrem_hip + dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs) / total_qtd_nrem_ahr;
+                SubstituiVar("&(MED_NREM_APNEIA_HIPOP)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(MED_NREM_APNEIA_HIPOP)&", "0.0");
+            }
+
+            // TOT_NREM_APNEIA_HIPOP
+            SubstituiVar("&(TOT_NREM_APNEIA_HIPOP)&", TimeSpan.FromSeconds(dur_tot_nrem_hip + dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+            // REM APNEIA_HIPOP_RERA
+            // MED_REM_APNEIA_HIPOP_RERA
+            int total_qtd_rem_ahr_rera = QTD_REM_RERA + qtd_rem_hip + qtd_rem_ap_cen + qtd_rem_ap_mis + qtd_rem_ap_obs;
+            if (total_qtd_rem_ahr_rera > 0)
+            {
+                double dur_med = (dur_tot_rem_rera + dur_tot_rem_hip + dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs) / total_qtd_rem_ahr_rera;
+                SubstituiVar("&(MED_REM_AHR)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(MED_REM_AHR)&", "0.0");
+            }
+
+            // TOT_REM_APNEIA_HIPOP_RERA
+            SubstituiVar("&(TOT_REM_AHR)&", TimeSpan.FromSeconds(dur_tot_rem_rera + dur_tot_rem_hip + dur_tot_rem_ap_cen + dur_tot_rem_ap_mis + dur_tot_rem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+            // NREM APNEIA_HIPOP_RERA
+            // MED_NREM_APNEIA_HIPOP_RERA
+            int total_qtd_nrem_ahr_rera = QTD_NREM_RERA + qtd_nrem_hip + qtd_nrem_ap_cen + qtd_nrem_ap_mis + qtd_nrem_ap_obs;
+            if (total_qtd_nrem_ahr_rera > 0)
+            {
+                double dur_med = (dur_tot_nrem_rera + dur_tot_nrem_hip + dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs) / total_qtd_nrem_ahr_rera;
+                SubstituiVar("&(MED_NREM_AHR)&", dur_med.ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(MED_NREM_AHR)&", "0.0");
+            }
+
+            // TOT_NREM_APNEIA_HIPOP_RERA
+            SubstituiVar("&(TOT_NREM_AHR)&", TimeSpan.FromSeconds(dur_tot_nrem_rera + dur_tot_nrem_hip + dur_tot_nrem_ap_cen + dur_tot_nrem_ap_mis + dur_tot_nrem_ap_obs).ToString(@"hh\:mm\:ss"));
+
+            // DUR_TOT_APNEIA_CEN
+            SubstituiVar("&(DUR_TOT_APNEIA_CEN)&", TimeSpan.FromSeconds(dur_tot_rem_ap_cen + dur_tot_nrem_ap_cen).ToString(@"hh\:mm\:ss"));
+
+            // DUR_TOT_APNEIA_OBS
+            SubstituiVar("&(DUR_TOT_APNEIA_OBS)&", TimeSpan.FromSeconds(dur_tot_rem_ap_obs + dur_tot_nrem_ap_obs).ToString(@"hh\:mm\:ss"));  // Corrigido: código original repetia "ap_cen" por engano
+
+            // DUR_TOT_APNEIA_MIS
+            SubstituiVar("&(DUR_TOT_APNEIA_MIS)&", TimeSpan.FromSeconds(dur_tot_rem_ap_mis + dur_tot_nrem_ap_mis).ToString(@"hh\:mm\:ss"));
+
+            // DUR_TOT_APNEIA
+            dur_tot = dur_tot_rem_ap_cen + dur_tot_nrem_ap_cen + dur_tot_rem_ap_mis + dur_tot_nrem_ap_mis + dur_tot_rem_ap_obs + dur_tot_nrem_ap_obs;
+            SubstituiVar("&(DUR_TOT_APNEIA)&", TimeSpan.FromSeconds(dur_tot).ToString(@"hh\:mm\:ss"));
+
+            // DUR_TOT_HIPOPNEIA
+            dur_tot += dur_tot_rem_hip + dur_tot_nrem_hip;
+            SubstituiVar("&(DUR_TOT_HIPOPNEIA)&", TimeSpan.FromSeconds(dur_tot).ToString(@"hh\:mm\:ss"));
+
+            // QTD_REM_AHR
+            SubstituiVar("&(QTD_REM_AHR)&", (qtd_rem_hip + QTD_REM_RERA + qtd_rem_ap_cen + qtd_rem_ap_mis + qtd_rem_ap_obs).ToString());
+
+            // QTD_NREM_AHR
+            SubstituiVar("&(QTD_NREM_AHR)&", (qtd_nrem_hip + QTD_NREM_RERA + qtd_nrem_ap_cen + qtd_nrem_ap_mis + qtd_nrem_ap_obs).ToString());
+
+            // Continuação do método vai aqui...
         }
 
         public static async void ResumoEventos(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
@@ -7205,7 +7662,6 @@ namespace PlotagemOpenGL.LaudoForm
             }
 
         }
-
 
     }
 }
