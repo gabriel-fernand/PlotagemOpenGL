@@ -1,6 +1,7 @@
 ﻿using Accord.Math;
 using Accord.Statistics;
 using Cyotek.Windows.Forms;
+using Google.Protobuf.WellKnownTypes;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PlotagemOpenGL.auxi;
@@ -4181,14 +4182,15 @@ namespace PlotagemOpenGL.LaudoForm
 
                 // Copia o arquivo original para o temporário
                 File.Copy(nomeOrigem, caminhoTemp, overwrite: true);
+                string g_textolaudo = "";
 
                 // Inicializa o Word
                 wordApp = new Microsoft.Office.Interop.Word.Application();
-                doc = null;
-                string g_textolaudo = "";
+                wordApp.Visible = true; // <- ESSENCIAL para mostrar a janela do Word
 
+                // Abre o documento
                 doc = wordApp.Documents.Open(caminhoTemp);
-                doc.Activate();
+                doc.Activate(); // Coloca o documento em foco (opcional se já visível)
 
                 g_textolaudo = wordApp.Selection.Text;
 
@@ -4208,10 +4210,10 @@ namespace PlotagemOpenGL.LaudoForm
 
                     string origem = Path.Combine(g_dir_laudos, "Graficos para laudo.xls");
                     string destino = Path.Combine(g_dir_laudos, nome_arq_temp + ".xls");
-                    File.Copy(origem, destino, overwrite: true); // overwrite se quiser sobrescrever o destino
-
+                    File.Copy(origem, destino, overwrite: true); // sobrescreve se já existir
 
                     ObjExcel = new Microsoft.Office.Interop.Excel.Application();
+                    ObjExcel.Visible = true; // <- ESSENCIAL para abrir visivelmente
 
                     planExcel = ObjExcel.Workbooks.Open(destino);
 
@@ -4310,6 +4312,7 @@ namespace PlotagemOpenGL.LaudoForm
                         {
 
                         }
+                        InicializaEvRespDOC();
 
                         F_PreencheLaudoDOC(Path.Combine(@"C:\Temp\Dat\", comboBox1.Text + ".doc"));
                     }
@@ -4405,7 +4408,7 @@ namespace PlotagemOpenGL.LaudoForm
         {
 
             // Zera os eventos
-            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera };
+            var eventos = new[] {ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera};
             foreach (var ev in eventos)
             {
                 ev.indice = 0;
@@ -6443,15 +6446,30 @@ namespace PlotagemOpenGL.LaudoForm
                 if(passagem != ultimapassagem)
                 {
                     //Comentarios
-                    planExcel.Sheets.Select("Comentarios");
-
+                    foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
+                    {
+                        if (sheet.Name.Equals("Comentarios", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sheet.Select(); // ou sheet.Activate()
+                            break;
+                        }
+                    }
                     if (texto.EndsWith("COMENTARIOS.DOC", StringComparison.OrdinalIgnoreCase))
                     {
                         IncluiComentarios();
                     }
 
                     planExcel.RefreshAll();
-                    planExcel.Sheets.Select("Sheet1");
+
+                    foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
+                    {
+                        if (sheet.Name.Equals("Sheet1", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sheet.Select(); // ou sheet.Activate()
+                            break;
+                        }
+                    }
+
 
                     ResumoEventos(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
 
@@ -6462,7 +6480,7 @@ namespace PlotagemOpenGL.LaudoForm
 
         public static async void ResumoEventos(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
         {
-            if (!ExisteVar("RESUMO_EVENTOS)&")) return;
+            if (!ExisteVar("&(RESUMO_EVENTOS)&")) return;
 
             string eventosCardiacos = "#";
             string sql;
@@ -6472,130 +6490,174 @@ namespace PlotagemOpenGL.LaudoForm
 
             try
             {
-                // Coletar eventos cardíacos (CodTipoCanal = 2)
-                sql = "SELECT * FROM tbl_EventoTipoCanal WHERE CodTipoCanal = 2";
-                tbl = ExecutaSQL(cnn_dbConfig, sql);
-
-                foreach (DataRow row in tbl.Rows)
-                    eventosCardiacos += ((int)row["CodEvento"]).ToString("000") + "#";
-
-                // Estatísticas gerais com estagio 0 (eventos cardíacos)
-                sql = $@"
-                    SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento,
-                           SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur
-                    FROM Cons_EventosComEstag
-                    WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
-                    GROUP BY CodEvento";
-                tblResumoEventos2 = ExecutaSQL(cnn_dbExame, sql);
-
-                // Relacionar eventos com grupos
-                sql = @"
-                    SELECT a.CodGrupo, a.DescrGrupo, b.CodEvento, c.Descrevento
-                    FROM tbl_RelatResumo a
-                    JOIN tbl_RelatResumoItem b ON b.CodGrupo = a.CodGrupo
-                    JOIN tbl_CadEvento c ON c.CodEvento = b.CodEvento
-                    ORDER BY a.CodGrupo, b.Ordem";
-                tblGrupoEventos2 = ExecutaSQL(cnn_dbConfig, sql);
-
-                // Estatísticas gerais com estagio > 0 (outros eventos)
-                sql = $@"
-                    SELECT CodEvento, COUNT(CodEvento) AS Qtd_Evento,
-                           SUM(Duracao) AS Dur_Total, MAX(Duracao) AS Maior_Dur
-                    FROM Cons_EventosComEstag
-                    WHERE estagio > 0 AND Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
-                    GROUP BY CodEvento";
-                tblResumoEventos = ExecutaSQL(cnn_dbExame, sql);
-
-                tblGrupoEventos = tblGrupoEventos2.Copy(); // Os grupos são os mesmos para ambos
-
-                // Continuação: gerar o Excel (na próxima parte)
-
-                // Supondo que todas as variáveis necessárias foram inicializadas anteriormente...
-                var grupo = "";
-                int linha = 40;
-
-                for (int iGrupo = 0; iGrupo < tblGrupoEventos2.Rows.Count; iGrupo++)
+                if (ExisteVar("&(RESUMO_EVENTOS)&"))
                 {
-                    DataRow grupoRow = tblGrupoEventos.Rows[iGrupo];
-                    DataRow grupoRow2 = tblGrupoEventos2.Rows[iGrupo];
-                    string codEvento = grupoRow["CodEvento"].ToString();
-
-                    // Filtra as tabelas de resumo
-                    DataRow[] resumoRows = tblResumoEventos.Select($"CodEvento = {codEvento}");
-                    DataRow[] resumoRows2 = tblResumoEventos2.Select($"CodEvento = {codEvento}");
-
-                    if (resumoRows2.Length > 0)
-                    {
-                        if (grupo != grupoRow["DescrGrupo"].ToString())
+                        // Eventos cardíacos
+                        sql = "SELECT * FROM tbl_EventoTipoCanal WHERE CodTipoCanal = 2";
+                        tbl = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(rw => rw.Field<int>("CodTipoCanal") == 2).CopyToDataTable();
+                        foreach (DataRow row in tbl.Rows)
                         {
-                            grupo = grupoRow["DescrGrupo"].ToString();
-                            for (int i = linha; i <= 140; i++)
+                            eventosCardiacos += ((int)row["CodEvento"]).ToString("000") + "#";
+                        }
+
+                        // Eventos cardíacos (estágio 0 permitido)
+                        sql = $@"SELECT CodEvento, COUNT(CodEvento) AS qtd_evento,
+                    SUM(Duracao) AS Dur_Total,
+                    MAX(Duracao) AS Maior_Dur
+             FROM Cons_EventosComEstag
+             WHERE Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
+             GROUP BY CodEvento";
+                    tblResumoEventos2 = ExecutaSQL(cnn_dbExame, sql);
+
+                    tblGrupoEventos2 = new DataTable();
+                    tblGrupoEventos2.Columns.Add("CodGrupo", typeof(int));
+                    tblGrupoEventos2.Columns.Add("DescrGrupo", typeof(string));
+                    tblGrupoEventos2.Columns.Add("CodEvento", typeof(int));
+                    tblGrupoEventos2.Columns.Add("DescrEvento", typeof(string));
+
+                    // Executa a junção com LINQ
+                    var query = from a in GlobVar.tbl_RelatResumo.AsEnumerable()
+                                join b in GlobVar.tbl_RelatResumoItem.AsEnumerable()
+                                    on a.Field<int>("CodGrupo") equals b.Field<int>("CodGrupo")
+                                join c in GlobVar.tbl_CadEvento.AsEnumerable()
+                                    on b.Field<int>("CodEvento") equals c.Field<int>("CodEvento")
+                                orderby a.Field<int>("CodGrupo"), b.Field<int>("Ordem")
+                                select new
+                                {
+                                    CodGrupo = a.Field<int>("CodGrupo"),
+                                    DescrGrupo = a.Field<string>("DescrGrupo"),
+                                    CodEvento = b.Field<int>("CodEvento"),
+                                    DescrEvento = c.Field<string>("DescrEvento")
+                                };
+
+                    // Preenche a DataTable com o resultado
+                    foreach (var item in query)
+                    {
+                        tblGrupoEventos2.Rows.Add(item.CodGrupo, item.DescrGrupo, item.CodEvento, item.DescrEvento);
+                    }
+                    // Eventos não cardíacos (estágio > 0)
+                    sql = $@"SELECT CodEvento, COUNT(CodEvento) AS qtd_evento,
+                    SUM(Duracao) AS Dur_Total,
+                    MAX(Duracao) AS Maior_Dur
+             FROM Cons_EventosComEstag
+             WHERE estagio > 0 AND Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia}
+             GROUP BY CodEvento";
+                    tblResumoEventos = ExecutaSQL(cnn_dbExame, sql);
+
+                    tblGrupoEventos = new DataTable();
+                    tblGrupoEventos.Columns.Add("CodGrupo", typeof(int));
+                    tblGrupoEventos.Columns.Add("DescrGrupo", typeof(string));
+                    tblGrupoEventos.Columns.Add("CodEvento", typeof(int));
+                    tblGrupoEventos.Columns.Add("DescrEvento", typeof(string));
+
+                    // Executa a junção com LINQ
+                    var query2 = from a in GlobVar.tbl_RelatResumo.AsEnumerable()
+                                join b in GlobVar.tbl_RelatResumoItem.AsEnumerable()
+                                    on a.Field<int>("CodGrupo") equals b.Field<int>("CodGrupo")
+                                join c in GlobVar.tbl_CadEvento.AsEnumerable()
+                                    on b.Field<int>("CodEvento") equals c.Field<int>("CodEvento")
+                                orderby a.Field<int>("CodGrupo"), b.Field<int>("Ordem")
+                                select new
+                                {
+                                    CodGrupo = a.Field<int>("CodGrupo"),
+                                    DescrGrupo = a.Field<string>("DescrGrupo"),
+                                    CodEvento = b.Field<int>("CodEvento"),
+                                    DescrEvento = c.Field<string>("DescrEvento")
+                                };
+
+                    // Preenche a DataTable com o resultado
+                    foreach (var item in query)
+                    {
+                        tblGrupoEventos.Rows.Add(item.CodGrupo, item.DescrGrupo, item.CodEvento, item.DescrEvento);
+                    }
+                    string grupo = "";
+                    int linha = 40;
+                    int i;
+
+                    for (int index = 0; index < tblGrupoEventos2.Rows.Count; index++)
+                    {
+                        var rowGrupo = tblGrupoEventos.Rows[index];
+                        var rowGrupo2 = tblGrupoEventos2.Rows[index];
+
+                        string codEvento = rowGrupo2["CodEvento"].ToString();
+                        DataRow[] eventoResumo = tblResumoEventos.Select($"CodEvento = {codEvento}");
+                        DataRow[] eventoResumo2 = tblResumoEventos2.Select($"CodEvento = {codEvento}");
+
+                        if (eventoResumo2.Length > 0)
+                        {
+                            if (grupo != rowGrupo["DescrGrupo"].ToString())
                             {
-                                var celula = ObjExcel.Application.Cells[i, 1].Value;
-                                if (celula == "Título")
+                                grupo = rowGrupo["DescrGrupo"].ToString();
+
+                                for (i = linha; i <= 140; i++)
                                 {
-                                    ObjExcel.Application.Cells[i, 1].Value = grupo;
-                                    linha = i + 1;
-                                    break;
+                                    string cell = ObjExcel.Cells[i, 1]?.Value?.ToString() ?? "";
+                                    if (cell == "Título")
+                                    {
+                                        ObjExcel.Cells[i, 1].Value = grupo;
+                                        linha = i + 1;
+                                        break;
+                                    }
+                                    else if (cell == "FIMFIM")
+                                    {
+                                        break;
+                                    }
                                 }
-                                else if (celula == "FIMFIM")
-                                {
-                                    goto Finaliza;
-                                }
+                            }
+
+                            if (rowGrupo["DescrGrupo"].ToString() != "Eventos Cardíacos")
+                            {
+                                DataRow ev = eventoResumo[0];
+                                ObjExcel.Cells[linha, 1].Value = "     " + rowGrupo["DescrEvento"].ToString();
+                                ObjExcel.Cells[linha, 2].Value = ev["qtd_evento"];
+                                ObjExcel.Cells[linha, 3].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Dur_Total"]) / GlobVar.namos).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 4].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Dur_Total"]) / GlobVar.namos / Convert.ToDouble(ev["qtd_evento"])).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 5].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Maior_Dur"]) / GlobVar.namos).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 6].Value = (GlobVar.tbl_ResumoExame.Rows[0]["TTS"] is 0) ? "0.0" :
+                                    (Convert.ToDouble(ev["qtd_evento"]) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString("0.0");
+                            }
+                            else
+                            {
+                                
+                                DataRow ev = eventoResumo2[0];
+                                ObjExcel.Cells[linha, 1].Value = "     " + rowGrupo2["DescrEvento"].ToString();
+                                ObjExcel.Cells[linha, 2].Value = ev["qtd_evento"];
+                                ObjExcel.Cells[linha, 3].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Dur_Total"]) / GlobVar.namos).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 4].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Dur_Total"]) / GlobVar.namos / Convert.ToDouble(ev["qtd_evento"])).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 5].Value = TimeSpan.FromSeconds(Convert.ToDouble(ev["Maior_Dur"]) / GlobVar.namos).ToString(@"hh\:mm\:ss");
+                                ObjExcel.Cells[linha, 6].Value = (GlobVar.tbl_ResumoExame.Rows[0]["TTS"] is 0) ? "0.0" :
+                                    (Convert.ToDouble(ev["qtd_evento"]) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString("0.0");
+                            }
+
+                            linha++;
+                        }
+                    }                    // Remove linhas vazias e "Título"
+                    while (linha < 150 && (ObjExcel.Cells[linha, 1]?.Value?.ToString() ?? "") != "FIMFIM")
+                        {
+                            string celula = ObjExcel.Cells[linha, 1]?.Value?.ToString() ?? "";
+                            string celulaProxima = ObjExcel.Cells[linha + 1, 1]?.Value?.ToString() ?? "";
+
+                            if (celula == "Título" || (string.IsNullOrEmpty(celula) && (string.IsNullOrEmpty(celulaProxima) || celulaProxima == "Título")))
+                            {
+                                ObjExcel.Rows[linha].Delete();
+                            }
+                            else
+                            {
+                                linha++;
                             }
                         }
 
-                        if (grupo != "Eventos Cardíacos" && resumoRows.Length > 0)
+                        if (passagem == 1)
                         {
-                            var resumo = resumoRows[0];
-                            ObjExcel.Application.Cells[linha, 1].Value = "     " + grupoRow["DescrEvento"];
-                            ObjExcel.Application.Cells[linha, 2].Value = resumo["Qtd_Evento"]; 
-                            ObjExcel.Application.Cells[linha, 3].Value = FormataTempoMin(Convert.ToInt32(resumo["Dur_Total"]) / GlobVar.namos);
-                            ObjExcel.Application.Cells[linha, 4].Value = FormataTempoMin((Convert.ToInt32(resumo["Dur_Total"]) / GlobVar.namos) / Convert.ToInt32(resumo["Qtd_Evento"]));
-                            ObjExcel.Application.Cells[linha, 5].Value = FormataTempoMin(Convert.ToInt32(resumo["Maior_Dur"]) / GlobVar.namos);
-                            ObjExcel.Application.Cells[linha, 6].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0.0" :
-                                (Convert.ToDouble(resumo["Qtd_Evento"]) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0");
+                            Cola_Resumo_Eventos("&(RESUMO_EVENTOS)&", 38, linha - 1);
                         }
                         else
                         {
-                            var resumo2 = resumoRows2[0];
-                            ObjExcel.Application.Cells[linha, 1].Value = "     " + grupoRow2["DescrEvento"];
-                            ObjExcel.Application.Cells[linha, 2].Value = resumo2["Qtd_Evento"];
-                            ObjExcel.Application.Cells[linha, 3].Value = FormataTempoMin(Convert.ToInt32(resumo2["Dur_Total"]) / GlobVar.namos);
-                            ObjExcel.Application.Cells[linha, 4].Value = FormataTempoMin((Convert.ToInt32(resumo2["Dur_Total"]) / GlobVar.namos) / Convert.ToInt32(resumo2["Qtd_Evento"]));
-                            ObjExcel.Application.Cells[linha, 5].Value = FormataTempoMin(Convert.ToInt32(resumo2["Maior_Dur"]) / GlobVar.namos);
-                            ObjExcel.Application.Cells[linha, 6].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0.0" :
-                                (Convert.ToDouble(resumo2["Qtd_Evento"]) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0");
+                            Cola_Resumo_Eventos("&(SP_RESUMO_EVENTOS)&", 38, linha - 1);
                         }
-
-                        linha++;
-                    }
+                    
                 }
 
-            Finaliza:
-
-                // Limpeza de linhas "Título" ou em branco
-                for (int i = 40; i < 150 && ObjExcel.Application.Cells[i, 1].Value?.ToString() != "FIMFIM";)
-                {
-                    var val = ObjExcel.Application.Cells[i, 1].Value?.ToString();
-                    var nextVal = ObjExcel.Application.Cells[i + 1, 1].Value?.ToString();
-                    if (val == "Título" || (string.IsNullOrEmpty(val) && (string.IsNullOrEmpty(nextVal) || nextVal == "Título")))
-                    {
-                        ObjExcel.Application.Rows[i].Delete();
-                        // não incrementa, pois a linha desceu
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-
-                // Inserção do resumo
-                string marcador = passagem == 1 ? "&(RESUMO_EVENTOS)&" :
-                                 passagem == 2 ? "&(SP_RESUMO_EVENTOS)&" :
-                                 $"&(S{passagem}_RESUMO_EVENTOS)&";
-
-                Cola_Resumo_Eventos(marcador, 38, linha - 1);
 
                 // Gráfico de Estágios
                 ObjExcel.Application.Cells[1, 2].Value = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_0"]);// tblResumoExame_EST_0;
@@ -6716,45 +6778,59 @@ namespace PlotagemOpenGL.LaudoForm
         }
         public static Bitmap CaptureOpenGLControl()
         {
-            var gl = openglHipno.OpenGL; 
+            var gl = openglHipno.OpenGL;
             int width = openglHipno.Width;
             int height = openglHipno.Height;
 
-            // Lê os pixels da área de renderização
-            byte[] pixelData = new byte[width * height * 3];
-            gl.ReadPixels(0, 0, width, height, OpenGL.GL_RGB, OpenGL.GL_UNSIGNED_BYTE, pixelData);
+            // Cria buffer para pixels com 4 bytes por pixel (BGRA)
+            byte[] pixelData = new byte[width * height * 4];
 
-            // Cria o bitmap para armazenar a imagem
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            // Lê os pixels do OpenGL no formato BGRA
+            gl.ReadPixels(0, 0, width, height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, pixelData);
+
+            // Cria o bitmap no formato 32bpp ARGB
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
 
             int stride = bmpData.Stride;
             IntPtr ptr = bmpData.Scan0;
 
-            // Cria um array que respeita o formato do bitmap (invertendo eixo Y)
-            byte[] flipped = new byte[stride * height];
+            // Copia linha por linha (invertendo Y)
             for (int y = 0; y < height; y++)
             {
-                int srcIndex = (height - y - 1) * width * 3;
-                int dstIndex = y * stride;
-                Array.Copy(pixelData, srcIndex, flipped, dstIndex, width * 3);
+                int srcIndex = (height - y - 1) * width * 4;
+                IntPtr destPtr = IntPtr.Add(ptr, y * stride);
+                Marshal.Copy(pixelData, srcIndex, destPtr, width * 4);
             }
 
-            // Copia para memória do bitmap
-            Marshal.Copy(flipped, 0, ptr, flipped.Length);
             bitmap.UnlockBits(bmpData);
-
             return bitmap;
         }
         public static void Cola_Hipnograma(string header)
         {
-            Bitmap bmp = CaptureOpenGLControl();
-            Control areaReferencia = FormLaudo.openglHipno;
-            // Copia para a área de transferência
-            Clipboard.Clear();
-            Clipboard.SetImage(bmp);
+            // Captura OpenGL em alta resolução
+            Bitmap originalBmp = CaptureOpenGLControl();
 
-            // Cola no Word na posição do header
+            // Define o controle de referência para saber o tamanho alvo
+            Control areaReferencia = FormLaudo.openglHipno;
+
+            // Converte para pontos (1 ponto = 1/72 in, 96 DPI típico em tela)
+            int targetWidth = areaReferencia.Width;
+            int targetHeight = areaReferencia.Height;
+
+            // Redimensiona a imagem com qualidade alta
+            Bitmap resizedBmp = new Bitmap(targetWidth, targetHeight);
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(resizedBmp))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(originalBmp, 0, 0, targetWidth, targetHeight);
+            }
+
+            // Coloca no clipboard
+            Clipboard.Clear();
+            Clipboard.SetImage(resizedBmp);
+
+            // Cola no Word
             var selection = FormLaudo.wordApp.Selection;
             selection.Find.ClearFormatting();
             selection.Find.Text = header;
@@ -6772,18 +6848,20 @@ namespace PlotagemOpenGL.LaudoForm
 
             selection.Paste();
 
-            // Redimensiona a imagem colada com base na área de referência (ex: GrafResumoDoc)
+            // Redimensiona na interface do Word se necessário
             if (selection.InlineShapes.Count > 0)
             {
                 var shape = selection.InlineShapes[selection.InlineShapes.Count];
-
-                // Converte pixels para pontos (1 ponto = 1/72 polegada, pixels geralmente = 96 dpi)
-                float widthInPoints = areaReferencia.Width * 72f / 96f;
-                float heightInPoints = areaReferencia.Height * 72f / 96f;
+                float widthInPoints = targetWidth * 72f / 96f;
+                float heightInPoints = targetHeight * 72f / 96f;
 
                 shape.Width = widthInPoints;
                 shape.Height = heightInPoints;
             }
+
+            // Liberação
+            originalBmp.Dispose();
+            resizedBmp.Dispose();
         }
 
         public static void Cola_Grafico(string header, string chartName)
@@ -6817,7 +6895,7 @@ namespace PlotagemOpenGL.LaudoForm
         }
         private static bool ExisteVar(string header)
         {
-            string g_textolaudo = wordApp.Selection.Text;
+            string g_textolaudo = doc.Content.Text;
             if (g_textolaudo.Contains(header))
             {
                 var find = wordApp.Selection.Find;
@@ -6843,14 +6921,20 @@ namespace PlotagemOpenGL.LaudoForm
         {
             try
             {
-                // Seleciona e copia o intervalo no Excel
-                Microsoft.Office.Interop.Excel.Range range = ObjExcel.Range[$"{linhaIni}:{linhaFim}"];
+                // Pega a planilha correta
+                var sheet = (Microsoft.Office.Interop.Excel.Worksheet)planExcel.Sheets[1]; // ou pelo nome
+
+                // Seleciona e copia o intervalo
+                var range = sheet.Range[$"{linhaIni}:{linhaFim}"];
                 range.Copy();
 
-                // Atribui o objeto Selection do Word
+                // Faz o Word visível (essencial para depuração e colagem correta)
+                wordApp.Visible = true;
+                doc.Activate();
+
                 var selection = wordApp.Selection;
 
-                // Configura a busca no documento Word
+                // Localiza o marcador no Word
                 selection.Find.ClearFormatting();
                 selection.Find.Text = header;
                 selection.Find.Replacement.ClearFormatting();
@@ -6864,14 +6948,13 @@ namespace PlotagemOpenGL.LaudoForm
                 selection.Find.MatchSoundsLike = false;
                 selection.Find.MatchAllWordForms = false;
 
-                // Executa a busca e cola a tabela do Excel
                 if (selection.Find.Execute())
                 {
-                    selection.PasteExcelTable(false, false, false); // Corrigido: sem nomes nomeados
+                    selection.PasteExcelTable(false, false, false);
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show($"Marcador \"{header}\" não encontrado no documento Word.");
+                    System.Windows.Forms.MessageBox.Show($"Marcador \"{header}\" não encontrado no Word.");
                 }
             }
             catch (Exception ex)
@@ -6888,7 +6971,14 @@ namespace PlotagemOpenGL.LaudoForm
 
         private static void s_resumo_CPAP()
         {
-            planExcel.Sheets.Select("CPAP_0");
+            foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
+            {
+                if (sheet.Name.Equals("CPAP_0", StringComparison.OrdinalIgnoreCase))
+                {
+                    sheet.Select(); // ou sheet.Activate()
+                    break;
+                }
+            }
 
             if (ExisteVar("&(RESUMO_CPAP)&"))
             {
@@ -6947,7 +7037,14 @@ namespace PlotagemOpenGL.LaudoForm
 
         private static void s_resumo_BPAP()
         {
-            planExcel.Sheets.Select("BPAP_0");
+            foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
+            {
+                if (sheet.Name.Equals("BPAP_0", StringComparison.OrdinalIgnoreCase))
+                {
+                    sheet.Select(); // ou sheet.Activate()
+                    break;
+                }
+            }
 
             if (ExisteVar("&(RESUMO_EPAP)&"))
             {
@@ -7012,7 +7109,15 @@ namespace PlotagemOpenGL.LaudoForm
 
             if (ExisteVar("&(HIPOVENTILACAO)&"))
             {
-                planExcel.Sheets.Select("Hipo");
+                foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in planExcel.Sheets)
+                {
+                    if (sheet.Name.Equals("Hipo", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sheet.Select(); // ou sheet.Activate()
+                        break;
+                    }
+                }
+
 
                 /* Codigo original em VB6 que esta comentado, caso seja preciso utilizar ele futuramente
                  *       'For i = 1 To frm_Principal.grd_HipoVent.Rows - 1            
