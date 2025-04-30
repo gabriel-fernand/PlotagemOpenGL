@@ -6481,11 +6481,573 @@ namespace PlotagemOpenGL.LaudoForm
                     //'rotina de calculo da saturação por estágio
 
                     s_Calcula_Saturacao_Estagio(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
+
+                    // 'substitui variaveis do paciente e dados do exame
+
+                    s_dados_exame_paciente(cnn_dbExame, cnn_dbConfig);
+
+                    // 'determina Nadir da SaO2 associado com apnéia
+
+                    s_Nadir_Apneia();
+
+                    // 'busca Apnéias centrais por estagio
+
+                    s_busca_apneias_por_estagio(cnn_dbExame);
+
+                    // Posicao
+
+                    s_dados_Posicao();
                 }
             }
         }
+
+        public static void s_dados_Posicao()
+        {
+            DataRow rwResumoExame = GlobVar.tbl_ResumoExame.Rows[0];
+
+
+        }
+
+        public static void s_busca_apneias_por_estagio(OleDbConnection cnn_dbExame)
+        {
+            DataTable tbl = new DataTable();
+            int[] apn_cen_est = new int[9];
+
+            for(int i = 0; i < apn_cen_est.Length; i ++)
+            {
+                apn_cen_est[i] = 0;
+            }
+
+            tbl = ExecutaSQL(cnn_dbExame, "SELECT * FROM Cons_Eventos_ApCen");
+            if(tbl != null)
+            {
+                foreach(DataRow rw in tbl.Rows)
+                {
+                    int estagio = Convert.ToInt32(rw["Estagio"]);
+                    apn_cen_est[estagio]++;
+                }
+            }
+
+            string adulto = GlobVar.tbl_DadosExame.Rows[0]["Adulto"].ToString();
+
+            if (adulto.Equals("A"))
+            {
+                SubstituiVar("&(APN_CEN_EST_1)&", apn_cen_est[1] > 0 ? apn_cen_est[1].ToString() : "0");
+                SubstituiVar("&(APN_CEN_EST_2)&", apn_cen_est[2] > 0 ? apn_cen_est[2].ToString() : "0");
+                SubstituiVar("&(APN_CEN_EST_3)&", apn_cen_est[3] > 0 ? apn_cen_est[3].ToString() : "0");
+
+            }
+            else if (adulto.Equals("I"))
+            {
+                SubstituiVar("&(APN_CEN_EST_7)&", apn_cen_est[7] > 0 ? apn_cen_est[7].ToString() : "0");
+                SubstituiVar("&(APN_CEN_EST_8)&", apn_cen_est[8] > 0 ? apn_cen_est[8].ToString() : "0");
+                SubstituiVar("&(APN_CEN_EST_9)&", apn_cen_est[9] > 0 ? apn_cen_est[9].ToString() : "0");
+            }
+        }
+
+        public static void s_Nadir_Apneia()
+        {
+            int Nadir_Apneia = 200;
+
+            var linhasValidas = GlobVar.tbl_Paginas.AsEnumerable()
+                .Where(rw => rw.Field<int>("Estagio") > 0)
+                .OrderBy(rw => rw.Field<int>("SatBasal"));
+
+            if (linhasValidas.Any())
+            {
+                int satBasal = linhasValidas.First().Field<int>("SatBasal");
+                if (satBasal < Nadir_Apneia)
+                    Nadir_Apneia = satBasal;
+            }
+
+            if (Nadir_Apneia == 200)
+                Nadir_Apneia = 0;
+
+            SubstituiVar("&(NADIR_APNEIA)&", Nadir_Apneia.ToString());
+        }
+
+        public static void s_dados_exame_paciente(OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
+        {
+            try
+            {
+                if (passagem == ultimapassagem)
+                {
+                    SubstituiVar("&(INICIO_EXAME_CPAP_INT)&", GlobVar.tbl_ResumoExame.Rows[0]["Ini_Exame"].ToString());
+                    SubstituiVar("&(FIM_EXAME_CPAP_INT)&", GlobVar.tbl_ResumoExame.Rows[0]["Fim_Exame"].ToString());
+                    SubstituiVar("&(LAT_SONO_MIN_INT)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"])).ToString());
+                    SubstituiVar("&(LAT_SONO_REM_MIN_INT)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_SonoREM"])).ToString());
+
+                    SubstituiVar("&(TTS_MIN_INT)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0" : FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])));
+                    SubstituiVar("&(EFIC_SONO_INT)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0.0" :
+                        (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) * 100.0 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0"));
+                    return;
+                }
+                var rowFirst = GlobVar.tbl_Paginas.AsEnumerable()
+                    .Where(rw => rw.Field<int>("NumPag") == 0)
+                    .FirstOrDefault();
+
+                var rowLast = GlobVar.tbl_Paginas.AsEnumerable()
+                    .OrderByDescending(rw => rw.Field<int>("NumPag"))
+                    .FirstOrDefault();
+
+                DateTime? inicio_grav = rowFirst.Field<DateTime?>("Horario");
+                DateTime? fim_grav = rowLast.Field<DateTime?>("Horario");
+
+                // Dados gerais do exame
+                SubstituiVar("&(NOME)&", GlobVar.tbl_DadosExame.Rows[0]["Nome"].ToString());
+                SubstituiVar("&(DATA)&", Convert.ToDateTime(GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"]).ToString("dd/MM/yyyy"));
+                SubstituiVar("&(DATA_INICIO_FULL)&", inicio_grav.Value.ToString("dddd dd/MM/yyyy HH:mm"));
+                SubstituiVar("&(DATA_INICIO)&", inicio_grav.Value.ToString("dd/MM/yyyy"));
+                SubstituiVar("&(HORA_INICIO)&", inicio_grav.Value.ToString("HH:mm"));
+                SubstituiVar("&(DATA_TERMINO_FULL)&", fim_grav.Value.ToString("dddd dd/MM/yyyy HH:mm"));
+                SubstituiVar("&(DATA_TERMINO)&", fim_grav.Value.ToString("dd/MM/yyyy"));
+                SubstituiVar("&(HORA_TERMINO)&", fim_grav.Value.ToString("HH:mm"));
+
+                TimeSpan duracao = fim_grav.Value - inicio_grav.Value;
+
+                int ttaMin = (int)duracao.TotalMinutes;
+                SubstituiVar("&(TTA_MIN)&", ttaMin.ToString());
+
+                int ttaSegundos = (int)duracao.TotalSeconds;
+                SubstituiVar("&(TTA_EXTENSO)&", FormataTempoExtenso(ttaSegundos));
+                var rowDadosExame = GlobVar.tbl_DadosExame.Rows[0];
+
+                SubstituiVar("&(TTE_EXTENSO)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTE)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
+                SubstituiVar("&(INICIO_EXAME)&", GlobVar.tbl_ResumoExame.Rows[0]["Ini_Exame"].ToString());
+                SubstituiVar("&(ARQUIVO)&", Path.GetFileNameWithoutExtension(GlobVar.bDataFile));
+                SubstituiVar("&(SEXO)&", GlobVar.tbl_DadosExame.Rows[0]["Sexo"].ToString());
+                DateTime dataNascimento = Convert.ToDateTime(rowDadosExame["DataNascimento"]);
+                DateTime dataRealizacao = Convert.ToDateTime(rowDadosExame["DataRealizacao"]);
+
+                int anos = dataRealizacao.Year - dataNascimento.Year;
+                int meses = dataRealizacao.Month - dataNascimento.Month;
+                int dias = dataRealizacao.Day - dataNascimento.Day;
+
+                if (dias < 0)
+                {
+                    meses--;
+                    dias += DateTime.DaysInMonth(dataRealizacao.AddMonths(-1).Year, dataRealizacao.AddMonths(-1).Month);
+                }
+                if (meses < 0)
+                {
+                    anos--;
+                    meses += 12;
+                }
+
+                // IDADE (apenas anos)
+                SubstituiVar("&(IDADE)&", anos.ToString());
+
+                // IDADE_AM (anos e meses)
+                string idadeAM = $"{anos} ano{(anos == 1 ? "" : "s")}";
+                if (meses > 0)
+                    idadeAM += $" e {meses} mes{(meses == 1 ? "" : "es")}";
+                SubstituiVar("&(IDADE_AM)&", idadeAM);
+
+                // IDADE_AMD (anos, meses e dias)
+                string idadeAMD = $"{anos} ano{(anos == 1 ? "" : "s")}";
+                if (meses > 0)
+                    idadeAMD += $", {meses} mes{(meses == 1 ? "" : "es")}";
+                if (dias > 0)
+                    idadeAMD += $", {dias} dia{(dias == 1 ? "" : "s")}";
+                SubstituiVar("&(IDADE_AMD)&", idadeAMD);
+                SubstituiVar("&(DATANASCIMENTO)&", rowDadosExame.Field<DateTime>("DataNascimento").ToString("dd:MM:yyyy"));
+                SubstituiVar("&(PESO)&", $"{GlobVar.tbl_DadosExame.Rows[0]["Peso"]} Kg");
+                SubstituiVar(" &(ALTURA)&", $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"]:0.00} m");
+
+                double imc = Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["Altura"]) > 0
+                    ? Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["Peso"]) / Math.Pow(Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["Altura"]), 2) : 0.0;
+                SubstituiVar(" &(IMC)&", imc.ToString("0.0"));
+
+                SubstituiVar("&(EMAIL)&", GlobVar.tbl_DadosExame.Rows[0]["EMail"].ToString());
+                SubstituiVar("&(MEDICO_SOLIC)&", GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString());
+                SubstituiVar("&(FIM_EXAME)&", GlobVar.tbl_ResumoExame.Rows[0]["FIM_EXAME"].ToString());
+                SubstituiVar("&(LAT_SONO)&", GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"].ToString());
+
+                // Teste
+                string teste = string.Join("\r\n", Enumerable.Range(0, 11).Select(i => $"linha {i}"));
+                SubstituiVar("&(TESTE)&", teste);
+
+                SubstituiVar("&(LAT_SONO_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"])).ToString());
+                int pts = Convert.ToInt32(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) - Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"])) * 60;
+                SubstituiVar("&(PTS)&", TimeSpan.FromSeconds(pts).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(PTS_MIN)&", FormataTempoMin(pts));
+
+                SubstituiVar("&(LAT_SONO_REM)&", GlobVar.tbl_ResumoExame.Rows[0]["Lat_SonoREM"].ToString());
+                int latREMMin = (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_SonoREM"]));
+                SubstituiVar("&(LAT_SONO_REM_MIN)&", latREMMin.ToString());
+                SubstituiVar("&(LAT_SONO_REM_MIN_DEC)&", latREMMin.ToString() + ",0");
+
+                SubstituiVar("&(TTS)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "00:00" : TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTS_MIN)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0" : FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
+
+                SubstituiVar("&(TTR)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTR_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
+                SubstituiVar("&(EFIC_SONO)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0.0" :
+                    (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) * 100.0 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0"));
+
+                SubstituiVar("&(EST_0)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_0"])).ToString(@"hh\:mm\:ss"));
+                int vais = pts - Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]);
+                SubstituiVar("&(VAIS)&", TimeSpan.FromSeconds(vais).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(OBSERVACAO)&", GlobVar.tbl_DadosExame.Rows[0]["Observacao"].ToString());
+
+                SubstituiVar("&(ADULTO)&", GlobVar.tbl_DadosExame.Rows[0]["Adulto"].ToString().Equals("A") ? "Adulto" : "Infantil");
+                SubstituiVar("&(MONTAGEM)&", Tela_Plotagem.MontagemBox.Text);
+
+                for (int i = 0; i <= 9; i++)
+                {
+                    string texto2 = g_dados_fc_separada.Substring(i * 9, 9);
+                    SubstituiVar($"&(Est_{i}_Media)&", int.Parse(texto2.Substring(0, 3)).ToString());
+                    SubstituiVar($"&(Est_{i}_Minima)&", int.Parse(texto2.Substring(3, 3)).ToString());
+                    SubstituiVar($"&(Est_{i}_Maxima)&", int.Parse(texto2.Substring(6, 3)).ToString());
+                }
+
+                var tbl_MudaEstagio = ExecutaSQL(cnn_dbExame, "SELECT * FROM tbl_MudancaEstagio");
+                SubstituiVar("&(MUD_EST)&", tbl_MudaEstagio.Rows.Count.ToString());
+
+                SubstituiVar("&(TTS_7)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTS_7_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"])));
+                SubstituiVar("&(TTS_8)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTS_8_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"])));
+                SubstituiVar("&(TTS_9)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTS_9_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"])));
+
+                SubstituiVar("&(TTS_MIN_INT)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0" : FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
+
+                if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) > 0)
+                {
+                    double mudEstHoraSono = tbl_MudaEstagio.Rows.Count / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600.0);
+                    SubstituiVar("&(MUD_EST_HORA_SONO)&", mudEstHoraSono.ToString("0.0"));
+                }
+
+                int h = int.Parse(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"].ToString().Substring(0, 2));
+                int m = int.Parse(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"].ToString().Substring(3, 2));
+                int s = int.Parse(GlobVar.tbl_ResumoExame.Rows[0]["Lat_Sono"].ToString().Substring(6, 2));
+                int latSegundos = h * 3600 + m * 60 + s;
+                int waso = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_0"]) - latSegundos;
+                SubstituiVar("&(WASO)&", (waso / 60).ToString());
+            }
+            catch (Exception ex)
+            {
+                // Log ou tratamento de erro
+            }
+        }
+
         public static void s_Calcula_Saturacao_Estagio(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame, OleDbConnection cnn_dbConfig)
         {
+            int SaO2_100 = 511;
+            int Sat_Basal_inicial = 100;
+
+            // Obtém dados do exame
+            var rsDadosExame = GlobVar.tbl_DadosExame;
+            if (rsDadosExame != null && rsDadosExame.Rows.Count > 0)
+            {
+                var row = rsDadosExame.Rows[0];
+                if (!row.IsNull("SaO2_100"))
+                    SaO2_100 = Convert.ToInt32(row["SaO2_100"]);
+                if (!row.IsNull("SatBasal"))
+                    Sat_Basal_inicial = Convert.ToInt32(row["SatBasal"]);
+            }
+
+            // Coleta páginas a desprezar com evento CodEvento = 100
+            var tbl_Eventos = GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 100).OrderBy(rw => rw.Field<int>("NumPag")).CopyToDataTable(); //obj_dbExame.ExecutaSQL(cnn_dbExame, "SELECT * FROM tbl_Eventos WHERE CodEvento = 100 ORDER BY NumPag");
+            string paginas_desprezadas = "#";
+            foreach (DataRow row in tbl_Eventos.Rows)
+            {
+                paginas_desprezadas += row["NumPag"].ToString() + "#";
+            }
+
+            // Variáveis de controle
+            double menor_sat = SaO2_100;
+            double MAIOR_SAT = 0;
+            double acum = 0;
+            int qtd = 0;
+            int abaixo90 = 0;
+            int abaixo80 = 0;
+            double ref_90 = SaO2_100 * 0.9;
+            double ref_80 = SaO2_100 * 0.8;
+
+            int Sat_Segundos = 60;
+            int Sat_Desvio = 10;
+            int Sat_QuedaAbaixoDe = 4;
+            int Sat_DuracaoMinima = 10;
+            int Sat_Recalcular = 900;
+            int Sat_DesprezarAbaixo = 40;
+
+            // Parâmetros de configuração
+            var rsParametros = GlobVar.tbl_ParametrosParaAnalisar;
+            if (rsParametros != null && rsParametros.Rows.Count > 0)
+            {
+                var p = rsParametros.Rows[0];
+                Sat_QuedaAbaixoDe = p.IsNull("Sat_QuedaAbaixoDe") ? 4 : Convert.ToInt32(p["Sat_QuedaAbaixoDe"]);
+                Sat_DuracaoMinima = p.IsNull("Sat_DuracaoMinima") ? 10 : Convert.ToInt32(p["Sat_DuracaoMinima"]);
+                Sat_Recalcular = p.IsNull("Sat_Recalcular") ? 900 : Convert.ToInt32(p["Sat_Recalcular"]);
+                Sat_DesprezarAbaixo = p.IsNull("Sat_DesprezarAbaixo") ? 40 : Convert.ToInt32(p["Sat_DesprezarAbaixo"]);
+                Sat_Segundos = p.IsNull("Sat_Tempo_Medio") ? 60 : Convert.ToInt32(p["Sat_Tempo_Medio"]);
+                Sat_Desvio = p.IsNull("Sat_Tolerancia_Desvio") ? 10 : Convert.ToInt32(p["Sat_Tolerancia_Desvio"]);
+            }
+
+            double despreza = SaO2_100 * Sat_DesprezarAbaixo / 100.0;
+            double ref_queda = Sat_Basal_inicial * (100.0 - Sat_QuedaAbaixoDe) / 100.0;
+
+            int Qtd_Dessat = 0;
+            double menor_sat_dessat = SaO2_100;
+
+            // Inicializa vetores de contagem por estágio
+            int[] sat_menor_95 = new int[10];
+            int[] sat_menor_90 = new int[10];
+            int[] sat_menor_85 = new int[10];
+            int[] sat_menor_80 = new int[10];
+            int[] sat_menor_75 = new int[10];
+            int[] sat_menor_70 = new int[10];
+            double[] sat_media_vlr = new double[10];
+            int[] sat_media_qte = new int[10];
+
+            int sat_Confere = 0;
+            int sat_80a84 = 0;
+            int sat_85a89 = 0;
+            int sat_90a95 = 0;
+            int sat_outras = 0;
+
+            // Paginação e posição do canal SaO2
+            if ((pag_dia == 0)) pag_dia = Canais.Get_BomDia();
+            if ((pag_noite == 0)) pag_noite = Canais.Get_BoaNoite();
+
+
+            var tbl_Paginas = GlobVar.tbl_Paginas.AsEnumerable().OrderBy(row => row.Field<int>("NumPag")).CopyToDataTable();
+
+            // Primeira página com estágio de sono (≠ 0)
+            foreach (DataRow row in tbl_Paginas.Rows)
+            {
+                if (Convert.ToInt32(row["estagio"]) != 0)
+                {
+                    SubstituiVar("&(INICIO_SONO)&", row["horario"].ToString());
+                    int pagNum = Convert.ToInt32(row["NumPag"]);
+                    SubstituiVar("&(TEMPO_ACORDADO_ANTES_SONO)&", FormataTempoMin(pagNum - Convert.ToInt32(pag_noite)));
+                    break;
+                }
+            }
+
+            // Posiciona na página de início da noite
+            int indiceInicio = 0;
+            for (int i = 0; i < tbl_Paginas.Rows.Count; i++)
+            {
+                if (Convert.ToInt32(tbl_Paginas.Rows[i]["NumPag"]) == Convert.ToInt32(pag_noite))
+                {
+                    indiceInicio = i;
+                    break;
+                }
+            }
+            int Cont = 0;
+            int abaixo70 = 0;
+            abaixo80 = 0;
+            abaixo90 = 0;
+            int qtd_pag_vigilia = 0;
+            double media_pag_vigilia = 0;
+            int qtd_pag_nrem = 0;
+            double media_pag_nrem = 0;
+            int qtd_pag_rem = 0;
+            double media_pag_rem = 0;
+
+            string SAT_MEDIA = "";
+            string Sat_Media_Calc = "";
+            double Sat_Valor = 0;
+            double valor = 0;
+
+            for (int i = Convert.ToInt32(pag_noite); i < Convert.ToInt32(pag_dia); i++)
+            {
+                if (!paginas_desprezadas.Contains("#" + i.ToString() + "#"))
+                {
+                    valor = Canais.F_Get1ValorDoCanalSAO2(i);
+                    if (valor > despreza && valor <= 100)
+                    {
+                        if (SAT_MEDIA.Length < Sat_Segundos * 4)
+                        {
+                            SAT_MEDIA += valor.ToString("000") + "#";
+                        }
+                        else
+                        {
+                            SAT_MEDIA = SAT_MEDIA.Substring(4) + valor.ToString("000") + "#";
+
+                            Sat_Media_Calc = SAT_MEDIA;
+                            Sat_Valor = 0;
+                            while (Sat_Media_Calc.Length > 1)
+                            {
+                                Sat_Valor += Convert.ToInt32(Sat_Media_Calc.Substring(0, 3));
+                                Sat_Media_Calc = Sat_Media_Calc.Substring(4);
+                            }
+
+                            double mediaAtual = Sat_Valor / Sat_Segundos;
+                            double tolerancia = mediaAtual * Sat_Desvio / 100.0;
+
+                            if (valor < mediaAtual + tolerancia && valor > mediaAtual - tolerancia)
+                            {
+                                SAT_MEDIA = SAT_MEDIA.Substring(4) + valor.ToString("000") + "#";
+                                acum += valor;
+                                qtd++;
+
+                                if (valor > MAIOR_SAT) MAIOR_SAT = valor;
+                                if (valor < menor_sat) menor_sat = valor;
+
+                                if (valor < 90)
+                                {
+                                    abaixo90++;
+                                    if (valor < 80)
+                                    {
+                                        abaixo80++;
+                                        if (valor < 70)
+                                            abaixo70++;
+                                    }
+                                }
+
+                                // Obter estágio da página atual
+                                var rowPag = tbl_Paginas.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["NumPag"]) == i);
+                                if (rowPag == null) continue;
+                                int estagio = Convert.ToInt32(rowPag["estagio"]);
+
+                                if (estagio == 0)
+                                {
+                                    qtd_pag_vigilia++;
+                                    media_pag_vigilia += valor;
+                                }
+                                else if (estagio == 5)
+                                {
+                                    qtd_pag_rem++;
+                                    media_pag_rem += valor;
+                                }
+                                else
+                                {
+                                    qtd_pag_nrem++;
+                                    media_pag_nrem += valor;
+                                }
+
+                                // Faixas clássicas
+                                if (valor < 70)
+                                    sat_menor_70[estagio]++;
+                                else if (valor < 75)
+                                    sat_menor_75[estagio]++;
+                                else if (valor < 80)
+                                    sat_menor_80[estagio]++;
+                                else if (valor < 85)
+                                    sat_menor_85[estagio]++;
+                                else if (valor < 90)
+                                    sat_menor_90[estagio]++;
+                                else if (valor < 95)
+                                    sat_menor_95[estagio]++;
+                                else
+                                    sat_Confere++;
+
+                                // Novas faixas
+                                if (valor >= 80 && valor <= 84)
+                                    sat_80a84++;
+                                else if (valor >= 85 && valor <= 89)
+                                    sat_85a89++;
+                                else if (valor >= 90 && valor <= 95)
+                                    sat_90a95++;
+                                else
+                                    sat_outras++;
+
+                                // Acumuladores por estágio
+                                sat_media_vlr[estagio] += valor;
+                                sat_media_qte[estagio] += 1;
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            int sat_tot95 = 0;
+            int sat_tot90 = 0;
+            int sat_tot85 = 0;
+            int sat_tot80 = 0;
+            int sat_tot75 = 0;
+            int sat_tot70 = 0;
+
+            if (media_pag_vigilia > 0 && qtd_pag_vigilia > 0)
+                SubstituiVar("&(SAT_MEDIA_VIGILIA)&", (media_pag_vigilia / qtd_pag_vigilia).ToString("0.0"));
+            else
+                SubstituiVar("&(SAT_MEDIA_VIGILIA)&", "0.0");
+
+            if (media_pag_rem > 0 && qtd_pag_rem > 0)
+                SubstituiVar("&(SAT_MEDIA_REM)&", (media_pag_rem / qtd_pag_rem).ToString("0.0"));
+            else
+                SubstituiVar("&(SAT_MEDIA_REM)&", "0.0");
+
+            if (media_pag_nrem > 0 && qtd_pag_nrem > 0)
+                SubstituiVar("&(SAT_MEDIA_NREM)&", (media_pag_nrem / qtd_pag_nrem).ToString("0.0"));
+            else
+                SubstituiVar("&(SAT_MEDIA_NREM)&", "0.0");
+
+            for (int i = 0; i <= 9; i++)
+            {
+                SubstituiVar($"&(S95_{i})&", (sat_menor_95[i] / 60.0).ToString("0.0"));
+                SubstituiVar($"&(S90_{i})&", (sat_menor_90[i] / 60.0).ToString("0.0"));
+                SubstituiVar($"&(S85_{i})&", (sat_menor_85[i] / 60.0).ToString("0.0"));
+                SubstituiVar($"&(S80_{i})&", (sat_menor_80[i] / 60.0).ToString("0.0"));
+                SubstituiVar($"&(S75_{i})&", (sat_menor_75[i] / 60.0).ToString("0.0"));
+                SubstituiVar($"&(S70_{i})&", (sat_menor_70[i] / 60.0).ToString("0.0"));
+
+                if (i == 5)
+                {
+                    sat_tot95 += sat_menor_95[i];
+                    sat_tot90 += sat_menor_90[i];
+                    sat_tot85 += sat_menor_85[i];
+                    sat_tot80 += sat_menor_80[i];
+                    sat_tot75 += sat_menor_75[i];
+                    sat_tot70 += sat_menor_70[i];
+                }
+            }
+
+            double sat_nrem95 = 0, sat_nrem90 = 0, sat_nrem85 = 0, sat_nrem80 = 0, sat_nrem75 = 0, sat_nrem70 = 0;
+
+            for (int i = 0; i <= 3; i++)
+            {
+                sat_nrem95 += sat_menor_95[i];
+                sat_nrem90 += sat_menor_90[i];
+                sat_nrem85 += sat_menor_85[i];
+                sat_nrem80 += sat_menor_80[i];
+                sat_nrem75 += sat_menor_75[i];
+                sat_nrem70 += sat_menor_70[i];
+            }
+
+            SubstituiVar("&(S95NR)&", (sat_nrem95 / 60.0).ToString("0.0"));
+            SubstituiVar("&(S90NR)&", (sat_nrem90 / 60.0).ToString("0.0"));
+            SubstituiVar("&(S85NR)&", (sat_nrem85 / 60.0).ToString("0.0"));
+            SubstituiVar("&(S80NR)&", (sat_nrem80 / 60.0).ToString("0.0"));
+            SubstituiVar("&(S75NR)&", (sat_nrem75 / 60.0).ToString("0.0"));
+            SubstituiVar("&(S70NR)&", (sat_nrem70 / 60.0).ToString("0.0"));
+
+            SubstituiVar("&(S95TOT)&", ((sat_nrem95 + sat_tot95) / 60.0).ToString("0.0"));
+            SubstituiVar("&(S90TOT)&", ((sat_nrem90 + sat_tot90) / 60.0).ToString("0.0"));
+            SubstituiVar("&(S85TOT)&", ((sat_nrem85 + sat_tot85) / 60.0).ToString("0.0"));
+            SubstituiVar("&(S80TOT)&", ((sat_nrem80 + sat_tot80) / 60.0).ToString("0.0"));
+            SubstituiVar("&(S75TOT)&", ((sat_nrem75 + sat_tot75) / 60.0).ToString("0.0"));
+            SubstituiVar("&(S70TOT)&", ((sat_nrem70 + sat_tot70) / 60.0).ToString("0.0"));
+
+            // Médias de saturação por estágio (0 a 9)
+            for (int i = 0; i <= 9; i++)
+            {
+                string mediaStr = sat_media_qte[i] > 0
+                    ? (sat_media_vlr[i] / sat_media_qte[i]).ToString("0.0")
+                    : "0.0";
+                SubstituiVar($"&(SAT_MED_{i})&", mediaStr);
+            }
+
+            // Faixas percentuais de saturação
+            double totalPag = pag_dia - pag_noite;
+            if (totalPag > 0)
+            {
+                SubstituiVar("&(SATX80_84)&", (sat_80a84 / totalPag * 100).ToString("0.0"));
+                SubstituiVar("&(SATX85_89)&", (sat_85a89 / totalPag * 100).ToString("0.0"));
+                SubstituiVar("&(SATX90_95)&", (sat_90a95 / totalPag * 100).ToString("0.0"));
+            }
+            else
+            {
+                SubstituiVar("&(SATX80_84)&", "0.0");
+                SubstituiVar("&(SATX85_89)&", "0.0");
+                SubstituiVar("&(SATX90_95)&", "0.0");
+            }
 
         }
 
@@ -7661,6 +8223,25 @@ namespace PlotagemOpenGL.LaudoForm
                 }
             }
 
+        }
+        private static string FormataTempoExtenso(int totalSegundos)
+        {
+            int horas = totalSegundos / 3600;
+            int minutos = (totalSegundos % 3600) / 60;
+            int segundos = totalSegundos % 60;
+
+            List<string> partes = new List<string>();
+
+            if (horas > 0)
+                partes.Add(horas + (horas == 1 ? " hora" : " horas"));
+
+            if (minutos > 0)
+                partes.Add(minutos + (minutos == 1 ? " minuto" : " minutos"));
+
+            if (segundos > 0 && horas == 0) // opcional: só mostra segundos se for menos de 1h
+                partes.Add(segundos + (segundos == 1 ? " segundo" : " segundos"));
+
+            return string.Join(" e ", partes);
         }
 
     }
