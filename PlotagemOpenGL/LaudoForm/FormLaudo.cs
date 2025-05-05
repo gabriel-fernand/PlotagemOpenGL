@@ -47,7 +47,7 @@ namespace PlotagemOpenGL.LaudoForm
         public static float Porcentagem;
         public static int NeEmarg;
         public static float NeWPorcentagem;
-
+        public static int tempo_ronco = 0;
         public static int[] pontoZero;
         public static int[] pontoTop;
 
@@ -99,6 +99,33 @@ namespace PlotagemOpenGL.LaudoForm
         public static DataTable tbl_HipnoLaudo = new DataTable();
 
         private static TaskCompletionSource<bool> tcsTabIndexChanged;
+
+        public static string texto2 = "";
+        // Apneia e Hipopnéia com Dessaturação
+        public static int qtd_ap_cen_com_dessat;
+        public static int qtd_ap_obs_com_dessat;
+        public static int qtd_ap_mis_com_dessat;
+        public static int qtd_hipop_com_dessat;
+
+        // Com microdespertar
+        public static int qtd_ap_cen_com_mdesp;
+        public static int qtd_ap_obs_com_mdesp;
+        public static int qtd_ap_mis_com_mdesp;
+        public static int qtd_hipop_com_mdesp;
+
+        // Com Dessaturação e Microdespertar
+        public static int qtd_ap_cen_com_dessat_e_mdesp;
+        public static int qtd_ap_obs_com_dessat_e_mdesp;
+        public static int qtd_ap_mis_com_dessat_e_mdesp;
+        public static int qtd_hipop_com_dessat_e_mdesp;
+
+        // RERA
+        public static int qtd_RERA_com_dessat;
+        public static int qtd_RERA_com_mdesp;
+        public static int qtd_RERA_com_dessat_e_mdesp;
+
+        // PLM
+        public static int qtd_PLM_com_mdesp;
 
         public FormLaudo()
         {
@@ -6463,33 +6490,33 @@ namespace PlotagemOpenGL.LaudoForm
                              $"FROM Cons_EventosComEstag WHERE estagio > 0 AND Pag_Ini >= {pag_noite} AND Pag_Ini <= {pag_dia} AND CodEvento = 13 " +
                              $"GROUP BY CodEvento";
                 DataTable tbl = ExecutaSQL(cnn_dbExame, sql);
-                double tempo_ronco = tbl.Rows.Count == 0 ? 0 : Convert.ToDouble(tbl.Rows[0]["Dur_Total"]) / GlobVar.namos;
+                tempo_ronco = tbl.Rows.Count == 0 ? 0 : Convert.ToInt32(tbl.Rows[0]["Dur_Total"]) / GlobVar.namos;
 
                 // Apneia e Hipopnéia com Dessaturação
-                int qtd_ap_cen_com_dessat = GetQtd("Cons_ApCen_Com_Dessat");
-                int qtd_ap_obs_com_dessat = GetQtd("Cons_ApObs_Com_Dessat");
-                int qtd_ap_mis_com_dessat = GetQtd("Cons_ApMis_Com_Dessat");
-                int qtd_hipop_com_dessat = GetQtd("Cons_Hipop_Com_Dessat");
+                 qtd_ap_cen_com_dessat = GetQtd("Cons_ApCen_Com_Dessat");
+                 qtd_ap_obs_com_dessat = GetQtd("Cons_ApObs_Com_Dessat");
+                 qtd_ap_mis_com_dessat = GetQtd("Cons_ApMis_Com_Dessat");
+                 qtd_hipop_com_dessat = GetQtd("Cons_Hipop_Com_Dessat");
 
                 // Com microdespertar
-                int qtd_ap_cen_com_mdesp = GetQtd("Cons_ApCen_Com_MDesp");
-                int qtd_ap_obs_com_mdesp = GetQtd("Cons_ApObs_Com_MDesp");
-                int qtd_ap_mis_com_mdesp = GetQtd("Cons_ApMis_Com_MDesp");
-                int qtd_hipop_com_mdesp = GetQtd("Cons_Hipop_Com_MDesp");
+                 qtd_ap_cen_com_mdesp = GetQtd("Cons_ApCen_Com_MDesp");
+                 qtd_ap_obs_com_mdesp = GetQtd("Cons_ApObs_Com_MDesp");
+                 qtd_ap_mis_com_mdesp = GetQtd("Cons_ApMis_Com_MDesp");
+                 qtd_hipop_com_mdesp = GetQtd("Cons_Hipop_Com_MDesp");
 
                 // Com Dessaturação e Microdespertar
-                int qtd_ap_cen_com_dessat_e_mdesp = GetQtdJoin("Cons_ApCen_Com_Dessat", "Cons_ApCen_Com_MDesp", "Cons_Eventos_ApCen");
-                int qtd_ap_obs_com_dessat_e_mdesp = GetQtdJoin("Cons_ApObs_Com_Dessat", "Cons_ApObs_Com_MDesp", "Cons_Eventos_ApObs");
-                int qtd_ap_mis_com_dessat_e_mdesp = GetQtdJoin("Cons_ApMis_Com_Dessat", "Cons_ApMis_Com_MDesp", "Cons_Eventos_ApMis");
-                int qtd_hipop_com_dessat_e_mdesp = GetQtdJoin("Cons_Hipop_Com_Dessat", "Cons_Hipop_Com_MDesp", "Cons_Eventos_Hipop");
+                 qtd_ap_cen_com_dessat_e_mdesp = GetQtdJoin("Cons_ApCen_Com_Dessat", "Cons_ApCen_Com_MDesp", "Cons_Eventos_ApCen");
+                 qtd_ap_obs_com_dessat_e_mdesp = GetQtdJoin("Cons_ApObs_Com_Dessat", "Cons_ApObs_Com_MDesp", "Cons_Eventos_ApObs");
+                 qtd_ap_mis_com_dessat_e_mdesp = GetQtdJoin("Cons_ApMis_Com_Dessat", "Cons_ApMis_Com_MDesp", "Cons_Eventos_ApMis");
+                 qtd_hipop_com_dessat_e_mdesp = GetQtdJoin("Cons_Hipop_Com_Dessat", "Cons_Hipop_Com_MDesp", "Cons_Eventos_Hipop");
 
                 // RERA
-                int qtd_RERA_com_dessat = GetQtd("Cons_RERA_Com_Dessat");
-                int qtd_RERA_com_mdesp = GetQtd("Cons_RERA_Com_MDesp");
-                int qtd_RERA_com_dessat_e_mdesp = GetQtdJoin("Cons_RERA_Com_Dessat", "Cons_RERA_Com_MDesp", "Cons_Eventos_RERA");
+                 qtd_RERA_com_dessat = GetQtd("Cons_RERA_Com_Dessat");
+                 qtd_RERA_com_mdesp = GetQtd("Cons_RERA_Com_MDesp");
+                 qtd_RERA_com_dessat_e_mdesp = GetQtdJoin("Cons_RERA_Com_Dessat", "Cons_RERA_Com_MDesp", "Cons_Eventos_RERA");
 
                 // PLM
-                int qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
+                 qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
 
                 // Funções auxiliares
                 int GetQtd(string table)
@@ -6625,8 +6652,127 @@ namespace PlotagemOpenGL.LaudoForm
 
                     //'ESTAGIOS
                     s_dados_Estagios(cnn_dbExame);
+
+                    //'"RESUMO_DESP"
+                    s_dados_Despertares_Ronco_PLM(cnn_dbExame);
                 }
             }
+        }
+
+        public static void s_dados_Despertares_Ronco_PLM(OleDbConnection cnn_dbExame)
+        {
+            int qtd = GetQtdEvento(cnn_dbExame, 7);
+            int qtd2 = GetQtdEvento(cnn_dbExame, 8);
+            if (passagem == ultimapassagem)
+            {
+                double tts = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+
+                if (tts == 0)
+                {
+                    SubstituiVar("&(QH_PLM_INT)&", "0.0");
+                    SubstituiVar("&(QTD_MDESP_INT)&", "0.0");
+                }
+                else
+                {
+                    SubstituiVar("&(QH_PLM_INT)&", (GetQtdEvento(cnn_dbExame,12) / (tts / 3600)).ToString("0.0"));
+                    SubstituiVar("&(QTD_MDESP_INT)&", GetQtdEvento(cnn_dbExame,8).ToString("0.0"));
+                }
+            }
+            else
+            {
+                int total = qtd + qtd2;
+
+                if (total == 0)
+                {
+                    texto2 = " " + f_var("Var56160") + " " + f_var("Var58024");
+                }
+                else if (total == 1)
+                {
+                    if (qtd == 1)
+                        texto2 = f_var("Var56160") + " " + f_var("Var58035");
+                    else
+                        texto2 = f_var("Var56160") + " " + f_var("Var58034");
+                }
+                else
+                {
+                    if (qtd > 1)
+                        texto2 = " " + f_var("Var58032") + " " + qtd.ToString() + " " + f_var("Var58008") + " ";
+                    else
+                        texto2 = " " + f_var("Var58033") + " " + qtd.ToString() + " " + f_var("Var35008") + " ";
+
+                    if (qtd2 > 1)
+                        texto2 += f_var("Var56160") + " " + qtd2.ToString() + " " + f_var("Var58009");
+                    else
+                        texto2 += f_var("Var56160") + " " + qtd2.ToString() + " " + f_var("Var58007");
+                }
+
+                SubstituiVar("&(RESUMO_DESP)&", texto2);
+                SubstituiVar("&(TEMPO_RONCO)&", FormataTempoMin(tempo_ronco));
+
+                double tts = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+                double qtd_desp = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["qtd_desp"]);
+
+                SubstituiVar("&(PORC_TEMPO_RONCO)&", tts == 0 ? "0.0" : (tempo_ronco * 100 / tts).ToString("0.0"));
+                SubstituiVar("&(QTD_DESP)&", qtd_desp.ToString("0"));
+
+                int qtd_mdesp = GetQtdEvento(cnn_dbExame,8);
+                SubstituiVar("&(QTD_MDESP)&", qtd_mdesp.ToString());
+
+                int qtd_idr_sem_mdesp = qtd_mdesp - qtd_hipop_com_mdesp - qtd_ap_cen_com_mdesp - qtd_ap_obs_com_mdesp - qtd_ap_mis_com_mdesp - qtd_RERA_com_mdesp;
+                SubstituiVar("&(QTD_IDR_SEM_MDESP)&", qtd_idr_sem_mdesp.ToString());
+
+                SubstituiVar("&(IND_MDESP)&", tts == 0 ? "0.0" : (qtd_mdesp / (tts / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_DESP)&", tts == 0 ? "0.0" : (qtd_desp / (tts / 3600)).ToString("0.0"));
+
+                int qtd_movperna = GetQtdEvento(cnn_dbExame,22);
+                SubstituiVar("&(QTD_MOVPERNA)&", qtd_movperna.ToString());
+
+                double qh_movperna = tts == 0 ? 0.0 : (qtd_movperna / (tts / 3600));
+                SubstituiVar("&(QH_MOVPERNA)&", qh_movperna.ToString("0.0"));
+                SubstituiVar("&(IND_MOVPERNA)&", qh_movperna.ToString("0.0"));
+
+                int qtd_plm = GetQtdEvento(cnn_dbExame,12);
+                SubstituiVar("&(QTD_PLM)&", qtd_plm.ToString());
+
+                double qh_plm = tts == 0 ? 0.0 : (qtd_plm / (tts / 3600));
+                SubstituiVar("&(QH_PLM)&", qh_plm.ToString("0.0"));
+                SubstituiVar("&(IND_PLM)&", qh_plm.ToString("0.0"));
+
+                int qtd_ronco = GetQtdEvento(cnn_dbExame,13);
+                double qh_ronco = tts == 0 ? 0.0 : (qtd_ronco / (tts / 3600));
+                SubstituiVar("&(QH_RONCO)&", qh_ronco.ToString("0.0"));
+                SubstituiVar("&(QTD_RONCO)&", qtd_ronco.ToString());
+            }
+
+        }
+        private static int GetQtdEvento(OleDbConnection cnn_dbExame, int codEvento)
+        {
+            int resultado = 0;
+
+            // Supondo que pag_noite e pag_dia são inteiros já definidos em GlobVar
+            int pagNoite = Canais.Get_BoaNoite();
+            int pagDia = Canais.Get_BomDia();
+
+            string sql = $@"
+                SELECT CodEvento, 
+                       COUNT(CodEvento) AS Qtd_Evento, 
+                       SUM(Duracao) AS Dur_Total, 
+                       MAX(Duracao) AS Maior_Dur 
+                FROM Cons_EventosComEstag 
+                WHERE Estagio > 0 
+                  AND Pag_Ini >= {pagNoite} 
+                  AND Pag_Ini <= {pagDia} 
+                  AND CodEvento = {codEvento}
+                GROUP BY CodEvento";
+
+            DataTable tblResumoEventos = ExecutaSQL(cnn_dbExame, sql); // Retorna um DataTable
+
+            if (tblResumoEventos.Rows.Count > 0)
+            {
+                resultado = Convert.ToInt32(tblResumoEventos.Rows[0]["Qtd_Evento"]);
+            }
+
+            return resultado;
         }
 
         public static void s_dados_Estagios(OleDbConnection cnn_dbExame)
