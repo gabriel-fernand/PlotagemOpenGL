@@ -21,13 +21,13 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tensorflow.Operations.Losses;
-using UnityEngine;
 
 namespace PlotagemOpenGL.LaudoForm
 {
@@ -94,12 +94,16 @@ namespace PlotagemOpenGL.LaudoForm
         public static System.Collections.Generic.Dictionary<int, CPAPRelat> cpapRelatDict = new System.Collections.Generic.Dictionary<int, CPAPRelat>();
         public static Dictionary<int, Dictionary<int, BPAPRelat>> g_BPAP_Relat = new Dictionary<int, Dictionary<int, BPAPRelat>>();
 
-        public NapResumo[] g_naps = new NapResumo[5];
+        public static NapResumo[] g_naps = new NapResumo[5];
 
         public static DataTable tbl_HipnoLaudo = new DataTable();
 
         private static TaskCompletionSource<bool> tcsTabIndexChanged;
 
+        public static double CPAP_Min = 0;
+        public static double CPAP_Max = 0;
+
+        public static int qtd_Desp_com_dessat;
         public static string texto2 = "";
         // Apneia e Hipopnéia com Dessaturação
         public static int qtd_ap_cen_com_dessat;
@@ -2390,6 +2394,10 @@ namespace PlotagemOpenGL.LaudoForm
         bool onTop = false;
         bool onBut = false;
         bool changingSize = false;
+        static string g_dir_laudos = "";
+        static string nomeOrigem = "";
+        static string nome_arq_temp = "";
+
         private void OpenGLHipno_MouseMove(object sender, MouseEventArgs e)
         {
             if (e == null) return;
@@ -4039,15 +4047,15 @@ namespace PlotagemOpenGL.LaudoForm
             }
         }
 
-        bool laudosplitnight = false;
-        bool laudosegmentos = false;
+        static bool laudosplitnight = false;
+        static bool laudosegmentos = false;
 
         public static int passagem = 0;
         static int ultimapassagem = 0;
         static int segmentos = 0;
-        List<object> lst_segmentos = new();
-        string g_variaveislaudo = "";
-        string g_arq_exame = "";
+        static List<object> lst_segmentos = new();
+        static string g_variaveislaudo = "";
+        static string g_arq_exame = "";
 
         public static Microsoft.Office.Interop.Word.Application wordApp;
         public static Microsoft.Office.Interop.Word.Document doc;
@@ -4203,9 +4211,9 @@ namespace PlotagemOpenGL.LaudoForm
 
                 //Cursor.Current = Cursors.WaitCursor;
 
-                string g_dir_laudos = @"C:\Temp\Laudos\";
+                g_dir_laudos = @"C:\Temp\Laudos\";
                 string nomeOrigem = Path.Combine(g_dir_laudos, comboBox1.Text + ".doc");
-                string nome_arq_temp = "TMP" + DateTime.Now.ToString("HHmmss");
+                nome_arq_temp = "TMP" + DateTime.Now.ToString("HHmmss");
                 string caminhoTemp = Path.Combine(g_dir_laudos, nome_arq_temp + ".doc");
 
                 // Copia o arquivo original para o temporário
@@ -4214,7 +4222,7 @@ namespace PlotagemOpenGL.LaudoForm
 
                 // Inicializa o Word
                 wordApp = new Microsoft.Office.Interop.Word.Application();
-                wordApp.Visible = true; // <- ESSENCIAL para mostrar a janela do Word
+                wordApp.Visible = false; // <- ESSENCIAL para mostrar a janela do Word
 
                 // Abre o documento
                 doc = wordApp.Documents.Open(caminhoTemp);
@@ -4346,11 +4354,108 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                 }
 
+                if (TextoComboContem("CALIBRACAO"))
+                {
+                    s_monta_relatorio_Calibracao();
+                }
+
+
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void s_monta_relatorio_Calibracao()
+        {
+            /*
+            int coluna, linha, contador = 0;
+            string conteudo;
+            double percentualErro, fator, valorMedido = 0;
+
+            var grid = frm_Principal.grd_Calibracao;
+            int numRows = grid.RowCount;
+            int numCols = grid.ColumnCount;
+
+            for (coluna = 0; coluna <= 6; coluna++)
+            {
+                for (linha = 0; linha <= 48; linha++)
+                {
+                    if (linha < numRows && coluna < numCols)
+                    {
+                        conteudo = Convert.ToString(grid[coluna, linha].Value);
+                    }
+                    else
+                    {
+                        conteudo = " ";
+                    }
+
+                    if (string.IsNullOrWhiteSpace(conteudo)) conteudo = " ";
+
+                    if (linha == 0 && coluna > 0 && !string.IsNullOrWhiteSpace(conteudo))
+                        double.TryParse(conteudo, out valorMedido);
+
+                    SubstituiVar($"&(C{coluna:00}L{linha:00})&", double.TryParse(conteudo, out double val) ? val.ToString("0.000") : " ");
+
+                    if (coluna > 0 && linha > 0)
+                    {
+                        if (double.TryParse(conteudo, out double valorAtual) && valorMedido != 0)
+                        {
+                            percentualErro = (valorAtual - valorMedido) / valorMedido * 100;
+                            //fator = (percentualErro + Convert.ToDouble(frm_Principal.txt_Calibracao_Fator.Text)) / 100 * valorAtual;
+
+                            SubstituiVar($"&(C{coluna:00}L{linha:00}E)&", percentualErro.ToString("0.00"));
+                            SubstituiVar($"&(C{coluna:00}L{linha:00}F)&", fator.ToString("0.00000"));
+                        }
+                        else
+                        {
+                            SubstituiVar($"&(C{coluna:00}L{linha:00}E)&", " ");
+                            SubstituiVar($"&(C{coluna:00}L{linha:00}F)&", " ");
+                        }
+                    }
+
+                    contador++;
+                    if ((int)(contador / 3.43) % 10 == 0)
+                        //pgb_LaudoDoc.Value = Math.Min(100, (int)(contador / 3.43));
+                }
+            }
+
+            //SubstituiVar("&(CALIBRA_NS_EQUIP)&", frm_Principal.txt_Calibracao_NS.Text);
+            SubstituiVar("&(DATA)&", DateTime.Now.ToString("dd/MMM/yyyy"));
+            SubstituiVar("&(DATAANO)&", DateTime.Now.AddYears(1).ToString("dd/MMM/yyyy"));
+
+            object unit = Microsoft.Office.Interop.Word.WdUnits.wdStory;
+            object missing = System.Type.Missing;
+            wordApp.Selection.HomeKey(ref unit, ref missing);
+
+            //pgb_LaudoDoc.Value = 100;
+
+            string caminhoFinal = g_arq_exame + " - Relatório de Calibração.doc";
+            wordApp.ActiveDocument.SaveAs2(caminhoFinal);
+
+            wordApp.Visible = true;
+            wordApp.Activate();
+
+            wordApp = null;
+
+            try
+            {
+                File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".doc"));
+            }
+            catch { }
+
+            planExcel.Close(false);
+            planExcel = null;
+            ObjExcel = null;
+
+            try
+            {
+                File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".xls"));
+            }
+            catch { }
+            */
         }
 
         public static void CalcularDadosFrequenciaCardiaca()
@@ -4792,8 +4897,8 @@ namespace PlotagemOpenGL.LaudoForm
                 return;
             }
 
-            double CPAP_Min = tbl_Paginas.First().Field<double>("Pressao_CPAP");
-            double CPAP_Max = tbl_Paginas.Last().Field<double>("Pressao_CPAP");
+            CPAP_Min = tbl_Paginas.First().Field<double>("Pressao_CPAP");
+            CPAP_Max = tbl_Paginas.Last().Field<double>("Pressao_CPAP");
 
             int pressaomenor = 100, pressaomaior = 0;
 
@@ -5049,8 +5154,8 @@ namespace PlotagemOpenGL.LaudoForm
                     return;
                 }
 
-                double CPAP_Min = Convert.ToDouble(tbl_Paginas.First()["Pressao_CPAP"]);
-                double CPAP_Max = Convert.ToDouble(tbl_Paginas.Last()["Pressao_CPAP"]);
+                CPAP_Min = Convert.ToDouble(tbl_Paginas.First()["Pressao_CPAP"]);
+                CPAP_Max = Convert.ToDouble(tbl_Paginas.Last()["Pressao_CPAP"]);
 
                 var paginasPorNum = GlobVar.tbl_Paginas.AsEnumerable().OrderBy(r => Convert.ToInt32(r["NumPag"])).ToList();
                 int pressaomenor = 100;
@@ -6543,7 +6648,7 @@ namespace PlotagemOpenGL.LaudoForm
                 sql = $"SELECT COUNT(Cons_Desp_Com_Dessat.CodEvento) AS Qtd_Evento FROM Cons_Desp_Com_Dessat WHERE Cons_Desp_Com_Dessat.Pag_Ini >= {pag_noite} AND Cons_Desp_Com_Dessat.Pag_Ini <= {pag_dia}";
                 tbl = ExecutaSQL(cnn_dbExame, sql);
 
-                int qtd_Desp_com_dessat = 0;
+                qtd_Desp_com_dessat = 0;
                 if (tbl.Rows.Count > 0)
                 {
                     qtd_Desp_com_dessat = Convert.ToInt32(tbl.Rows[0]["Qtd_Evento"]);
@@ -6655,10 +6760,1616 @@ namespace PlotagemOpenGL.LaudoForm
 
                     //'"RESUMO_DESP"
                     s_dados_Despertares_Ronco_PLM(cnn_dbExame);
+
+                    if (GlobVar.tbl_Paginas != null)
+                    {
+                        DateTime ini = Convert.ToDateTime(GlobVar.tbl_Paginas.Rows[0]["Horario"]);
+                        SubstituiVar("&(Ini_Sono)", ini.ToString("HH:mm:ss"));
+
+                        var ultimaPagina = GlobVar.tbl_Paginas.Rows[GlobVar.tbl_Paginas.Rows.Count - 1];
+                        DateTime fimSono = Convert.ToDateTime(ultimaPagina["Horario"]);
+                        DateTime fimExame = Convert.ToDateTime(GlobVar.tbl_ResumoExame.Rows[0]["FIM_EXAME"]);
+
+                        SubstituiVar("&(Fim_Sono)", fimSono.ToString("HH:mm:ss"));
+                        TimeSpan despertoFim = fimExame - fimSono;
+                        SubstituiVar("&(Desperto_Fim)", despertoFim.ToString(@"hh\:mm\:ss"));
+
+                        //'BOA NOITE E BOM DIA
+                        DataRow rowNoite = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == pag_noite).FirstOrDefault();
+                        DateTime hrNoite = Convert.ToDateTime(rowNoite["Horario"]);
+                        hora_boa_noite = hrNoite.ToString("HH:mm:ss");
+
+                        DataRow rowDia = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == pag_dia).FirstOrDefault();
+                        DateTime hrDia = Convert.ToDateTime(rowDia["Horario"]);
+                        hora_bom_dia = hrDia.ToString("HH:mm:ss");
+                    }
+                    SubstituiVar("&(BOA_NOITE)&", hora_boa_noite);
+                    SubstituiVar("&(BOM_DIA)&", hora_bom_dia);
+
+                    //IND_APHIP
+                    if (GlobVar.tbl_ResumoExame == null)
+                    {
+                        SubstituiVar("&(IND_APHIP)&", "0.0");
+                    }
+                    else
+                    {
+                        SubstituiVar("&(IND_APHIP)&", ((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString("F1"));
+                    }
+
+                    // IND_AP
+                    if (GlobVar.tbl_ResumoExame == null || Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+                    {
+                        SubstituiVar("&(IND_AP)&", "0.0");
+                    }
+                    else
+                    {
+                        SubstituiVar("&(IND_AP)&", ev_ap.indice.ToString("F1"));
+                    }
+
+                    // IND_HIP
+                    if (GlobVar.tbl_ResumoExame == null || Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+                    {
+                        SubstituiVar("&(IND_HIP)&", "0.0");
+                    }
+                    else
+                    {
+                        SubstituiVar("&(IND_HIP)&", ev_hipop.indice.ToString("F1"));
+                    }
+
+                    // IND_APHIP_REM
+                    if (GlobVar.tbl_ResumoExame == null || Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
+                    {
+                        SubstituiVar("&(IND_APHIP_REM)&", "0.0");
+                    }
+                    else
+                    {
+                        double est5Horas = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600;
+                        double indiceAPHIP_REM = (ev_ap.qtd_rem + ev_hipop.qtd_rem) / est5Horas;
+                        SubstituiVar("&(IND_APHIP_REM)&", indiceAPHIP_REM.ToString("F1"));
+                    }
+
+                    // IND_AP_REM
+                    if (GlobVar.tbl_ResumoExame == null || Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
+                    {
+                        SubstituiVar("&(IND_AP_REM)&", "0.0");
+                    }
+                    else
+                    {
+                        double est5Horas = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600;
+                        double indiceAP_REM = ev_ap.qtd_rem / est5Horas;
+                        SubstituiVar("&(IND_AP_REM)&", indiceAP_REM.ToString("F1"));
+                    }
+
+                    // pgb_LaudoDoc.Value = 60; // Deixe isso onde você precisar controlar a barra de progresso.
+
+                    // IND_HIP_REM
+                    if (GlobVar.tbl_ResumoExame == null || Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
+                    {
+                        SubstituiVar("&(IND_HIP_REM)&", "0.0");
+                    }
+                    else
+                    {
+                        double est5Horas = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600;
+                        double indiceHIP_REM = ev_hipop.qtd_rem / est5Horas;
+                        SubstituiVar("&(IND_HIP_REM)&", indiceHIP_REM.ToString("F1"));
+                    }
+
+                    //"RESUMO_RESP"
+                    s_dados_Respiratorios(pag_noite, pag_dia, cnn_dbExame);
+
+                    //'"IND_REM_HIPOPNEIA_OBS"
+                    if (Convert.ToInt16(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
+                    {
+                        SubstituiVar("&(IND_REM_HIPOPNEIA_OBS)&", "0.0");
+
+                    }
+                    else
+                    {
+                        SubstituiVar("&(IND_REM_HIPOPNEIA_OBS)&", (ev_hipop_obs.qtd_rem / (Convert.ToInt16(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString("F1"));
+                        double est5Segundos = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
+                        double indice = est5Segundos == 0 ? 0.0 : ev_hipop_obs.qtd_rem / (est5Segundos / 3600);
+                        texto = texto.Substring(0, pos1 - 1) + indice.ToString("0.0") + texto.Substring(0 + 2);
+
+                    }
+
+                    //'"SAT_BASAL"
+                    s_dados_Saturacao(cnn_dbExame);
+
+                    //' FREQ CARD
+                    //'"FC_MAIOR"
+                    SubstituiVar("&(FC_MAIOR)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MAIOR"]).ToString("F0", new CultureInfo("pt-BR")));
+
+                    SubstituiVar("&(FC_REM_MEDIA)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_REM_MEDIA"]).ToString("F0", new CultureInfo("pt-BR")));
+                    SubstituiVar("&(FC_REM_MAIOR)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_REM_MAIOR"]).ToString("F0", new CultureInfo("pt-BR")));
+                    SubstituiVar("&(FC_NREM_MEDIA)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_NREM_MEDIA"]).ToString("F0", new CultureInfo("pt-BR")));
+                    SubstituiVar("&(FC_NREM_MAIOR)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_NREM_MAIOR"]).ToString("F0", new CultureInfo("pt-BR")));
+                    SubstituiVar("&(FC_VIGILIA_MEDIA)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_VIGILIA_MEDIA"]).ToString("F0", new CultureInfo("pt-BR")));
+                    SubstituiVar("&(FC_VIGILIA_MAIOR)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_VIGILIA_MAIOR"]).ToString("F0", new CultureInfo("pt-BR")));
+
+                    //'"FC_MENOR"
+                    SubstituiVar("&(FC_MENOR)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MENOR"]).ToString("F0", new CultureInfo("pt-BR")));
+
+                    //'"FC_MEDIA"
+                    SubstituiVar("&(FC_MEDIA)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MEDIA"]).ToString("F0", new CultureInfo("pt-BR")));
+
+                    SubstituiVar("&(CPAP_MIN)&", (CPAP_Min.ToString("F0", new CultureInfo("pt-BR"))));
+                    SubstituiVar("&(CPAP_MAX)&", (CPAP_Max.ToString("F0", new CultureInfo("pt-BR"))));
+
+                    s_dados_Multipla_Latencia();
+                    
                 }
+                else
+                {
+                    //'substitui variaveis do paciente e dados do exame
+                    s_dados_exame_paciente(cnn_dbExame, cnn_dbConfig);
+
+
+                    //'ESTAGIOS
+                    s_dados_Estagios(cnn_dbExame);
+
+
+                    //'"RESUMO_DESP"
+                    s_dados_Despertares_Ronco_PLM(cnn_dbExame);
+
+
+                    //'"RESUMO_RESP"
+                    s_dados_Respiratorios(pag_noite, pag_dia, cnn_dbExame);
+
+
+                    //'"EVENTOS X POSICAO"
+                    S_PreparaEventosPosicao(cnn_dbExame);
+
+
+                    //'"SAT_BASAL"
+                    s_dados_Saturacao(cnn_dbExame);
+
+                    //'SubstituiVar("&(IND_APHIP_INT)&", "0.0")
+                    if(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0){
+                    SubstituiVar("&(IND_APHIP_INT)&", "0.0");
+
+                    }//If tbl_ResumoExame!TTS = 0 Then
+                    else
+                    {
+                    SubstituiVar("&(IND_APHIP_INT)&", TimeSpan.FromSeconds((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    }
+                    //'SubstituiVar("&(IND_AP_INT)&", "0.0")
+                    SubstituiVar("&(IND_AP_INT)&", TimeSpan.FromSeconds(ev_ap.indice).ToString(@"hh\:mm\:ss"));
+                    //'SubstituiVar("&(IND_HIP_INT)&", "0.0")
+                    SubstituiVar("&(IND_HIP_INT)&", TimeSpan.FromSeconds(ev_hipop.indice).ToString(@"hh\:mm\:ss"));
+                    //'SubstituiVar("&(IND_APHIP_REM_INT)&", "0.0")
+                    if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
+                    {
+                    SubstituiVar("&(IND_APHIP_REM_INT)&", "0.0");
+                    SubstituiVar("&(IND_AP_REM_INT)&", "0.0");
+                    SubstituiVar("&(IND_HIP_REM_INT)&", "0.0");
+
+                    } //If tbl_ResumoExame!Est_5 = 0 Then
+                    else
+                    {
+                    SubstituiVar("&(IND_APHIP_REM_INT)&", TimeSpan.FromSeconds((ev_ap.qtd_rem + ev_hipop.qtd_rem) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_AP_REM_INT)&", TimeSpan.FromSeconds(ev_ap.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_HIP_REM_INT)&", TimeSpan.FromSeconds(ev_hipop.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+
+                    }
+                    
+                    //'SubstituiVar("&(IND_AP_REM_INT)&", "0.0");
+                    //'SubstituiVar("&(IND_HIP_REM_INT)&", "0.0");
+                    SubstituiVar("&(FC_MAIOR_INT)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MAIOR"])).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(FC_MENOR_INT)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MENOR"])).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(FC_MEDIA_INT)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MEDIA"])).ToString(@"hh\:mm\:ss"));
+
+                }
+                // Volta ao início do documento Word
+                object unit = Microsoft.Office.Interop.Word.WdUnits.wdStory;
+                object missing = System.Type.Missing;
+                wordApp.Selection.HomeKey(ref unit, ref missing);
+
+
+                if (passagem == 1 || passagem == ultimapassagem)
+                {
+                    string nomeArquivoFinal;
+                    if (texto.ToUpper().EndsWith("COMENTARIOS.DOC"))
+                        nomeArquivoFinal = g_arq_exame + " Comentarios.doc";
+                    else
+                        nomeArquivoFinal = g_arq_exame + " Laudo.doc";
+
+                    wordApp.ActiveDocument.SaveAs2(nomeArquivoFinal);
+                    wordApp.Visible = true;
+                    wordApp.Activate();
+
+                    // Libera memória
+                    wordApp = null;
+
+                    try
+                    {
+                        File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".doc"));
+                    }
+                    catch { }
+
+                    F_PreencheLaudoDOC(texto + "");// = texto + "";
+                }
+
+                // Fecha Excel
+                planExcel.Close(false);
+                planExcel = null;
+                ObjExcel = null;
+
+                try
+                {
+                    File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".xls"));
+                }
+                catch { }
+
+                // Carrega informações da clínica
+                sql = "SELECT * FROM tbl_DadosClinica";
+                rs = ExecutaSQL(cnn_dbConfig, sql);
+                if (rs != null && rs.Rows.Count > 0)
+                {
+                    var idClinica = rs.Rows[0]["ID_Clinica"].ToString();
+                    g_variaveislaudo = "&(ID_CLINICA)&" + idClinica + ";" + Environment.NewLine + g_variaveislaudo;
+                }
+
             }
         }
 
+        public static void s_dados_Multipla_Latencia()
+        {
+            for (int i = 1; i <= 5; i++)
+            {
+                int index = i - 1;
+                string inicio = g_naps[index].Inicio == TimeSpan.Zero ? "-" : g_naps[index].Inicio.ToString(@"hh\:mm\:ss");
+                string fim = g_naps[index].fim == TimeSpan.Zero ? "-" : g_naps[index].fim.ToString(@"hh\:mm\:ss");
+
+                string latSono = g_naps[index].Lat_Sono == -1 ? "-" : g_naps[index].Lat_Sono.ToString();
+                string latEst1 = g_naps[index].Lat_Est1 == -1 ? "-" : g_naps[index].Lat_Est1.ToString();
+                string latEst2 = g_naps[index].Lat_Est2 == -1 ? "-" : g_naps[index].Lat_Est2.ToString();
+                string latEst3 = g_naps[index].Lat_Est3 == -1 ? "-" : g_naps[index].Lat_Est3.ToString();
+                string latEst4 = g_naps[index].Lat_Est4 == -1 ? "-" : g_naps[index].Lat_Est4.ToString();
+                string latEst5BoaNoite = g_naps[index].Lat_Est5_BoaNoite == -1 ? "-" : g_naps[index].Lat_Est5_BoaNoite.ToString();
+                string latEst5SleepOnset = g_naps[index].Lat_Est5_SleepOnset == -1 ? "-" : g_naps[index].Lat_Est5_SleepOnset.ToString();
+
+                SubstituiVar($"&(INICIO_P{i})&", inicio);
+                SubstituiVar($"&(FIM_P{i})&", fim);
+                SubstituiVar($"&(LAT_SONO_P{i})&", latSono);
+                SubstituiVar($"&(LAT_EST1_P{i})&", latEst1);
+                SubstituiVar($"&(LAT_EST2_P{i})&", latEst2);
+                SubstituiVar($"&(LAT_EST3_P{i})&", latEst3);
+                SubstituiVar($"&(LAT_EST4_P{i})&", latEst4);
+                SubstituiVar($"&(LAT_EST5_P{i})&", latEst5BoaNoite);
+                SubstituiVar($"&(LAT_EST5_OS_P{i})&", latEst5SleepOnset);
+
+                // Substituições com conversão para minutos (LAT_SONO_MIN_Px)
+                string latSonoMin = g_naps[index].Lat_Sono == -1
+                    ? TimeSpan.FromSeconds(g_naps[index].TTR).ToString(@"hh\:mm\:ss")
+                    : TimeSpan.FromSeconds(g_naps[index].Lat_Sono).ToString(@"hh\:mm\:ss");
+                SubstituiVar($"&(LAT_SONO_MIN_P{i})&", latSonoMin);
+
+                // Substituições com conversão para minutos (LAT_EST1_MIN_Px)
+                string latEst1Min = g_naps[index].Lat_Est1 == -1
+                    ? "-"
+                    : TimeSpan.FromSeconds(g_naps[index].Lat_Est1).ToString(@"hh\:mm\:ss");
+                SubstituiVar($"&(LAT_EST1_MIN_P{i})&", latEst1Min);
+
+
+            }
+
+            int latMedSono = 0;
+            int latMedSonoQtd = 0;
+
+            for (int i = 1; i <= 5; i++)
+            {
+                int index = i - 1;
+                int latEst1 = g_naps[index].Lat_Est1;
+                if (latEst1 != -1)
+                {
+                    latMedSono += latEst1;
+                    latMedSonoQtd++;
+                }
+            }
+
+            if (latMedSonoQtd > 0)
+            {
+                SubstituiVar("&(LAT_MED_SONO)&", TimeSpan.FromSeconds((double)latMedSono / latMedSonoQtd).ToString(@"hh\:mm\:ss"));
+            }
+            else
+            {
+                SubstituiVar("&(LAT_MED_SONO)&", "-");
+            }
+
+            // Assume: SubstituiVar(string variavel, string valor)
+            // Assume: FormataTempo(double tempo, bool comHoras)
+
+            for (int estagio = 0; estagio <= 3; estagio++)
+            {
+                double soma = 0;
+                for (int i = 1; i <= 5; i++)
+                {
+                    int index = i - 1;
+                    switch (estagio)
+                    {
+                        case 0: soma += g_naps[index].TempoEst0; break;
+                        case 1: soma += g_naps[index].TempoEst1; break;
+                        case 2: soma += g_naps[index].TempoEst2; break;
+                        case 3: soma += g_naps[index].TempoEst3; break;
+                    }
+                }
+                SubstituiVar($"&(DUR_EST{estagio})&", TimeSpan.FromSeconds(soma).ToString(@"hh\:mm\:ss"));
+            }
+
+            // Estágio REM (equivale a EST5)
+            double somaREM = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                somaREM += g_naps[i].TempodeREM;
+            }
+            SubstituiVar("&(DUR_EST5)&", TimeSpan.FromSeconds(somaREM).ToString(@"hh\:mm\:ss"));
+
+            // Latências por estágio (EST2 a EST5) e páginas (P1 a P5)
+            for (int est = 2; est <= 5; est++)
+            {
+                for (int pag = 1; pag <= 5; pag++)
+                {
+                    int index = pag - 1;
+                    string variavel = $"&(LAT_EST{est}_MIN_P{pag})&";
+                    double valor = est switch
+                    {
+                        2 => g_naps[index].Lat_Est2,
+                        3 => g_naps[index].Lat_Est3,
+                        4 => g_naps[index].Lat_Est4,
+                        5 => g_naps[index].Lat_Est5_BoaNoite,
+                        _ => -1
+                    };
+
+                    SubstituiVar(variavel, valor == -1 ? "-" : TimeSpan.FromSeconds(valor).ToString(@"hh\:mm\:ss"));
+                }
+            }
+            string[] remVars = { "LAT_EST5_MIN_P1", "LAT_EST5_MIN_P2", "LAT_EST5_MIN_P3", "LAT_EST5_MIN_P4", "LAT_EST5_MIN_P5" };
+            double somaBoaNoite = 0;
+
+            foreach (string var in remVars)
+            {
+                int index = int.Parse(var[^1].ToString()) - 1;
+                somaBoaNoite += g_naps[index].Lat_Est5_BoaNoite;
+            }
+
+            double mediaBoaNoite = somaBoaNoite / remVars.Length;
+            SubstituiVar("&(LAT_REM_MIN)&", TimeSpan.FromSeconds(mediaBoaNoite).ToString(@"hh\:mm\:ss"));
+
+            for (int i = 1; i <= 5; i++)
+            {
+                int index = i - 1;
+                string varName = $"&(LAT_EST5_OS_MIN_P{i})&";
+                double onset = g_naps[index].Lat_Est5_SleepOnset;
+
+                string valor = (onset == -1)
+                    ? "-"
+                    : TimeSpan.FromSeconds(onset).ToString(@"hh\:mm\:ss");
+
+                SubstituiVar(varName, valor);
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                int index = i - 1;
+
+                // TTS_MIN_Px
+                string varTTS = $"TTS_MIN_P{i}";
+                if (g_naps[index].TTS == 0)
+                    SubstituiVar($"&({varTTS})&", "-");
+                else
+                    SubstituiVar($"&({varTTS})&", TimeSpan.FromSeconds(g_naps[index].TTS).ToString(@"hh\:mm\:ss"));
+
+                // TTR_MIN_Px
+                string varTTR = $"TTR_MIN_P{i}";
+                if (g_naps[index].TTR == 0)
+                    SubstituiVar($"&({varTTR})&", "-");
+                else
+                    SubstituiVar($"&({varTTR})&", TimeSpan.FromSeconds(g_naps[index].TTR).ToString(@"hh\:mm\:ss"));
+
+                // EFIC_SONO_Px
+                string varEFIC = $"EFIC_SONO_P{i}";
+                if (g_naps[index].TTR == 0)
+                    SubstituiVar($"&({varEFIC})&", "0.0");
+                else
+                {
+                    double efic = g_naps[index].TTS * 100.0 / g_naps[index].TTR;
+                    SubstituiVar($"&({varEFIC})&", efic.ToString("0.0", CultureInfo.InvariantCulture));
+                }
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                int index = i - 1;
+
+                SubstituiVar($"&(HorarioNREM_P{i})&", g_naps[index].HorarioNREM.ToString(@"hh\:mm\:ss"));
+                SubstituiVar($"&(HorarioREM_P{i})&", g_naps[index].HorarioREM.ToString(@"hh\:mm\:ss"));
+
+                string tempoEst0;
+                if (g_naps[index].TempoEst0 == 0)
+                    tempoEst0 = "-";
+                else
+                    tempoEst0 = TimeSpan.FromSeconds(g_naps[index].TempoEst0).ToString(@"hh\:mm\:ss");
+
+                SubstituiVar($"&(TEMPO_EST0_MIN_P{i})&", tempoEst0);
+            }
+
+            string[] estagios = { "TEMPO_EST0_MIN", "TEMPO_EST1_MIN", "TEMPO_EST2_MIN", "TEMPO_EST3_MIN" };
+            for (int est = 0; est <= 3; est++)
+            {
+                for (int p = 1; p <= 5; p++)
+                {
+                    string varName = $"{estagios[est]}_P{p}";
+                    int index = p - 1;
+
+                    double tempo = est switch
+                    {
+                        0 => g_naps[index].TempoEst0,
+                        1 => g_naps[index].TempoEst1,
+                        2 => g_naps[index].TempoEst2,
+                        3 => g_naps[index].TempoEst3,
+                        _ => 0
+                    };
+
+                    if (tempo == 0)
+                        SubstituiVar($"&({varName})&", "-");
+                    else
+                        SubstituiVar($"&({varName})&", TimeSpan.FromSeconds(tempo).ToString(@"hh\:mm\:ss"));
+                }
+            }
+
+            // TEMPO_REM_MIN_P1 a P5
+            for (int p = 1; p <= 5; p++)
+            {
+                int index = p - 1;
+                string varName = $"&(TEMPO_REM_MIN_P{p})&";
+                if (g_naps[index].TempodeREM == 0)
+                {
+                    SubstituiVar(varName, "-");
+                }
+                else
+                {
+                    SubstituiVar(varName, TimeSpan.FromSeconds(g_naps[index].TempodeREM).ToString(@"hh\:mm\:ss"));
+                }
+            }
+
+            // EFIC_SONO_ML
+            double ttr_ml = 0;
+            double tts_ml = 0;
+            int qtd_ttr_ml = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (g_naps[i].TTR != 0)
+                {
+                    qtd_ttr_ml++;
+                    ttr_ml += g_naps[i].TTR;
+                    tts_ml += g_naps[i].TTS;
+                }
+            }
+            if (ttr_ml == 0)
+            {
+                SubstituiVar("&(EFIC_SONO_ML)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(EFIC_SONO_ML)&", (tts_ml * 100 / ttr_ml).ToString("0.0") + " %");
+            }
+
+            // MEDIA_LAT5_ML
+            double lat_ml = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (g_naps[i].Lat_Sono > -1)
+                {
+                    if (g_naps[i].Lat_Sono > 0)
+                        lat_ml += g_naps[i].Lat_Sono;
+                }
+                else
+                {
+                    lat_ml += g_naps[i].TTR;
+                }
+            }
+            SubstituiVar("&(MEDIA_LAT5_ML)&", TimeSpan.FromSeconds(lat_ml / 5).ToString(@"hh\:mm\:ss") + " mm:ss");
+            SubstituiVar("&(MEDIA_LAT5_ML_)&", TimeSpan.FromSeconds(lat_ml / 5).ToString(@"hh\:mm\:ss"));
+
+            // MEDIA_LAT4_ML
+            lat_ml = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (g_naps[i].Lat_Sono > -1)
+                {
+                    if (g_naps[i].Lat_Sono > 0)
+                        lat_ml += g_naps[i].Lat_Sono;
+                }
+                else
+                {
+                    lat_ml += g_naps[i].TTR;
+                }
+            }
+            SubstituiVar("&(MEDIA_LAT4_ML)&", TimeSpan.FromSeconds(lat_ml / 4).ToString(@"hh\:mm\:ss") + " mm:ss");
+
+            // MEDIA_LAT3_ML
+            lat_ml = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                if (g_naps[i].Lat_Sono > -1)
+                {
+                    if (g_naps[i].Lat_Sono > 0)
+                        lat_ml += g_naps[i].Lat_Sono;
+                }
+                else
+                {
+                    lat_ml += g_naps[i].TTR;
+                }
+            }
+            SubstituiVar("&(MEDIA_LAT3_ML)&", TimeSpan.FromSeconds(lat_ml / 3).ToString(@"hh\:mm\:ss") + " mm:ss");
+
+            // MEDIA_LAT2_ML
+            lat_ml = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                if (g_naps[i].Lat_Sono > -1)
+                {
+                    if (g_naps[i].Lat_Sono > 0)
+                        lat_ml += g_naps[i].Lat_Sono;
+                }
+                else
+                {
+                    lat_ml += g_naps[i].TTR;
+                }
+            }
+            SubstituiVar("&(MEDIA_LAT2_ML)&", TimeSpan.FromSeconds(lat_ml / 2).ToString(@"hh\:mm\:ss") + " mm:ss");
+
+            // QTD_REM_ML
+            int qtd_rem_ml = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (g_naps[i].Lat_Est5_BoaNoite > -1)
+                {
+                    qtd_rem_ml++;
+                }
+            }
+            SubstituiVar("&(QTD_REM_ML)&", qtd_rem_ml.ToString("0"));
+
+            // MEDIA_LAT_REM_ML
+            lat_ml = 0;
+            int qtd_lat_ml = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (g_naps[i].Lat_Est5_BoaNoite > -1)
+                {
+                    lat_ml += g_naps[i].Lat_Est5_BoaNoite;
+                    qtd_lat_ml++;
+                }
+            }
+            if (qtd_lat_ml == 0)
+            {
+                SubstituiVar("&(MEDIA_LAT_REM_ML)&", "-");
+            }
+            else
+            {
+                SubstituiVar("&(MEDIA_LAT_REM_ML)&", TimeSpan.FromSeconds(lat_ml / qtd_lat_ml).ToString(@"hh\:mm\:ss") + " mm:ss");
+            }
+
+            // MEDIA_LAT_REM_OS_ML
+            lat_ml = 0;
+            qtd_lat_ml = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (g_naps[i].Lat_Est5_BoaNoite > -1)
+                {
+                    lat_ml += g_naps[i].Lat_Est5_SleepOnset;
+                    qtd_lat_ml++;
+                }
+            }
+            if (qtd_lat_ml == 0)
+            {
+                SubstituiVar("&(MEDIA_LAT_REM_OS_ML)&", "-");
+            }
+            else
+            {
+                SubstituiVar("&(MEDIA_LAT_REM_OS_ML)&", TimeSpan.FromSeconds(lat_ml / qtd_lat_ml).ToString(@"hh\:mm\:ss") + " mm:ss");
+            }
+
+
+
+        }
+        public static void s_dados_Saturacao(OleDbConnection cnn_dbExame)
+        {
+            try
+            {
+                int qtd_rem = 0;
+                int qtd_nrem = 0;
+                int qtd = GetQtdEvento(cnn_dbExame, 17);
+
+                if (passagem == ultimapassagem)
+                {
+                    if (Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["SaO2_100"]) == 0)
+                    {
+                        SubstituiVar("&(SAT_MEDIA_INT)&", "0");
+                        SubstituiVar("&(MAIOR_SAT_INT)&", "0");
+                        SubstituiVar("&(MENOR_SAT_INT)&", "0");
+                    }
+                    else
+                    {
+                        double sao2 = Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["SaO2_100"]);
+                        SubstituiVar("&(SAT_MEDIA_INT)&", ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"] * 100 / sao2).ToString("0"));
+                        SubstituiVar("&(MAIOR_SAT_INT)&", ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"] * 100 / sao2).ToString("0"));
+                        SubstituiVar("&(MENOR_SAT_INT)&", ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"] * 100 / sao2).ToString("0"));
+                    }
+
+                    SubstituiVar("&(SAT90_MIN_INT)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])));
+                    SubstituiVar("&(SAT_BASAL_INT)&", Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["SatBasal"]).ToString("0"));
+
+                    double ttr = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]);
+                    if (ttr == 0)
+                    {
+                        SubstituiVar("&(SAT90_PORC_INT)&", "0.0");
+                        SubstituiVar("&(SAT80_PORC_INT)&", "0.0");
+                    }
+                    else
+                    {
+                        SubstituiVar("&(SAT90_PORC_INT)&", (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr).ToString("0.0"));
+                        SubstituiVar("&(SAT80_PORC_INT)&", (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"]) * 100 / ttr).ToString("0.0"));
+                        SubstituiVar("&(SAT70_PORC_INT)&", (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"]) * 100 / ttr).ToString("0.0"));
+                    }
+
+                    SubstituiVar("&(SAT80_MIN_INT)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"])));
+
+                    if (qtd == 0)
+                        SubstituiVar("&(DESSAT_INT)&", f_var("Var58025"));
+                    else if (qtd == 1)
+                        SubstituiVar("&(DESSAT_INT)&", f_var("Var58039"));
+                    else
+                        SubstituiVar("&(DESSAT_INT)&", f_var("Var58032") + " " + qtd + " " + f_var("Var56158").ToLower());
+                }
+                else
+                {
+                    SubstituiVar("&(SAT_BASAL)&", Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["SatBasal"]).ToString("0"));
+
+                    double sao2 = Convert.ToDouble(GlobVar.tbl_DadosExame.Rows[0]["SaO2_100"]);
+                    double ttr = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]);
+                    double tts = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+
+                    SubstituiVar("&(SAT_MEDIA)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"] * 100 / sao2).ToString("0"));
+                    SubstituiVar("&(MAIOR_SAT)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"] * 100 / sao2).ToString("0"));
+                    SubstituiVar("&(MENOR_SAT)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"] * 100 / sao2).ToString("0"));
+
+                    SubstituiVar("&(SAT90)&", ttr == 0 ? "0.0" :
+                        TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])).ToString(@"hh\:mm\:ss") +
+                        $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr):0.0} %)");
+
+                    SubstituiVar("&(SAT90_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])));
+                    SubstituiVar("&(SAT90_PORC)&", ttr == 0 ? "0.0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr).ToString("0.0"));
+
+                    SubstituiVar("&(SAT80)&", ttr == 0 ? "0.0" :
+                        TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"])).ToString(@"hh\:mm\:ss") +
+                        $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"]) * 100 / ttr):0.0} %)");
+
+                    SubstituiVar("&(SAT80_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"])));
+                    SubstituiVar("&(SAT80_PORC)&", ttr == 0 ? "0.0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"]) * 100 / ttr).ToString("0.0"));
+
+                    SubstituiVar("&(SAT70)&", ttr == 0 ? "0.0" :
+                        TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"])).ToString(@"hh\:mm\:ss") +
+                        $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"]) * 100 / ttr):0.0} %)");
+
+                    SubstituiVar("&(SAT70_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"])));
+                    SubstituiVar("&(SAT70_PORC)&", ttr == 0 ? "0.0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"]) * 100 / ttr).ToString("0.0"));
+
+                    var dtqt = GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("Estagio") == 5).CopyToDataTable();
+                    var qtDesTem = dtqt.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 15).CopyToDataTable();
+                    qtd_rem = qtDesTem.Rows.Count;
+                    qtd_nrem = qtd - qtd_rem;
+
+                    if (qtd == 0)
+                        SubstituiVar("&(DESSAT)&", f_var("Var58025"));
+                    else if (qtd == 1)
+                        SubstituiVar("&(DESSAT)&", f_var("Var58039"));
+                    else
+                        SubstituiVar("&(DESSAT)&", f_var("Var58032") + " " + qtd + " " + f_var("Var56158").ToLower());
+
+                    SubstituiVar("&(QTD_DESSAT)&", qtd.ToString());
+                    SubstituiVar("&(QTD_DESSAT_REM)&", qtd_rem.ToString());
+                    SubstituiVar("&(QTD_DESSAT_NREM)&", qtd_nrem.ToString());
+
+                    SubstituiVar("&(IND_DESSAT)&", tts == 0 ? "0.0" : (qtd / (tts / 3600)).ToString("0.0"));
+
+                    double est5 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
+                    double est_nrem = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]) +
+                                      Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]) +
+                                      Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
+
+                    double ind_rem = est5 == 0 ? 0 : qtd_rem / (est5 / 3600);
+                    double ind_nrem = est_nrem == 0 ? 0 : qtd_nrem / (est_nrem / 3600);
+
+                    SubstituiVar("&(IND_DESSAT_REM)&", ind_rem.ToString("0.0"));
+                    SubstituiVar("&(IND_DESSAT_NREM)&", ind_nrem.ToString("0.0"));
+                }
+            }
+            catch (Exception ex)
+            {
+                // Trate o erro de forma adequada, se necessário
+            }
+        }
+
+        public static void s_dados_Respiratorios(int pag_noite, int pag_dia, OleDbConnection cnn_dbExame)
+        {
+            int maior_ev_num = 0;
+            string maior_ev_string = "";
+            int pos_c = 0, pos_b = 0, pos_d = 0, pos_e = 0;
+            string sql = "";
+            DataTable rs = new DataTable();
+
+            sql = "SELECT * FROM tbl_PosEstagio";
+            rs = ExecutaSQL(cnn_dbExame, sql);
+            
+            if(rs != null)
+            {
+                foreach(DataRow rw in rs.Rows)
+                {
+                    if (Convert.ToInt32(rw["Estagio"]) > 0)
+                    {
+                        pos_c += Convert.ToInt32(rw["Cima"]);
+                        pos_b += Convert.ToInt32(rw["Baixo"]);
+                        pos_d += Convert.ToInt32(rw["Direita"]);
+                        pos_e += Convert.ToInt32(rw["Esquerda"]);
+                    }
+                }
+            }
+
+            texto2 = "";
+
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+            {
+                texto2 = f_var("Var58026");
+            }
+            else if (ev_ap.qtd + ev_hipop.qtd == 1)
+            {
+                if (ev_ap_cen.qtd == 1)
+                {
+                    texto2 = f_var("Var58036");
+                }
+                else if (ev_ap_obs.qtd + ev_hipop.qtd == 1)
+                {
+                    texto2 = f_var("Var58038");
+                }
+                else
+                {
+                    texto2 = f_var("Var58037");
+                }
+            }
+            else
+            {
+                texto2 = f_var("Var58032") + " " + (ev_ap.qtd + ev_hipop.qtd).ToString() + " " + f_var("Var58012").ToLower() + ", " + f_var("Var58011") + " ";
+
+                if (ev_ap_cen.qtd > 1)
+                {
+                    texto2 += ev_ap_cen.qtd.ToString() + " " + f_var("Var58003") + ", ";
+                }
+                else
+                {
+                    texto2 += ev_ap_cen.qtd.ToString() + " " + f_var("Var58004") + ", ";
+                }
+
+                if (ev_ap_obs.qtd + ev_ap_cen.qtd + ev_hipop.qtd > 1)
+                {
+                    texto2 += (ev_ap_obs.qtd + ev_hipop.qtd).ToString() + " " + f_var("Var58031") + " e ";
+                }
+                else
+                {
+                    texto2 += (ev_ap_obs.qtd + ev_hipop.qtd).ToString() + " " + f_var("Var58030") + " e ";
+                }
+
+                if (ev_ap_mis.qtd > 1)
+                {
+                    texto2 += ev_ap_mis.qtd.ToString() + " " + f_var("Var58020");
+                }
+                else
+                {
+                    texto2 += ev_ap_mis.qtd.ToString() + " " + f_var("Var58019");
+                }
+            }
+
+            string texto2RERA = "";
+
+            int totalEventosRERA = ev_ap.qtd + ev_hipop.qtd + ev_rera.qtd;
+
+            if (totalEventosRERA == 0)
+            {
+                texto2RERA = f_var("Var58026");
+            }
+            else if (totalEventosRERA == 1)
+            {
+                if (ev_ap_cen.qtd == 1)
+                {
+                    texto2RERA = f_var("Var58036");
+                }
+                else if (ev_ap_obs.qtd + ev_hipop.qtd + ev_rera.qtd == 1)
+                {
+                    texto2RERA = f_var("Var58038");
+                }
+                else
+                {
+                    texto2RERA = f_var("Var58037");
+                }
+            }
+            else
+            {
+                texto2RERA = f_var("Var58032") + " " + totalEventosRERA.ToString() + " " + f_var("Var58012").ToLower() + ", " + f_var("Var58011") + " ";
+
+                if (ev_ap_cen.qtd > 1)
+                {
+                    texto2RERA += ev_ap_cen.qtd.ToString() + " " + f_var("Var58003") + " e ";
+                }
+                else
+                {
+                    texto2RERA += ev_ap_cen.qtd.ToString() + " " + f_var("Var58004") + " e ";
+                }
+
+                int totalObsMisHipRera = ev_ap_obs.qtd + ev_ap_mis.qtd + ev_hipop.qtd + ev_rera.qtd;
+
+                if (ev_ap_obs.qtd + ev_hipop.qtd + ev_rera.qtd > 1)
+                {
+                    texto2RERA += totalObsMisHipRera.ToString() + " " + f_var("Var58031") + ".";
+                }
+                else
+                {
+                    texto2RERA += totalObsMisHipRera.ToString() + " " + f_var("Var58030") + ".";
+                }
+
+                // Caso você deseje reativar o trecho comentado no VB6:
+                /*
+                if (ev_ap_mis.qtd > 1)
+                {
+                    texto2RERA += ev_ap_mis.qtd.ToString() + " " + f_var("Var58020");
+                }
+                else
+                {
+                    texto2RERA += ev_ap_mis.qtd.ToString() + " " + f_var("Var58019");
+                }
+                */
+            }
+
+            if (passagem == ultimapassagem)
+            {
+                SubstituiVar("&(RESUMO_RESP_INT)&", texto2RERA);
+                SubstituiVar("&(RESUMO_RESP_INT_RERA)&", texto2RERA);
+            }
+            else
+            {
+                SubstituiVar("&(RESUMO_RESP)&", texto2RERA);
+                SubstituiVar("&(RESUMO_RESP_RERA)&", texto2RERA);
+
+                SubstituiVar("&(TEMPO_DORSAL)&", TimeSpan.FromSeconds(pos_c).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TEMPO_NDORSAL)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) - pos_c).ToString(@"hh\:mm\:ss"));
+
+                // MAIORIA_RESP
+                if (ev_ap_cen.qtd > (ev_ap_obs.qtd + ev_hipop.qtd) && ev_ap_cen.qtd > ev_ap_mis.qtd)
+                {
+                    SubstituiVar("&(MAIORIA_RESP)&", f_var("Var58004"));
+                }
+                else if ((ev_ap_obs.qtd + ev_hipop.qtd) > ev_ap_cen.qtd && (ev_ap_obs.qtd + ev_hipop.qtd) > ev_ap_mis.qtd)
+                {
+                    SubstituiVar("&(MAIORIA_RESP)&", "obstrutiva");
+                }
+                else
+                {
+                    SubstituiVar("&(MAIORIA_RESP)&", "mista");
+                }
+
+                // QUANT_RESP
+                SubstituiVar("&(QUANT_RESP)&", (ev_ap.qtd + ev_hipop.qtd).ToString());
+
+                // QUANT_CEN
+                SubstituiVar("&(QUANT_CEN)&", ev_ap_cen.qtd.ToString());
+
+                // QUANT_OBS
+                SubstituiVar("&(QUANT_OBS)&", (ev_ap_obs.qtd + ev_hipop.qtd).ToString());
+
+                // QUANT_OBS_RERA
+                SubstituiVar("&(QUANT_OBS_RERA)&", (ev_ap_obs.qtd + ev_ap_mis.qtd + ev_hipop.qtd + ev_rera.qtd).ToString());
+
+                // IND_OBS_RERA
+                SubstituiVar("&(IND_OBS_RERA)&", (ev_ap_obs.indice + ev_ap_mis.indice + ev_hipop.indice + ev_rera.indice).ToString("0.0"));
+
+                // QUANT_MIS
+                SubstituiVar("&(QUANT_MIS)&", ev_ap_mis.qtd.ToString());
+
+                // QUANT_OBS_MIS (obs: parece que houve repetição da tag QUANT_OBS no original)
+                SubstituiVar("&(QUANT_OBS)&", (ev_ap_obs.qtd + ev_ap_mis.qtd + ev_hipop.qtd).ToString());
+
+                // IND_OBS
+                if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+                {
+                    SubstituiVar("&(IND_OBS)&", "0.0");
+                }
+                else
+                {
+                    SubstituiVar("&(IND_OBS)&", (ev_ap_obs.indice + ev_hipop.indice).ToString("0.0"));
+                }
+
+                // IND_OBS_MIS
+                if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+                {
+                    SubstituiVar("&(IND_OBS_MIS)&", "0.0");
+                }
+                else
+                {
+                    SubstituiVar("&(IND_OBS_MIS)&", (ev_ap_obs.indice + ev_ap_mis.indice + ev_hipop.indice).ToString("0.0"));
+                }
+            }
+
+            // APNEIA e HIPOP COM DESSAT
+            SubstituiVar("&(QTD_APNEIA_DESSAT)&", (qtd_ap_cen_com_dessat + qtd_ap_obs_com_dessat + qtd_ap_mis_com_dessat).ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_CEN_DESSAT)&", qtd_ap_cen_com_dessat.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_OBS_DESSAT)&", qtd_ap_obs_com_dessat.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_MIS_DESSAT)&", qtd_ap_mis_com_dessat.ToString("0"));
+            SubstituiVar("&(QTD_HIPOP_DESSAT)&", qtd_hipop_com_dessat.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_HIPOP_DESSAT)&", (qtd_hipop_com_dessat + qtd_ap_cen_com_dessat + qtd_ap_obs_com_dessat + qtd_ap_mis_com_dessat).ToString("0"));
+
+            // APNEIA e HIPOP COM MDESP
+            SubstituiVar("&(QTD_APNEIA_MDESP)&", (qtd_ap_cen_com_mdesp + qtd_ap_obs_com_mdesp + qtd_ap_mis_com_mdesp).ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_CEN_MDESP)&", qtd_ap_cen_com_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_OBS_MDESP)&", qtd_ap_obs_com_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_MIS_MDESP)&", qtd_ap_mis_com_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_HIPOP_MDESP)&", qtd_hipop_com_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_HIPOP_MDESP)&", (qtd_hipop_com_mdesp + qtd_ap_cen_com_mdesp + qtd_ap_obs_com_mdesp + qtd_ap_mis_com_mdesp).ToString("0"));
+
+            // APNEIA e HIPOP COM DESSAT e MDESP
+            SubstituiVar("&(QTD_APNEIA_MDESP_DESSAT)&", (qtd_ap_cen_com_dessat_e_mdesp + qtd_ap_obs_com_dessat_e_mdesp + qtd_ap_mis_com_dessat_e_mdesp).ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_CEN_MDESP_DESSAT)&", qtd_ap_cen_com_dessat_e_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_OBS_MDESP_DESSAT)&", qtd_ap_obs_com_dessat_e_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_MIS_MDESP_DESSAT)&", qtd_ap_mis_com_dessat_e_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_HIPOP_MDESP_DESSAT)&", qtd_hipop_com_dessat_e_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_APNEIA_HIPOP_MDESP_DESSAT)&", (qtd_hipop_com_dessat_e_mdesp + qtd_ap_cen_com_dessat_e_mdesp + qtd_ap_obs_com_dessat_e_mdesp + qtd_ap_mis_com_dessat_e_mdesp).ToString("0"));
+
+            // RERA
+            SubstituiVar("&(QTD_RERA_DESSAT)&", qtd_RERA_com_dessat.ToString("0"));
+            SubstituiVar("&(QTD_RERA_MDESP)&", qtd_RERA_com_mdesp.ToString("0"));
+            SubstituiVar("&(QTD_RERA_MDESP_DESSAT)&", qtd_RERA_com_dessat_e_mdesp.ToString("0"));
+
+            // APNEIA
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_APNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_APNEIA)&", (ev_ap.qtd / (double)(ev_ap.qtd + ev_hipop.qtd)).ToString("0.0"));
+
+            // DESPERTAR
+            SubstituiVar("&(QTD_DESP_DESSAT)&", qtd_Desp_com_dessat.ToString("0"));
+
+            // QTD_APNEIA
+            SubstituiVar("&(QTD_APNEIA)&", ev_ap.qtd.ToString("0"));
+
+            // IND_APNEIA
+            SubstituiVar("&(IND_APNEIA)&", ev_ap.indice.ToString("0.0"));
+
+            // MAIOR_APNEIA
+            SubstituiVar("&(MAIOR_APNEIA)&", ev_ap.maior.ToString("0.0"));
+
+            // MEDIA_APNEIA
+            SubstituiVar("&(MEDIA_APNEIA)&", ev_ap.media.ToString("0.0"));
+
+            // QTD_REM_APNEIA
+            SubstituiVar("&(QTD_REM_APNEIA)&", ev_ap.qtd_rem.ToString("0"));
+
+            // IND_REM_APNEIA
+            if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"])== 0)
+                SubstituiVar("&(IND_REM_APNEIA)&", "0.0");
+            else
+                SubstituiVar("&(IND_REM_APNEIA)&", (ev_ap.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600.0)).ToString("0.0"));
+
+            // QTD_NREM_APNEIA
+            SubstituiVar("&(QTD_NREM_APNEIA)&", ev_ap.qtd_nrem.ToString("0"));
+
+            // IND_NREM_APNEIA
+            double est_nrem = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]) + Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]) + Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]) + Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
+            if (est_nrem == 0)
+                SubstituiVar("&(IND_NREM_APNEIA)&", "0.0");
+            else
+                SubstituiVar("&(IND_NREM_APNEIA)&", (ev_ap.qtd_nrem / (est_nrem / 3600.0)).ToString("0.0"));
+
+            // Posição - QTD_PC_APNEIA
+            SubstituiVar("&(QTD_PC_APNEIA)&", ev_ap.qtd_pos_c.ToString("0"));
+
+            // IND_PC_APNEIA
+            if (ev_ap.qtd_pos_c == 0 || Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+            {
+                SubstituiVar("&(IND_PC_APNEIA)&", "0.0");
+                SubstituiVar("&(IND_PC_APNEIA_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_APNEIA)&", (ev_ap.qtd_pos_c / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA_TTS)&", (ev_ap.qtd_pos_c / (pos_c / 3600.0)).ToString("0.0"));
+            }
+
+            // PORC_PC_APNEIA
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PC_APNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PC_APNEIA)&", ((ev_ap.qtd_pos_c / (double)(ev_ap.qtd + ev_hipop.qtd)) * 100).ToString("0.0"));
+
+            // QTD_PNC_APNEIA
+            SubstituiVar("&(QTD_PNC_APNEIA)&", ev_ap.qtd_pos_x.ToString("0"));
+
+            // IND_PNC_APNEIA
+            if (ev_ap.qtd_pos_x == 0 || Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
+            {
+                SubstituiVar("&(IND_PNC_APNEIA)&", "0.0");
+                SubstituiVar("&(IND_PNC_APNEIA_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_APNEIA)&", (ev_ap.qtd_pos_x / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_TTS)&", (ev_ap.qtd_pos_x / ((Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) - pos_c) / 3600.0)).ToString("0.0"));
+            }
+
+            // "PORC_PNC_APNEIA"
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PNC_APNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PNC_APNEIA)&", Math.Round(ev_ap.qtd_pos_x * 100.0 / (ev_ap.qtd + ev_hipop.qtd), 1).ToString("0.0"));
+
+            // "PORC_APNEIA_CEN"
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_APNEIA_CEN)&", "0.0");
+            else
+                SubstituiVar("&(PORC_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd * 100.0 / (ev_ap.qtd + ev_hipop.qtd), 1).ToString("0.0"));
+
+            // "QTD_APNEIA_CEN"
+            SubstituiVar("&(QTD_APNEIA_CEN)&", ev_ap_cen.qtd.ToString("0"));
+
+            // "IND_APNEIA_CEN"
+            SubstituiVar("&(IND_APNEIA_CEN)&", ev_ap_cen.indice.ToString("0.0"));
+
+            // "MAIOR_APNEIA_CEN"
+            SubstituiVar("&(MAIOR_APNEIA_CEN)&", ev_ap_cen.maior.ToString("0.0"));
+
+            // "MEDIA_APNEIA_CEN"
+            SubstituiVar("&(MEDIA_APNEIA_CEN)&", ev_ap_cen.media.ToString("0.0"));
+
+            // "QTD_REM_APNEIA_CEN"
+            SubstituiVar("&(QTD_REM_APNEIA_CEN)&", ev_ap_cen.qtd_rem.ToString("0"));
+
+            int EstagioRem = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
+            int Est1 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]);
+            int Est2 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]);
+            int Est3 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
+            int Est4 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
+            int TTS = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+
+            // "IND_REM_APNEIA_CEN"
+            if (EstagioRem == 0)
+                SubstituiVar("&(IND_REM_APNEIA_CEN)&", "0.0");
+            else
+                SubstituiVar("&(IND_REM_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_rem / (EstagioRem / 3600.0), 1).ToString("0.0"));
+
+            // "QTD_NREM_APNEIA_CEN"
+            SubstituiVar("&(QTD_NREM_APNEIA_CEN)&", ev_ap_cen.qtd_nrem.ToString("0"));
+
+            // "IND_NREM_APNEIA_CEN"
+            double tempoNrem = Est1 + Est2 + Est3 + Est4;
+            if (tempoNrem == 0)
+                SubstituiVar("&(IND_NREM_APNEIA_CEN)&", "0.0");
+            else
+                SubstituiVar("&(IND_NREM_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_nrem / (tempoNrem / 3600.0), 1).ToString("0.0"));
+
+            // "QTD_PC_APNEIA_CEN"
+            SubstituiVar("&(QTD_PC_APNEIA_CEN)&", ev_ap_cen.qtd_pos_c.ToString("0"));
+
+            // "IND_PC_APNEIA_CEN" e "IND_PC_APNEIA_CEN_TTS"
+            if (ev_ap_cen.qtd_pos_c == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PC_APNEIA_CEN)&", "0.0");
+                SubstituiVar("&(IND_PC_APNEIA_CEN_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_pos_c / (TTS / 3600.0), 1).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA_CEN_TTS)&", Math.Round(ev_ap_cen.qtd_pos_c / (pos_c / 3600.0), 1).ToString("0.0"));
+            }
+
+            // "PORC_PC_APNEIA_CEN"
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PC_APNEIA_CEN)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PC_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_pos_c * 100.0 / (ev_ap.qtd + ev_hipop.qtd), 1).ToString("0.0"));
+
+            // "QTD_PNC_APNEIA_CEN"
+            SubstituiVar("&(QTD_PNC_APNEIA_CEN)&", ev_ap_cen.qtd_pos_x.ToString("0"));
+
+            // "IND_PNC_APNEIA_CEN" e "IND_PNC_APNEIA_CEN_TTS"
+            if (ev_ap_cen.qtd_pos_x == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_CEN)&", "0.0");
+                SubstituiVar("&(IND_PNC_APNEIA_CEN_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_pos_x / (TTS / 3600.0), 1).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_CEN_TTS)&", Math.Round(ev_ap_cen.qtd_pos_x / ((TTS - pos_c) / 3600.0), 1).ToString("0.0"));
+            }
+
+            // "PORC_PNC_APNEIA_CEN"
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PNC_APNEIA_CEN)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PNC_APNEIA_CEN)&", Math.Round(ev_ap_cen.qtd_pos_x * 100.0 / (ev_ap.qtd + ev_hipop.qtd), 1).ToString("0.0"));
+
+            double totalApHipop = ev_ap.qtd + ev_hipop.qtd;
+            SubstituiVar("&(PORC_APNEIA_OBS)&", totalApHipop == 0 ? "0.0" : (ev_ap_obs.qtd / totalApHipop * 100).ToString("0.0"));
+
+            SubstituiVar("&(QTD_APNEIA_OBS)&", ev_ap_obs.qtd.ToString("0"));
+            SubstituiVar("&(IND_APNEIA_OBS)&", ev_ap_obs.indice.ToString("0.0"));
+            SubstituiVar("&(MAIOR_APNEIA_OBS)&", ev_ap_obs.maior.ToString("0.0"));
+            SubstituiVar("&(MEDIA_APNEIA_OBS)&", ev_ap_obs.media.ToString("0.0"));
+            SubstituiVar("&(QTD_REM_APNEIA_OBS)&", ev_ap_obs.qtd_rem.ToString("0"));
+
+            // IND_REM_APNEIA_OBS
+            double est5 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
+            SubstituiVar("&(IND_REM_APNEIA_OBS)&", est5 == 0 ? "0.0" : (ev_ap_obs.qtd_rem / (est5 / 3600)).ToString("0.0"));
+
+            SubstituiVar("&(QTD_NREM_APNEIA_OBS)&", ev_ap_obs.qtd_nrem.ToString("0"));
+
+            double est1_4 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]) +
+                            Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]) +
+                            Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]) +
+                            Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
+
+            SubstituiVar("&(IND_NREM_APNEIA_OBS)&", est1_4 == 0 ? "0.0" : (ev_ap_obs.qtd_nrem / (est1_4 / 3600)).ToString("0.0"));
+
+            // Posição - PC
+            SubstituiVar("&(QTD_PC_APNEIA_OBS)&", ev_ap_obs.qtd_pos_c.ToString("0"));
+
+            double tts = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+            if (ev_ap_obs.qtd_pos_c == 0 || tts == 0)
+            {
+                SubstituiVar("&(IND_PC_APNEIA_OBS)&", "0.0");
+                SubstituiVar("&(IND_PC_APNEIA_OBS_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_APNEIA_OBS)&", (ev_ap_obs.qtd_pos_c / (tts / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA_OBS_TTS)&", (ev_ap_obs.qtd_pos_c / (pos_c / 3600)).ToString("0.0"));
+            }
+
+            SubstituiVar("&(PORC_PC_APNEIA_OBS)&", totalApHipop == 0 ? "0.0" : (ev_ap_obs.qtd_pos_c / totalApHipop * 100).ToString("0.0"));
+
+            // Posição - PNC
+            SubstituiVar("&(QTD_PNC_APNEIA_OBS)&", ev_ap_obs.qtd_pos_x.ToString("0"));
+
+            if (ev_ap_obs.qtd_pos_x == 0 || tts == 0)
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_OBS)&", "0.0");
+                SubstituiVar("&(IND_PNC_APNEIA_OBS_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_OBS)&", (ev_ap_obs.qtd_pos_x / (tts / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_OBS_TTS)&", (ev_ap_obs.qtd_pos_x / ((tts - pos_c) / 3600)).ToString("0.0"));
+            }
+
+            SubstituiVar("&(PORC_PNC_APNEIA_OBS)&", totalApHipop == 0 ? "0.0" : (ev_ap_obs.qtd_pos_x / totalApHipop * 100).ToString("0.0"));
+
+            // PORC_APNEIA_MIS
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_APNEIA_MIS)&", "0.0");
+            else
+                SubstituiVar("&(PORC_APNEIA_MIS)&", (ev_ap_mis.qtd / (ev_ap.qtd + ev_hipop.qtd)).ToString("0.0"));
+
+            // QTD_APNEIA_MIS
+            SubstituiVar("&(QTD_APNEIA_MIS)&", ev_ap_mis.qtd.ToString("0"));
+
+            // IND_APNEIA_MIS
+            SubstituiVar("&(IND_APNEIA_MIS)&", ev_ap_mis.indice.ToString("0.0"));
+
+            // MAIOR_APNEIA_MIS
+            SubstituiVar("&(MAIOR_APNEIA_MIS)&", ev_ap_mis.maior.ToString("0.0"));
+
+            // MEDIA_APNEIA_MIS
+            SubstituiVar("&(MEDIA_APNEIA_MIS)&", ev_ap_mis.media.ToString("0.0"));
+
+            // QTD_REM_APNEIA_MIS
+            SubstituiVar("&(QTD_REM_APNEIA_MIS)&", ev_ap_mis.qtd_rem.ToString("0"));
+
+            // IND_REM_APNEIA_MIS
+            if (est5 == 0)
+                SubstituiVar("&(IND_REM_APNEIA_MIS)&", "0.0");
+            else
+                SubstituiVar("&(IND_REM_APNEIA_MIS)&", (ev_ap_mis.qtd_rem / (est5 / 3600.0)).ToString("0.0"));
+
+            // QTD_NREM_APNEIA_MIS
+            SubstituiVar("&(QTD_NREM_APNEIA_MIS)&", ev_ap_mis.qtd_nrem.ToString("0"));
+
+            // IND_NREM_APNEIA_MIS
+            if (tempoNrem == 0)
+                SubstituiVar("&(IND_NREM_APNEIA_MIS)&", "0.0");
+            else
+                SubstituiVar("&(IND_NREM_APNEIA_MIS)&", (ev_ap_mis.qtd_nrem / (tempoNrem / 3600.0)).ToString("0.0"));
+
+            // QTD_PC_APNEIA_MIS
+            SubstituiVar("&(QTD_PC_APNEIA_MIS)&", ev_ap_mis.qtd_pos_c.ToString("0"));
+
+            // IND_PC_APNEIA_MIS
+            if (ev_ap_mis.qtd_pos_c == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PC_APNEIA_MIS)&", "0.0");
+                SubstituiVar("&(IND_PC_APNEIA_MIS_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_APNEIA_MIS)&", (ev_ap_mis.qtd_pos_c / (TTS / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA_MIS_TTS)&", (ev_ap_mis.qtd_pos_c / (pos_c / 3600.0)).ToString("0.0"));
+            }
+
+            // PORC_PC_APNEIA_MIS
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PC_APNEIA_MIS)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PC_APNEIA_MIS)&", ((ev_ap_mis.qtd_pos_c / (ev_ap.qtd + ev_hipop.qtd)) * 100).ToString("0.0"));
+
+            // QTD_PNC_APNEIA_MIS
+            SubstituiVar("&(QTD_PNC_APNEIA_MIS)&", ev_ap_mis.qtd_pos_x.ToString("0"));
+
+            // IND_PNC_APNEIA_MIS
+            if (ev_ap_mis.qtd_pos_x == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_MIS)&", "0.0");
+                SubstituiVar("&(IND_PNC_APNEIA_MIS_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_MIS)&", (ev_ap_mis.qtd_pos_x / (TTS / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_MIS_TTS)&", (ev_ap_mis.qtd_pos_x / ((TTS - pos_c) / 3600.0)).ToString("0.0"));
+            }
+
+            // PORC_PNC_APNEIA_MIS
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PNC_APNEIA_MIS)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PNC_APNEIA_MIS)&", ((ev_ap_mis.qtd_pos_x / (ev_ap.qtd + ev_hipop.qtd)) * 100).ToString("0.0"));
+
+            // RERA e IDR
+            s_dados_RERA_IDR();
+
+            // HIPOPNEIA
+
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_HIPOPNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_HIPOPNEIA)&", ((ev_hipop.qtd * 100.0) / (ev_ap.qtd + ev_hipop.qtd)).ToString("0.0"));
+
+            SubstituiVar("&(QTD_HIPOPNEIA)&", ev_hipop.qtd.ToString("0"));
+            SubstituiVar("&(IND_HIPOPNEIA)&", ev_hipop.indice.ToString("0.0"));
+            SubstituiVar("&(MAIOR_HIPOPNEIA)&", ev_hipop.maior.ToString("0.0"));
+            SubstituiVar("&(MEDIA_HIPOPNEIA)&", ev_hipop.media.ToString("0.0"));
+
+            SubstituiVar("&(QTD_REM_HIPOPNEIA)&", ev_hipop.qtd_rem.ToString("0"));
+
+            if (est5 == 0)
+                SubstituiVar("&(IND_REM_HIPOPNEIA)&", "0.0");
+            else
+                SubstituiVar("&(IND_REM_HIPOPNEIA)&", (ev_hipop.qtd_rem / (est5 / 3600.0)).ToString("0.0"));
+
+            SubstituiVar("&(QTD_NREM_HIPOPNEIA)&", ev_hipop.qtd_nrem.ToString("0"));
+
+            double estNrem = Est1 + Est2 + Est3 + Est4;
+            if (estNrem == 0)
+                SubstituiVar("&(IND_NREM_HIPOPNEIA)&", "0.0");
+            else
+                SubstituiVar("&(IND_NREM_HIPOPNEIA)&", (ev_hipop.qtd_nrem / (estNrem / 3600.0)).ToString("0.0"));
+
+            // POSIÇÃO
+
+            SubstituiVar("&(QTD_PC_HIPOPNEIA)&", ev_hipop.qtd_pos_c.ToString("0"));
+
+            if (ev_hipop.qtd_pos_c == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PC_HIPOPNEIA)&", "0.0");
+                SubstituiVar("&(IND_PC_HIPOPNEIA_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_HIPOPNEIA)&", (ev_hipop.qtd_pos_c / (TTS / 3600.0)).ToString("0.0"));
+                if (pos_c > 0)
+                    SubstituiVar("&(IND_PC_HIPOPNEIA_TTS)&", (ev_hipop.qtd_pos_c / (pos_c / 3600.0)).ToString("0.0"));
+                else
+                    SubstituiVar("&(IND_PC_HIPOPNEIA_TTS)&", "0.0");
+            }
+
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PC_HIPOPNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PC_HIPOPNEIA)&", ((ev_hipop.qtd_pos_c * 100.0) / (ev_ap.qtd + ev_hipop.qtd)).ToString("0.0"));
+
+            SubstituiVar("&(QTD_PNC_HIPOPNEIA)&", ev_hipop.qtd_pos_x.ToString("0"));
+
+            if (ev_hipop.qtd_pos_x == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PNC_HIPOPNEIA)&", "0.0");
+                SubstituiVar("&(IND_PNC_HIPOPNEIA_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_HIPOPNEIA)&", (ev_hipop.qtd_pos_x / (TTS / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_HIPOPNEIA_TTS)&", (ev_hipop.qtd_pos_x / ((TTS - pos_c) / 3600.0)).ToString("0.0"));
+            }
+
+            if (ev_ap.qtd + ev_hipop.qtd == 0)
+                SubstituiVar("&(PORC_PNC_HIPOPNEIA)&", "0.0");
+            else
+                SubstituiVar("&(PORC_PNC_HIPOPNEIA)&", ((ev_hipop.qtd_pos_x * 100.0) / (ev_ap.qtd + ev_hipop.qtd)).ToString("0.0"));
+
+            // HIPOPNEIA_OBS
+
+            SubstituiVar("&(QTD_HIPOPNEIA_OBS)&", ev_hipop_obs.qtd.ToString("0"));
+            SubstituiVar("&(IND_HIPOPNEIA_OBS)&", ev_hipop_obs.indice.ToString("0.0"));
+            SubstituiVar("&(MAIOR_HIPOPNEIA_OBS)&", ev_hipop_obs.maior.ToString("0.0"));
+            SubstituiVar("&(MEDIA_HIPOPNEIA_OBS)&", ev_hipop_obs.media.ToString("0.0"));
+            SubstituiVar("&(QTD_REM_HIPOPNEIA_OBS)&", ev_hipop_obs.qtd_rem.ToString("0"));
+            SubstituiVar("&(QTD_NREM_HIPOPNEIA_OBS)&", ev_hipop_obs.qtd_nrem.ToString("0"));
+
+            if (estNrem == 0)
+                SubstituiVar("&(IND_NREM_HIPOPNEIA_OBS)&", "0.0");
+            else
+                SubstituiVar("&(IND_NREM_HIPOPNEIA_OBS)&", (ev_hipop_obs.qtd_nrem / (estNrem / 3600.0)).ToString("0.0"));
+
+            // APNEIA E HIPOPNEIA
+
+            // QTD_APNEIA_HIPOP
+            SubstituiVar("&(QTD_APNEIA_HIPOP)&", (ev_ap.qtd + ev_hipop.qtd).ToString("0"));
+
+            // IND_APNEIA_HIPOP
+            SubstituiVar("&(IND_APNEIA_HIPOP)&", (ev_ap.indice + ev_hipop.indice).ToString("0.0"));
+
+            // IND_APNEIA_HIPOP sem apneia central
+            SubstituiVar("&(IND_AP_M_OB_HIP)&", (ev_ap.indice + ev_hipop.indice - ev_ap_cen.indice).ToString("0.0"));
+
+            // MAIOR_APNEIA_HIPOP e MAIOR_EV_RESP
+            var maiorApneiaHipop = Math.Max(ev_ap.maior, ev_hipop.maior).ToString("0.0");
+            SubstituiVar("&(MAIOR_APNEIA_HIPOP)&", maiorApneiaHipop);
+            SubstituiVar("&(MAIOR_EV_RESP)&", maiorApneiaHipop);
+
+            // MEDIA_APNEIA_HIPOP e MEDIA_EV_RESP
+            int totalQtd = ev_ap.qtd + ev_hipop.qtd;
+            if (totalQtd == 0)
+            {
+                SubstituiVar("&(MEDIA_APNEIA_HIPOP)&", "0.0");
+                SubstituiVar("&(MEDIA_EV_RESP)&", "0.0");
+            }
+            else
+            {
+                double media = (ev_ap.media * ev_ap.qtd + ev_hipop.media * ev_hipop.qtd) / totalQtd;
+                SubstituiVar("&(MEDIA_APNEIA_HIPOP)&", media.ToString("0.0"));
+                SubstituiVar("&(MEDIA_EV_RESP)&", media.ToString("0.0"));
+            }
+
+            // QTD_REM_APNEIA_HIPOP
+            SubstituiVar("&(QTD_REM_APNEIA_HIPOP)&", (ev_ap.qtd_rem + ev_hipop.qtd_rem).ToString("0"));
+
+            // IND_REM_APNEIA_HIPOP
+            if (est5 == 0)
+            {
+                SubstituiVar("&(IND_REM_APNEIA_HIPOP)&", "0.0");
+            }
+            else
+            {
+                double indRem = (ev_ap.qtd_rem + ev_hipop.qtd_rem) / (est5 / 3600.0);
+                SubstituiVar("&(IND_REM_APNEIA_HIPOP)&", indRem.ToString("0.0"));
+            }
+
+            // QTD_NREM_APNEIA_HIPOP
+            SubstituiVar("&(QTD_NREM_APNEIA_HIPOP)&", (ev_ap.qtd_nrem + ev_hipop.qtd_nrem).ToString("0"));
+
+            // IND_NREM_APNEIA_HIPOP
+            if (estNrem == 0)
+            {
+                SubstituiVar("&(IND_NREM_APNEIA_HIPOP)&", "0.0");
+            }
+            else
+            {
+                double indNrem = (ev_ap.qtd_nrem + ev_hipop.qtd_nrem) / (estNrem / 3600.0);
+                SubstituiVar("&(IND_NREM_APNEIA_HIPOP)&", indNrem.ToString("0.0"));
+            }
+
+            // Posição - QTD_PC_APNEIA_HIPOP
+            SubstituiVar("&(QTD_PC_APNEIA_HIPOP)&", (ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c).ToString("0"));
+
+            // IND_PC_APNEIA_HIPOP e IND_PC_APNEIA_HIPOP_TTS
+            int qtdPosC = ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c;
+            if (qtdPosC == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PC_APNEIA_HIPOP)&", "0.0");
+                SubstituiVar("&(IND_PC_APNEIA_HIPOP_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PC_APNEIA_HIPOP)&", (qtdPosC / (TTS / 3600.0)).ToString("0.0"));
+                if (pos_c > 0)
+                {
+                    SubstituiVar("&(IND_PC_APNEIA_HIPOP_TTS)&", (qtdPosC / (pos_c / 3600.0)).ToString("0.0"));
+                }
+                else
+                {
+                    SubstituiVar("&(IND_PC_APNEIA_HIPOP_TTS)&", "0.0");
+                }
+            }
+
+            // PORC_PC_APNEIA_HIPOP
+            if (totalQtd == 0)
+            {
+                SubstituiVar("&(PORC_PC_APNEIA_HIPOP)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(PORC_PC_APNEIA_HIPOP)&", (qtdPosC * 100.0 / totalQtd).ToString("0.0"));
+            }
+
+            // QTD_PNC_APNEIA_HIPOP
+            SubstituiVar("&(QTD_PNC_APNEIA_HIPOP)&", (ev_ap.qtd_pos_x + ev_hipop.qtd_pos_x).ToString("0"));
+
+            // IND_PNC_APNEIA_HIPOP e IND_PNC_APNEIA_HIPOP_TTS
+            int qtdPosX = ev_ap.qtd_pos_x + ev_hipop.qtd_pos_x;
+            if (qtdPosX == 0 || TTS == 0)
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_HIPOP)&", "0.0");
+                SubstituiVar("&(IND_PNC_APNEIA_HIPOP_TTS)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(IND_PNC_APNEIA_HIPOP)&", (qtdPosX / (TTS / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_HIPOP_TTS)&", (qtdPosX / ((TTS - pos_c) / 3600.0)).ToString("0.0"));
+            }
+
+            // PORC_PNC_APNEIA_HIPOP
+            if (totalQtd == 0)
+            {
+                SubstituiVar("&(PORC_PNC_APNEIA_HIPOP)&", "0.0");
+            }
+            else
+            {
+                SubstituiVar("&(PORC_PNC_APNEIA_HIPOP)&", (qtdPosX * 100.0 / totalQtd).ToString("0.0"));
+            }
+
+            maior_ev_num = ev_ap_cen.qtd;
+            maior_ev_string = f_var("Var58066");
+            if (ev_ap_obs.qtd > maior_ev_num)
+            {
+                maior_ev_num = ev_ap_obs.qtd;
+                maior_ev_string = f_var("Var58068");
+            }
+            if (ev_ap_mis.qtd > maior_ev_num)
+            {
+                maior_ev_num = ev_ap_mis.qtd;
+                maior_ev_string = f_var("Var58067");
+            }
+            if (ev_hipop.qtd > maior_ev_num)
+            {
+                maior_ev_num = ev_hipop.qtd;
+                maior_ev_string = f_var("Var56044");
+            }
+            if (ev_rera.qtd > maior_ev_num)
+            {
+                maior_ev_num = ev_rera.qtd;
+                maior_ev_string = "RERA";
+            }
+            SubstituiVar("&(MAIOR_QTDE_EV_RESP)&", maior_ev_string);
+
+        }
+        public static void s_dados_RERA_IDR()
+        {
+            try
+            {
+                DataRow tblResumoExame = GlobVar.tbl_ResumoExame.Rows[0];
+                // RERA
+                SubstituiVar("&(QTD_RERA)&", ev_rera.qtd.ToString("0"));
+                SubstituiVar("&(IND_RERA)&", ev_rera.indice.ToString("0.0"));
+                SubstituiVar("&(MAIOR_RERA)&", ev_rera.maior.ToString("0.0"));
+                SubstituiVar("&(MEDIA_RERA)&", ev_rera.media.ToString("0.0"));
+
+                SubstituiVar("&(QTD_REM_RERA)&", ev_rera.qtd_rem.ToString("0"));
+
+                double est5 = Convert.ToDouble(tblResumoExame["Est_5"]);
+                SubstituiVar("&(IND_REM_RERA)&", est5 == 0 ? "0.0" :
+                    (ev_rera.qtd_rem / (est5 / 3600)).ToString("0.0"));
+
+                int qtdNrem = ev_rera.qtd_nrem;
+                SubstituiVar("&(QTD_NREM_RERA)&", qtdNrem.ToString("0"));
+
+                double totalNrem = Convert.ToDouble(tblResumoExame["Est_1"]) + Convert.ToDouble(tblResumoExame["Est_2"]) +
+                                   Convert.ToDouble(tblResumoExame["Est_3"]) + Convert.ToDouble(tblResumoExame["Est_4"]);
+                SubstituiVar("&(IND_NREM_RERA)&", totalNrem == 0 ? "0.0" :
+                    (qtdNrem / (totalNrem / 3600)).ToString("0.0"));
+
+                SubstituiVar("&(QTD_PC_RERA)&", ev_rera.qtd_pos_c.ToString("0"));
+
+                double tts = Convert.ToDouble(tblResumoExame["TTS"]);
+                if (ev_rera.qtd_pos_c == 0 || tts == 0)
+                {
+                    SubstituiVar("&(IND_PC_RERA)&", "0.0");
+                    SubstituiVar("&(IND_PC_RERA_TTS)&", "0.0");
+                }
+                else
+                {
+                    SubstituiVar("&(IND_PC_RERA)&", (ev_rera.qtd_pos_c / (tts / 3600)).ToString("0.0"));
+                    double pos_c = Convert.ToDouble(tblResumoExame["pos_c"]);
+                    SubstituiVar("&(IND_PC_RERA_TTS)&", (ev_rera.qtd_pos_c / (pos_c / 3600)).ToString("0.0"));
+                }
+
+                SubstituiVar("&(PORC_PC_RERA)&", ev_rera.qtd == 0 ? "0.0" :
+                    ((ev_rera.qtd_pos_c / (double)ev_rera.qtd) * 100).ToString("0.0"));
+
+                SubstituiVar("&(QTD_PNC_RERA)&", ev_rera.qtd_pos_x.ToString("0"));
+
+                if (ev_rera.qtd_pos_x == 0 || tts == 0)
+                {
+                    SubstituiVar("&(IND_PNC_RERA)&", "0.0");
+                    SubstituiVar("&(IND_PNC_RERA_TTS)&", "0.0");
+                }
+                else
+                {
+                    double pos_c = Convert.ToDouble(tblResumoExame["pos_c"]);
+                    SubstituiVar("&(IND_PNC_RERA)&", (ev_rera.qtd_pos_x / (tts / 3600)).ToString("0.0"));
+                    SubstituiVar("&(IND_PNC_RERA_TTS)&", (ev_rera.qtd_pos_x / ((tts - pos_c) / 3600)).ToString("0.0"));
+                }
+
+                SubstituiVar("&(PORC_PNC_RERA)&", ev_rera.qtd == 0 ? "0.0" :
+                    ((ev_rera.qtd_pos_x / (double)ev_rera.qtd) * 100).ToString("0.0"));
+
+                // IDR
+                int qtdIDR = ev_ap.qtd + ev_hipop.qtd + ev_rera.qtd;
+                SubstituiVar("&(QTD_IDR)&", qtdIDR.ToString("0"));
+                SubstituiVar("&(IND_IDR)&", (ev_rera.indice + ev_ap.indice + ev_hipop.indice).ToString("0.0"));
+
+                double maiorIDR = new[] { ev_rera.maior, ev_ap.maior, ev_hipop.maior }.Max();
+                SubstituiVar("&(MAIOR_IDR)&", maiorIDR.ToString("0.0"));
+
+                if (qtdIDR == 0)
+                    SubstituiVar("&(MEDIA_IDR)&", "0.0");
+                else
+                {
+                    double mediaIDR = (ev_ap.media * ev_ap.qtd + ev_hipop.media * ev_hipop.qtd + ev_rera.media * ev_rera.qtd) / qtdIDR;
+                    SubstituiVar("&(MEDIA_IDR)&", mediaIDR.ToString("0.0"));
+                }
+
+                SubstituiVar("&(QTD_REM_IDR)&", (ev_ap.qtd_rem + ev_hipop.qtd_rem + ev_rera.qtd_rem).ToString("0"));
+                SubstituiVar("&(IND_REM_IDR)&", est5 == 0 ? "0.0" :
+                    ((ev_ap.qtd_rem + ev_hipop.qtd_rem + ev_rera.qtd_rem) / (est5 / 3600)).ToString("0.0"));
+
+                SubstituiVar("&(QTD_NREM_IDR)&", (ev_ap.qtd_nrem + ev_hipop.qtd_nrem + ev_rera.qtd_nrem).ToString("0"));
+                SubstituiVar("&(IND_NREM_IDR)&", totalNrem == 0 ? "0.0" :
+                    ((ev_ap.qtd_nrem + ev_hipop.qtd_nrem + ev_rera.qtd_nrem) / (totalNrem / 3600)).ToString("0.0"));
+
+                SubstituiVar("&(QTD_IDR_MDESP)&", totalNrem == 0 ? "0" :
+                    (qtd_hipop_com_mdesp + qtd_ap_cen_com_mdesp + qtd_ap_obs_com_mdesp + qtd_ap_mis_com_mdesp + qtd_RERA_com_mdesp).ToString("0"));
+
+                SubstituiVar("&(QTD_IDR_DESSAT)&", totalNrem == 0 ? "0" :
+                    (qtd_hipop_com_dessat + qtd_ap_cen_com_dessat + qtd_ap_obs_com_dessat + qtd_ap_mis_com_dessat + qtd_RERA_com_dessat).ToString("0"));
+
+                SubstituiVar("&(QTD_IDR_MDESP_DESSAT)&", totalNrem == 0 ? "0" :
+                    (qtd_hipop_com_dessat_e_mdesp + qtd_ap_cen_com_dessat_e_mdesp + qtd_ap_obs_com_dessat_e_mdesp + qtd_ap_mis_com_dessat_e_mdesp + qtd_RERA_com_dessat_e_mdesp).ToString("0"));
+
+                int qtdPosC_IDR = ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c + ev_rera.qtd_pos_c;
+                SubstituiVar("&(QTD_PC_IDR)&", qtdPosC_IDR.ToString("0"));
+
+                if (qtdPosC_IDR == 0 || tts == 0)
+                {
+                    SubstituiVar("&(IND_PC_IDR)&", "0.0");
+                    SubstituiVar("&(IND_PC_IDR_TTS)&", "0.0");
+                }
+                else
+                {
+                    SubstituiVar("&(IND_PC_IDR)&", (qtdPosC_IDR / (tts / 3600)).ToString("0.0"));
+                    double pos_c = Convert.ToDouble(tblResumoExame["pos_c"]);
+                    if (pos_c > 0)
+                        SubstituiVar("&(IND_PC_IDR_TTS)&", (qtdPosC_IDR / (pos_c / 3600)).ToString("0.0"));
+                }
+            }
+            catch (Exception ex)
+            {
+                // Tratamento de erro opcional
+                Console.WriteLine("Erro ao calcular RERA/IDR: " + ex.Message);
+            }
+        }
         public static void s_dados_Despertares_Ronco_PLM(OleDbConnection cnn_dbExame)
         {
             int qtd = GetQtdEvento(cnn_dbExame, 7);
@@ -9378,7 +11089,7 @@ namespace PlotagemOpenGL.LaudoForm
                 range.Copy();
 
                 // Faz o Word visível (essencial para depuração e colagem correta)
-                wordApp.Visible = true;
+                wordApp.Visible = false;
                 doc.Activate();
 
                 var selection = wordApp.Selection;
