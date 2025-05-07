@@ -5456,9 +5456,9 @@ namespace PlotagemOpenGL
                                        GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
 
             // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 12), XBrushes.Black, new XPoint(40, 20));
-            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 40));
-            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(40, 60));
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(25, 25));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 40));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 50));
 
             // Converter a imagem Bitmap para XImage
             using (MemoryStream stream = new MemoryStream())
@@ -5467,14 +5467,15 @@ namespace PlotagemOpenGL
                 XImage xImage = XImage.FromStream(stream);
 
                 // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 160) / xImage.PixelHeight);
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                double scaleFactor = Math.Min((page.Width - 20) / xImage.PixelWidth, (page.Height - 60) / xImage.PixelHeight);
                 double width = xImage.PixelWidth * scaleFactor;
-                double height = xImage.PixelHeight * scaleFactor; 
+                double height = page.Height - 90 - 45;//  xImage.PixelHeight * scaleFactor;
 
                 // Desenhar a imagem na página do PDF centralizada
                 double posX = (page.Width - width) / 2;
-                double posY = 100; // margem superior de 140 unidades
-
+                double posY = 95; // margem superior de 140 unidades
+                                   // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, posX, posY, width, height);
             }
 
@@ -5542,16 +5543,22 @@ namespace PlotagemOpenGL
             string descricao = $"Epoca: {ptsEmTela.Text} - Horario: {inicioTela.Text} - Estagio: {estagioatutxt} ({GlobVar.segundos} seg)";
 
             // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 16), XBrushes.Black, new XPoint(40, 40));
-            gfx.DrawString(medicoSolicitante, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 50));
-            gfx.DrawString(modeloEquipamento, new XFont("Arial", 14), XBrushes.Black, new XPoint(40, 60));
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(25, 25));
+            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 55));
+            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 65));
 
             // Desenhar a descrição acima da imagem no PDF
-            gfx.DrawString(descricao, new XFont("Arial", 8), XBrushes.Black, new XPoint(40, 80));
+            gfx.DrawString(descricao, new XFont("Arial", 8), XBrushes.Black, new XPoint(25, 75));
+
+            if (MostarAmplitudes.Checked)
+            {
+                MostarAmplitudes.Checked = false;
+                MostarAmplitudes_Click(MostarAmplitudes, EventArgs.Empty);
+            }
 
             // Capturar a imagem do painelExames
-            Bitmap bitmapPainel = new Bitmap(painelExames.Width, painelExames.Height);
-            painelExames.DrawToBitmap(bitmapPainel, new Rectangle(0, 0, painelExames.Width, painelExames.Height));
+            Bitmap bitmapPainel = new Bitmap(painelExames.Width, (int)(painelExames.Height * 1.12f));
+            painelExames.DrawToBitmap(bitmapPainel, new Rectangle(0, 0, painelExames.Width, (int)(painelExames.Height * 1.12f)));
 
             // Capturar a imagem da tela OpenGL
             Bitmap bitmapOpenGL = new Bitmap(openglControl1.Width, openglControl1.Height);
@@ -5564,7 +5571,7 @@ namespace PlotagemOpenGL
             using (Graphics g = Graphics.FromImage(bitmapCombinado))
             {
                 g.DrawImage(bitmapPainel, 0, 0);
-                g.DrawImage(bitmapOpenGL, bitmapPainel.Width, 0);
+                g.DrawImage(bitmapOpenGL, bitmapPainel.Width + 2, 0);
             }
 
             // Converter a imagem combinada para XImage
@@ -5574,12 +5581,12 @@ namespace PlotagemOpenGL
                 XImage xImage = XImage.FromStream(stream);
 
                 // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                double scaleFactor = Math.Min((page.Width - 80) / xImage.PixelWidth, (page.Height - 120) / xImage.PixelHeight);
+                double scaleFactor = Math.Min((page.Width - 20) / xImage.PixelWidth, (page.Height - 60) / xImage.PixelHeight);
                 double width = xImage.PixelWidth * scaleFactor;
-                double height = xImage.PixelHeight * scaleFactor;
+                double height = page.Height - 90 - 45;//  xImage.PixelHeight * scaleFactor;
 
                 // Desenhar a imagem combinada no PDF
-                gfx.DrawImage(xImage, (page.Width - width) / 2, 85, width, height); // A posição Y ajustada para ficar abaixo do texto
+                gfx.DrawImage(xImage, (page.Width - width) / 2, 90, width, height); // A posição Y ajustada para ficar abaixo do texto
             }
 
             // Salvar o documento PDF

@@ -9966,13 +9966,13 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(LAT_SONO_REM_MIN)&", latREMMin.ToString());
                 SubstituiVar("&(LAT_SONO_REM_MIN_DEC)&", latREMMin.ToString() + ",0");
 
-                SubstituiVar("&(TTS)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "00:00" : TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString(@"hh\:mm\:ss"));
-                SubstituiVar("&(TTS_MIN)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0" : FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
+                SubstituiVar("&(TTS)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "00:00" : TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(TTS_MIN)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0 ? "0" : FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])));
 
                 SubstituiVar("&(TTR)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString(@"hh\:mm\:ss"));
                 SubstituiVar("&(TTR_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])));
                 SubstituiVar("&(EFIC_SONO)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0 ? "0.0" :
-                    (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) * 100.0 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0"));
+                    (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) * 100.0 / Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0"));
 
                 SubstituiVar("&(EST_0)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["EST_0"])).ToString(@"hh\:mm\:ss"));
                 int vais = pts - Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]);
