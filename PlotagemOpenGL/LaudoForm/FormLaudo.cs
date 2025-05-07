@@ -167,7 +167,7 @@ namespace PlotagemOpenGL.LaudoForm
             this.Text = "Laudo e Relatório de Polissonografia";
             comentarios();
             CarregarArquivosNoComboBox();
-
+            CalculaResumoMultiplaLatencia();
         }
         private void CarregarArquivosNoComboBox()
         {
@@ -197,7 +197,60 @@ namespace PlotagemOpenGL.LaudoForm
             string caminhoCompleto = Path.Combine(diretorio, nomeSelecionado + ".doc");
 
         }
+        public static Panel pnl_Loading;
+        public static Label lbl_Carregando;
+        public static ProgressBar barraLoading;
 
+        private void CriarPainelLoading()
+        {
+            // Painel de loading
+            pnl_Loading = new Panel
+            {
+                Width = 300,
+                Height = 100,
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.FromArgb(245, 245, 255), // azul claro
+                Visible = false
+            };
+
+            // Centralizar na tela
+            pnl_Loading.Left = (this.ClientSize.Width - pnl_Loading.Width) / 2;
+            pnl_Loading.Top = (this.ClientSize.Height - pnl_Loading.Height) / 2;
+
+            // Label de carregamento
+            lbl_Carregando = new Label
+            {
+                Text = "Loading Form   0 %",
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = Color.Black,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Width = pnl_Loading.Width,
+                Height = 30,
+                Top = 10
+            };
+
+            // Barra de progresso com margem
+            barraLoading = new ProgressBar
+            {
+                Style = ProgressBarStyle.Continuous,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 0,
+                Width = pnl_Loading.Width - 40, // margem lateral de 20px
+                Height = 18,
+                Left = 20,
+                Top = lbl_Carregando.Bottom + 15,
+                ForeColor = Color.MediumPurple
+            };
+
+            // Adiciona ao painel
+            pnl_Loading.Controls.Add(lbl_Carregando);
+            pnl_Loading.Controls.Add(barraLoading);
+
+            // Adiciona ao formulário
+            Laudo.Controls.Add(pnl_Loading);
+        }
 
         private void comentarios()
         {
@@ -4120,9 +4173,13 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                 }
 
-                g_arq_exame = @"C:\Temp\Exames\" + comboBox1.Text + " Laudo.DOC";
+                string loc = Path.GetDirectoryName(GlobVar.bDataFile);
+                string arq_exame = Path.GetFileNameWithoutExtension(GlobVar.bDataFile);
 
-                if (ExisteArquivo(g_arq_exame))
+
+                g_arq_exame = Path.Combine(loc, arq_exame + " Laudo.DOC");
+
+                if (File.Exists(g_arq_exame))
                 {
                     if (ArquivoAberto(g_arq_exame))
                     {
@@ -4209,6 +4266,19 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                 }
 
+                CriarPainelLoading();
+
+
+                pnl_Loading.Visible = true;
+                Application.DoEvents(); // Permite atualizar UI
+
+                // ... aqui você faz sua tarefa longa, pode ir atualizando o texto se quiser:
+                lbl_Carregando.Text = "Carregando etapas...";
+
+                barraLoading.Value = 10; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
+
+
                 //Cursor.Current = Cursors.WaitCursor;
 
                 g_dir_laudos = @"C:\Temp\Laudos\";
@@ -4230,6 +4300,9 @@ namespace PlotagemOpenGL.LaudoForm
 
                 g_textolaudo = wordApp.Selection.Text;
 
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
+
                 if (!TextoComboContem("CALIBRACAO"))
                 {
                     if (segmentos > 0)
@@ -4243,6 +4316,8 @@ namespace PlotagemOpenGL.LaudoForm
                     {
 
                     }
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     string origem = Path.Combine(g_dir_laudos, "Graficos para laudo.xls");
                     string destino = Path.Combine(g_dir_laudos, nome_arq_temp + ".xls");
@@ -4322,12 +4397,16 @@ namespace PlotagemOpenGL.LaudoForm
                     if (!TextoComboContem("CALIBRACAO"))
                     {
                         VerificaDessaturacao();
+                        barraLoading.Value += 5; // ou += 10, etc.
+                        Application.DoEvents();  // Atualiza visual
 
                         if (TextoComboContem("SPLIT-NIGHT") || TextoComboContem("SPLIT NIGHT"))
                         {
                             PreparaRelatorioMDB();
 
                             InicializaEvRespDOC();
+                            barraLoading.Value += 5; // ou += 10, etc.
+                            Application.DoEvents();  // Atualiza visual
 
                             //Latencia multipla
                             if (passagem == 1)
@@ -4342,7 +4421,12 @@ namespace PlotagemOpenGL.LaudoForm
                             {
                                 S_BPAP_Dados(passagem, pag_noite, pag_dia);
                             }
+                            barraLoading.Value += 5; // ou += 10, etc.
+                            Application.DoEvents();  // Atualiza visual
+
                         }
+                        barraLoading.Value += 5; // ou += 10, etc.
+                        Application.DoEvents();  // Atualiza visual
 
                         if (TextoComboContem("&(FCX_"))
                         {
@@ -4359,7 +4443,11 @@ namespace PlotagemOpenGL.LaudoForm
                     s_monta_relatorio_Calibracao();
                 }
 
+                barraLoading.Value = 100; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
 
+                pnl_Loading.Visible = false;
+                Application.DoEvents(); // Permite atualizar UI
 
             }
             catch (Exception ex)
@@ -6428,6 +6516,8 @@ namespace PlotagemOpenGL.LaudoForm
                 }
             }
             string Montagem = GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString();
+            barraLoading.Value += 5; // ou += 10, etc.
+            Application.DoEvents();  // Atualiza visual
 
             if (GlobVar.tbl_DadosExame != null && GlobVar.tbl_ResumoExame != null)
             {
@@ -6642,11 +6732,13 @@ namespace PlotagemOpenGL.LaudoForm
                 }
 
                 SubstituiVar("&(QTD_PLM_DESP)&", qtd_PLM_com_mdesp.ToString("0"));
-                SubstituiVar("&(IND_PLM_DESP)&", (qtd_PLM_com_mdesp / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_PLM_DESP)&", (qtd_PLM_com_mdesp / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600)).ToString("0.0"));
 
                 // DESPERTAR COM DESSAT
                 sql = $"SELECT COUNT(Cons_Desp_Com_Dessat.CodEvento) AS Qtd_Evento FROM Cons_Desp_Com_Dessat WHERE Cons_Desp_Com_Dessat.Pag_Ini >= {pag_noite} AND Cons_Desp_Com_Dessat.Pag_Ini <= {pag_dia}";
                 tbl = ExecutaSQL(cnn_dbExame, sql);
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
 
                 qtd_Desp_com_dessat = 0;
                 if (tbl.Rows.Count > 0)
@@ -6674,6 +6766,8 @@ namespace PlotagemOpenGL.LaudoForm
 
                 string direct = Path.GetDirectoryName(GlobVar.textFile);
                 string co2File = Path.Combine(direct, Path.GetFileNameWithoutExtension(GlobVar.textFile) + ".CO2");
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
 
                 if (File.Exists(co2File))
                 {
@@ -6733,6 +6827,8 @@ namespace PlotagemOpenGL.LaudoForm
                     S_PreparaEventosRespiratorios(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
 
                     //'rotina de calculo da saturação por estágio
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     s_Calcula_Saturacao_Estagio(pag_noite, pag_dia, cnn_dbExame, cnn_dbConfig);
 
@@ -6785,6 +6881,8 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                     SubstituiVar("&(BOA_NOITE)&", hora_boa_noite);
                     SubstituiVar("&(BOM_DIA)&", hora_bom_dia);
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     //IND_APHIP
                     if (GlobVar.tbl_ResumoExame == null)
@@ -6856,6 +6954,8 @@ namespace PlotagemOpenGL.LaudoForm
 
                     //"RESUMO_RESP"
                     s_dados_Respiratorios(pag_noite, pag_dia, cnn_dbExame);
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     //'"IND_REM_HIPOPNEIA_OBS"
                     if (Convert.ToInt16(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
@@ -6865,7 +6965,7 @@ namespace PlotagemOpenGL.LaudoForm
                     }
                     else
                     {
-                        SubstituiVar("&(IND_REM_HIPOPNEIA_OBS)&", (ev_hipop_obs.qtd_rem / (Convert.ToInt16(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString("F1"));
+                        SubstituiVar("&(IND_REM_HIPOPNEIA_OBS)&", (ev_hipop_obs.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString("F1"));
                         double est5Segundos = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
                         double indice = est5Segundos == 0 ? 0.0 : ev_hipop_obs.qtd_rem / (est5Segundos / 3600);
                         texto = texto.Substring(0, pos1 - 1) + indice.ToString("0.0") + texto.Substring(0 + 2);
@@ -6894,14 +6994,20 @@ namespace PlotagemOpenGL.LaudoForm
 
                     SubstituiVar("&(CPAP_MIN)&", (CPAP_Min.ToString("F0", new CultureInfo("pt-BR"))));
                     SubstituiVar("&(CPAP_MAX)&", (CPAP_Max.ToString("F0", new CultureInfo("pt-BR"))));
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     s_dados_Multipla_Latencia();
-                    
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
+
                 }
                 else
                 {
                     //'substitui variaveis do paciente e dados do exame
                     s_dados_exame_paciente(cnn_dbExame, cnn_dbConfig);
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
 
                     //'ESTAGIOS
@@ -6910,11 +7016,15 @@ namespace PlotagemOpenGL.LaudoForm
 
                     //'"RESUMO_DESP"
                     s_dados_Despertares_Ronco_PLM(cnn_dbExame);
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
 
                     //'"RESUMO_RESP"
                     s_dados_Respiratorios(pag_noite, pag_dia, cnn_dbExame);
 
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     //'"EVENTOS X POSICAO"
                     S_PreparaEventosPosicao(cnn_dbExame);
@@ -6922,15 +7032,17 @@ namespace PlotagemOpenGL.LaudoForm
 
                     //'"SAT_BASAL"
                     s_dados_Saturacao(cnn_dbExame);
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
 
                     //'SubstituiVar("&(IND_APHIP_INT)&", "0.0")
-                    if(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0){
+                    if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0){
                     SubstituiVar("&(IND_APHIP_INT)&", "0.0");
 
                     }//If tbl_ResumoExame!TTS = 0 Then
                     else
                     {
-                    SubstituiVar("&(IND_APHIP_INT)&", TimeSpan.FromSeconds((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_APHIP_INT)&", TimeSpan.FromSeconds((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString(@"hh\:mm\:ss"));
                     }
                     //'SubstituiVar("&(IND_AP_INT)&", "0.0")
                     SubstituiVar("&(IND_AP_INT)&", TimeSpan.FromSeconds(ev_ap.indice).ToString(@"hh\:mm\:ss"));
@@ -6946,12 +7058,14 @@ namespace PlotagemOpenGL.LaudoForm
                     } //If tbl_ResumoExame!Est_5 = 0 Then
                     else
                     {
-                    SubstituiVar("&(IND_APHIP_REM_INT)&", TimeSpan.FromSeconds((ev_ap.qtd_rem + ev_hipop.qtd_rem) / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
-                    SubstituiVar("&(IND_AP_REM_INT)&", TimeSpan.FromSeconds(ev_ap.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
-                    SubstituiVar("&(IND_HIP_REM_INT)&", TimeSpan.FromSeconds(ev_hipop.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_APHIP_REM_INT)&", TimeSpan.FromSeconds((ev_ap.qtd_rem + ev_hipop.qtd_rem) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_AP_REM_INT)&", TimeSpan.FromSeconds(ev_ap.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                    SubstituiVar("&(IND_HIP_REM_INT)&", TimeSpan.FromSeconds(ev_hipop.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
 
                     }
-                    
+                    barraLoading.Value += 5; // ou += 10, etc.
+                    Application.DoEvents();  // Atualiza visual
+
                     //'SubstituiVar("&(IND_AP_REM_INT)&", "0.0");
                     //'SubstituiVar("&(IND_HIP_REM_INT)&", "0.0");
                     SubstituiVar("&(FC_MAIOR_INT)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MAIOR"])).ToString(@"hh\:mm\:ss"));
@@ -6959,46 +7073,75 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(FC_MEDIA_INT)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["FC_MEDIA"])).ToString(@"hh\:mm\:ss"));
 
                 }
-                // Volta ao início do documento Word
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
+
+                // Move o cursor para o início
                 object unit = Microsoft.Office.Interop.Word.WdUnits.wdStory;
                 object missing = System.Type.Missing;
                 wordApp.Selection.HomeKey(ref unit, ref missing);
 
+                string loc = Path.GetDirectoryName(GlobVar.bDataFile);
+                string arq_exame = Path.GetFileNameWithoutExtension(GlobVar.bDataFile);
+                string nomeArquivoFinal = "";
 
+                // Verifica se é hora de salvar como definitivo
                 if (passagem == 1 || passagem == ultimapassagem)
                 {
-                    string nomeArquivoFinal;
                     if (texto.ToUpper().EndsWith("COMENTARIOS.DOC"))
-                        nomeArquivoFinal = g_arq_exame + " Comentarios.doc";
+                        nomeArquivoFinal = loc + "\\" + arq_exame + " Comentarios.doc";
                     else
-                        nomeArquivoFinal = g_arq_exame + " Laudo.doc";
+                        nomeArquivoFinal = Path.Combine(loc + "\\" + arq_exame + " Laudo.doc");
 
-                    wordApp.ActiveDocument.SaveAs2(nomeArquivoFinal);
-                    wordApp.Visible = true;
-                    wordApp.Activate();
+                    // Salva como novo arquivo
+                    doc.SaveAs2(nomeArquivoFinal);
 
-                    // Libera memória
-                    wordApp = null;
-
-                    try
-                    {
-                        File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".doc"));
-                    }
-                    catch { }
-
-                    F_PreencheLaudoDOC(texto + "");// = texto + "";
+                    // Torna o Word visível com o novo arquivo
+                    //wordApp.Visible = true;
+                    //oficial.Activate();
                 }
+
+                // Fecha e libera os objetos corretamente
+                doc.Close(false);
+                //System.Runtime.InteropServices.Marshal.ReleaseComObject(doc);
+                doc = null;
+
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
 
                 // Fecha Excel
                 planExcel.Close(false);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(planExcel);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(ObjExcel);
                 planExcel = null;
                 ObjExcel = null;
 
+                // Fecha o Word se quiser liberar totalmente
+                // (cuidado: se tiver outros documentos abertos, ele fechará tudo)
+                //wordApp.Quit(false);
+                //System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
+                //wordApp = null;
+                barraLoading.Value += 5; // ou += 10, etc.
+                Application.DoEvents();  // Atualiza visual
+
+                // Remove arquivos temporários
                 try
                 {
+                    File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".doc"));
                     File.Delete(Path.Combine(g_dir_laudos, nome_arq_temp + ".xls"));
+
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    // Log ou ignore, como preferir
+                }
+                // Reabre o documento oficial e ativa o Word
+                if (!string.IsNullOrEmpty(nomeArquivoFinal) && File.Exists(nomeArquivoFinal))
+                {
+                    var docOficial = wordApp.Documents.Open(nomeArquivoFinal);
+                    wordApp.Visible = true;
+                    docOficial.Activate();
+                }
 
                 // Carrega informações da clínica
                 sql = "SELECT * FROM tbl_DadosClinica";
@@ -7430,10 +7573,10 @@ namespace PlotagemOpenGL.LaudoForm
                     double ttr = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]);
                     double tts = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
 
-                    SubstituiVar("&(SAT_MEDIA)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"] * 100 / sao2).ToString("0"));
-                    SubstituiVar("&(MAIOR_SAT)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"] * 100 / sao2).ToString("0"));
-                    SubstituiVar("&(MENOR_SAT)&", sao2 == 0 ? "0" : ((double)GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"] * 100 / sao2).ToString("0"));
-
+                    SubstituiVar("&(SAT_MEDIA)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"]) * 100 / sao2).ToString("0"));
+                    SubstituiVar("&(MAIOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"]) * 100 / sao2).ToString("0"));
+                    SubstituiVar("&(MENOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"]) * 100 / sao2).ToString("0"));
+                    
                     SubstituiVar("&(SAT90)&", ttr == 0 ? "0.0" :
                         TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])).ToString(@"hh\:mm\:ss") +
                         $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr):0.0} %)");
@@ -7455,9 +7598,17 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(SAT70_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"])));
                     SubstituiVar("&(SAT70_PORC)&", ttr == 0 ? "0.0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"]) * 100 / ttr).ToString("0.0"));
 
-                    var dtqt = GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("Estagio") == 5).CopyToDataTable();
-                    var qtDesTem = dtqt.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 15).CopyToDataTable();
-                    qtd_rem = qtDesTem.Rows.Count;
+                    DataTable dtqt = ExecutaSQL(cnn_dbExame, "SELECT * FROM Cons_EventosComEstag WHERE Estagio = 5");//GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("Estagio") == 5).CopyToDataTable();
+                    var query = dtqt.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 15);
+                    if (query.Any())
+                    {
+                        var qtDesTem = query.CopyToDataTable();
+                        qtd_rem = qtDesTem.Rows.Count;
+                    }
+                    else
+                    {
+                        qtd_rem = 0;
+                    }
                     qtd_nrem = qtd - qtd_rem;
 
                     if (qtd == 0)
@@ -7755,7 +7906,7 @@ namespace PlotagemOpenGL.LaudoForm
             if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"])== 0)
                 SubstituiVar("&(IND_REM_APNEIA)&", "0.0");
             else
-                SubstituiVar("&(IND_REM_APNEIA)&", (ev_ap.qtd_rem / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_REM_APNEIA)&", (ev_ap.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600.0)).ToString("0.0"));
 
             // QTD_NREM_APNEIA
             SubstituiVar("&(QTD_NREM_APNEIA)&", ev_ap.qtd_nrem.ToString("0"));
@@ -7778,7 +7929,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
             else
             {
-                SubstituiVar("&(IND_PC_APNEIA)&", (ev_ap.qtd_pos_c / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA)&", (ev_ap.qtd_pos_c / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
                 SubstituiVar("&(IND_PC_APNEIA_TTS)&", (ev_ap.qtd_pos_c / (pos_c / 3600.0)).ToString("0.0"));
             }
 
@@ -7799,8 +7950,8 @@ namespace PlotagemOpenGL.LaudoForm
             }
             else
             {
-                SubstituiVar("&(IND_PNC_APNEIA)&", (ev_ap.qtd_pos_x / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
-                SubstituiVar("&(IND_PNC_APNEIA_TTS)&", (ev_ap.qtd_pos_x / ((Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) - pos_c) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA)&", (ev_ap.qtd_pos_x / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600.0)).ToString("0.0"));
+                SubstituiVar("&(IND_PNC_APNEIA_TTS)&", (ev_ap.qtd_pos_x / ((Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) - pos_c) / 3600.0)).ToString("0.0"));
             }
 
             // "PORC_PNC_APNEIA"
@@ -7830,12 +7981,12 @@ namespace PlotagemOpenGL.LaudoForm
             // "QTD_REM_APNEIA_CEN"
             SubstituiVar("&(QTD_REM_APNEIA_CEN)&", ev_ap_cen.qtd_rem.ToString("0"));
 
-            int EstagioRem = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
-            int Est1 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]);
-            int Est2 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]);
-            int Est3 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
-            int Est4 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
-            int TTS = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
+            double EstagioRem = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]);
+            double Est1 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_1"]);
+            double Est2 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_2"]);
+            double Est3 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
+            double Est4 = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
+            double TTS = Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]);
 
             // "IND_REM_APNEIA_CEN"
             if (EstagioRem == 0)
@@ -8668,11 +8819,11 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(TTS_EST_5)&", (est5 * 100 / tts).ToString("0.0"));
 
                 // "LAT_EST_5_MIN"
-                int latREM = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Lat_SonoREM"]);
-                if (latREM < 0)
+                DateTime latREM = Convert.ToDateTime(GlobVar.tbl_ResumoExame.Rows[0]["Lat_SonoREM"]);
+                if (latREM == DateTime.MinValue)
                     SubstituiVar("&(LAT_EST_5_MIN)&", " - ");
                 else
-                    SubstituiVar("&(LAT_EST_5_MIN)&", latREM.ToString());
+                    SubstituiVar("&(LAT_EST_5_MIN)&", latREM.ToString("hh:mm:ss"));
 
                 // "EST_6"
                 int est6 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_6"]);
@@ -8836,30 +8987,30 @@ namespace PlotagemOpenGL.LaudoForm
                     if (rw["Posicao"].ToString().Equals("C"))
                     {
                         AC_C_Q[Convert.ToInt32(rw["Estagio"])] = AC_C_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AC_C_T[Convert.ToInt32(rw["Estagio"])] = AC_C_T[Convert.ToInt32("Estagio")] + AC_C_T[Convert.ToInt32("Duracao")];
+                        AC_C_T[Convert.ToInt32(rw["Estagio"])] = AC_C_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("B"))
                     {
                         AC_B_Q[Convert.ToInt32(rw["Estagio"])] = AC_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AC_B_T[Convert.ToInt32(rw["Estagio"])] = AC_B_T[Convert.ToInt32("Estagio")] + AC_B_T[Convert.ToInt32("Duracao")];
+                        AC_B_T[Convert.ToInt32(rw["Estagio"])] = AC_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
 
                     }
                     else if (rw["Posicao"].ToString().Equals("D"))
                     {
                         AC_D_Q[Convert.ToInt32(rw["Estagio"])] = AC_D_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AC_D_T[Convert.ToInt32(rw["Estagio"])] = AC_D_T[Convert.ToInt32("Estagio")] + AC_D_T[Convert.ToInt32("Duracao")];
+                        AC_D_T[Convert.ToInt32(rw["Estagio"])] = AC_D_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
 
                     }
                     else if (rw["Posicao"].ToString().Equals("E"))
                     {
                         AC_E_Q[Convert.ToInt32(rw["Estagio"])] = AC_E_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AC_E_T[Convert.ToInt32(rw["Estagio"])] = AC_E_T[Convert.ToInt32("Estagio")] + AC_E_T[Convert.ToInt32("Duracao")];
+                        AC_E_T[Convert.ToInt32(rw["Estagio"])] = AC_E_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
 
                     }
                     else if (rw["Posicao"].ToString().Equals("."))
                     {
                         AC_B_Q[Convert.ToInt32(rw["Estagio"])] = AC_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AC_B_T[Convert.ToInt32(rw["Estagio"])] = AC_B_T[Convert.ToInt32("Estagio")] + AC_B_T[Convert.ToInt32("Duracao")];
+                        AC_B_T[Convert.ToInt32(rw["Estagio"])] = AC_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
 
                     }
                 }
@@ -8873,30 +9024,33 @@ namespace PlotagemOpenGL.LaudoForm
             {
                 foreach(DataRow rw in rs.Rows)
                 {
+                    int estagio = Convert.ToInt32(rw["Estagio"]);
+                    int duracao = Convert.ToInt32(rw["Duracao"]);
+
                     if (rw["Posicao"].ToString().Equals("C"))
                     {
-                        AO_C_Q[Convert.ToInt32(rw["Estagio"])] = AO_C_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AO_C_T[Convert.ToInt32(rw["Estagio"])] = AO_C_T[Convert.ToInt32("Estagio")] + AO_C_T[Convert.ToInt32("Duracao")];
+                        AO_C_Q[estagio] = AO_C_Q[estagio] + 1;
+                        AO_C_T[estagio] = AO_C_T[estagio] + duracao;
                     }
                     else if (rw["Posicao"].ToString().Equals("B"))
                     {
                         AO_B_Q[Convert.ToInt32(rw["Estagio"])] = AO_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AO_B_T[Convert.ToInt32(rw["Estagio"])] = AO_B_T[Convert.ToInt32("Estagio")] + AO_B_T[Convert.ToInt32("Duracao")];
+                        AO_B_T[Convert.ToInt32(rw["Estagio"])] = AO_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("D"))
                     {
                         AO_D_Q[Convert.ToInt32(rw["Estagio"])] = AO_D_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AO_D_T[Convert.ToInt32(rw["Estagio"])] = AO_D_T[Convert.ToInt32("Estagio")] + AO_D_T[Convert.ToInt32("Duracao")];
+                        AO_D_T[Convert.ToInt32(rw["Estagio"])] = AO_D_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("E"))
                     {
                         AO_E_Q[Convert.ToInt32(rw["Estagio"])] = AO_E_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AO_E_T[Convert.ToInt32(rw["Estagio"])] = AO_E_T[Convert.ToInt32("Estagio")] + AO_E_T[Convert.ToInt32("Duracao")];
+                        AO_E_T[Convert.ToInt32(rw["Estagio"])] = AO_E_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("."))
                     {
                         AO_B_Q[Convert.ToInt32(rw["Estagio"])] = AO_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AO_B_T[Convert.ToInt32(rw["Estagio"])] = AO_B_T[Convert.ToInt32("Estagio")] + AO_B_T[Convert.ToInt32("Duracao")];
+                        AO_B_T[Convert.ToInt32(rw["Estagio"])] = AO_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                 }
             }
@@ -8912,27 +9066,27 @@ namespace PlotagemOpenGL.LaudoForm
                     if (rw["Posicao"].ToString().Equals("C"))
                     {
                         AM_C_Q[Convert.ToInt32(rw["Estagio"])] = AM_C_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AM_C_T[Convert.ToInt32(rw["Estagio"])] = AM_C_T[Convert.ToInt32("Estagio")] + AM_C_T[Convert.ToInt32("Duracao")];
+                        AM_C_T[Convert.ToInt32(rw["Estagio"])] = AM_C_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("B"))
                     {
                         AM_B_Q[Convert.ToInt32(rw["Estagio"])] = AM_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AM_B_T[Convert.ToInt32(rw["Estagio"])] = AM_B_T[Convert.ToInt32("Estagio")] + AM_B_T[Convert.ToInt32("Duracao")];
+                        AM_B_T[Convert.ToInt32(rw["Estagio"])] = AM_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("D"))
                     {
                         AM_D_Q[Convert.ToInt32(rw["Estagio"])] = AM_D_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AM_D_T[Convert.ToInt32(rw["Estagio"])] = AM_D_T[Convert.ToInt32("Estagio")] + AM_D_T[Convert.ToInt32("Duracao")];
+                        AM_D_T[Convert.ToInt32(rw["Estagio"])] = AM_D_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("E"))
                     {
                         AM_E_Q[Convert.ToInt32(rw["Estagio"])] = AM_E_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AM_E_T[Convert.ToInt32(rw["Estagio"])] = AM_E_T[Convert.ToInt32("Estagio")] + AM_E_T[Convert.ToInt32("Duracao")];
+                        AM_E_T[Convert.ToInt32(rw["Estagio"])] = AM_E_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("."))
                     {
                         AM_B_Q[Convert.ToInt32(rw["Estagio"])] = AM_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        AM_B_T[Convert.ToInt32(rw["Estagio"])] = AM_B_T[Convert.ToInt32("Estagio")] + AM_B_T[Convert.ToInt32("Duracao")];
+                        AM_B_T[Convert.ToInt32(rw["Estagio"])] = AM_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                 }
             }
@@ -8948,27 +9102,27 @@ namespace PlotagemOpenGL.LaudoForm
                     if (rw["Posicao"].ToString().Equals("C"))
                     {
                         HP_C_Q[Convert.ToInt32(rw["Estagio"])] = HP_C_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        HP_C_T[Convert.ToInt32(rw["Estagio"])] = HP_C_T[Convert.ToInt32("Estagio")] + HP_C_T[Convert.ToInt32("Duracao")];
+                        HP_C_T[Convert.ToInt32(rw["Estagio"])] = HP_C_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("B"))
                     {
                         HP_B_Q[Convert.ToInt32(rw["Estagio"])] = HP_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        HP_B_T[Convert.ToInt32(rw["Estagio"])] = HP_B_T[Convert.ToInt32("Estagio")] + HP_B_T[Convert.ToInt32("Duracao")];
+                        HP_B_T[Convert.ToInt32(rw["Estagio"])] = HP_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("D"))
                     {
                         HP_D_Q[Convert.ToInt32(rw["Estagio"])] = HP_D_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        HP_D_T[Convert.ToInt32(rw["Estagio"])] = HP_D_T[Convert.ToInt32("Estagio")] + HP_D_T[Convert.ToInt32("Duracao")];
+                        HP_D_T[Convert.ToInt32(rw["Estagio"])] = HP_D_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("E"))
                     {
                         HP_E_Q[Convert.ToInt32(rw["Estagio"])] = HP_E_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        HP_E_T[Convert.ToInt32(rw["Estagio"])] = HP_E_T[Convert.ToInt32("Estagio")] + HP_E_T[Convert.ToInt32("Duracao")];
+                        HP_E_T[Convert.ToInt32(rw["Estagio"])] = HP_E_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("."))
                     {
                         HP_B_Q[Convert.ToInt32(rw["Estagio"])] = HP_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        HP_B_T[Convert.ToInt32(rw["Estagio"])] = HP_B_T[Convert.ToInt32("Estagio")] + HP_B_T[Convert.ToInt32("Duracao")];
+                        HP_B_T[Convert.ToInt32(rw["Estagio"])] = HP_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                 }
             }
@@ -8984,27 +9138,27 @@ namespace PlotagemOpenGL.LaudoForm
                     if (rw["Posicao"].ToString().Equals("C"))
                     {
                         RE_C_Q[Convert.ToInt32(rw["Estagio"])] = RE_C_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        RE_C_T[Convert.ToInt32(rw["Estagio"])] = RE_C_T[Convert.ToInt32("Estagio")] + RE_C_T[Convert.ToInt32("Duracao")];
+                        RE_C_T[Convert.ToInt32(rw["Estagio"])] = RE_C_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("B"))
                     {
                         RE_B_Q[Convert.ToInt32(rw["Estagio"])] = RE_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        RE_B_T[Convert.ToInt32(rw["Estagio"])] = RE_B_T[Convert.ToInt32("Estagio")] + RE_B_T[Convert.ToInt32("Duracao")];
+                        RE_B_T[Convert.ToInt32(rw["Estagio"])] = RE_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("D"))
                     {
                         RE_D_Q[Convert.ToInt32(rw["Estagio"])] = RE_D_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        RE_D_T[Convert.ToInt32(rw["Estagio"])] = RE_D_T[Convert.ToInt32("Estagio")] + RE_D_T[Convert.ToInt32("Duracao")];
+                        RE_D_T[Convert.ToInt32(rw["Estagio"])] = RE_D_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("E"))
                     {
                         RE_E_Q[Convert.ToInt32(rw["Estagio"])] = RE_E_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        RE_E_T[Convert.ToInt32(rw["Estagio"])] = RE_E_T[Convert.ToInt32("Estagio")] + RE_E_T[Convert.ToInt32("Duracao")];
+                        RE_E_T[Convert.ToInt32(rw["Estagio"])] = RE_E_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                     else if (rw["Posicao"].ToString().Equals("."))
                     {
                         RE_B_Q[Convert.ToInt32(rw["Estagio"])] = RE_B_Q[Convert.ToInt32(rw["Estagio"])] + 1;
-                        RE_B_T[Convert.ToInt32(rw["Estagio"])] = RE_B_T[Convert.ToInt32("Estagio")] + RE_B_T[Convert.ToInt32("Duracao")];
+                        RE_B_T[Convert.ToInt32(rw["Estagio"])] = RE_B_T[Convert.ToInt32(rw["Estagio"])] + Convert.ToInt32(rw["Duracao"]);
                     }
                 }
             }
@@ -9850,7 +10004,7 @@ namespace PlotagemOpenGL.LaudoForm
 
                 if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) > 0)
                 {
-                    double mudEstHoraSono = tbl_MudaEstagio.Rows.Count / (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600.0);
+                    double mudEstHoraSono = tbl_MudaEstagio.Rows.Count / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) / 3600.0);
                     SubstituiVar("&(MUD_EST_HORA_SONO)&", mudEstHoraSono.ToString("0.0"));
                 }
 
