@@ -10947,28 +10947,28 @@ namespace PlotagemOpenGL.LaudoForm
                         }
                     }                    // Remove linhas vazias e "Título"
                     while (linha < 150 && (ObjExcel.Cells[linha, 1]?.Value?.ToString() ?? "") != "FIMFIM")
-                        {
-                            string celula = ObjExcel.Cells[linha, 1]?.Value?.ToString() ?? "";
-                            string celulaProxima = ObjExcel.Cells[linha + 1, 1]?.Value?.ToString() ?? "";
+                    {
+                        string celula = ObjExcel.Cells[linha, 1]?.Value?.ToString() ?? "";
+                        string celulaProxima = ObjExcel.Cells[linha + 1, 1]?.Value?.ToString() ?? "";
 
-                            if (celula == "Título" || (string.IsNullOrEmpty(celula) && (string.IsNullOrEmpty(celulaProxima) || celulaProxima == "Título")))
-                            {
-                                ObjExcel.Rows[linha].Delete();
-                            }
-                            else
-                            {
-                                linha++;
-                            }
-                        }
-
-                        if (passagem == 1)
+                        if (celula == "Título" || (string.IsNullOrEmpty(celula) && (string.IsNullOrEmpty(celulaProxima) || celulaProxima == "Título")))
                         {
-                            Cola_Resumo_Eventos("&(RESUMO_EVENTOS)&", 38, linha - 1);
+                            ObjExcel.Rows[linha].Delete();
                         }
                         else
                         {
-                            Cola_Resumo_Eventos("&(SP_RESUMO_EVENTOS)&", 38, linha - 1);
+                            linha++;
                         }
+                    }
+
+                    if (passagem == 1)
+                    {
+                        Cola_Resumo_Eventos("&(RESUMO_EVENTOS)&", 38, linha - 1);
+                    }
+                    else
+                    {
+                        Cola_Resumo_Eventos("&(SP_RESUMO_EVENTOS)&", 38, linha - 1);
+                    }
                     
                 }
 

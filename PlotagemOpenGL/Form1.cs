@@ -5443,6 +5443,7 @@ namespace PlotagemOpenGL
             PdfDocument document = new PdfDocument();
             document.Info.Title = "Relatório";
 
+            TempoTimerAndar.Visible = false;
             // Criar uma página no documento com orientação Paisagem
             PdfPage page = document.AddPage();
             page.Orientation = PdfSharp.PageOrientation.Landscape;
@@ -5454,9 +5455,11 @@ namespace PlotagemOpenGL
                                        GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
             string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null ?
                                        GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+            Icon icon = this.Icon; // ou qualquer outra instância de Icon
+
 
             // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(25, 25));
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(43, 25));
             gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 40));
             gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 50));
 
@@ -5470,7 +5473,7 @@ namespace PlotagemOpenGL
                 // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
                 double scaleFactor = Math.Min((page.Width - 20) / xImage.PixelWidth, (page.Height - 60) / xImage.PixelHeight);
                 double width = xImage.PixelWidth * scaleFactor;
-                double height = page.Height - 90 - 45;//  xImage.PixelHeight * scaleFactor;
+                double height = page.Height - 90 - 30;//  xImage.PixelHeight * scaleFactor;
 
                 // Desenhar a imagem na página do PDF centralizada
                 double posX = (page.Width - width) / 2;
@@ -5478,6 +5481,28 @@ namespace PlotagemOpenGL
                                    // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, posX, posY, width, height);
             }
+            using (Bitmap bmp = icon.ToBitmap())
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
+                ms.Seek(0, SeekOrigin.Begin);
+                XImage logo = XImage.FromStream(ms);
+
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                double width = (int)(page.Width * 0.04f);
+                double height = (int)(page.Height * 0.04f);//  xImage.PixelHeight * scaleFactor;
+
+                // Desenhar a imagem na página do PDF centralizada
+                double posX = 7;//(page.Width - width);
+                double posY = 10; // margem superior de 140 unidades
+
+                gfx.DrawImage(logo, posX, posY, width, height);
+                
+            }
+
+
+            TempoTimerAndar.Visible = true;
 
             // Salvar o documento PDF
             document.Save(caminhoArquivo);
@@ -5543,7 +5568,7 @@ namespace PlotagemOpenGL
             string descricao = $"Epoca: {ptsEmTela.Text} - Horario: {inicioTela.Text} - Estagio: {estagioatutxt} ({GlobVar.segundos} seg)";
 
             // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(25, 25));
+            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(43, 25));
             gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 55));
             gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 65));
 
@@ -5583,10 +5608,31 @@ namespace PlotagemOpenGL
                 // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
                 double scaleFactor = Math.Min((page.Width - 20) / xImage.PixelWidth, (page.Height - 60) / xImage.PixelHeight);
                 double width = xImage.PixelWidth * scaleFactor;
-                double height = page.Height - 90 - 45;//  xImage.PixelHeight * scaleFactor;
+                double height = page.Height - 90 - 30;//  xImage.PixelHeight * scaleFactor;
 
                 // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, (page.Width - width) / 2, 90, width, height); // A posição Y ajustada para ficar abaixo do texto
+            }
+            Icon icon = this.Icon; // ou qualquer outra instância de Icon
+
+            using (Bitmap bmp = icon.ToBitmap())
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
+                ms.Seek(0, SeekOrigin.Begin);
+                XImage logo = XImage.FromStream(ms);
+
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
+                double width = (int)(page.Width * 0.04f);
+                double height = (int)(page.Height * 0.04f);//  xImage.PixelHeight * scaleFactor;
+
+                // Desenhar a imagem na página do PDF centralizada
+                double posX = 7;//(page.Width - width);
+                double posY = 10; // margem superior de 140 unidades
+
+                gfx.DrawImage(logo, posX, posY, width, height);
+
             }
 
             // Salvar o documento PDF
