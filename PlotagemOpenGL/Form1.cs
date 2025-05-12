@@ -4822,7 +4822,7 @@ namespace PlotagemOpenGL
             string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0, 10);
             string arquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}";
 
-            this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}";
+            this.Text = $"iCelera - {nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}.DAT";
 
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
             int inicio = (GlobVar.indice / GlobVar.namos);
@@ -5437,9 +5437,138 @@ namespace PlotagemOpenGL
                 }
             }
         }
+        public string getTitulo()
+        {
+            string text = "";
+            var ini = new IniFile(@"C:\Temp\Config.ini");
+
+            string retLen = ini.Read("LAUDO", "CABECALHO_PAGINA_TRACADO", "__NOT_FOUND__");
+
+            if (retLen == "__NOT_FOUND__" || string.IsNullOrWhiteSpace(retLen))
+            {
+                // A chave não existe
+                string nome = GlobVar.tbl_DadosExame.Rows[0]["Nome"].ToString();
+                string sexo = $"({GlobVar.tbl_DadosExame.Rows[0]["Sexo"].ToString()})";
+                string idade = $"{GlobVar.tbl_DadosExame.Rows[0]["IdadeAno"]} anos";
+                string altura = $"{GlobVar.tbl_DadosExame.Rows[0]["Altura"].ToString()}m";
+                string realizacao = GlobVar.tbl_DadosExame.Rows[0]["DataRealizacao"].ToString().Substring(0, 10);
+                string arquivo = $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}";
+
+                text = $"{nome} {sexo} {idade} - {altura} - Realizacao: {realizacao} - Arquivo: {arquivo}.DAT";
+            }
+            else
+            {
+                string texto = retLen;
+                int pos1 = texto.IndexOf("&(");
+                while (pos1 >= 0)
+                {
+                    int pos2 = texto.IndexOf(")&", pos1 + 2);
+                    if (pos2 > pos1)
+                    {
+                        string campo = texto.Substring(pos1 + 2, pos2 - pos1 - 2).ToUpper();
+                        string substituto = "";
+
+                        DataRow dados = GlobVar.tbl_DadosExame.Rows[0];
+
+                        switch (campo)
+                        {
+                            case "NOME":
+                                substituto = dados["Nome"].ToString();
+                                break;
+                            case "DATA":
+                                substituto = Convert.ToDateTime(dados["DataRealizacao"]).ToString("dd/MM/yyyy");
+                                break;
+                            case "ARQUIVO":
+                                substituto = Path.GetFileNameWithoutExtension(GlobVar.textFile);
+                                break;
+                            case "SEXO":
+                                substituto = dados["Sexo"].ToString();
+                                break;
+                            case "IDADE":
+                                substituto = $"{dados["IdadeAno"]} anos";
+                                break;
+                            case "IDADE_AM":
+                                substituto = dados["IdadeAM"].ToString();
+                                break;
+                            case "IDADE_AMD":
+                                substituto = dados["IdadeAMD"].ToString();
+                                break;
+                            case "PESO":
+                                substituto = $"{Convert.ToDouble(dados["Peso"]):0.0} Kg";
+                                break;
+                            case "ALTURA":
+                                substituto = $"{Convert.ToDouble(dados["Altura"]):0.00} m";
+                                break;
+                            case "IMC":
+                                double peso = Convert.ToDouble(dados["Peso"]);
+                                double altura = Convert.ToDouble(dados["Altura"]);
+                                if (altura > 0)
+                                    substituto = $"{peso / (altura * altura):0.00}";
+                                break;
+                            case "EMAIL":
+                                substituto = dados["EMail"].ToString();
+                                break;
+                            case "MEDICO_SOLIC":
+                                substituto = dados["MedicoSolicitante"].ToString();
+                                break;
+                        }
+
+                        // Substitui o campo
+                        texto = texto.Substring(0, pos1) + substituto + texto.Substring(pos2 + 2);
+                        pos1 = texto.IndexOf("&(", pos1 + substituto.Length); // continua após a substituição
+                    }
+                    else
+                    {
+                        break; // não encontrou fechamento
+                    }
+                }
+
+                text = texto;
+            }
+            return text;
+        }
+        public static bool ImprimeLogo = false;
         private void SalvarComoPDF(string caminhoArquivo, Bitmap imagem)
         {
-            // Criar um documento PDF
+            var ini = new IniFile(@"C:\Temp\Config.ini");
+            // Conversão de mm para pontos
+            double CmParaPontos(double cm) => cm * 28.3465;
+            double mmParaPontos(double mm) => mm * 2.83465;
+
+            string logo = "";
+            if (!ImprimeLogo)
+            {
+                string impLogo = ini.Read("LAUDO", "IMP_LOGO_ICELERA", "NÃO");
+                ImprimeLogo = impLogo.Trim().ToUpper() == "SIM";
+
+                string pathCliente = Path.Combine("C:\\Temp\\Icones", "LogoCliente.bmp");
+                string pathPadrao = Path.Combine("C:\\Temp\\Icones", "iCelera.bmp");
+
+                if (File.Exists(pathCliente))
+                {
+                    logo = pathCliente;
+                }
+                else if (File.Exists(pathPadrao))
+                {
+                    logo = pathPadrao;
+                }
+                else
+                {
+                    System.Windows.Forms.DialogResult resultado = System.Windows.Forms.MessageBox.Show(
+                        "Arquivo de logo não encontrado.\nDeseja continuar sem o logo?",
+                        "Logo não encontrado",
+                        System.Windows.Forms.MessageBoxButtons.OKCancel,
+                        System.Windows.Forms.MessageBoxIcon.Warning
+                    );
+
+                    if (resultado == DialogResult.Cancel)
+                    {
+                        return; // cancela o processo
+                    }
+
+                    ImprimeLogo = false; // continua sem logo
+                }
+            }            // Criar um documento PDF
             PdfDocument document = new PdfDocument();
             document.Info.Title = "Relatório";
 
@@ -5450,18 +5579,31 @@ namespace PlotagemOpenGL
             XGraphics gfx = XGraphics.FromPdfPage(page);
 
             // Títulos com dados do exame
-            string tituloPrincipal = this.Text;
-            string medicoSolicitante = GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != null ?
-                                       GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
-            string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null ?
-                                       GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+            string tituloPrincipal = getTitulo();
+            string medicoSolicitante = GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"] != DBNull.Value || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"] != null || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"].Equals("") ?
+                                       GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"].ToString() : "Informe o nome do médico";
+            string modeloEquipamento = GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"] != DBNull.Value || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"] != null || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"].Equals("") ?
+                                       GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"].ToString() : "Informe o nome da clínica";
             Icon icon = this.Icon; // ou qualquer outra instância de Icon
 
+            double xLoc = mmParaPontos(int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_ESQUERDA")));
+            double yLoc = mmParaPontos(int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_SUPERIOR")));
+            double espacoEntreLinhas = mmParaPontos(2); // 2mm de espaçamento extra
 
-            // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(43, 25));
-            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 40));
-            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 50));
+            void DesenhaTextoAjustado(string texto, XFont fonte)
+            {
+                // Desenha o texto
+                gfx.DrawString(texto, fonte, XBrushes.Black, new XPoint(xLoc, yLoc));
+
+                // Atualiza yLoc com base na altura da fonte + espaçamento extra
+                XSize tamanhoTexto = gfx.MeasureString(texto, fonte);
+                yLoc += tamanhoTexto.Height + espacoEntreLinhas;
+            }
+
+            // Uso:
+            DesenhaTextoAjustado(tituloPrincipal, new XFont("Arial", 14));
+            DesenhaTextoAjustado(medicoSolicitante, new XFont("Arial", 10));
+            DesenhaTextoAjustado(modeloEquipamento, new XFont("Arial", 10));
 
             // Converter a imagem Bitmap para XImage
             using (MemoryStream stream = new MemoryStream())
@@ -5480,27 +5622,38 @@ namespace PlotagemOpenGL
                 double posY = 95; // margem superior de 140 unidades
                                    // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, posX, posY, width, height);
+
+                // Desenhar uma borda ao redor da imagem
+                XPen pen = new XPen(XColors.Black, 1); // cor e espessura da borda
+                gfx.DrawRectangle(pen, posX, posY, width, height);
             }
-            using (Bitmap bmp = icon.ToBitmap())
-            using (MemoryStream ms = new MemoryStream())
+            if (ImprimeLogo)
             {
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
-                ms.Seek(0, SeekOrigin.Begin);
-                XImage logo = XImage.FromStream(ms);
+                using (Bitmap bmp = new Bitmap(logo))
+                using (MemoryStream ms = new MemoryStream())
+                {
 
-                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                double width = (int)(page.Width * 0.04f);
-                double height = (int)(page.Height * 0.04f);//  xImage.PixelHeight * scaleFactor;
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
+                    ms.Seek(0, SeekOrigin.Begin);
 
-                // Desenhar a imagem na página do PDF centralizada
-                double posX = 7;//(page.Width - width);
-                double posY = 10; // margem superior de 140 unidades
+                    XImage log = XImage.FromStream(ms);
 
-                gfx.DrawImage(logo, posX, posY, width, height);
-                
+                    // Converte centímetros para pontos
+                    double width = CmParaPontos(2.0);    // 2 cm de largura
+                    double height = CmParaPontos(1.6);   // 1,6 cm de altura
+
+                    // Lê os valores do .ini em milímetros
+                    int margemDireitaMM = int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_DIREITA"));
+                    int margemSuperiorMM = int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_SUPERIOR"));
+
+                    // Define posição convertendo cm para pontos também
+                    double posX = page.Width - mmParaPontos(20) - mmParaPontos(margemDireitaMM); // 2cm = 20mm
+                    double posY = mmParaPontos(margemSuperiorMM);
+
+                    // Desenha a imagem
+                    gfx.DrawImage(log, posX, posY, width, height);
+                }
             }
-
 
             TempoTimerAndar.Visible = true;
 
@@ -5547,7 +5700,47 @@ namespace PlotagemOpenGL
         }
         private void ImprimeTudo_Click(string caminhoArquivo)
         {
-            // Criar um documento PDF
+            var ini = new IniFile(@"C:\Temp\Config.ini");
+            // Conversão de mm para pontos
+            double CmParaPontos(double cm) => cm * 28.3465;
+            double mmParaPontos(double mm) => mm * 2.83465;
+
+            string logo = "";
+            if (!ImprimeLogo)
+            {
+                string impLogo = ini.Read("LAUDO", "IMP_LOGO_ICELERA", "NÃO");
+                ImprimeLogo = impLogo.Trim().ToUpper() == "SIM";
+
+                string pathCliente = Path.Combine("C:\\Temp\\Icones", "LogoCliente.bmp");
+                string pathPadrao = Path.Combine("C:\\Temp\\Icones", "iCelera.bmp");
+
+                if (File.Exists(pathCliente))
+                {
+                    ImprimeLogo = true;
+                    logo = pathCliente;
+                }
+                else if (File.Exists(pathPadrao))
+                {
+                    logo = pathPadrao;
+                    ImprimeLogo = true;
+                }
+                else
+                {
+                    System.Windows.Forms.DialogResult resultado = System.Windows.Forms.MessageBox.Show(
+                        "Arquivo de logo não encontrado.\nDeseja continuar sem o logo?",
+                        "Logo não encontrado",
+                        System.Windows.Forms.MessageBoxButtons.OKCancel,
+                        System.Windows.Forms.MessageBoxIcon.Warning
+                    );
+
+                    if (resultado == DialogResult.Cancel)
+                    {
+                        return; // cancela o processo
+                    }
+
+                    ImprimeLogo = false; // continua sem logo
+                }
+            }            // Criar um documento PDF
             PdfDocument document = new PdfDocument();
             document.Info.Title = "Relatório Completo";
 
@@ -5557,23 +5750,35 @@ namespace PlotagemOpenGL
             XGraphics gfx = XGraphics.FromPdfPage(page);
 
             // Títulos com dados do exame
-            string tituloPrincipal = this.Text;
-            string medicoSolicitante = GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"] != null || GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].Equals("") ?
-                                       GlobVar.tbl_DadosExame.Rows[0]["MedicoSolicitante"].ToString() : "Informe o nome do médico";
-            string modeloEquipamento = GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != DBNull.Value || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"] != null || GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].Equals("") ?
-                                       GlobVar.tbl_DadosExame.Rows[0]["ModeloEquipamento"].ToString() : "Informe o nome da clínica";
+            string tituloPrincipal = getTitulo();
+            string medicoSolicitante = GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"] != DBNull.Value || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"] != null || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"].Equals("") ?
+                                       GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica1"].ToString() : "Informe o nome do médico";
+            string modeloEquipamento = GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"] != DBNull.Value || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"] != null || GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"].Equals("") ?
+                                       GlobVar.tbl_DadosClinica.Rows[0]["NomeClinica2"].ToString() : "Informe o nome da clínica";
 
 
             // Descrição com as informações fornecidas
             string descricao = $"Epoca: {ptsEmTela.Text} - Horario: {inicioTela.Text} - Estagio: {estagioatutxt} ({GlobVar.segundos} seg)";
 
-            // Desenhar os títulos no PDF
-            gfx.DrawString(tituloPrincipal, new XFont("Arial", 14), XBrushes.Black, new XPoint(43, 25));
-            gfx.DrawString(medicoSolicitante, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 55));
-            gfx.DrawString(modeloEquipamento, new XFont("Arial", 10), XBrushes.Black, new XPoint(25, 65));
+            double xLoc = mmParaPontos(int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_ESQUERDA")));
+            double yLoc = mmParaPontos(int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_SUPERIOR")));
+            double espacoEntreLinhas = mmParaPontos(2); // 2mm de espaçamento extra
 
-            // Desenhar a descrição acima da imagem no PDF
-            gfx.DrawString(descricao, new XFont("Arial", 8), XBrushes.Black, new XPoint(25, 75));
+            void DesenhaTextoAjustado(string texto, XFont fonte)
+            {
+                // Desenha o texto
+                gfx.DrawString(texto, fonte, XBrushes.Black, new XPoint(xLoc, yLoc));
+
+                // Atualiza yLoc com base na altura da fonte + espaçamento extra
+                XSize tamanhoTexto = gfx.MeasureString(texto, fonte);
+                yLoc += tamanhoTexto.Height + espacoEntreLinhas;
+            }
+
+            // Uso:
+            DesenhaTextoAjustado(tituloPrincipal, new XFont("Arial", 14));
+            DesenhaTextoAjustado(medicoSolicitante, new XFont("Arial", 10));
+            DesenhaTextoAjustado(modeloEquipamento, new XFont("Arial", 10));
+
 
             if (MostarAmplitudes.Checked)
             {
@@ -5612,29 +5817,46 @@ namespace PlotagemOpenGL
 
                 // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, (page.Width - width) / 2, 90, width, height); // A posição Y ajustada para ficar abaixo do texto
+
+                // Desenhar a descrição acima da imagem no PDF
+                // Atualiza yLoc com base na altura da fonte + espaçamento extra
+                XSize tamanhoTexto = gfx.MeasureString(descricao, new XFont("Arial", 8));
+                gfx.DrawString(descricao, new XFont("Arial", 8), XBrushes.Black, new XPoint(xLoc, (90 - tamanhoTexto.Height - 1)));
+
+                // Desenhar uma borda ao redor da imagem
+                XPen pen = new XPen(XColors.Black, 1); // cor e espessura da borda
+                gfx.DrawRectangle(pen, (page.Width - width) / 2, 90, width, height - 49);
             }
             Icon icon = this.Icon; // ou qualquer outra instância de Icon
 
-            using (Bitmap bmp = icon.ToBitmap())
-            using (MemoryStream ms = new MemoryStream())
+            if (ImprimeLogo)
             {
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
-                ms.Seek(0, SeekOrigin.Begin);
-                XImage logo = XImage.FromStream(ms);
+                using (Bitmap bmp = new Bitmap(logo))
+                using (MemoryStream ms = new MemoryStream())
+                {
 
-                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                // Ajustar o tamanho da imagem para caber na página, mantendo a proporção
-                double width = (int)(page.Width * 0.04f);
-                double height = (int)(page.Height * 0.04f);//  xImage.PixelHeight * scaleFactor;
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png); // ou .Bmp
+                    ms.Seek(0, SeekOrigin.Begin);
 
-                // Desenhar a imagem na página do PDF centralizada
-                double posX = 7;//(page.Width - width);
-                double posY = 10; // margem superior de 140 unidades
+                    XImage log = XImage.FromStream(ms);
 
-                gfx.DrawImage(logo, posX, posY, width, height);
+                    // Converte centímetros para pontos
+                    double width = CmParaPontos(2.0);    // 2 cm de largura
+                    double height = CmParaPontos(1.6);   // 1,6 cm de altura
 
+                    // Lê os valores do .ini em milímetros
+                    int margemDireitaMM = int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_DIREITA"));
+                    int margemSuperiorMM = int.Parse(ini.Read("IMPRESSORA PADRAO", "MARGEM_SUPERIOR"));
+
+                    // Define posição convertendo cm para pontos também
+                    double posX = page.Width - mmParaPontos(20) - mmParaPontos(margemDireitaMM); // 2cm = 20mm
+                    double posY = mmParaPontos(margemSuperiorMM);
+
+                    // Desenha a imagem
+                    gfx.DrawImage(log, posX, posY, width, height);
+
+                }
             }
-
             // Salvar o documento PDF
             document.Save(caminhoArquivo);
             document.Close();

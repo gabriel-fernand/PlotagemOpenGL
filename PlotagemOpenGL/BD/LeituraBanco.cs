@@ -123,7 +123,7 @@ public class LeituraBanco
             string querytbl_ParametrosParaAnalise = "SELECT * FROM tbl_ParametrosParaAnalise";
             string queryTbl_RelatResumo = "SELECT * FROM tbl_RelatResumo";
             string queryTbl_RelatResumoItem = "SELECT * FROM tbl_RelatResumoItem";
-
+            string queryTbl_DadosClinica = "SELECT * FROM tbl_DadosClinica";
             string queryTbl_HipnoLaudos = "SELECT * FROM tbl_HipnoLaudos";
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
@@ -143,6 +143,7 @@ public class LeituraBanco
             using var commandJanelaResumo = new OdbcCommand(queryTbl_JanelaResumo, connectionConfigBd);
             using var commandTbl_Estagios = new OdbcCommand(queryTbl_Estagios, connectionConfigBd);
             using var commandTbl_HipnoLaudos = new OdbcCommand(queryTbl_HipnoLaudos, connectionConfigBd);
+            using var commandTbl_DadosClinica = new OdbcCommand(queryTbl_DadosClinica, connectionConfigBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -161,7 +162,9 @@ public class LeituraBanco
             using var adapterTbl_Estagios = new OdbcDataAdapter(commandTbl_Estagios);
             using var adaptertbl_ParametrosParaAnalise = new OdbcDataAdapter(commandtbl_ParametrosParaAnalise);
             using var adaptertbl_HipnoLaudo = new OdbcDataAdapter(commandTbl_HipnoLaudos);
+            using var adaptertbl_DadosClinica = new OdbcDataAdapter(commandTbl_DadosClinica);
 
+            adaptertbl_DadosClinica.Fill(GlobVar.tbl_DadosClinica);
             adaptertbl_HipnoLaudo.Fill(GlobVar.tbl_HipnoLaudo);
             adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
