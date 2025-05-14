@@ -1,4 +1,5 @@
-﻿using PlotagemOpenGL.auxi;
+﻿using PdfSharp.Quality;
+using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.FormesMenuPanels;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace PlotagemOpenGL
             InitializeComponent();
             LeitorDiretorio.LeituraDiretorio();
             LeituraBanco.BancoConifg();
-            AtualizarLabelsComArquivos();
+            AtualizarLabelsComArquivosRecentes();
             groupBox1.Paint += GroupBox1_Paint;
             groupBox2.Paint += GroupBox1_Paint;
             ConfigurarMouseEventosParaLabels();    
@@ -147,60 +148,46 @@ namespace PlotagemOpenGL
         }
         private async void examClick(object sender, EventArgs e)
         {
-            if (sender is Label label) // Verifica se o remetente do evento é um Label
+            if (sender is Label label && label.Tag is string basePath)
             {
-                string diretorioDat = label.Tag?.ToString() + ".Dat"; // Adiciona extensão .Dat
-                string diretorioMdb = label.Tag?.ToString() + ".mdb"; // Adiciona extensão .mdb
+                string diretorioDat = Path.ChangeExtension(basePath, ".dat");
+                string diretorioMdb = Path.ChangeExtension(basePath, ".mdb");
 
-                if (!string.IsNullOrEmpty(diretorioDat))
+                if (!File.Exists(diretorioDat))
                 {
-                    // Exibe os diretórios selecionados
-                    //MessageBox.Show($"Diretório selecionado: {diretorioDat} {diretorioMdb}", "Informação");
-
-                    // Caminho do arquivo
-                    string filePath = @"C:\Temp\Diretorios.txt";
-
-                    if (File.Exists(filePath))
-                    {
-                        // Lê o conteúdo do arquivo
-                        string fileContent = File.ReadAllText(filePath);
-
-                        // Divide o conteúdo em diretórios
-                        string[] diretorios = fileContent.Split(',');
-
-                        // Substitui os dois primeiros diretórios, se existirem
-                        if (diretorios.Length >= 2)
-                        {
-                            diretorios[0] = diretorioDat;
-                            diretorios[1] = diretorioMdb;
-
-                            // Junta os diretórios novamente com vírgulas
-                            string updatedContent = string.Join(",", diretorios);
-
-                            // Escreve o conteúdo atualizado de volta no arquivo
-                            File.WriteAllText(filePath, updatedContent);
-
-
-                            await exame.InitializeAsync(); // Aguarde a inicialização assíncrona
-                            exame.Show();
-                            this.Hide();
-
-                            //MessageBox.Show("Os diretórios foram atualizados com sucesso!", "Sucesso");
-                        }
-                        else
-                        {
-                            MessageBox.Show("O arquivo não contém diretórios suficientes para atualizar.", "Erro");
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("O arquivo Diretorios.txt não foi encontrado.", "Erro");
-                    }
+                    MessageBox.Show($"Arquivo .DAT não encontrado:\n{diretorioDat}", "Erro");
+                    return;
                 }
-                else
+
+                if (!File.Exists(diretorioMdb))
                 {
-                    MessageBox.Show("A tag do Label está vazia ou não foi definida.", "Aviso");
+                    MessageBox.Show($"Arquivo .MDB não encontrado:\n{diretorioMdb}", "Erro");
+                    return;
                 }
+
+                // Atualizar Diretorios.txt
+                string filePath = @"C:\Temp\Diretorios.txt";
+                string[] diretorios = new string[2];
+
+                if (File.Exists(filePath))
+                {
+                    diretorios = File.ReadAllText(filePath).Split(',');
+                    if (diretorios.Length < 2)
+                        diretorios = new string[2];
+                }
+
+                diretorios[0] = diretorioDat;
+                diretorios[1] = diretorioMdb;
+
+                File.WriteAllText(filePath, string.Join(",", diretorios));
+
+                // Atualizar ARQUIVOS RECENTES no config.ini
+                AtualizarArquivosRecentes(diretorioDat);
+
+                // Iniciar exame
+                await exame.InitializeAsync();
+                exame.Show();
+                this.Hide();
             }
         }
         private void GroupBox1_Paint(object sender, PaintEventArgs e)
@@ -244,51 +231,63 @@ namespace PlotagemOpenGL
             }
         }
 
-
-        private void AtualizarLabelsComArquivos()
+        IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+        private void AtualizarLabelsComArquivosRecentes()
         {
-            // Caminho do diretório
-            string directoryPath = @"C:\Temp\Dat";
+            int totalLabels = 5;
 
-            // Verifica se o diretório existe
-            if (Directory.Exists(directoryPath))
+            for (int i = 1; i <= totalLabels; i++)
             {
-                // Obtém os arquivos .DAT no diretório e os ordena pela data de modificação mais recente
-                var arquivos = new DirectoryInfo(directoryPath)
-                    .GetFiles("*.DAT")
-                    .OrderByDescending(file => file.LastWriteTime) // Ordena pela data de modificação
-                    .ToList();
+                string chave = $"ARQ_{i}";
+                string caminho = ini.Read("ARQUIVOS RECENTES", chave, "config.ini");
 
-                // Número total de labels
-                int totalLabels = 5;
-
-                // Atribui os nomes dos arquivos às Labels
-                for (int i = 0; i < totalLabels; i++)
+                Label label = groupBox1.Controls.Find("label" + i, true).FirstOrDefault() as Label;
+                if (label != null)
                 {
-                    Label label = groupBox1.Controls.Find("label" + (i + 1), true).FirstOrDefault() as Label;
-                    if (label != null)
+                    if (!string.IsNullOrWhiteSpace(caminho) && File.Exists(caminho))
                     {
-                        // Se houver um arquivo correspondente, atribui o nome do arquivo
-                        if (i < arquivos.Count)
-                        {
-                            label.Visible = true;
-                            label.Text = Path.GetFileNameWithoutExtension(arquivos[i].Name);
-                            string v = $@"C:\Temp\Dat\{label.Text}";
-                            label.Tag = v;
-                            label.Click += examClick;
-                        }
-                        else
-                        {
-                            // Caso contrário, limpa o texto da Label
-                            label.Text = "";
-                            label.Visible = false;
-                        }
+                        label.Visible = true;
+                        label.Text = Path.GetFileNameWithoutExtension(caminho);
+                        label.Tag = caminho;
+                        label.Click -= examClick; // previne múltiplas associações
+                        label.Click += examClick;
+                    }
+                    else
+                    {
+                        label.Visible = false;
+                        label.Text = "";
+                        label.Tag = null;
                     }
                 }
             }
-            else
+        }
+        public void AtualizarArquivosRecentes(string novoArquivo)
+        {
+            string iniPath = "config.ini";
+            List<string> arquivos = new List<string>();
+
+            // Carrega os arquivos atuais (ARQ_1 a ARQ_5)
+            for (int i = 1; i <= 5; i++)
             {
-                MessageBox.Show("O diretório não existe: " + directoryPath);
+                string val = ini.Read("ARQUIVOS RECENTES", $"ARQ_{i}", iniPath);
+                if (!string.IsNullOrWhiteSpace(val))
+                    arquivos.Add(val);
+            }
+
+            // Remove se já existir
+            arquivos.RemoveAll(a => string.Equals(a, novoArquivo, StringComparison.OrdinalIgnoreCase));
+
+            // Insere no topo
+            arquivos.Insert(0, novoArquivo);
+
+            // Limita a 5 arquivos
+            while (arquivos.Count > 5)
+                arquivos.RemoveAt(5);
+
+            // Salva de volta no INI
+            for (int i = 0; i < arquivos.Count; i++)
+            {
+                ini.Write("ARQUIVOS RECENTES", $"ARQ_{i + 1}", arquivos[i]);
             }
         }
 

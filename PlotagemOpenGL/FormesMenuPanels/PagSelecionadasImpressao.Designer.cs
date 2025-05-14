@@ -67,45 +67,41 @@ namespace PlotagemOpenGL.FormesMenuPanels
             // 
             dataGridViewTextBoxColumn1.HeaderText = "Código";
             dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            dataGridViewTextBoxColumn1.Name = "Código";
-            dataGridViewTextBoxColumn1.Width = 125;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.Width = 125;
             // 
             // dataGridViewTextBoxColumn2
             // 
             dataGridViewTextBoxColumn2.HeaderText = "Montagem";
             dataGridViewTextBoxColumn2.MinimumWidth = 6;
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            dataGridViewTextBoxColumn2.Width = 125;
             dataGridViewTextBoxColumn2.ReadOnly = true;
+            dataGridViewTextBoxColumn2.Width = 125;
             // 
             // dataGridViewTextBoxColumn3
             // 
             dataGridViewTextBoxColumn3.HeaderText = "Pág. Inicial";
             dataGridViewTextBoxColumn3.MinimumWidth = 6;
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            dataGridViewTextBoxColumn3.ReadOnly = true;
             dataGridViewTextBoxColumn3.Width = 125;
-            dataGridViewTextBoxColumn3.ReadOnly = true;
-            dataGridViewTextBoxColumn3.ReadOnly = true;
-
             // 
             // dataGridViewTextBoxColumn4
             // 
             dataGridViewTextBoxColumn4.HeaderText = "Época";
             dataGridViewTextBoxColumn4.MinimumWidth = 6;
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            dataGridViewTextBoxColumn4.Width = 125;
             dataGridViewTextBoxColumn4.ReadOnly = true;
-
+            dataGridViewTextBoxColumn4.Width = 125;
             // 
             // dataGridViewTextBoxColumn5
             // 
             dataGridViewTextBoxColumn5.HeaderText = "Duração(seg.)";
             dataGridViewTextBoxColumn5.MinimumWidth = 6;
             dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            dataGridViewTextBoxColumn5.Width = 125;
             dataGridViewTextBoxColumn5.ReadOnly = true;
-
+            dataGridViewTextBoxColumn5.Width = 125;
             // 
             // dataGridViewTextBoxColumn6
             // 
@@ -121,6 +117,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             listBoxArquivos.Name = "listBoxArquivos";
             listBoxArquivos.Size = new System.Drawing.Size(616, 104);
             listBoxArquivos.TabIndex = 1;
+            listBoxArquivos.SelectionMode = SelectionMode.MultiExtended;
             // 
             // btnSelecionarTudo
             // 
@@ -140,6 +137,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             btnImprimir.Size = new System.Drawing.Size(98, 48);
             btnImprimir.TabIndex = 3;
             btnImprimir.Text = "Imprimir";
+            btnImprimir.Click += btnImprimir_Click;
             // 
             // btnVisualizar
             // 

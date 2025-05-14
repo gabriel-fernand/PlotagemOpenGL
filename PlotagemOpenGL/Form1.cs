@@ -483,7 +483,7 @@ namespace PlotagemOpenGL
                 MessageBox.Show($"Erro ao atualizar o menu: {ex.Message}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
             }
         }
-        HipnogramaForm Janela;
+        public static HipnogramaForm Janela;
 
         public void JanelaSeparada_Click(object sender, EventArgs e)
         {
@@ -1719,7 +1719,7 @@ namespace PlotagemOpenGL
 
             }
         }
-        private void UpdatePanelHeightInDataTable()
+        public static void UpdatePanelHeightInDataTable()
         {
             float totalPercentage = 0;
             DataRow lastRow = null;
@@ -1762,7 +1762,7 @@ namespace PlotagemOpenGL
                 lastRow["Altura"] = (float)lastRow["Altura"] + remainingPercentage;
             }
         }
-        private void AjustarFonteDosLabels() // ------------ Ajuste Fontes
+        public static void AjustarFonteDosLabels() // ------------ Ajuste Fontes
         {
 
 
@@ -1913,7 +1913,7 @@ namespace PlotagemOpenGL
             UpdateInicioTela();
 
         }
-        private void AjustarBotoesMinusEPlus()
+        public static void AjustarBotoesMinusEPlus()
         {
             foreach (Panel pn in painelExames.Controls)
             {
@@ -2394,7 +2394,7 @@ namespace PlotagemOpenGL
         }
         string concluido = "";
         public static bool conc = true;
-        private Task _backgroundTask;
+        public static Task _backgroundTask;
         private CancellationTokenSource _cancellationTokenSource;
         private async void MontagemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -4637,7 +4637,7 @@ namespace PlotagemOpenGL
             {
             }
         }
-        bool isScroll = false;
+        public static bool isScroll = false;
         bool notClick = false;
         int lastScroll = 0;
         private async void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -4939,7 +4939,7 @@ namespace PlotagemOpenGL
                 // Por exemplo, parar atualizações
             }
         }
-        private Image GetEstagioImage(int estagioAtual)
+        public static Image GetEstagioImage(int estagioAtual)
         {
             string path = estagioAtual switch
             {
@@ -5623,9 +5623,7 @@ namespace PlotagemOpenGL
                                    // Desenhar a imagem combinada no PDF
                 gfx.DrawImage(xImage, posX, posY, width, height);
 
-                // Desenhar uma borda ao redor da imagem
-                XPen pen = new XPen(XColors.Black, 1); // cor e espessura da borda
-                gfx.DrawRectangle(pen, posX, posY, width, height);
+                gfx.DrawRectangle(new XPen(XColors.Black, 1), posX, posY, width, height - 49);
             }
             if (ImprimeLogo)
             {
@@ -5863,7 +5861,7 @@ namespace PlotagemOpenGL
         }
         private void ImprimeSele_Click(object sender, EventArgs e)
         {
-            PagSelecionadasImpressao pg = new PagSelecionadasImpressao();
+            PagSelecionadasImpressao pg = new PagSelecionadasImpressao(this);
 
             pg.ShowDialog();
         }

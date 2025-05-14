@@ -38,7 +38,10 @@ public class IniFile
     {
         return WritePrivateProfileString(section, key, value, _path) != 0;
     }
-
+    public void WriteValue(string section, string key, string value, string filePath)
+    {
+        WritePrivateProfileString(section, key, value, filePath);
+    }
     public bool DeleteKey(string section, string key)
     {
         return WritePrivateProfileString(section, key, null, _path) != 0;

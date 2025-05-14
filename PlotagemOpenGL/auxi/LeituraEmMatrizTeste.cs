@@ -803,7 +803,7 @@ namespace PlotagemOpenGL.auxi
             });
         }
 
-        public static async void montagemSelecionadaAlteradaTudo(CancellationToken token)
+        public static async void montagemSelecionadaAlteradaTudo(CancellationToken token = default)
         {
             try {
                 Tela_Plotagem.conc = false;
