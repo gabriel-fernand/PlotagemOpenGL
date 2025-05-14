@@ -253,12 +253,12 @@ namespace PlotagemOpenGL
                     LeituraBanco.BancoRead();
                     LeituraBanco.AlteraTable();
                     LeituraBanco.AjustaMontagem();
+                    Leitura.QuantidadeCanais();
                     //Canais.LerCanais();
                     //Leitura.LerArquivo();
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(40);
 
-                    Leitura.QuantidadeCanais();
                     //Leitura.LeituraDat();
                     LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
                     await Task.Delay(25);
