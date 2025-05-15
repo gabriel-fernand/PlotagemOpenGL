@@ -1114,8 +1114,13 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             string valores = "";
             // calculo para procurar 2 seg antes e 2 seg depois
             int doisSeg = 2 * txCanal;
-            inicio -= doisSeg;
-            fim += doisSeg;
+            int ajusteTxLoc = 1;
+            if(txCanal != GlobVar.namos)
+            {
+                ajusteTxLoc = GlobVar.namos / txCanal;
+            }
+            inicio = inicio / ajusteTxLoc - doisSeg;
+            fim = fim / ajusteTxLoc - doisSeg;
             int index = GlobVar.codSelected.IndexOf(codCanal);
 
             for(int i = inicio; i <= fim; i++)

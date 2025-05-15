@@ -97,21 +97,27 @@ namespace PlotagemOpenGL.auxi
 
                 fs.Position = fs.Position - 1;
 
-                for (Int16 ich1 = 0; ich1 < GlobVar.size; ich1++) //leitura de 1 segundo size e igual a quantos segundos tem no arquivo dat, trazendo a Matriz completa de todos canais juntos
+                for (Int16 ich1 = 0;( ich1 < GlobVar.size && ich1 < GlobVar.matrizCompleta.GetLength(0)) && ich1 >= 0; ich1++)
                 {
-
                     byte[] buffer4 = new byte[ntotal];
-
-                    fs.Read(buffer4, 0, buffer4.Length);
-
-                    short[] bitstring = new short[GlobVar.sizesample / 2];
-
-                    var limite = GlobVar.startpos + GlobVar.sizesample;
-
-                    for (Int16 i = 0, j = 0; i < ntotal; i += 2, j++)
+                    int lidos = fs.Read(buffer4, 0, buffer4.Length);
+                    if (lidos != ntotal)
                     {
-                        GlobVar.matrizCompleta[ich1, j] = BitConverter.ToInt16(buffer4, i);
+                        MessageBox.Show($"Erro ao ler o segundo {ich1}. Esperado {ntotal} bytes, lido {lidos}.");
+                        break;
+                    }
 
+                    for (int i = 0, j = 0; i + 1 < buffer4.Length && j < GlobVar.matrizCompleta.GetLength(1); i += 2, j++)
+                    {
+                        try
+                        {
+                            GlobVar.matrizCompleta[ich1, j] = BitConverter.ToInt16(buffer4, i);
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            MessageBox.Show($"Erro de índice: ich1={ich1}, j={j}, matrizCompleta[{GlobVar.matrizCompleta.GetLength(0)}, {GlobVar.matrizCompleta.GetLength(1)}], buffer4.Length={buffer4.Length}, ntotal={ntotal}");
+                            throw;
+                        }
                     }
                 }
                 fs.Close();

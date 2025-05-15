@@ -3526,7 +3526,7 @@ namespace PlotagemOpenGL
             ApnEvento.TabIndex = 82;
             ApnEvento.Text = "Apneia";
             ApnEvento.UseVisualStyleBackColor = true;
-            ApnEvento.Visible = false;
+            ApnEvento.Visible = true;
             ApnEvento.Click += ApnEvent_Click;
             // 
             // playSelect
@@ -3537,7 +3537,7 @@ namespace PlotagemOpenGL
             playSelect.TabIndex = 57;
             playSelect.Text = "Hipo";
             playSelect.UseVisualStyleBackColor = true;
-            playSelect.Visible = false;
+            playSelect.Visible = true;
             playSelect.Click += playSelect_Click;
             // 
             // minusAll
