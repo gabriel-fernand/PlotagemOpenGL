@@ -103,7 +103,7 @@ namespace PlotagemOpenGL.BD
                         if (rs.Rows.Count > 0)
                         {
                             if (MenorSat != null) {
-                                MenorSat = Convert.ToInt16(rs.Rows[0]["MenorSat"]);
+                                MenorSat = Convert.ToInt32(rs.Rows[0]["MenorSat"]);
                             }
                             Posicao = rs.Rows[0]["Posicao"].ToString();
                         }
@@ -217,7 +217,7 @@ namespace PlotagemOpenGL.BD
                             }
                             else
                             {
-                                seq_aux = Convert.ToInt16(rs_seq.Rows[0]["ProxSeqEvento"]);
+                                seq_aux = Convert.ToInt32(rs_seq.Rows[0]["ProxSeqEvento"]);
                                 using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
                                 {
                                     cmdUpdate.ExecuteNonQuery();

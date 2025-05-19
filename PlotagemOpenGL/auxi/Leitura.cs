@@ -51,7 +51,7 @@ namespace PlotagemOpenGL.auxi
 
                     GlobVar.tipocanais = tipocanais1.Replace(" ", "");
 
-                    int ncanint = Convert.ToInt16(tipocanais1.Replace(" ", "")); //Int16.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
+                    int ncanint = Convert.ToInt32(tipocanais1.Replace(" ", "")); //Int32.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
                     GlobVar.qtdCanais = new string[ncanint];
 
                     fs.Close();

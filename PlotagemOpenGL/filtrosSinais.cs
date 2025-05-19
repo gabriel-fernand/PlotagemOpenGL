@@ -43,7 +43,7 @@ namespace PlotagemOpenGL
             }
             alterado = temp;
         }
-        public static void VoltaMatriz(Int16 select)
+        public static void VoltaMatriz(Int32 select)
         {
             int colunaCanalIndex = 0;
             int ponteiro = GlobVar.codCanal.IndexOf(select);
@@ -68,16 +68,16 @@ namespace PlotagemOpenGL
             }
 
             int codCanal1 = select;
-            int codCanal2 = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[(GlobVar.codSelected.IndexOf(select))]["CodCanal2"]);
+            int codCanal2 = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[(GlobVar.codSelected.IndexOf(select))]["CodCanal2"]);
             if (codCanal2 != -1)
             {
                 GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
             }
             /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
-                if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)
+                if (GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))] < 512)
                 {
-                    int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))];
+                    int aux = 512 / GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_Montagem.Rows[i]["CodCanal1"]))];
                     GlobVar.matrizCanal.SetRow<short>(i, LeituraEmMatrizTeste.RemoverMetadeParaFrente(GlobVar.matrizCanal.GetRow<short>(i), aux));
                 }
             }*/

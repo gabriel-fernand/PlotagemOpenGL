@@ -261,7 +261,7 @@ public class LeituraBanco
                     {
                         // Existem linhas correspondentes
                         var auxCodMont = matchingRows.CopyToDataTable();
-                        int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                        int CodMont = Convert.ToInt32(auxCodMont.Rows[0]["CodMontagem"]);
                         GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
                                 .Where(row => row.Field<int>("CodMontagem") == CodMont)
                                 .CopyToDataTable();
@@ -276,7 +276,7 @@ public class LeituraBanco
                                 MessageBoxIcon.Information
                             );
                             var auxCodMont = matchingRows.CopyToDataTable();
-                            int CodMont = Convert.ToInt16(auxCodMont.Rows[0]["CodMontagem"]);
+                            int CodMont = Convert.ToInt32(auxCodMont.Rows[0]["CodMontagem"]);
 
                             GlobVar.codMont = CodMont;
                         }
@@ -407,7 +407,7 @@ public class LeituraBanco
             int duracao = lastRow.Field<int>("Duracao");
             duracao += ((lastRow.Field<int>("NumPag")) * 512);
 
-            int? satu = Convert.ToInt16(firstRow.Field<float>("MenorSat"));
+            int? satu = Convert.ToInt32(firstRow.Field<float>("MenorSat"));
             string posi = firstRow.Field<string>("Posicao");
 
             DataRow newRow = GlobVar.eventosUpdate.NewRow();

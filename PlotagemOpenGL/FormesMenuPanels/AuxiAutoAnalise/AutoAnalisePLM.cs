@@ -147,7 +147,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 }
                 foreach (DataRow rw in GlobVar.eventosUpdate.Rows.Cast<DataRow>().ToList())
                 {
-                    if (codigosExcluir.Contains(Convert.ToInt32(rw["CodEvento"])) && Convert.ToInt16(rw["CodCanal1"]) == codCanal)
+                    if (codigosExcluir.Contains(Convert.ToInt32(rw["CodEvento"])) && Convert.ToInt32(rw["CodCanal1"]) == codCanal)
                     {
                         if (owner.cancellationToken.IsCancellationRequested) return;
                         GlobVar.eventosUpdate.Rows.Remove(rw);
@@ -653,7 +653,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         {
                             if (MenorSat != null)
                             {
-                                MenorSat = Convert.ToInt16(rs.Rows[0]["MenorSat"]);
+                                MenorSat = Convert.ToInt32(rs.Rows[0]["MenorSat"]);
                             }
                             Posicao = rs.Rows[0]["Posicao"].ToString();
                         }

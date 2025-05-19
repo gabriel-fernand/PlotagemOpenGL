@@ -18,18 +18,28 @@ namespace PlotagemOpenGL.auxi
     {
         public static void LeituraDat()
         {
+            int index = 0;
+            if (GlobVar.qtdCanais == null && GlobVar.tbl_CanaisAdquiridos != null)
+            {
+                index = GlobVar.tbl_CanaisAdquiridos.Rows.Count;
+            }
+            else
+            {
+                index = GlobVar.qtdCanais.Length;
+            }
+
             int ntotal = 0;
             string[] dadoscanal = new string[47];
             byte[] buffer0 = new byte[395];
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
             byte[] buffer3 = new byte[47];
-            GlobVar.nomeCanais = new string[GlobVar.qtdCanais.Length];
-            GlobVar.txPorCanal = new int[GlobVar.qtdCanais.Length];
-            GlobVar.ponteiroI = new int[GlobVar.qtdCanais.Length];
-            GlobVar.ponteiroF = new int[GlobVar.qtdCanais.Length];
-            GlobVar.scale = new double[GlobVar.qtdCanais.Length];
-            GlobVar.codCanal = new int[GlobVar.qtdCanais.Length];
+            GlobVar.nomeCanais = new string[index];
+            GlobVar.txPorCanal = new int[index];
+            GlobVar.ponteiroI = new int[index];
+            GlobVar.ponteiroF = new int[index];
+            GlobVar.scale = new double[index];
+            GlobVar.codCanal = new int[index];
             GlobVar.grafSelected = new int[GlobVar.tbl_MontagemSelecionada.Rows.Count];
             GlobVar.codSelected = new int[GlobVar.tbl_MontagemSelecionada.Rows.Count];
             GlobVar.SomenteNums = new bool[2];
@@ -56,7 +66,7 @@ namespace PlotagemOpenGL.auxi
 
                 GlobVar.tipocanais = tipocanais1.Replace(" ", "");
 
-                int ncanint = Convert.ToInt16(tipocanais1.Replace(" ", "")); //Int16.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
+                int ncanint = Convert.ToInt32(tipocanais1.Replace(" ", "")); //Int32.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
                 GlobVar.qtdCanais = new string[ncanint];
                 int txPorSeg = 0;
                 for (int ich = 0; ich < ncanint; ich++)
@@ -70,20 +80,20 @@ namespace PlotagemOpenGL.auxi
                     string phrase = dadoscanal[ich];
                     GlobVar.codCanal[ich] = Convert.ToInt16(phrase.Substring(0, 3).Trim()); //Faz a leitura do codigo do canal
                     GlobVar.nomeCanais[ich] = phrase.Substring(11, 10).Trim(); //Faz a leitura dos nomes de cada canal e armazena em um array
-                    GlobVar.amos = Convert.ToInt16(phrase.Substring(8, 4));
+                    GlobVar.amos = Convert.ToInt32(phrase.Substring(8, 4));
                     string sizesample3 = phrase.Substring(8, 4);
                     string aux = sizesample3.Replace(" ", "");
-                    int auxx = Convert.ToInt16(aux);
+                    int auxx = Convert.ToInt32(aux);
                     GlobVar.txPorCanal[ich] = auxx;
 
                     GlobVar.startpos = Convert.ToInt32(ntotal);
                     string sizesample1 = phrase.Substring(8, 4);
                     string banana = sizesample1.Replace(" ", "");
 
-                    GlobVar.sizesample = (Convert.ToInt16(banana) * 2);
+                    GlobVar.sizesample = (Convert.ToInt32(banana) * 2);
                     ntotal = ntotal + (GlobVar.amos * 2);
 
-                    int ponteirostr = Convert.ToInt16(fs.Position);
+                    int ponteirostr = Convert.ToInt32(fs.Position);
                     GlobVar.ponteiroI[ich] = txPorSeg;
                     txPorSeg += auxx;
                     GlobVar.ponteiroF[ich] = txPorSeg;
@@ -97,7 +107,7 @@ namespace PlotagemOpenGL.auxi
 
                 fs.Position = fs.Position - 1;
 
-                for (Int16 ich1 = 0;( ich1 < GlobVar.size && ich1 < GlobVar.matrizCompleta.GetLength(0)) && ich1 >= 0; ich1++)
+                for (Int32 ich1 = 0;( ich1 < GlobVar.size && ich1 < GlobVar.matrizCompleta.GetLength(0)) && ich1 >= 0; ich1++)
                 {
                     byte[] buffer4 = new byte[ntotal];
                     int lidos = fs.Read(buffer4, 0, buffer4.Length);
@@ -129,14 +139,14 @@ namespace PlotagemOpenGL.auxi
                 LeituraBanco.AlteraMontagem(GlobVar.codMont);
 
                 int linhaCanais = 0;
-                int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+                int codMont = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
                 if(codMont == 181)
                 {
                     foreach(DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                     {
-                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
-                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
-                        if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal2"]));
+                        if (canalIndex == -1 && (Convert.ToInt32(rw["CodCanal1"]) != 100 && Convert.ToInt32(rw["CodCanal1"]) != 101 && Convert.ToInt32(rw["CodCanal1"]) != 102)) return;
 
                         int ponteiroI = GlobVar.ponteiroI[canalIndex];
                         int ponteiroF = GlobVar.ponteiroF[canalIndex];
@@ -243,8 +253,8 @@ namespace PlotagemOpenGL.auxi
                 {
                     foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
                     {
-                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal1"]));
-                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(row["CodCanal2"]));
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(row["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(row["CodCanal2"]));
                         if (canalIndex == -1) return;
 
                         int ponteiroI = GlobVar.ponteiroI[canalIndex];
@@ -296,9 +306,9 @@ namespace PlotagemOpenGL.auxi
                 {
                     if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29 || Convert.ToInt32(row["CodTipoCanal"]) == 38)
                     {
-                        if (Convert.ToInt16(row["CodCanal1"]) != 65)
+                        if (Convert.ToInt32(row["CodCanal1"]) != 65)
                         {
-                            int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                            int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                             int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                             if (canalIndex == -1) return;
 
@@ -332,7 +342,7 @@ namespace PlotagemOpenGL.auxi
                 foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
 
-                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                     int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                     if (canalIndex == -1) return;
 
@@ -385,7 +395,7 @@ namespace PlotagemOpenGL.auxi
 
                 for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
-                    float scala = (float)( Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i))) ;
+                    float scala = (float)( Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i))) ;
                     GlobVar.scale[i] = scala;
                 }
                 
@@ -465,14 +475,14 @@ namespace PlotagemOpenGL.auxi
             Tela_Plotagem.cronometro1.Start();
 
             int linhaCanais = 0;
-            int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+            int codMont = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
             if (codMont == 181)
             {
                 foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
-                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
-                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
-                    if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
+                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal1"]));
+                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal2"]));
+                    if (canalIndex == -1 && (Convert.ToInt32(rw["CodCanal1"]) != 100 && Convert.ToInt32(rw["CodCanal1"]) != 101 && Convert.ToInt32(rw["CodCanal1"]) != 102)) return;
 
                     int ponteiroI = 0;
                     int ponteiroF = 0;
@@ -498,7 +508,7 @@ namespace PlotagemOpenGL.auxi
                             inicio_can2 = GlobVar.ponteiroI[canal2bIndex];
                             Fim_can2 = GlobVar.ponteiroF[canal2bIndex];
                         }
-                        if (Convert.ToInt16(rw["CodCanal1"]) == 100)
+                        if (Convert.ToInt32(rw["CodCanal1"]) == 100)
                         {
                             for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                             {
@@ -513,7 +523,7 @@ namespace PlotagemOpenGL.auxi
                                 }
                             }
                         }
-                        else if (Convert.ToInt16(rw["CodCanal1"]) == 101)
+                        else if (Convert.ToInt32(rw["CodCanal1"]) == 101)
                         {
                             for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                             {
@@ -528,7 +538,7 @@ namespace PlotagemOpenGL.auxi
                                 }
                             }
                         }
-                        else if (Convert.ToInt16(rw["CodCanal1"]) == 102)
+                        else if (Convert.ToInt32(rw["CodCanal1"]) == 102)
                         {
                             for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                             {
@@ -586,8 +596,8 @@ namespace PlotagemOpenGL.auxi
                 // Paralelizar a cópia de dados para GlobVar.matrizCanal
                 Parallel.For(0, rowCount, linhaCanais =>
                 {
-                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
+                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
+                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
                     if (canalIndex == -1) return;
 
                     int ponteiroI = GlobVar.ponteiroI[canalIndex];
@@ -670,9 +680,9 @@ namespace PlotagemOpenGL.auxi
             {
                 if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
                 {
-                    if (Convert.ToInt16(row["CodCanal1"]) != 65)
+                    if (Convert.ToInt32(row["CodCanal1"]) != 65)
                     {
-                        int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                        int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                         int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                         if (canalIndex == -1) return;
 
@@ -700,7 +710,7 @@ namespace PlotagemOpenGL.auxi
             // Aplicar filtros paralelamente
             foreach (DataRow row in GlobVar.tbl_MontagemSelecionada.Rows)
             {
-                int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                 int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
 
                 if (canalIndex == -1) return;
@@ -772,9 +782,9 @@ namespace PlotagemOpenGL.auxi
             {
                 if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
                 {
-                    if (Convert.ToInt16(row["CodCanal1"]) != 65)
+                    if (Convert.ToInt32(row["CodCanal1"]) != 65)
                     {
-                        int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                        int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                         int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                         if (canalIndex == -1) return;
 
@@ -804,7 +814,7 @@ namespace PlotagemOpenGL.auxi
             GlobVar.scale = new double[rowCount];
             Parallel.For(0, rowCount, i =>
             {
-                float scala = (float)(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i)));
+                float scala = (float)(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["AmplitudeMin"]) / Ampli(CodTipo(i)));
                 GlobVar.scale[i] = scala;
             });
         }
@@ -824,14 +834,14 @@ namespace PlotagemOpenGL.auxi
                 GlobVar.FiltroCompleto = false;
 
                 int linhaCanais = 0;
-                int codMont = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
+                int codMont = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[0]["CodMontagem"]);
                 if (codMont == 181)
                 {
                     foreach (DataRow rw in GlobVar.tbl_MontagemSelecionada.Rows)
                     {
-                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal1"]));
-                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(rw["CodCanal2"]));
-                        if (canalIndex == -1 && (Convert.ToInt16(rw["CodCanal1"]) != 100 && Convert.ToInt16(rw["CodCanal1"]) != 101 && Convert.ToInt16(rw["CodCanal1"]) != 102)) return;
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(rw["CodCanal2"]));
+                        if (canalIndex == -1 && (Convert.ToInt32(rw["CodCanal1"]) != 100 && Convert.ToInt32(rw["CodCanal1"]) != 101 && Convert.ToInt32(rw["CodCanal1"]) != 102)) return;
 
                         int ponteiroI = GlobVar.ponteiroI[canalIndex];
                         int ponteiroF = GlobVar.ponteiroF[canalIndex];
@@ -850,7 +860,7 @@ namespace PlotagemOpenGL.auxi
                             int inicio_can2 = GlobVar.ponteiroI[canal2bIndex];
                             int Fim_can2 = GlobVar.ponteiroF[canal2bIndex];
 
-                            if (Convert.ToInt16(rw["CodCanal1"]) == 100)
+                            if (Convert.ToInt32(rw["CodCanal1"]) == 100)
                             {
                                 for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                                 {
@@ -865,7 +875,7 @@ namespace PlotagemOpenGL.auxi
                                     }
                                 }
                             }
-                            else if (Convert.ToInt16(rw["CodCanal1"]) == 101)
+                            else if (Convert.ToInt32(rw["CodCanal1"]) == 101)
                             {
                                 for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                                 {
@@ -880,7 +890,7 @@ namespace PlotagemOpenGL.auxi
                                     }
                                 }
                             }
-                            else if (Convert.ToInt16(rw["CodCanal1"]) == 102)
+                            else if (Convert.ToInt32(rw["CodCanal1"]) == 102)
                             {
                                 for (int linha = 0; linha < GlobVar.matrizCompleta.GetLength(0); linha++)
                                 {
@@ -947,8 +957,8 @@ namespace PlotagemOpenGL.auxi
                             return;
                         }
 
-                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
+                        int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
+                        int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
                         if (canalIndex == -1) return;
 
                         int ponteiroI = GlobVar.ponteiroI[canalIndex];
@@ -1021,9 +1031,9 @@ namespace PlotagemOpenGL.auxi
                 {
                     if (Convert.ToInt32(row["CodTipoCanal"]) == 15 || Convert.ToInt32(row["CodTipoCanal"]) == 28 || Convert.ToInt32(row["CodTipoCanal"]) == 29)
                     {
-                        if (Convert.ToInt16(row["CodCanal1"]) != 65)
+                        if (Convert.ToInt32(row["CodCanal1"]) != 65)
                         {
-                            int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                            int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                             int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                             if (canalIndex == -1) return;
 
@@ -1056,7 +1066,7 @@ namespace PlotagemOpenGL.auxi
                     if (token.IsCancellationRequested)
                         return;
 
-                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                     int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
                     if (canalIndex == -1) return;
 
@@ -1139,8 +1149,8 @@ namespace PlotagemOpenGL.auxi
                 // Paralelizar a cópia de dados para GlobVar.matrizCanal
                 Parallel.For(GlobVar.LastRowLoaded, rowCount, linhaCanais =>
                 {
-                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
-                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
+                    int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal1"]));
+                    int canal2Index = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[linhaCanais]["CodCanal2"]));
                     if (canalIndex == -1) return;
 
                     int ponteiroI = GlobVar.ponteiroI[canalIndex];
@@ -1203,7 +1213,7 @@ namespace PlotagemOpenGL.auxi
                 for (int i = GlobVar.LastRowLoaded; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
                 {
                     DataRow row = GlobVar.tbl_MontagemSelecionada.Rows[i];
-                    int codCanal1 = Convert.ToInt16(row["CodCanal1"]);
+                    int codCanal1 = Convert.ToInt32(row["CodCanal1"]);
                     int canalIndex = GlobVar.codCanal.IndexOf(codCanal1);
 
                     if (canalIndex == -1) return;
@@ -1362,7 +1372,7 @@ namespace PlotagemOpenGL.auxi
             for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
                 GlobVar.grafSelected[i] = i;
-                GlobVar.codSelected[i] = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]);
+                GlobVar.codSelected[i] = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodCanal1"]);
             }
         }
         public static float[] FloatToShort(short[] input)
@@ -1416,7 +1426,7 @@ namespace PlotagemOpenGL.auxi
         public static string CodTipo(int Index)
         {
             string output = "";
-            int codTipo = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[Index]["CodTipoCanal"]);
+            int codTipo = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[Index]["CodTipoCanal"]);
             var row = GlobVar.tbl_CadTipoCanal.AsEnumerable().Where(r => r.Field<int>("CodTipo") == codTipo).FirstOrDefault();
             string codSigla = row.Field<string>("Sigla");
             

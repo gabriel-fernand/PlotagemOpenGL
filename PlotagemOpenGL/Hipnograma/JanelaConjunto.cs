@@ -155,7 +155,7 @@ namespace PlotagemOpenGL.Hipnograma
 
             foreach (DataRow row in MontagemJanela.Rows)
             {
-                int codGrupo = Convert.ToInt16(row["CodGrupo"]);
+                int codGrupo = Convert.ToInt32(row["CodGrupo"]);
 
                 switch (codGrupo)
                 {
@@ -700,11 +700,11 @@ namespace PlotagemOpenGL.Hipnograma
                 ant--;
                 gl.Color(0.0f, 0.0f, 0.0f);
 
-                //legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
+                //legenda(porcent, topPorcent, Convert.ToInt32(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
-                //desenhaGarficos(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
+                //desenhaGarficos(porcent, topPorcent, Convert.ToInt32(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
@@ -1035,7 +1035,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         else
                         {
-                            quasi = NormalizarValor(SA02[sasa], Convert.ToInt16(rows["LI"]), Convert.ToInt16(rows["LS"]), pontoZero, topPonto);
+                            quasi = NormalizarValor(SA02[sasa], Convert.ToInt32(rows["LI"]), Convert.ToInt32(rows["LS"]), pontoZero, topPonto);
                             gl.Vertex(i, quasi);
                             sasa++;
                         }
@@ -1073,7 +1073,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         else
                         {
-                            quasi = NormalizarValor(FreqCard[feq], Convert.ToInt16(rowf["LI"]), Convert.ToInt16(rowf["LS"]), pontoZero, topPonto);
+                            quasi = NormalizarValor(FreqCard[feq], Convert.ToInt32(rowf["LI"]), Convert.ToInt32(rowf["LS"]), pontoZero, topPonto);
                             gl.Vertex(i, quasi);
                             feq++;
                         }

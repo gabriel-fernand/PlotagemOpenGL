@@ -181,7 +181,7 @@ namespace PlotagemOpenGL.Hipnograma
 
             foreach (DataRow row in MontagemJanela.Rows)
             {
-                int codGrupo = Convert.ToInt16(row["CodGrupo"]);
+                int codGrupo = Convert.ToInt32(row["CodGrupo"]);
 
                 switch (codGrupo)
                 {
@@ -905,11 +905,11 @@ namespace PlotagemOpenGL.Hipnograma
                 ant--;
                 gl.Color(0.0f, 0.0f, 0.0f);
 
-                legenda(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
+                legenda(porcent, topPorcent, Convert.ToInt32(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
-                desenhaGarficos(porcent, topPorcent, Convert.ToInt16(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
+                desenhaGarficos(porcent, topPorcent, Convert.ToInt32(MontagemJanela.Rows[i]["CodGrupo"]), marg, (int)Porcentagem);
 
                 gl.End();
                 gl.Flush();
@@ -1368,7 +1368,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         else
                         {
-                            quasi = NormalizarValor(SA02[sasa], Convert.ToInt16(rows["LI"]), Convert.ToInt16(rows["LS"]), pontoZero, topPonto);
+                            quasi = NormalizarValor(SA02[sasa], Convert.ToInt32(rows["LI"]), Convert.ToInt32(rows["LS"]), pontoZero, topPonto);
                             gl.Vertex(i, quasi);
                             sasa++;
                         }
@@ -1406,7 +1406,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         else
                         {
-                            quasi = NormalizarValor(FreqCard[feq], Convert.ToInt16(rowf["LI"]), Convert.ToInt16(rowf["LS"]), pontoZero, topPonto);
+                            quasi = NormalizarValor(FreqCard[feq], Convert.ToInt32(rowf["LI"]), Convert.ToInt32(rowf["LS"]), pontoZero, topPonto);
                             gl.Vertex(i, quasi);
                             feq++;
                         }
@@ -1477,7 +1477,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int cpap = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = NormalizarValor(CPAP[cpap], Convert.ToInt16(rowsf["LI"]), Convert.ToInt16(rowsf["LS"]), pontoZero, topPonto);
+                        quasi = NormalizarValor(CPAP[cpap], Convert.ToInt32(rowsf["LI"]), Convert.ToInt32(rowsf["LS"]), pontoZero, topPonto);
                         gl.Vertex(i, quasi);
                         cpap++;
                     }
@@ -1507,7 +1507,7 @@ namespace PlotagemOpenGL.Hipnograma
                     int cpapvz = pagBn;
                     for (int i = xStart; i < xEnd; i++)
                     {
-                        quasi = NormalizarValor(CPAPVaz[cpapvz], Convert.ToInt16(rowvz["LI"]), Convert.ToInt16(rowvz["LS"]), pontoZero, topPonto);
+                        quasi = NormalizarValor(CPAPVaz[cpapvz], Convert.ToInt32(rowvz["LI"]), Convert.ToInt32(rowvz["LS"]), pontoZero, topPonto);
                         gl.Vertex(i, quasi);
                         cpapvz++;
                     }
@@ -1545,7 +1545,7 @@ namespace PlotagemOpenGL.Hipnograma
                         }
                         else
                         {
-                            quasi = NormalizarValor(FreqCard[feqc], Convert.ToInt16(rowc["LI"]), Convert.ToInt16(rowc["LS"]), pontoZero, topPonto);
+                            quasi = NormalizarValor(FreqCard[feqc], Convert.ToInt32(rowc["LI"]), Convert.ToInt32(rowc["LS"]), pontoZero, topPonto);
                             gl.Vertex(i, quasi);
                             feqc++;
                         }

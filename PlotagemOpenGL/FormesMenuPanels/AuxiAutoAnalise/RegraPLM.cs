@@ -576,7 +576,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         {
                             if (MenorSat != null)
                             {
-                                MenorSat = Convert.ToInt16(rs.Rows[0]["MenorSat"]);
+                                MenorSat = Convert.ToInt32(rs.Rows[0]["MenorSat"]);
                             }
                             Posicao = rs.Rows[0]["Posicao"].ToString();
                         }

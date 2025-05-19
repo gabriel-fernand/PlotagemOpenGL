@@ -120,7 +120,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Tela_Plotagem.fimTela.Text = $"{horasI}:{minutosI}:{segundosI}";
 
             Tela_Plotagem.PainelMarca.Enabled = GlobVar.segundos == 30 &&
-                                  (Convert.ToInt16(segundosI) == 30 || Convert.ToInt16(segundosI) == 0);
+                                  (Convert.ToInt32(segundosI) == 30 || Convert.ToInt32(segundosI) == 0);
 
             var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(r => r.Field<int>("NumPag") == paginaCoerente);
             string horario = row["Horario"].ToString();
@@ -144,7 +144,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     }
                 }
             }
-            int estagioAtual = Convert.ToInt16(row["Estagio"]);
+            int estagioAtual = Convert.ToInt32(row["Estagio"]);
             if (estagioAtual == 5) { Tela_Plotagem.lbEstagio.Text = "Estágio: R"; } else { Tela_Plotagem.lbEstagio.Text = "Estágio: " + estagioAtual.ToString(); }
 
             Tela_Plotagem.Atual.BackgroundImage = Tela_Plotagem.GetEstagioImage(estagioAtual);

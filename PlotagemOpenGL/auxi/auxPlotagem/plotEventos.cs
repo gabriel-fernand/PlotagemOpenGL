@@ -224,7 +224,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 //Verifica se o evento pode ser do tipo
                 var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                         .Where(row => row.Field<int>("CodCanal") == codCanal).CopyToDataTable();
-                int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+                int TipoCanal = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
 
                 var EventoTipo = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
                                                         .Where(row => row.Field<int>("CodTipoCanal") == TipoCanal).CopyToDataTable();
@@ -417,7 +417,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 GlobVar.InicioEvent = formattedStartTime;*/
 
                 var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
-                        .Where(row => row.Field<int>("CodEvento") == Convert.ToInt16(eventRow["CodEvento"])).CopyToDataTable();
+                        .Where(row => row.Field<int>("CodEvento") == Convert.ToInt32(eventRow["CodEvento"])).CopyToDataTable();
                 GlobVar.Event = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
             }
             catch { }
@@ -432,11 +432,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 //int YAdjusted = Plotagem.EncontrarValorMaisProximo(GlobVar.desenhoLoc, startY);
 
 
-                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
+                //GlobVar.CodCanal = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]);
 
                 var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                 .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
-                GlobVar.CodTipoCanalEvent = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+                GlobVar.CodTipoCanalEvent = Convert.ToInt32(codTipoCanal.Rows[0]["CodTipo"]);
 
                 DataTable sequancias = new DataTable();
 
@@ -473,8 +473,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
-                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
-                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.CodCanalEvent = Convert.ToInt32(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt32(sequancias.Rows[i]["MenorSat"]);
                         GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
 
                         var dt = GlobVar.tbl_CadEvento.AsEnumerable().Where(x => x.Field<int>("CodEvento") == GlobVar.CodEvento).CopyToDataTable();
@@ -534,8 +534,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
-                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
-                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.CodCanalEvent = Convert.ToInt32(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt32(sequancias.Rows[i]["MenorSat"]);
                         GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
 
 
@@ -592,8 +592,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
-                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
-                        GlobVar.satuMinCanal = Convert.ToInt16(sequancias.Rows[i]["MenorSat"]);
+                        GlobVar.CodCanalEvent = Convert.ToInt32(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.satuMinCanal = Convert.ToInt32(sequancias.Rows[i]["MenorSat"]);
                         GlobVar.posiCanal = sequancias.Rows[i]["Posicao"].ToString();
 
 
@@ -601,11 +601,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         //break; // Sai do loop assim que encontrar um evento
                     }
                 }
-                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.CodCanal);
+                //GlobVar.CodCanal = Convert.ToInt32(GlobVar.CodCanal);
 
                 var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                 .Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
-                GlobVar.CodTipoCanalEvent = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+                GlobVar.CodTipoCanalEvent = Convert.ToInt32(codTipoCanal.Rows[0]["CodTipo"]);
 
                 // Limpa o DataTable 'sequancias' se necessário
                 sequancias.Dispose();
@@ -620,7 +620,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             {
                 bool isThereAnEvent = false;
 
-                //GlobVar.CodCanal = Convert.ToInt16(GlobVar.CodCanal);
+                //GlobVar.CodCanal = Convert.ToInt32(GlobVar.CodCanal);
 
 
                 DataTable sequancias = new DataTable();
@@ -658,7 +658,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
-                        GlobVar.CodCanalEvent = Convert.ToInt16(sequancias.Rows[i]["CodCanal1"]);
+                        GlobVar.CodCanalEvent = Convert.ToInt32(sequancias.Rows[i]["CodCanal1"]);
 
                         var rowAux = GlobVar.tbl_CadEvento.AsEnumerable().Where(row => row.Field<int>("CodEvento") == GlobVar.CodEvento).CopyToDataTable();
                         GlobVar.nomeEvento = rowAux.Rows[0]["DescrOriginal"].ToString();
@@ -899,11 +899,11 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 {
                     DataTable canHaveEventTable = new DataTable();
 
-                    int codCanal = Convert.ToInt16(GlobVar.CodCanal);
+                    int codCanal = Convert.ToInt32(GlobVar.CodCanal);
 
                     var codTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                     .Where(row => row.Field<int>("CodCanal") == codCanal).CopyToDataTable();
-                    int tipoCanal = Convert.ToInt16(codTipoCanal.Rows[0]["CodTipo"]);
+                    int tipoCanal = Convert.ToInt32(codTipoCanal.Rows[0]["CodTipo"]);
 
 
                     var canHaveEvent = GlobVar.tbl_EventoTipoCanal.AsEnumerable()
@@ -919,7 +919,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             canHaveEventTable = canHaveEvent.CopyToDataTable();
                             canHaveEventTable.AsEnumerable().OrderBy(row => row.Field<int>("CodCanal"));
 
-                            GlobVar.lastEvent = Convert.ToInt16(canHaveEventTable.Rows[0]["CodEvento"]);
+                            GlobVar.lastEvent = Convert.ToInt32(canHaveEventTable.Rows[0]["CodEvento"]);
                             return;
                         }
                     }
@@ -1008,7 +1008,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         {
             DataView view = new DataView(GlobVar.eventosUpdate);
             var auxTable = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodEvento") == codEvento).CopyToDataTable();
-            int Seq = Convert.ToInt16(auxTable.Rows[0]["Seq"]);
+            int Seq = Convert.ToInt32(auxTable.Rows[0]["Seq"]);
             view.RowFilter = $"CodEvento = {codEvento}";
 
             if (view.Count > 0)
@@ -1030,7 +1030,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                                         .Where(row => row.Field<int>("CodTipoCanal") == GlobVar.CodTipoCanalEvent).CopyToDataTable();
                 for (int i = 0; i < EventsCan.Rows.Count; i++)
                 {
-                    int AuxCodCanal = Convert.ToInt16(EventsCan.Rows[i]["CodEvento"]);
+                    int AuxCodCanal = Convert.ToInt32(EventsCan.Rows[i]["CodEvento"]);
 
                     if (GlobVar.tbl_CadEvento.AsEnumerable().Any(row => row.Field<int>("CodEvento") == AuxCodCanal))
                     {
@@ -1060,7 +1060,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             for(int i = 0; i < tamanho; i++)
             {
-                 GlobVar.minSat[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao , ponteiroInicio]);
+                 GlobVar.minSat[i] = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao , ponteiroInicio]);
                 ponteiroInicio += 8;
             }
         }
@@ -1078,7 +1078,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             for (int i = 0; i < tamanho; i++)
             {
-                GlobVar.minPosi[i] = Convert.ToInt16(GlobVar.matrizCanal[linhaSaturacao, ponteiroInicio]);
+                GlobVar.minPosi[i] = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiroInicio]);
                 ponteiroInicio += 8;
             }
             int minPosi = GlobVar.minPosi[0];

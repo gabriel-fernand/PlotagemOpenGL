@@ -127,7 +127,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
                         int QualAnalisar = ap.Canula.Checked ? 13 : 8;
                         var row = GlobVar.tbl_MontagemSelecionada.AsEnumerable().FirstOrDefault(r => r.Field<int>("CodTipoCanal") == QualAnalisar);
-                        codCanal = Convert.ToInt16(row["CodCanal1"]);
+                        codCanal = Convert.ToInt32(row["CodCanal1"]);
                         anApneiHipo = new AnaliseAutomaticaApneia(80, 50, 10, 3, 30, 5, codCanal, DeleteApnHip.Checked, this);
 
                         valorBar += (int)incremento;

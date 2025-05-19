@@ -111,7 +111,7 @@ namespace PlotagemOpenGL.auxi
             {
                 /*var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                                             .Where(row => row.Field<int>("CodCanal") == Convert.ToInt32(pn.Tag)).CopyToDataTable();
-                int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+                int TipoCanal = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
 
                 if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31
                     || TipoCanal == 15 || TipoCanal == 30 || TipoCanal == 12)
@@ -183,8 +183,8 @@ namespace PlotagemOpenGL.auxi
                 }
 
                 // Procurar pelo valor CodCanal1 no vetor GlobVar.codCanal
-                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]));
-                if (Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 100 || Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 101 || Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 102)
+                int canalIndex = GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]));
+                if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 100 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 101 || Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[j]["CodCanal1"]) == 102)
                 {
 
                 }
@@ -218,7 +218,7 @@ namespace PlotagemOpenGL.auxi
                         // Verificar o tipo de canal para ajustar o comportamento
                         var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
                                             .Where(row => row.Field<int>("CodCanal") == tag).CopyToDataTable();
-                        int TipoCanal = Convert.ToInt16(CodTipoCanal.Rows[0]["CodTipo"]);
+                        int TipoCanal = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
 
                         if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31 || TipoCanal == 30 || tag == 65)
                         {
@@ -285,7 +285,7 @@ namespace PlotagemOpenGL.auxi
             desenhoLocRev = desenhoLoc.Reverse().ToArray();
             int YAdjusted = Plotagem.EncontrarValorMaisProximo(desenhoLocRev, startY);
             
-            //Canal = GlobVar.nomeCanais[GlobVar.codCanal.IndexOf(Convert.ToInt16(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]))];
+            //Canal = GlobVar.nomeCanais[GlobVar.codCanal.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[YAdjusted]["CodCanal1"]))];
             Canal = "Teste";
             return Canal;
         }
