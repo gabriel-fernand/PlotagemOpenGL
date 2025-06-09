@@ -1,6 +1,7 @@
 ﻿using Accord.Math;
 using System;
 using System.IO;
+using Tensorflow.Operations.Activation;
 
 namespace PlotagemOpenGL.auxi
 {
@@ -24,6 +25,7 @@ namespace PlotagemOpenGL.auxi
                     
                     GlobVar.textFile = (valoresStr[0]);
                     GlobVar.bDataFile = valoresStr[1];
+
                     GlobVar.configBD = valoresStr[2];
 
                 }

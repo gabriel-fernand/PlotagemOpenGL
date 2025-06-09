@@ -21,10 +21,12 @@ public class LeituraBanco
         try
         {
             string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+            //System.Windows.Forms.MessageBox.Show("Esse e o CodMont " + connectionStringDatBd);
+
             using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
 
             connectionDatBd.Open();
-            //MessageBox.Show("Conexão bem-sucedida!");
+            //System.Windows.Forms.MessageBox.Show("Conexão bem-sucedida!");
 
             string query = "SELECT * FROM tbl_Eventos";
             string quaryTbl_MontGrav = "SELECT * FROM tbl_MontGrav";
@@ -84,17 +86,16 @@ public class LeituraBanco
 
             adapterCons_Eventos.Fill(GlobVar.Cons_Eventos);
             connectionDatBd.Close();
-            
+
+
         }
         catch (OdbcException ex)
         {
-            // Tratamento de exceções específicas do ODBC
-            Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
+            System.Windows.Forms.MessageBox.Show($"Erro ODBC:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {
-            // Tratamento de outras exceções
-            Console.WriteLine($"Erro inesperado: {ex.Message}");
+            System.Windows.Forms.MessageBox.Show($"Erro geral:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
     public static void BancoConifg()
@@ -105,6 +106,8 @@ public class LeituraBanco
             using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
 
             connectionConfigBd.Open();
+            //System.Windows.Forms.MessageBox.Show("Conexão bem-sucedida!");
+
 
             string queryConfig = "SELECT * FROM tbl_CadCanal";
             string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
@@ -187,88 +190,98 @@ public class LeituraBanco
         }
         catch (OdbcException ex)
         {
-            // Tratamento de exceções específicas do ODBC
-            Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
+            System.Windows.Forms.MessageBox.Show($"Erro ODBC:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {
-            // Tratamento de outras exceções
-            Console.WriteLine($"Erro inesperado: {ex.Message}");
+            System.Windows.Forms.MessageBox.Show($"Erro geral:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
     public static void AjustaMontagem()
     {
-        try { 
-        if (sele.Rows.Count > 0)
-        {
-            string p;
-            // Pegando o valor da primeira linha e coluna "CodTipoExame"
-            int codTipoExame = Convert.ToInt32(sele.Rows[0]["CodTipoExame"]) ;
-            if (codTipoExame == 1) p = "P";
-            else p = "E";
+        try {
 
-            string tipoExame = null;
-            foreach (DataRow dr in GlobVar.tbl_TipoExame.Rows)
+            if (sele.Rows.Count >= 0)
             {
-                if (Convert.ToInt32(dr["CodTipoExame"]) == codTipoExame)
+                string p;
+                int codTipoExame = 0;
+                if (sele.Rows.Count > 0)
                 {
-                    tipoExame = dr["TipoExame"].ToString();
+                    // Pegando o valor da primeira linha e coluna "CodTipoExame"
+                    codTipoExame = Convert.ToInt32(sele.Rows[0]["CodTipoExame"]);
+                    if (codTipoExame == 1) p = "P";
+                    else p = "E";
 
-                    var codMontagensFiltrados = GlobVar.tbl_Montagem.AsEnumerable()
-                                                .Where(row => row.Field<string>("TipoMontagem") == p)
-                                                .Select(row => row.Field<int>("CodMontagem"))
-                                                .ToList();
+                }
+                else
+                {
+                    p = "P";
+                }
 
-                    // Criando um novo DataTable com as linhas filtradas de tbl_MontCanal
-                    DataTable tbl_MontCanalFiltrado = GlobVar.tbl_MontCanal.Clone(); // Clona a estrutura do DataTable original
+                //System.Windows.Forms.MessageBox.Show("Esse e o Tipo Exame " + p);
 
-                    foreach (DataRow row in GlobVar.tbl_MontCanal.Rows)
+                string tipoExame = null;
+                foreach (DataRow dr in GlobVar.tbl_TipoExame.Rows)
+                {
+                    if (Convert.ToInt32(dr["CodTipoExame"]) == codTipoExame)
                     {
-                        if (codMontagensFiltrados.Contains(row.Field<int>("CodMontagem")))
-                        {
-                            tbl_MontCanalFiltrado.ImportRow(row);
-                        }
-                    }
+                        tipoExame = dr["TipoExame"].ToString();
 
-                    // Ordenando as linhas filtradas
-                    var orderedRows = tbl_MontCanalFiltrado.AsEnumerable()
-                                                            .OrderBy(row => row.Field<int>("CodMontagem"))
-                                                            .ThenBy(row => row.Field<int>("Ordem"));
-
-                    // Limpando GlobVar.tbl_MontCanal e importando as linhas ordenadas
-                    GlobVar.tbl_MontCanal.Clear();
-
-                    foreach (var row in orderedRows)
-                    {
-                        GlobVar.tbl_MontCanal.ImportRow(row);
-                    }
-
-                    // Filtrando e atualizando GlobVar.tbl_Montagem
-                    var montagemFiltrada = GlobVar.tbl_Montagem.AsEnumerable()
+                        var codMontagensFiltrados = GlobVar.tbl_Montagem.AsEnumerable()
                                                     .Where(row => row.Field<string>("TipoMontagem") == p)
-                                                    .CopyToDataTable();
+                                                    .Select(row => row.Field<int>("CodMontagem"))
+                                                    .ToList();
 
-                    GlobVar.tbl_Montagem.Clear();
-                    foreach (DataRow row in montagemFiltrada.Rows)
-                    {
-                        GlobVar.tbl_Montagem.ImportRow(row);
-                    }
+                        // Criando um novo DataTable com as linhas filtradas de tbl_MontCanal
+                        DataTable tbl_MontCanalFiltrado = GlobVar.tbl_MontCanal.Clone(); // Clona a estrutura do DataTable original
 
-                    var matchingRows = GlobVar.tbl_Montagem.AsEnumerable()
-.                                               Where(row => row.Field<string>("DescrMontagem") == GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString());
+                        foreach (DataRow row in GlobVar.tbl_MontCanal.Rows)
+                        {
+                            if (codMontagensFiltrados.Contains(row.Field<int>("CodMontagem")))
+                            {
+                                tbl_MontCanalFiltrado.ImportRow(row);
+                            }
+                        }
 
-                    if (matchingRows.Any())
-                    {
-                        // Existem linhas correspondentes
-                        var auxCodMont = matchingRows.CopyToDataTable();
-                        int CodMont = Convert.ToInt32(auxCodMont.Rows[0]["CodMontagem"]);
-                        GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
-                                .Where(row => row.Field<int>("CodMontagem") == CodMont)
-                                .CopyToDataTable();
+                        // Ordenando as linhas filtradas
+                        var orderedRows = tbl_MontCanalFiltrado.AsEnumerable()
+                                                                .OrderBy(row => row.Field<int>("CodMontagem"))
+                                                                .ThenBy(row => row.Field<int>("Ordem"));
+
+                        // Limpando GlobVar.tbl_MontCanal e importando as linhas ordenadas
+                        GlobVar.tbl_MontCanal.Clear();
+
+                        foreach (var row in orderedRows)
+                        {
+                            GlobVar.tbl_MontCanal.ImportRow(row);
+                        }
+
+                        // Filtrando e atualizando GlobVar.tbl_Montagem
+                        var montagemFiltrada = GlobVar.tbl_Montagem.AsEnumerable()
+                                                        .Where(row => row.Field<string>("TipoMontagem") == p)
+                                                        .CopyToDataTable();
+
+                        GlobVar.tbl_Montagem.Clear();
+                        foreach (DataRow row in montagemFiltrada.Rows)
+                        {
+                            GlobVar.tbl_Montagem.ImportRow(row);
+                        }
+
+                        var matchingRows = GlobVar.tbl_Montagem.AsEnumerable()
+                                .Where(row => row.Field<string>("DescrMontagem") == GlobVar.tbl_MontGrav.Rows[0]["NomeMontagem"].ToString());
+
+                        if (matchingRows.Any())
+                        {
+                            // Existem linhas correspondentes
+                            var auxCodMont = matchingRows.CopyToDataTable();
+                            int CodMont = Convert.ToInt32(auxCodMont.Rows[0]["CodMontagem"]);
+                            GlobVar.tbl_MontagemSelecionada = GlobVar.tbl_MontCanal.AsEnumerable()
+                                    .Where(row => row.Field<int>("CodMontagem") == CodMont)
+                                    .CopyToDataTable();
                             GlobVar.codMont = CodMont;
-                    }
-                    else
-                    {
+                        }
+                        else
+                        {
                             System.Windows.Forms.MessageBox.Show(
                                 "Não foi localizada a montagem em que o exame foi realizado.\nO sistema ativou a montagem padrão",
                                 "Atenção!",
@@ -281,17 +294,17 @@ public class LeituraBanco
                             GlobVar.codMont = CodMont;
                         }
                         break;
-                }
+                    }
                 }
 
-            foreach(DataRow dw in GlobVar.tbl_MontagemSelecionada.Rows)
-            {
-                if (dw["CodCanal2"] == DBNull.Value)
+                foreach (DataRow dw in GlobVar.tbl_MontagemSelecionada.Rows)
                 {
-                    dw["CodCanal2"] = -1;
+                    if (dw["CodCanal2"] == DBNull.Value)
+                    {
+                        dw["CodCanal2"] = -1;
+                    }
                 }
-            }
-            GlobVar.tbl_MontagemSelecionada.AcceptChanges();
+                GlobVar.tbl_MontagemSelecionada.AcceptChanges();
             }
         }
         catch (IOException e)

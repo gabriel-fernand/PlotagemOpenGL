@@ -245,35 +245,35 @@ namespace PlotagemOpenGL
 
                     LeitorDiretorio.LeituraDiretorio();
 
-                    await Task.Delay(25);
+                    await Task.Delay(45);
                     telaLoad.AtualizarProgresso(20);
-
-                    await Task.Delay(25);
-                    telaLoad.AtualizarProgresso(30);
                     LeituraBanco.BancoRead();
+
+                    await Task.Delay(45);
+                    telaLoad.AtualizarProgresso(30);
                     LeituraBanco.AlteraTable();
                     LeituraBanco.AjustaMontagem();
                     Leitura.QuantidadeCanais();
                     //Canais.LerCanais();
-                    //Leitura.LerArquivo();
-                    await Task.Delay(25);
+                    //Leitura.LerArquvo();
+                    await Task.Delay(45);
                     telaLoad.AtualizarProgresso(40);
 
                     //Leitura.LeituraDat();
                     LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
-                    await Task.Delay(25);
+                    await Task.Delay(45);
 
                     LeituraEmMatrizTeste.LeituraDat();
                     LeituraBanco.ArrumaTbl_Paginas();
 
                     LeituraEmMatrizTeste.referencias();
-                    await Task.Delay(25);
+                    await Task.Delay(45);
                     telaLoad.AtualizarProgresso(50);
 
                     atualizaJanelaResumo();
                     SetStyle(ControlStyles.DoubleBuffer, true);
                     rectangleLoad();
-                    await Task.Delay(25);
+                    await Task.Delay(45);
 
                     this.Resize += Tela_Plotagem_Resiz;
                     this.Resize += painelComando_Resiz;
@@ -283,7 +283,7 @@ namespace PlotagemOpenGL
                     this.Controls.Add(openglControl1);
                     painelExames.Paint += painelExames_Paint;
                     toolTip1 = new CustomToolTip();
-                    await Task.Delay(25);
+                    await Task.Delay(45);
                     telaLoad.AtualizarProgresso(60);
 
                     formOriginalSize = this.Size;
@@ -6176,6 +6176,10 @@ namespace PlotagemOpenGL
 
             int a = 1;
             // Agora o telaSelect possui a estrutura de tbl_SellImpressao e os dados de tbl_MontagemSelecionada
+
+            CustomMessageBox.ShowTimed("Pagina selecionada para impressão posterior", 2);
+
+
         }
         public static void retornaOsValoresDosOutrosEstagios()
         {
