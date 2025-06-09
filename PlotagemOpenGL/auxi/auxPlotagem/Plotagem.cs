@@ -312,21 +312,23 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             if (Tela_Plotagem.MarcaDAguaAtiva)
             {
+                int pagina = (GlobVar.indice / GlobVar.namos) + 1;
+                Tela_Plotagem.estagioatutxt = GlobVar.tbl_Paginas.Rows[pagina]["Estagio"].ToString();
                 int tempoEmTela = GlobVar.segundos / 30;
                 //Marca apenas uma vez
                 if(tempoEmTela == 1)
                 {
-                    string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
                     int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
                     int alturaTela = Tela_Plotagem.openglControl1.Height;
-
+                    int tamanhoFonte = (int)(alturaTela * 0.8f);
                     // Calcular o tamanho da fonte com base em 80% da altura da tela
-                    float tamanhoFonte = alturaTela * 0.8f;
+                    Font font = new Font("Arial Narrow", tamanhoFonte);
 
                     // Aqui você pode ajustar manualmente o fator para centralizar o texto
                     // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
-                    int posX = larguraTela / 2 - (int)(larguraTela * 0.1);  // Ajuste para centralizar horizontalmente
-                    int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
+                    int posX =  ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2))) / 2 - 5;  // Ajuste para centralizar horizontalmente
+                    int posY =  alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
                     Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
                     // Primeira chamada para preparar o OpenGL para o texto
                     gl.DrawText(0, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
@@ -344,9 +346,9 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
                     int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
                     int alturaTela = Tela_Plotagem.openglControl1.Height;
+                    float tamanhoFonte = (tempoEmTela == 2) ? alturaTela * 0.8f : (tempoEmTela > 2 && tempoEmTela <= 4) ? alturaTela * 0.6f : alturaTela * 0.4f;
 
                     // Calcular o tamanho da fonte com base em 80% da altura da tela
-                    float tamanhoFonte =(tempoEmTela == 2) ? alturaTela * 0.8f : (tempoEmTela > 2 && tempoEmTela <= 4) ? alturaTela * 0.6f : alturaTela * 0.4f; 
 
                     for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
                     {
@@ -363,7 +365,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     // Distribuir as instâncias horizontalmente
                     for (int i = 0; i < tempoEmTela; i++)
                     {
-                        texto = Tela_Plotagem.estagios[i];
+                        texto = Tela_Plotagem.estagios[i].Equals("5") ? "R" : Tela_Plotagem.estagios[i];
                         Font font = new Font("Arial Narrow", tamanhoFonte);
 
                         SizeF tamanhoTxt;
@@ -388,6 +390,150 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     gl.End();
                     gl.Flush();
+                }
+            }
+
+            if (Tela_Plotagem.MarcaDAguaNaTelaAtiva)
+            {
+                int pagina = (GlobVar.indice / GlobVar.namos);
+                Tela_Plotagem.estagioatutxt = GlobVar.tbl_Paginas.Rows[pagina]["Estagio"].ToString();
+                int tempoEmTela = GlobVar.segundos / 30;
+                if (tempoEmTela == 1)
+                {
+                    int estagio = Convert.ToInt32(Tela_Plotagem.estagioatutxt);
+                    var rw = GlobVar.tbl_Estagios.AsEnumerable().Where(rw => rw.Field<int>("Estagio") == estagio).FirstOrDefault();
+                    float[] color = new float[3];
+                    color = ValorDecimalParaRGB(Convert.ToInt32(rw["Cor"]));
+
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+
+                    int meh = 14;
+                    int fontsize = 19;
+                    Font fonte = new System.Drawing.Font("Arial Narrow", fontsize);
+                    SizeF tamanhostring = plotNumerico.CalcularTamanhoString(texto, fonte);
+
+                    // Aqui você pode ajustar manualmente o fator para centralizar o texto
+                    // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
+                    int posX = ((larguraTela / (tempoEmTela) - ((int)fontsize / 2))) / 2;  // Ajuste para centralizar horizontalmente
+                    int posY = (int)(GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1] - (int)tamanhostring.Height / 6);
+                    Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
+                    // Primeira chamada para preparar o OpenGL para o texto
+                    gl.DrawText(0, posY, color[0], color[1], color[2], "Arial Narrow", meh, ""); // Prepara o OpenGL
+
+                    // Segunda chamada para realmente desenhar o texto
+                    gl.DrawText(posX, posY, color[0], color[1], color[2], "Arial Narrow", fontsize, texto);
+
+
+                    int midTras = (int)(((GlobVar.maximaVect - GlobVar.indice) / 2) - tamanhostring.Height * 3);
+                    int midFrente = (int)(((GlobVar.maximaVect - GlobVar.indice) / 2) + tamanhostring.Height * 3);
+
+                    // Define a espessura da linha antes de desenhar
+                    gl.LineWidth(3.0f);  // Valor em pixels — aumente conforme necessário
+
+                    // Linha da esquerda até o meio
+                    gl.Color(color[0], color[1], color[2]);
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.Vertex(GlobVar.indice + midTras, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.End();
+
+                    // Linha do meio até a direita
+                    gl.Color(color[0], color[1], color[2]);
+                    gl.Begin(OpenGL.GL_LINE_STRIP);
+                    gl.Vertex(GlobVar.indice + midFrente, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.Vertex(GlobVar.maximaVect, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.End();
+
+                    // Finaliza o desenho
+                    gl.Flush();
+
+                    // Opcional: restaurar a espessura padrão após desenhar
+                    gl.LineWidth(1.0f);
+
+                    // Finalizar a renderização do OpenGL
+                    gl.End();
+                    gl.Flush();
+
+                }
+                else
+                {
+                    Tela_Plotagem.retornaOsValoresDosOutrosEstagios();
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+                    int meh = 14;
+                    int fontsize = 19;
+                    Font fonte = new System.Drawing.Font("Arial Narrow", fontsize);
+                    SizeF tamanhostring = plotNumerico.CalcularTamanhoString(texto, fonte);
+
+                    int inicio = GlobVar.indice;
+                    int tamanho = (int)(GlobVar.maximaVect - GlobVar.indice) / tempoEmTela;
+                    int meiotras = (int)(tamanho / 2 - tamanhostring.Height * (tempoEmTela * 3));
+                    int meiofrent = (int)(tamanho / 2 + tamanhostring.Height * (tempoEmTela * 3));
+
+
+                    for (int i = 0; i < tempoEmTela; i++)
+                    {
+                        int estagio = Tela_Plotagem.estagios[i].Equals("R") ? 5 : Convert.ToInt32(Tela_Plotagem.estagios[i]);
+                        var rw = GlobVar.tbl_Estagios.AsEnumerable().Where(rw => rw.Field<int>("Estagio") == estagio).FirstOrDefault();
+                        float[] color = new float[3];
+                        color = ValorDecimalParaRGB(Convert.ToInt32(rw["Cor"]));
+                        
+
+
+                        texto = Tela_Plotagem.estagios[i].Equals("5") ? "R" : Tela_Plotagem.estagios[i];
+                        Font font = new Font("Arial Narrow", fontsize);
+
+                        SizeF tamanhoTxt;
+                        using (Graphics g = Tela_Plotagem.openglControl1.CreateGraphics())
+                        {
+                            // Agora você pode usar o contexto gráfico `g`
+                            tamanhoTxt = g.MeasureString(texto, font);
+
+                        }
+                        // Aqui, distribui o X uniformemente pela largura da tela
+                        int posX = ((larguraTela / tempoEmTela) * i) + ((larguraTela / (tempoEmTela) - ((int)fontsize / 2))) / 2;  // Distribuir na largura da tela
+
+                        // Ajuste o Y para manter o texto na mesma linha
+                        int posY = (int)(GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1] - (int)tamanhostring.Height / 6);
+
+                        // Primeira chamada para preparar o OpenGL para o texto
+                        gl.DrawText(0, posY, color[0], color[1], color[2], "Arial Narrow", (int)meh, "");
+
+                        // Segunda chamada para realmente desenhar o texto
+                        gl.DrawText(posX, posY, color[0], color[1], color[2], "Arial Narrow", (int)fontsize, texto);
+
+                        // Define a espessura da linha antes de desenhar
+                        gl.LineWidth(3.0f);  // Valor em pixels — aumente conforme necessário
+
+                        // Linha da esquerda até o meio
+                        gl.Color(color[0], color[1], color[2]);
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(inicio, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                        gl.Vertex(inicio + meiotras, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                        gl.End();
+
+                        // Linha do meio até a direita
+                        gl.Color(color[0], color[1], color[2]);
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(inicio + meiofrent, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                        gl.Vertex(inicio + tamanho, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                        gl.End();
+
+                        // Finaliza o desenho
+                        gl.Flush();
+
+                        // Opcional: restaurar a espessura padrão após desenhar
+                        gl.LineWidth(1.0f);
+
+                        // Finalizar a renderização do OpenGL
+                        gl.End();
+                        gl.Flush();
+                        inicio += tamanho;
+                    }
+
                 }
             }
 
@@ -486,5 +632,29 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             */
             return voltaSapora;
         }
+
+
+        /// <summary>
+        /// Converte um valor decimal (int ou uint) que representa uma cor RGB (0xRRGGBB)
+        /// para um vetor de 3 floats normalizados entre 0 e 1: [R, G, B].
+        /// </summary>
+        /// <param name="valor">Valor inteiro que representa uma cor RGB (ex: 0xFF0000 para vermelho)</param>
+        /// <returns>Vetor float[3] com R, G, B normalizados</returns>
+        public static float[] ValorDecimalParaRGB(int valor)
+        {
+            // Extrai os componentes de cor (assumindo formato 0xRRGGBB)
+            int r = (valor >> 16) & 0xFF;
+            int g = (valor >> 8) & 0xFF;
+            int b = valor & 0xFF;
+
+            // Normaliza para float de 0.0 a 1.0
+            return new float[]
+            {
+                b / 255f,
+                g / 255f,
+                r / 255f
+            };
+        }
+
     }
 }

@@ -203,6 +203,9 @@ namespace PlotagemOpenGL.auxi
 
                     if (panel != null || label != null)
                     {
+                        panel.Controls.Add(label);
+                        panel.Controls.Add(scala);
+
                         // Ajustar o tamanho e localização do painel
                         float ySizeAux = (float)(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Altura"]) / 100;
                         pnSize = (int)GlobVar.sizePainelExams.Y * ySizeAux;
@@ -214,6 +217,7 @@ namespace PlotagemOpenGL.auxi
                         panel.Tag = tag;
                         label.Text = GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.grafSelected[j]]["Legenda"].ToString();
                         label.Tag = panel.Tag;
+                        scala.Tag = "scala";
 
                         // Verificar o tipo de canal para ajustar o comportamento
                         var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable()
@@ -222,7 +226,7 @@ namespace PlotagemOpenGL.auxi
 
                         if (TipoCanal == 20 || TipoCanal == 21 || TipoCanal == 23 || TipoCanal == 24 || TipoCanal == 15 || TipoCanal == 16 || TipoCanal == 28 || TipoCanal == 29 || TipoCanal == 32 || TipoCanal == 31 || TipoCanal == 30 || tag == 65)
                         {
-                            scala.Location = new Point(-500, 0);
+                            //scala.Location = new Point(-500, 0);
                             panel.Controls.Remove(scala);
 
                             // Adicionar labels de máximas e mínimas

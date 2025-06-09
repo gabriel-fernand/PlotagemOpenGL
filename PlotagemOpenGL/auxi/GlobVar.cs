@@ -74,6 +74,7 @@ namespace PlotagemOpenGL.auxi
         public static float DuracaoEvent;
         public static int MinimumValueEvent = 256;
         public static int? lastEvent;
+        public static string txtLastEvent = "";
         public static bool EventHasChange = false;
         public static List<string> listEventsCanHave = new List<string>();
         public static Point rightClickSave;
@@ -137,7 +138,6 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_RelatResumoItem = new DataTable();
         public static DataTable tbl_HipnoLaudo = new DataTable();
         public static DataTable tbl_DadosClinica = new DataTable();
-
         public static DataTable Cons_Eventos = new DataTable();
 
         public static int CodJanela;

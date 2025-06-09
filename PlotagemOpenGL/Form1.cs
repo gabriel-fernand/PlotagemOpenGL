@@ -422,7 +422,7 @@ namespace PlotagemOpenGL
             catch (Exception e)
             {
                 MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
-
+                this.Close();
             }
         }
         void F_Idioma()
@@ -1883,7 +1883,14 @@ namespace PlotagemOpenGL
         }
         private void MesmaAlturaCanais_Click(object sender, EventArgs e)
         {
-            int normalSize = painelExames.Height / GlobVar.tbl_MontagemSelecionada.Rows.Count;
+            // Conta apenas os painéis de canais (ignorando o da marca d'água)
+            var paineisCanais = painelExames.Controls
+                .OfType<Panel>()
+                .OrderBy(p => p.Top)
+                .ToList();
+            int qtd = MarcaDAguaNaTelaAtiva ? paineisCanais.Count : GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+            int normalSize = painelExames.Height / qtd;
 
             int lastTop = 0;
 
@@ -2032,6 +2039,7 @@ namespace PlotagemOpenGL
         }
         private void RepositionPanels()
         {
+
             // Definir o espaçamento entre os painéis visíveis
             const int spacing = 0; // Ajuste conforme necessário
 
@@ -2055,17 +2063,23 @@ namespace PlotagemOpenGL
                 // Atualizar a posição Y para o próximo painel, considerando o espaçamento
                 y = panel.Bottom + spacing;
             }
-
+            List<int> agor = new List<int>();
             // Atualizar o array `desenhoLoc` com a nova posição dos painéis visíveis
             int index = 0;
             foreach (Panel pn in visiblePanels)
             {
                 // Calcular a posição do centro do painel e armazenar em `GlobVar.desenhoLoc`
                 int meioPn = pn.Top + (pn.Height / 2);
-                GlobVar.desenhoLoc[index] = meioPn;
+                agor.Add(meioPn);
+
                 index++;
             }
-
+            GlobVar.desenhoLoc = new float[agor.Count];
+            index = 0;
+            for(int i = 0; i < GlobVar.desenhoLoc.Length; i++)
+            {
+                GlobVar.desenhoLoc[i] = agor[i];
+            }
             // Caso tenha menos painéis visíveis do que o tamanho original de `GlobVar.desenhoLoc`,
             // zera os valores restantes
             for (int i = index; i < GlobVar.desenhoLoc.Length; i++)
@@ -2680,7 +2694,22 @@ namespace PlotagemOpenGL
         public static bool isThereX1Y0Comment = false;
         public static bool isThereX1Y1Comment = false;
         public static bool isThereVideoPonteiro = false;
-        private bool isTelaClearAndReloadExecuted; 
+        private bool isTelaClearAndReloadExecuted;
+        ToolTip tooltipEvento = new ToolTip();
+        Point mousePositionLocal;
+        // Mostra o tooltip na posição do mouse (após o Timer disparar)
+        private void TooltipTimer_Tick(object sender, EventArgs e)
+        {
+            if (isDrawingRectangle)
+            {
+                double inicio = Plotagem.startX / GlobVar.namos;
+                double fim = Plotagem.endX / GlobVar.namos;
+
+                double size = Math.Abs(fim - inicio);
+
+                tooltipEvento.Show($"{GlobVar.txtLastEvent}: {size:F2}Seg", openglControl1, mousePositionLocal.X + 10, mousePositionLocal.Y + 10);
+            }
+        }
         private void OpenGLControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (click)
@@ -2696,12 +2725,16 @@ namespace PlotagemOpenGL
                         timer2.Start();
                         isDrawing = true;
                         isDrawingRectangle = true;
+                        mousePositionLocal = e.Location;
+                        tooltipTimer.Start();
                         ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.startX, out Plotagem.startY);
                         if (!crtlAtivo) {
                             GlobVar.endX = (int)Plotagem.startX;
                             GlobVar.endY = (int)Plotagem.startY;
                             GlobVar.startX = (int)Plotagem.startX;
                             GlobVar.startY = (int)Plotagem.startY;
+                            int startY = (int)Plotagem.startY;
+                            plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
                             openglControl1.DoRender();
                             plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
                         }
@@ -2910,8 +2943,8 @@ namespace PlotagemOpenGL
                     GlobVar.DimXY.Y = (int)Plotagem.startY;
                     int startY = (int)Plotagem.startY;
                     float endX = Plotagem.endX;
-                    plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
-
+                    //plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
+                    mousePositionLocal = e.Location;
                     if (!isDrawing) {
                         this.isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnStartEvent = plotEventos.IsInAnEventStart((int)endX, GlobVar.desenhoLoc, startY);
@@ -3698,7 +3731,8 @@ namespace PlotagemOpenGL
                     {
                         isDrawing = false;
                         isDrawingRectangle = false;
-
+                        tooltipEvento.Hide(openglControl1);
+                        tooltipTimer.Stop();
                         if (!crtlAtivo) {
                             //UpdateLoc();
                             isDrawingRectangle = false;
@@ -3804,7 +3838,7 @@ namespace PlotagemOpenGL
 
                             GlobVar.endX = GlobVar.durEventoMove;
 
-                            if (GlobVar.endX != GlobVar.startX)
+                            if (GlobVar.iniEventoMove != GlobVar.startX)
                             {
                                 plotEventos.UpdateEvent(GlobVar.iniEventoMove, GlobVar.durEventoMove, GlobVar.CodCanalEvent, GlobVar.desenhoLoc, GlobVar.startY, GlobVar.seqEvento, GlobVar.CodEvento);
                             }
@@ -4791,6 +4825,153 @@ namespace PlotagemOpenGL
             }
 
         }
+        public static bool MarcaDAguaNaTelaAtiva = false;
+        private const string NomePainelMarcaDagua = "painelMarcaDagua";
+        private const int AlturaMarcaDagua = 30; // altura desejada do painel transparente
+
+        private void MarcaDAguaNaTela_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn == null) return;
+
+            if (MarcaDAguaNaTelaAtiva)
+            {
+                // DESATIVANDO
+                MarcaDAguaNaTelaAtiva = false;
+
+                // Estilo do botão
+                btn.BackColor = Color.Lime;
+                btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+                btn.FlatAppearance.BorderSize = 1;
+                btn.FlatAppearance.BorderColor = Color.Black;
+
+                // Remover painel de marca d'água
+                var painel = painelExames.Controls.OfType<Panel>().FirstOrDefault(p => p.Name == NomePainelMarcaDagua);
+                if (painel != null)
+                {
+                    painelExames.Controls.Remove(painel);
+                }
+
+                // Conta apenas os painéis de canais (ignorando o da marca d'água)
+                var paineisCanais = painelExames.Controls
+                    .OfType<Panel>()
+                    .OrderBy(p => p.Top)
+                    .ToList();
+                int qtd = MarcaDAguaNaTelaAtiva ? paineisCanais.Count : GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+                int normalSize = painelExames.Height / qtd;
+
+                int lastTop = 0;
+
+                foreach (Panel pn in painelExames.Controls)
+                {
+                    pn.Top = lastTop;
+                    pn.Height = normalSize;
+                    lastTop += normalSize;
+                }
+
+                int indiot = 0;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                {
+                    int topPn = pn.Top;
+                    int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                    int meioPn = pn.Height;
+                    if (indiot < GlobVar.desenhoLoc.Length)
+                    {
+                        GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                    }
+                    indiot++;
+                }
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
+                RepositionPanels();
+            }
+            else
+            {
+                // ATIVANDO
+                MarcaDAguaNaTelaAtiva = true;
+
+                btn.BackColor = Color.FromArgb(50, 147, 50);
+                btn.ForeColor = Color.White;
+                btn.FlatAppearance.BorderSize = 2;
+                btn.FlatAppearance.BorderColor = Color.DarkGreen;
+
+                // Criar painel transparente no topo
+                Panel marca = new Panel
+                {
+                    Name = NomePainelMarcaDagua,
+                    Height = AlturaMarcaDagua,
+                    Width = painelExames.Width,
+                    Location = new Point(0, 0),
+                    Tag = -1,
+                    BackColor = Color.Transparent // ou Color.FromArgb(0, 0, 0, 0)                    
+                };
+
+                // Painel transparente precisa ser o primeiro na lista de Controls (z-order)
+                painelExames.Controls.Add(marca);
+                painelExames.Controls.SetChildIndex(marca, 0); // Garante que ele fique atrás se for necessário
+                marca.Visible = false;
+                // Conta apenas os painéis de canais (ignorando o da marca d'água)
+                var paineisCanais = painelExames.Controls
+                    .OfType<Panel>()
+                    .OrderBy(p => p.Top)
+                    .ToList();
+                int qtd = MarcaDAguaNaTelaAtiva ? paineisCanais.Count : GlobVar.tbl_MontagemSelecionada.Rows.Count;
+
+                int normalSize = painelExames.Height / qtd;
+
+                int lastTop = 0;
+
+                foreach (Panel pn in painelExames.Controls)
+                {
+                    pn.Top = lastTop;
+                    pn.Height = normalSize;
+                    lastTop += normalSize;
+                }
+
+                int indiot = 0;
+                foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
+                {
+                    int topPn = pn.Top;
+                    int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
+
+                    int meioPn = pn.Height;
+                    if (indiot < GlobVar.desenhoLoc.Length)
+                    {
+                        GlobVar.desenhoLoc[indiot] = topPn + meioPn;
+                    }
+                    indiot++;
+                }
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
+                RepositionPanels();
+            }
+
+            UpdateInicioTela();
+            TelaClearAndReload();
+        }
+        private void ReorganizaPaineis()
+        {
+            int offsetY = MarcaDAguaNaTelaAtiva ? AlturaMarcaDagua : 0;
+
+            foreach (Control ctrl in painelExames.Controls)
+            {
+                if (ctrl is Panel p && p.Name != NomePainelMarcaDagua)
+                {
+                    p.Location = new Point(p.Location.X, offsetY);
+                }
+            }
+        }
+
         public void CalcularQtdImpressao()
         {
             // Verifica se o DataTable existe e possui linhas
@@ -4834,8 +5015,46 @@ namespace PlotagemOpenGL
             // Atualização de controles com segurança de thread
             fimTela.Text = $"{horasI}:{minutosI}:{segundosI}";
 
-            PainelMarca.Enabled = GlobVar.segundos == 30 &&
-                                  (Convert.ToInt32(segundosI) == 30 || Convert.ToInt32(segundosI) == 0);
+            int segI = Convert.ToInt32(segundosI);
+
+            if (GlobVar.segundos == 30 && (segI == 30 || segI == 0))
+            {
+                //PainelMarca.Enabled = true;
+
+                foreach (Control cr in PainelMarca.Controls)
+                {
+                    if (cr is Button btn)
+                    {
+                        if(Convert.ToInt32(btn.Tag) != -1)
+                        {
+                            btn.Enabled = true;
+                            btn.BackColor = Color.MediumSlateBlue;
+                            btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+                            btn.FlatAppearance.BorderSize = 1;
+                            btn.FlatAppearance.BorderColor = Color.Black;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //PainelMarca.Enabled = false;
+
+                foreach (Control cr in PainelMarca.Controls)
+                {
+                    if (cr is Button btn)
+                    {
+                        if (Convert.ToInt32(btn.Tag) != -1)
+                        {
+                            btn.Enabled = false;
+                            btn.BackColor = Color.Gray;
+                            btn.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+                            btn.FlatAppearance.BorderSize = 1;
+                            btn.FlatAppearance.BorderColor = Color.Black;
+                        }
+                    }
+                }
+            }
 
             var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(r => r.Field<int>("NumPag") == paginaCoerente);
             string horario = row["Horario"].ToString();
@@ -5962,9 +6181,9 @@ namespace PlotagemOpenGL
         {
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
             var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
+            var indexProximo = rowIndex;
             for (int i = 1; i <= 8; i++)
             {
-                var indexProximo = rowIndex + 30 * i;
                 if (indexProximo < GlobVar.tbl_Paginas.Rows.Count) // Verifica se o índice é válido
                 {
                     var rowProxima = GlobVar.tbl_Paginas.Rows[indexProximo];
@@ -6048,6 +6267,7 @@ namespace PlotagemOpenGL
                             break;
                     }
                 }
+                indexProximo = rowIndex + 30 * i;
             }
         }
         public static void atualizaButAntProx()

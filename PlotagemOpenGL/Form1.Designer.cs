@@ -329,6 +329,7 @@ namespace PlotagemOpenGL
             timer1 = new Timer(components);
             timer2 = new Timer(components);
             timer3 = new Timer(components);
+            tooltipTimer = new Timer(components);
             timerAvanca = new Timer(components);
             timerAndaUmaPag = new Timer(components);
             timerVoltaUmaPag = new Timer(components);
@@ -336,6 +337,7 @@ namespace PlotagemOpenGL
             timerClick = new Timer(components);
             timerComment = new Timer(components);
             toolTip2 = new ToolTip(components);
+            toolTipEvento = new ToolTip(components);
             menuStrip1 = new MenuStrip();
             arquivoToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
@@ -347,14 +349,14 @@ namespace PlotagemOpenGL
             toolStripMenuItem8 = new ToolStripMenuItem();
             toolStripMenuItem9 = new ToolStripMenuItem();
             janelaResumoToolStripMenuItem = new ToolStripMenuItem();
-            ferramentasToolStripMenuItem = new ToolStripMenuItem();
-            configuracaoToolStripMenuItem = new ToolStripMenuItem();
-            cadastroToolStripMenuItem = new ToolStripMenuItem();
             JanelaPrincipal = new ToolStripMenuItem();
             JanelaSeparada = new ToolStripMenuItem();
             NovaJanela = new ToolStripMenuItem();
             ListaEventos = new ToolStripMenuItem();
             RenomearExluirJanela = new ToolStripMenuItem();
+            ferramentasToolStripMenuItem = new ToolStripMenuItem();
+            configuracaoToolStripMenuItem = new ToolStripMenuItem();
+            cadastroToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             painelExames.SuspendLayout();
@@ -2465,7 +2467,7 @@ namespace PlotagemOpenGL
             Amplislaoq.BackgroundImageLayout = ImageLayout.Stretch;
             Amplislaoq.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Amplislaoq.Location = new System.Drawing.Point(238, 1);
-            Amplislaoq.Name = "Amplislaoq";
+            Amplislaoq.Name = "Mede Amplitude e frequencia do período marcado";
             Amplislaoq.Size = new System.Drawing.Size(47, 47);
             Amplislaoq.TabIndex = 62;
             Amplislaoq.UseVisualStyleBackColor = false;
@@ -2477,7 +2479,7 @@ namespace PlotagemOpenGL
             MinimoEvento.BackgroundImageLayout = ImageLayout.Stretch;
             MinimoEvento.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MinimoEvento.Location = new System.Drawing.Point(192, 1);
-            MinimoEvento.Name = "MinimoEvento";
+            MinimoEvento.Name = "Considerar duração mínima dos eventos";
             MinimoEvento.Size = new System.Drawing.Size(47, 47);
             MinimoEvento.TabIndex = 63;
             MinimoEvento.Tag = 2;
@@ -2491,7 +2493,7 @@ namespace PlotagemOpenGL
             EventoUmClick.BackgroundImageLayout = ImageLayout.Stretch;
             EventoUmClick.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             EventoUmClick.Location = new System.Drawing.Point(144, 1);
-            EventoUmClick.Name = "EventoUmClick";
+            EventoUmClick.Name = "Evento de um clique";
             EventoUmClick.Size = new System.Drawing.Size(47, 47);
             EventoUmClick.TabIndex = 64;
             EventoUmClick.Tag = 1;
@@ -2505,7 +2507,7 @@ namespace PlotagemOpenGL
             AnaliseAutomatica.BackgroundImageLayout = ImageLayout.Stretch;
             AnaliseAutomatica.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnaliseAutomatica.Location = new System.Drawing.Point(96, 1);
-            AnaliseAutomatica.Name = "AnaliseAutomatica";
+            AnaliseAutomatica.Name = "Análise Automática";
             AnaliseAutomatica.Size = new System.Drawing.Size(47, 47);
             AnaliseAutomatica.TabIndex = 65;
             AnaliseAutomatica.UseVisualStyleBackColor = false;
@@ -2518,7 +2520,7 @@ namespace PlotagemOpenGL
             Video.BackgroundImageLayout = ImageLayout.Stretch;
             Video.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Video.Location = new System.Drawing.Point(48, 1);
-            Video.Name = "Video";
+            Video.Name = "Vídeo";
             Video.Size = new System.Drawing.Size(47, 47);
             Video.TabIndex = 2;
             Video.UseVisualStyleBackColor = false;
@@ -2531,7 +2533,7 @@ namespace PlotagemOpenGL
             Profile.BackgroundImageLayout = ImageLayout.Stretch;
             Profile.ForeColor = System.Drawing.Color.Transparent;
             Profile.Location = new System.Drawing.Point(1, 1);
-            Profile.Name = "Profile";
+            Profile.Name = "Dados do Paciente";
             Profile.Size = new System.Drawing.Size(47, 47);
             Profile.TabIndex = 0;
             Profile.UseVisualStyleBackColor = false;
@@ -2558,7 +2560,7 @@ namespace PlotagemOpenGL
             ImprimeLaudo.BackgroundImageLayout = ImageLayout.Stretch;
             ImprimeLaudo.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ImprimeLaudo.Location = new System.Drawing.Point(236, 1);
-            ImprimeLaudo.Name = "ImprimeLaudo";
+            ImprimeLaudo.Name = "Laudo do Paciente";
             ImprimeLaudo.Size = new System.Drawing.Size(47, 47);
             ImprimeLaudo.TabIndex = 62;
             ImprimeLaudo.UseVisualStyleBackColor = false;
@@ -2571,7 +2573,7 @@ namespace PlotagemOpenGL
             ImprimeSele.BackgroundImageLayout = ImageLayout.Stretch;
             ImprimeSele.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ImprimeSele.Location = new System.Drawing.Point(189, 1);
-            ImprimeSele.Name = "ImprimeSele";
+            ImprimeSele.Name = "Páginas selecionadas para impressão";
             ImprimeSele.Size = new System.Drawing.Size(47, 47);
             ImprimeSele.TabIndex = 63;
             ImprimeSele.UseVisualStyleBackColor = false;
@@ -2584,7 +2586,7 @@ namespace PlotagemOpenGL
             CopiaTela.BackgroundImageLayout = ImageLayout.Stretch;
             CopiaTela.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             CopiaTela.Location = new System.Drawing.Point(142, 1);
-            CopiaTela.Name = "CopiaTela";
+            CopiaTela.Name = "Copia tela em arquivo";
             CopiaTela.Size = new System.Drawing.Size(47, 47);
             CopiaTela.TabIndex = 64;
             CopiaTela.UseVisualStyleBackColor = false;
@@ -2597,7 +2599,7 @@ namespace PlotagemOpenGL
             ImprimeTela.BackgroundImageLayout = ImageLayout.Stretch;
             ImprimeTela.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ImprimeTela.Location = new System.Drawing.Point(95, 1);
-            ImprimeTela.Name = "ImprimeTela";
+            ImprimeTela.Name = "Imprimir tela";
             ImprimeTela.Size = new System.Drawing.Size(47, 47);
             ImprimeTela.TabIndex = 65;
             ImprimeTela.UseVisualStyleBackColor = false;
@@ -2610,7 +2612,7 @@ namespace PlotagemOpenGL
             ImprimePagina.BackgroundImageLayout = ImageLayout.Stretch;
             ImprimePagina.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ImprimePagina.Location = new System.Drawing.Point(48, 1);
-            ImprimePagina.Name = "ImprimePagina";
+            ImprimePagina.Name = "Selecionar Página para impressão posterior";
             ImprimePagina.Size = new System.Drawing.Size(47, 47);
             ImprimePagina.TabIndex = 2;
             ImprimePagina.UseVisualStyleBackColor = false;
@@ -2623,7 +2625,7 @@ namespace PlotagemOpenGL
             OcultarPrinter.BackgroundImageLayout = ImageLayout.Stretch;
             OcultarPrinter.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             OcultarPrinter.Location = new System.Drawing.Point(289, 1);
-            OcultarPrinter.Name = "OcultarPrinter";
+            OcultarPrinter.Name = "Ocultar";
             OcultarPrinter.Size = new System.Drawing.Size(47, 47);
             OcultarPrinter.TabIndex = 1;
             OcultarPrinter.UseVisualStyleBackColor = false;
@@ -2636,7 +2638,7 @@ namespace PlotagemOpenGL
             ImprimeTudo.BackgroundImageLayout = ImageLayout.Stretch;
             ImprimeTudo.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ImprimeTudo.Location = new System.Drawing.Point(1, 1);
-            ImprimeTudo.Name = "ImprimeTudo";
+            ImprimeTudo.Name = "Imprimir exame";
             ImprimeTudo.Size = new System.Drawing.Size(47, 47);
             ImprimeTudo.TabIndex = 0;
             ImprimeTudo.UseVisualStyleBackColor = false;
@@ -2672,7 +2674,7 @@ namespace PlotagemOpenGL
             Avanca.BackgroundImageLayout = ImageLayout.Stretch;
             Avanca.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Avanca.Location = new System.Drawing.Point(189, 1);
-            Avanca.Name = "Avanca";
+            Avanca.Name = "Avança o tempo mostrado na tela";
             Avanca.Size = new System.Drawing.Size(47, 47);
             Avanca.TabIndex = 63;
             Avanca.UseVisualStyleBackColor = false;
@@ -2685,7 +2687,7 @@ namespace PlotagemOpenGL
             AndaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
             AndaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AndaUmaPag.Location = new System.Drawing.Point(142, 1);
-            AndaUmaPag.Name = "AndaUmaPag";
+            AndaUmaPag.Name = "Avança 1 segundo";
             AndaUmaPag.Size = new System.Drawing.Size(47, 47);
             AndaUmaPag.TabIndex = 64;
             AndaUmaPag.UseVisualStyleBackColor = false;
@@ -2698,7 +2700,7 @@ namespace PlotagemOpenGL
             Pausa.BackgroundImageLayout = ImageLayout.Stretch;
             Pausa.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Pausa.Location = new System.Drawing.Point(95, 1);
-            Pausa.Name = "Pausa";
+            Pausa.Name = "Pára o Avanço/Retrocesso";
             Pausa.Size = new System.Drawing.Size(47, 47);
             Pausa.TabIndex = 65;
             Pausa.UseVisualStyleBackColor = false;
@@ -2711,7 +2713,7 @@ namespace PlotagemOpenGL
             VoltaUmaPag.BackgroundImageLayout = ImageLayout.Stretch;
             VoltaUmaPag.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             VoltaUmaPag.Location = new System.Drawing.Point(48, 1);
-            VoltaUmaPag.Name = "VoltaUmaPag";
+            VoltaUmaPag.Name = "Retrocede 1 segundo";
             VoltaUmaPag.Size = new System.Drawing.Size(47, 47);
             VoltaUmaPag.TabIndex = 2;
             VoltaUmaPag.UseVisualStyleBackColor = false;
@@ -2724,7 +2726,7 @@ namespace PlotagemOpenGL
             OcultaTempo.BackgroundImageLayout = ImageLayout.Stretch;
             OcultaTempo.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             OcultaTempo.Location = new System.Drawing.Point(265, 1);
-            OcultaTempo.Name = "OcultaTempo";
+            OcultaTempo.Name = "Oculta";
             OcultaTempo.Size = new System.Drawing.Size(47, 47);
             OcultaTempo.TabIndex = 1;
             OcultaTempo.UseVisualStyleBackColor = false;
@@ -2737,7 +2739,7 @@ namespace PlotagemOpenGL
             Retrocede.BackgroundImageLayout = ImageLayout.Stretch;
             Retrocede.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Retrocede.Location = new System.Drawing.Point(1, 1);
-            Retrocede.Name = "Retrocede";
+            Retrocede.Name = "Retrocede o tempo mostrado na tela";
             Retrocede.Size = new System.Drawing.Size(47, 47);
             Retrocede.TabIndex = 0;
             Retrocede.UseVisualStyleBackColor = false;
@@ -2785,7 +2787,7 @@ namespace PlotagemOpenGL
             TresProxima.BackgroundImageLayout = ImageLayout.Stretch;
             TresProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             TresProxima.Location = new System.Drawing.Point(323, 1);
-            TresProxima.Name = "TresProxima";
+            TresProxima.Name = "";
             TresProxima.Size = new System.Drawing.Size(47, 47);
             TresProxima.TabIndex = 76;
             TresProxima.Tag = 3;
@@ -2799,7 +2801,7 @@ namespace PlotagemOpenGL
             DuasProxima.BackgroundImageLayout = ImageLayout.Stretch;
             DuasProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             DuasProxima.Location = new System.Drawing.Point(277, 1);
-            DuasProxima.Name = "DuasProxima";
+            DuasProxima.Name = "";
             DuasProxima.Size = new System.Drawing.Size(47, 47);
             DuasProxima.TabIndex = 77;
             DuasProxima.Tag = 2;
@@ -2813,10 +2815,11 @@ namespace PlotagemOpenGL
             MarcaNoGraf.BackgroundImageLayout = ImageLayout.Stretch;
             MarcaNoGraf.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MarcaNoGraf.Location = new System.Drawing.Point(461, 1);
-            MarcaNoGraf.Name = "MarcaNoGraf";
+            MarcaNoGraf.Name = "";
             MarcaNoGraf.Size = new System.Drawing.Size(47, 47);
             MarcaNoGraf.TabIndex = 71;
             MarcaNoGraf.UseVisualStyleBackColor = false;
+            MarcaNoGraf.Click += MarcaDAguaNaTela_Click;
             // 
             // MarcaDAguia
             // 
@@ -2825,7 +2828,7 @@ namespace PlotagemOpenGL
             MarcaDAguia.BackgroundImageLayout = ImageLayout.Stretch;
             MarcaDAguia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MarcaDAguia.Location = new System.Drawing.Point(415, 1);
-            MarcaDAguia.Name = "MarcaDAguia";
+            MarcaDAguia.Name = "";
             MarcaDAguia.Size = new System.Drawing.Size(47, 47);
             MarcaDAguia.TabIndex = 67;
             MarcaDAguia.UseVisualStyleBackColor = false;
@@ -2838,7 +2841,7 @@ namespace PlotagemOpenGL
             QuatroProxima.BackgroundImageLayout = ImageLayout.Stretch;
             QuatroProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             QuatroProxima.Location = new System.Drawing.Point(369, 1);
-            QuatroProxima.Name = "QuatroProxima";
+            QuatroProxima.Name = "";
             QuatroProxima.Size = new System.Drawing.Size(47, 47);
             QuatroProxima.TabIndex = 66;
             QuatroProxima.Tag = 4;
@@ -2851,7 +2854,7 @@ namespace PlotagemOpenGL
             UmaProxima.BackgroundImageLayout = ImageLayout.Stretch;
             UmaProxima.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             UmaProxima.Location = new System.Drawing.Point(231, 1);
-            UmaProxima.Name = "UmaProxima";
+            UmaProxima.Name = "";
             UmaProxima.Size = new System.Drawing.Size(47, 47);
             UmaProxima.TabIndex = 62;
             UmaProxima.Tag = 1;
@@ -2865,7 +2868,7 @@ namespace PlotagemOpenGL
             Atual.BackgroundImageLayout = ImageLayout.Stretch;
             Atual.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Atual.Location = new System.Drawing.Point(185, 1);
-            Atual.Name = "Atual";
+            Atual.Name = "";
             Atual.Size = new System.Drawing.Size(47, 47);
             Atual.TabIndex = 63;
             Atual.UseVisualStyleBackColor = false;
@@ -2876,7 +2879,7 @@ namespace PlotagemOpenGL
             UmaAnterior.BackgroundImageLayout = ImageLayout.Stretch;
             UmaAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             UmaAnterior.Location = new System.Drawing.Point(139, 1);
-            UmaAnterior.Name = "UmaAnterior";
+            UmaAnterior.Name = "";
             UmaAnterior.Size = new System.Drawing.Size(47, 47);
             UmaAnterior.TabIndex = 64;
             UmaAnterior.Tag = 1;
@@ -2889,7 +2892,7 @@ namespace PlotagemOpenGL
             DuasAnterior.BackgroundImageLayout = ImageLayout.Stretch;
             DuasAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             DuasAnterior.Location = new System.Drawing.Point(93, 1);
-            DuasAnterior.Name = "DuasAnterior";
+            DuasAnterior.Name = "";
             DuasAnterior.Size = new System.Drawing.Size(47, 47);
             DuasAnterior.TabIndex = 65;
             DuasAnterior.Tag = 2;
@@ -2902,7 +2905,7 @@ namespace PlotagemOpenGL
             TresAnterior.BackgroundImageLayout = ImageLayout.Stretch;
             TresAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             TresAnterior.Location = new System.Drawing.Point(47, 1);
-            TresAnterior.Name = "TresAnterior";
+            TresAnterior.Name = "";
             TresAnterior.Size = new System.Drawing.Size(47, 47);
             TresAnterior.TabIndex = 2;
             TresAnterior.Tag = 3;
@@ -2916,7 +2919,7 @@ namespace PlotagemOpenGL
             OcultaPanelLoc.BackgroundImageLayout = ImageLayout.Stretch;
             OcultaPanelLoc.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             OcultaPanelLoc.Location = new System.Drawing.Point(510, 1);
-            OcultaPanelLoc.Name = "OcultaPanelLoc";
+            OcultaPanelLoc.Name = "Oculta";
             OcultaPanelLoc.Size = new System.Drawing.Size(47, 47);
             OcultaPanelLoc.TabIndex = 1;
             OcultaPanelLoc.UseVisualStyleBackColor = false;
@@ -2928,7 +2931,7 @@ namespace PlotagemOpenGL
             QuatroAnterior.BackgroundImageLayout = ImageLayout.Stretch;
             QuatroAnterior.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             QuatroAnterior.Location = new System.Drawing.Point(1, 1);
-            QuatroAnterior.Name = "QuatroAnterior";
+            QuatroAnterior.Name = "";
             QuatroAnterior.Size = new System.Drawing.Size(47, 47);
             QuatroAnterior.TabIndex = 0;
             QuatroAnterior.Tag = 4;
@@ -2950,12 +2953,12 @@ namespace PlotagemOpenGL
             // 
             // MarcarR
             // 
-            MarcarR.BackColor = System.Drawing.Color.BlueViolet;
+            MarcarR.BackColor = System.Drawing.Color.MediumSlateBlue;
             MarcarR.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcarR.BackgroundImage");
             MarcarR.BackgroundImageLayout = ImageLayout.Stretch;
             MarcarR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MarcarR.Location = new System.Drawing.Point(189, 1);
-            MarcarR.Name = "MarcarR";
+            MarcarR.Name = "REM";
             MarcarR.Size = new System.Drawing.Size(47, 47);
             MarcarR.TabIndex = 63;
             MarcarR.Tag = 5;
@@ -2964,12 +2967,12 @@ namespace PlotagemOpenGL
             // 
             // Marcar3
             // 
-            Marcar3.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar3.BackColor = System.Drawing.Color.MediumSlateBlue;
             Marcar3.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar3.BackgroundImage");
             Marcar3.BackgroundImageLayout = ImageLayout.Stretch;
             Marcar3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Marcar3.Location = new System.Drawing.Point(142, 1);
-            Marcar3.Name = "Marcar3";
+            Marcar3.Name = "N3";
             Marcar3.Size = new System.Drawing.Size(47, 47);
             Marcar3.TabIndex = 64;
             Marcar3.Tag = 3;
@@ -2978,12 +2981,12 @@ namespace PlotagemOpenGL
             // 
             // Marcar2
             // 
-            Marcar2.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar2.BackColor = System.Drawing.Color.MediumSlateBlue;
             Marcar2.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar2.BackgroundImage");
             Marcar2.BackgroundImageLayout = ImageLayout.Stretch;
             Marcar2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Marcar2.Location = new System.Drawing.Point(95, 1);
-            Marcar2.Name = "Marcar2";
+            Marcar2.Name = "N2";
             Marcar2.Size = new System.Drawing.Size(47, 47);
             Marcar2.TabIndex = 65;
             Marcar2.Tag = 2;
@@ -2992,12 +2995,12 @@ namespace PlotagemOpenGL
             // 
             // Marcar1
             // 
-            Marcar1.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar1.BackColor = System.Drawing.Color.MediumSlateBlue;
             Marcar1.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar1.BackgroundImage");
             Marcar1.BackgroundImageLayout = ImageLayout.Stretch;
             Marcar1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Marcar1.Location = new System.Drawing.Point(48, 1);
-            Marcar1.Name = "Marcar1";
+            Marcar1.Name = "N1";
             Marcar1.Size = new System.Drawing.Size(47, 47);
             Marcar1.TabIndex = 2;
             Marcar1.Tag = 1;
@@ -3006,25 +3009,26 @@ namespace PlotagemOpenGL
             // 
             // OcultarMarcar
             // 
-            OcultarMarcar.BackColor = System.Drawing.Color.BlueViolet;
+            OcultarMarcar.BackColor = System.Drawing.Color.MediumSlateBlue;
             OcultarMarcar.BackgroundImage = (System.Drawing.Image)resources.GetObject("OcultarMarcar.BackgroundImage");
             OcultarMarcar.BackgroundImageLayout = ImageLayout.Stretch;
             OcultarMarcar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             OcultarMarcar.Location = new System.Drawing.Point(242, 1);
-            OcultarMarcar.Name = "OcultarMarcar";
+            OcultarMarcar.Name = "Ocultar";
             OcultarMarcar.Size = new System.Drawing.Size(47, 47);
             OcultarMarcar.TabIndex = 1;
             OcultarMarcar.UseVisualStyleBackColor = false;
+            OcultarMarcar.Tag = -1;
             OcultarMarcar.Click += hideBottom_Click;
             // 
             // Marcar0
             // 
-            Marcar0.BackColor = System.Drawing.Color.BlueViolet;
+            Marcar0.BackColor = System.Drawing.Color.MediumSlateBlue;
             Marcar0.BackgroundImage = (System.Drawing.Image)resources.GetObject("Marcar0.BackgroundImage");
             Marcar0.BackgroundImageLayout = ImageLayout.Stretch;
             Marcar0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Marcar0.Location = new System.Drawing.Point(1, 1);
-            Marcar0.Name = "Marcar0";
+            Marcar0.Name = "Acordado";
             Marcar0.Size = new System.Drawing.Size(47, 47);
             Marcar0.TabIndex = 0;
             Marcar0.Tag = 0;
@@ -3058,7 +3062,7 @@ namespace PlotagemOpenGL
             Proximo3.BackgroundImageLayout = ImageLayout.Stretch;
             Proximo3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Proximo3.Location = new System.Drawing.Point(323, 1);
-            Proximo3.Name = "Proximo3";
+            Proximo3.Name = "Move para a época seguinte com estágio 3";
             Proximo3.Size = new System.Drawing.Size(47, 47);
             Proximo3.TabIndex = 76;
             Proximo3.Tag = 3;
@@ -3072,7 +3076,7 @@ namespace PlotagemOpenGL
             Anterior3.BackgroundImageLayout = ImageLayout.Stretch;
             Anterior3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Anterior3.Location = new System.Drawing.Point(277, 1);
-            Anterior3.Name = "Anterior3";
+            Anterior3.Name = "Move para a época anterior com estágio 3";
             Anterior3.Size = new System.Drawing.Size(47, 47);
             Anterior3.TabIndex = 77;
             Anterior3.Tag = 3;
@@ -3086,7 +3090,7 @@ namespace PlotagemOpenGL
             ProximoDif.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoDif.Location = new System.Drawing.Point(507, 1);
-            ProximoDif.Name = "ProximoDif";
+            ProximoDif.Name = "Move para o estágio seguinte diferente do atual";
             ProximoDif.Size = new System.Drawing.Size(47, 47);
             ProximoDif.TabIndex = 70;
             ProximoDif.UseVisualStyleBackColor = false;
@@ -3099,7 +3103,7 @@ namespace PlotagemOpenGL
             AnteriorDif.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorDif.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorDif.Location = new System.Drawing.Point(461, 1);
-            AnteriorDif.Name = "AnteriorDif";
+            AnteriorDif.Name = "Move para o estágio anterior diferente da atual";
             AnteriorDif.Size = new System.Drawing.Size(47, 47);
             AnteriorDif.TabIndex = 71;
             AnteriorDif.UseVisualStyleBackColor = false;
@@ -3112,7 +3116,7 @@ namespace PlotagemOpenGL
             ProximoR.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoR.Location = new System.Drawing.Point(415, 1);
-            ProximoR.Name = "ProximoR";
+            ProximoR.Name = "Move para a época seguinte com estágio REM";
             ProximoR.Size = new System.Drawing.Size(47, 47);
             ProximoR.TabIndex = 67;
             ProximoR.Tag = 5;
@@ -3126,7 +3130,7 @@ namespace PlotagemOpenGL
             AnteriorR.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorR.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorR.Location = new System.Drawing.Point(369, 1);
-            AnteriorR.Name = "AnteriorR";
+            AnteriorR.Name = "Move para a época anterior com estágio REM";
             AnteriorR.Size = new System.Drawing.Size(47, 47);
             AnteriorR.TabIndex = 66;
             AnteriorR.Tag = 5;
@@ -3140,7 +3144,7 @@ namespace PlotagemOpenGL
             Proximo2.BackgroundImageLayout = ImageLayout.Stretch;
             Proximo2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Proximo2.Location = new System.Drawing.Point(231, 1);
-            Proximo2.Name = "Proximo2";
+            Proximo2.Name = "Move para a época seguinte com estágio 2";
             Proximo2.Size = new System.Drawing.Size(47, 47);
             Proximo2.TabIndex = 62;
             Proximo2.Tag = 2;
@@ -3154,7 +3158,7 @@ namespace PlotagemOpenGL
             Anterior2.BackgroundImageLayout = ImageLayout.Stretch;
             Anterior2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Anterior2.Location = new System.Drawing.Point(185, 1);
-            Anterior2.Name = "Anterior2";
+            Anterior2.Name = "Move para a época anterior com estágio 2";
             Anterior2.Size = new System.Drawing.Size(47, 47);
             Anterior2.TabIndex = 63;
             Anterior2.Tag = 2;
@@ -3168,7 +3172,7 @@ namespace PlotagemOpenGL
             Proximo1.BackgroundImageLayout = ImageLayout.Stretch;
             Proximo1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Proximo1.Location = new System.Drawing.Point(139, 1);
-            Proximo1.Name = "Proximo1";
+            Proximo1.Name = "Move para a época seguinte com estágio 1";
             Proximo1.Size = new System.Drawing.Size(47, 47);
             Proximo1.TabIndex = 64;
             Proximo1.Tag = 1;
@@ -3182,7 +3186,7 @@ namespace PlotagemOpenGL
             Anterior1.BackgroundImageLayout = ImageLayout.Stretch;
             Anterior1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Anterior1.Location = new System.Drawing.Point(93, 1);
-            Anterior1.Name = "Anterior1";
+            Anterior1.Name = "Move para a época anterior com estágio 1";
             Anterior1.Size = new System.Drawing.Size(47, 47);
             Anterior1.TabIndex = 65;
             Anterior1.Tag = 1;
@@ -3196,7 +3200,7 @@ namespace PlotagemOpenGL
             Proximo0.BackgroundImageLayout = ImageLayout.Stretch;
             Proximo0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Proximo0.Location = new System.Drawing.Point(47, 1);
-            Proximo0.Name = "Proximo0";
+            Proximo0.Name = "Move para a época seguinte com estágio 0";
             Proximo0.Size = new System.Drawing.Size(47, 47);
             Proximo0.TabIndex = 2;
             Proximo0.Tag = 0;
@@ -3210,7 +3214,7 @@ namespace PlotagemOpenGL
             OcultaPA.BackgroundImageLayout = ImageLayout.Stretch;
             OcultaPA.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             OcultaPA.Location = new System.Drawing.Point(561, 1);
-            OcultaPA.Name = "OcultaPA";
+            OcultaPA.Name = "Oculta";
             OcultaPA.Size = new System.Drawing.Size(47, 47);
             OcultaPA.TabIndex = 1;
             OcultaPA.UseVisualStyleBackColor = false;
@@ -3223,7 +3227,7 @@ namespace PlotagemOpenGL
             Anterior0.BackgroundImageLayout = ImageLayout.Stretch;
             Anterior0.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Anterior0.Location = new System.Drawing.Point(1, 1);
-            Anterior0.Name = "Anterior0";
+            Anterior0.Name = "Move para a época anterior com estágio 0";
             Anterior0.Size = new System.Drawing.Size(47, 47);
             Anterior0.TabIndex = 0;
             Anterior0.Tag = 0;
@@ -3263,7 +3267,7 @@ namespace PlotagemOpenGL
             Cpap.BackgroundImageLayout = ImageLayout.Stretch;
             Cpap.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Cpap.Location = new System.Drawing.Point(742, 1);
-            Cpap.Name = "Cpap";
+            Cpap.Name = "Move para o início do CPAP";
             Cpap.Size = new System.Drawing.Size(47, 47);
             Cpap.TabIndex = 78;
             Cpap.Tag = 50;
@@ -3277,7 +3281,7 @@ namespace PlotagemOpenGL
             ProximoDes.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoDes.Location = new System.Drawing.Point(323, 1);
-            ProximoDes.Name = "ProximoDes";
+            ProximoDes.Name = "Move para a dessaturação seguinte";
             ProximoDes.Size = new System.Drawing.Size(47, 47);
             ProximoDes.TabIndex = 76;
             ProximoDes.Tag = 20;
@@ -3291,7 +3295,7 @@ namespace PlotagemOpenGL
             AnteriorDes.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorDes.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorDes.Location = new System.Drawing.Point(277, 1);
-            AnteriorDes.Name = "AnteriorDes";
+            AnteriorDes.Name = "Move para a dessaturação anterior";
             AnteriorDes.Size = new System.Drawing.Size(47, 47);
             AnteriorDes.TabIndex = 77;
             AnteriorDes.Tag = 20;
@@ -3305,7 +3309,7 @@ namespace PlotagemOpenGL
             Dessatu.BackgroundImageLayout = ImageLayout.Stretch;
             Dessatu.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Dessatu.Location = new System.Drawing.Point(788, 1);
-            Dessatu.Name = "Dessatu";
+            Dessatu.Name = "Localiza menor saturação";
             Dessatu.Size = new System.Drawing.Size(47, 47);
             Dessatu.TabIndex = 75;
             Dessatu.UseVisualStyleBackColor = false;
@@ -3318,7 +3322,7 @@ namespace PlotagemOpenGL
             BaNotche.BackgroundImageLayout = ImageLayout.Stretch;
             BaNotche.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             BaNotche.Location = new System.Drawing.Point(696, 1);
-            BaNotche.Name = "BaNotche";
+            BaNotche.Name = "Move para o Boa Noite";
             BaNotche.Size = new System.Drawing.Size(47, 47);
             BaNotche.TabIndex = 72;
             BaNotche.Tag = 19;
@@ -3332,7 +3336,7 @@ namespace PlotagemOpenGL
             BaDia.BackgroundImageLayout = ImageLayout.Stretch;
             BaDia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             BaDia.Location = new System.Drawing.Point(650, 1);
-            BaDia.Name = "BaDia";
+            BaDia.Name = "Move para o Bom Dia";
             BaDia.Size = new System.Drawing.Size(47, 47);
             BaDia.TabIndex = 73;
             BaDia.Tag = 18;
@@ -3346,7 +3350,7 @@ namespace PlotagemOpenGL
             ProximoComentario.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoComentario.Location = new System.Drawing.Point(599, 1);
-            ProximoComentario.Name = "ProximoComentario";
+            ProximoComentario.Name = "Move para o comentário seguinte";
             ProximoComentario.Size = new System.Drawing.Size(47, 47);
             ProximoComentario.TabIndex = 68;
             ProximoComentario.UseVisualStyleBackColor = false;
@@ -3359,7 +3363,7 @@ namespace PlotagemOpenGL
             AnteriorComentario.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorComentario.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorComentario.Location = new System.Drawing.Point(553, 1);
-            AnteriorComentario.Name = "AnteriorComentario";
+            AnteriorComentario.Name = "Move para o comentário anterior";
             AnteriorComentario.Size = new System.Drawing.Size(47, 47);
             AnteriorComentario.TabIndex = 69;
             AnteriorComentario.UseVisualStyleBackColor = false;
@@ -3372,7 +3376,7 @@ namespace PlotagemOpenGL
             ProximoRonco.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoRonco.Location = new System.Drawing.Point(507, 1);
-            ProximoRonco.Name = "ProximoRonco";
+            ProximoRonco.Name = "Move para o evento de ronco seguinte";
             ProximoRonco.Size = new System.Drawing.Size(47, 47);
             ProximoRonco.TabIndex = 70;
             ProximoRonco.Tag = 7;
@@ -3386,7 +3390,7 @@ namespace PlotagemOpenGL
             AnteriorRonco.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorRonco.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorRonco.Location = new System.Drawing.Point(461, 1);
-            AnteriorRonco.Name = "AnteriorRonco";
+            AnteriorRonco.Name = "Move para o evento de ronco anterior";
             AnteriorRonco.Size = new System.Drawing.Size(47, 47);
             AnteriorRonco.TabIndex = 71;
             AnteriorRonco.Tag = 7;
@@ -3400,7 +3404,7 @@ namespace PlotagemOpenGL
             ProximoPerna.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoPerna.Location = new System.Drawing.Point(415, 1);
-            ProximoPerna.Name = "ProximoPerna";
+            ProximoPerna.Name = "Move para o evento de PLM seguinte";
             ProximoPerna.Size = new System.Drawing.Size(47, 47);
             ProximoPerna.TabIndex = 67;
             ProximoPerna.Tag = 4;
@@ -3414,7 +3418,7 @@ namespace PlotagemOpenGL
             AnteriorPerna.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorPerna.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorPerna.Location = new System.Drawing.Point(369, 1);
-            AnteriorPerna.Name = "AnteriorPerna";
+            AnteriorPerna.Name = "Move para o evento de PLM anterior";
             AnteriorPerna.Size = new System.Drawing.Size(47, 47);
             AnteriorPerna.TabIndex = 66;
             AnteriorPerna.Tag = 4;
@@ -3428,7 +3432,7 @@ namespace PlotagemOpenGL
             ProximoCardio.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoCardio.Location = new System.Drawing.Point(231, 1);
-            ProximoCardio.Name = "ProximoCardio";
+            ProximoCardio.Name = "Move para o evento de cardíaco seguinte";
             ProximoCardio.Size = new System.Drawing.Size(47, 47);
             ProximoCardio.TabIndex = 62;
             ProximoCardio.Tag = 2;
@@ -3442,7 +3446,7 @@ namespace PlotagemOpenGL
             AnteriorCardio.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorCardio.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorCardio.Location = new System.Drawing.Point(185, 1);
-            AnteriorCardio.Name = "AnteriorCardio";
+            AnteriorCardio.Name = "Move para o evento de cardíaco anterior";
             AnteriorCardio.Size = new System.Drawing.Size(47, 47);
             AnteriorCardio.TabIndex = 63;
             AnteriorCardio.Tag = 2;
@@ -3456,7 +3460,7 @@ namespace PlotagemOpenGL
             ProximoAcordar.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoAcordar.Location = new System.Drawing.Point(139, 1);
-            ProximoAcordar.Name = "ProximoAcordar";
+            ProximoAcordar.Name = "Move para o evento de despertar seguinte";
             ProximoAcordar.Size = new System.Drawing.Size(47, 47);
             ProximoAcordar.TabIndex = 64;
             ProximoAcordar.Tag = 1;
@@ -3470,7 +3474,7 @@ namespace PlotagemOpenGL
             AnteriorAcordar.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorAcordar.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorAcordar.Location = new System.Drawing.Point(93, 1);
-            AnteriorAcordar.Name = "AnteriorAcordar";
+            AnteriorAcordar.Name = "Move para o evento de despertar anterior";
             AnteriorAcordar.Size = new System.Drawing.Size(47, 47);
             AnteriorAcordar.TabIndex = 65;
             AnteriorAcordar.Tag = 1;
@@ -3484,7 +3488,7 @@ namespace PlotagemOpenGL
             ProximoPulmao.BackgroundImageLayout = ImageLayout.Stretch;
             ProximoPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             ProximoPulmao.Location = new System.Drawing.Point(47, 1);
-            ProximoPulmao.Name = "ProximoPulmao";
+            ProximoPulmao.Name = "Move para apneia seguinte";
             ProximoPulmao.Size = new System.Drawing.Size(47, 47);
             ProximoPulmao.TabIndex = 2;
             ProximoPulmao.Tag = 8;
@@ -3498,7 +3502,7 @@ namespace PlotagemOpenGL
             button20.BackgroundImageLayout = ImageLayout.Stretch;
             button20.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             button20.Location = new System.Drawing.Point(846, 1);
-            button20.Name = "button20";
+            button20.Name = "Ocultar";
             button20.Size = new System.Drawing.Size(47, 47);
             button20.TabIndex = 1;
             button20.UseVisualStyleBackColor = false;
@@ -3511,7 +3515,7 @@ namespace PlotagemOpenGL
             AnteriorPulmao.BackgroundImageLayout = ImageLayout.Stretch;
             AnteriorPulmao.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             AnteriorPulmao.Location = new System.Drawing.Point(1, 1);
-            AnteriorPulmao.Name = "AnteriorPulmao";
+            AnteriorPulmao.Name = "Move para apneia anterior";
             AnteriorPulmao.Size = new System.Drawing.Size(47, 47);
             AnteriorPulmao.TabIndex = 0;
             AnteriorPulmao.Tag = 8;
@@ -3587,6 +3591,11 @@ namespace PlotagemOpenGL
             // 
             timer2.Interval = 33;
             timer2.Tick += timer2_Tick;
+            //
+            // tooltipTimer
+            //
+            tooltipTimer.Interval = 33;
+            tooltipTimer.Tick += TooltipTimer_Tick;
             // 
             // timer3
             // 
@@ -3682,24 +3691,6 @@ namespace PlotagemOpenGL
             janelaResumoToolStripMenuItem.Size = new System.Drawing.Size(121, 24);
             janelaResumoToolStripMenuItem.Text = "Janela Resumo";
             // 
-            // ferramentasToolStripMenuItem
-            // 
-            ferramentasToolStripMenuItem.Name = "ferramentasToolStripMenuItem";
-            ferramentasToolStripMenuItem.Size = new System.Drawing.Size(104, 24);
-            ferramentasToolStripMenuItem.Text = "Ferramentas";
-            // 
-            // configuracaoToolStripMenuItem
-            // 
-            configuracaoToolStripMenuItem.Name = "configuracaoToolStripMenuItem";
-            configuracaoToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
-            configuracaoToolStripMenuItem.Text = "Configuração";
-            // 
-            // cadastroToolStripMenuItem
-            // 
-            cadastroToolStripMenuItem.Name = "cadastroToolStripMenuItem";
-            cadastroToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
-            cadastroToolStripMenuItem.Text = "Cadastro";
-            // 
             // JanelaPrincipal
             // 
             JanelaPrincipal.Name = "JanelaPrincipal";
@@ -3729,6 +3720,24 @@ namespace PlotagemOpenGL
             RenomearExluirJanela.Name = "RenomearExluirJanela";
             RenomearExluirJanela.Size = new System.Drawing.Size(330, 26);
             RenomearExluirJanela.Text = "Renomear ou excluir Janela Resumo";
+            // 
+            // ferramentasToolStripMenuItem
+            // 
+            ferramentasToolStripMenuItem.Name = "ferramentasToolStripMenuItem";
+            ferramentasToolStripMenuItem.Size = new System.Drawing.Size(104, 24);
+            ferramentasToolStripMenuItem.Text = "Ferramentas";
+            // 
+            // configuracaoToolStripMenuItem
+            // 
+            configuracaoToolStripMenuItem.Name = "configuracaoToolStripMenuItem";
+            configuracaoToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
+            configuracaoToolStripMenuItem.Text = "Configuração";
+            // 
+            // cadastroToolStripMenuItem
+            // 
+            cadastroToolStripMenuItem.Name = "cadastroToolStripMenuItem";
+            cadastroToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
+            cadastroToolStripMenuItem.Text = "Cadastro";
             // 
             // Tela_Plotagem
             // 
@@ -3851,6 +3860,7 @@ namespace PlotagemOpenGL
         public static ToolStripMenuItem ferramentasToolStripMenuItem;
         public static ToolStripMenuItem configuracaoToolStripMenuItem;
         public static ToolTip toolTip2;
+        public static ToolTip toolTipEvento;
         public static ToolStripMenuItem Excluir;
         public static ToolTip toolTip1;
         public static Timer timerAvanca;
@@ -3860,6 +3870,7 @@ namespace PlotagemOpenGL
         public static Timer timer1;
         public static Timer timer2;
         public static Timer timer3;
+        public static Timer tooltipTimer;        
         public static Timer timerClick;
         public static Timer timerComment;
         public static ComboBox TempoTimerAndar;

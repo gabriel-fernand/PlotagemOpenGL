@@ -208,6 +208,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 DataRow rowToRemove = view[0].Row;
                 GlobVar.eventosUpdate.Rows.Remove(rowToRemove);
             }
+
+
             minSaturacao((inicio /  512), (termino / 512));
             int minSat = GlobVar.minSat.Min();
             string posi = Posicao(inicio, termino);
@@ -469,7 +471,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     if (mouseX > Convert.ToInt64(sequancias.Rows[i]["Inicio"]) + 25 && mouseX < Convert.ToInt64(sequancias.Rows[i]["Duracao"]) - 25)
                     {
                         ProcessEvent(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)]);
-                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)] );
+                        EventMovement(sequancias.Rows[i], GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.CodCanal)]);
                         GlobVar.seqEvento = Convert.ToInt32(sequancias.Rows[i]["Seq"]);
                         GlobVar.CodEvento = Convert.ToInt32(sequancias.Rows[i]["CodEvento"]);
                         GlobVar.NumPagEvent = sequancias.Rows[i]["NumPag"].ToString();
@@ -912,6 +914,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         if(tipoCanal == 13) // forca para que no canal da canula o primeiro evento a ser criado, seja uma hipopneia
                         {
                             GlobVar.lastEvent = 5;
+                            var rwCadEvento = GlobVar.tbl_CadEvento.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == GlobVar.lastEvent).FirstOrDefault();
+                            GlobVar.txtLastEvent = rwCadEvento["DescrOriginal"].ToString();
                             return;
                         }
                         else
@@ -920,12 +924,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             canHaveEventTable.AsEnumerable().OrderBy(row => row.Field<int>("CodCanal"));
 
                             GlobVar.lastEvent = Convert.ToInt32(canHaveEventTable.Rows[0]["CodEvento"]);
+                            var rwCadEvento = GlobVar.tbl_CadEvento.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == GlobVar.lastEvent).FirstOrDefault();
+                            GlobVar.txtLastEvent = rwCadEvento["DescrOriginal"].ToString();
+
                             return;
                         }
                     }
                     else
                     {
                         GlobVar.lastEvent = null;
+                        GlobVar.txtLastEvent = "";
                         return;
                     }
                 }
@@ -945,6 +953,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     var firstRow = group.Last();
                     int codEvento = firstRow.Field<int>("CodEvento");
                     GlobVar.lastEvent = codEvento;
+                    var rwCadEvento = GlobVar.tbl_CadEvento.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == GlobVar.lastEvent).FirstOrDefault();
+                    GlobVar.txtLastEvent = rwCadEvento["DescrOriginal"].ToString();
                 }
 
             }
@@ -1068,15 +1078,17 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
         public static string Posicao(int pagInicio, int pagFinal)
         {
             string posi;
-            int ponteiroInicio = (pagInicio) * 8;
-            int ponteiroFinal = ((pagFinal + 1)) * 8;
+            int ponteiroInicio = (pagInicio);
+            int ponteiroFinal = ((pagFinal + 1));
 
             int tamanho = (((pagFinal) - (pagInicio) + 1));
             GlobVar.minPosi = new int[tamanho];
 
             int linhaSaturacao = GlobVar.codSelected.IndexOf(14);
 
-            for (int i = 0; i < tamanho; i++)
+
+
+            for (int i = 0; i < tamanho && i < GlobVar.minPosi.Length && ponteiroInicio < GlobVar.matrizCanal.GetLength(1); i++)
             {
                 GlobVar.minPosi[i] = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiroInicio]);
                 ponteiroInicio += 8;
