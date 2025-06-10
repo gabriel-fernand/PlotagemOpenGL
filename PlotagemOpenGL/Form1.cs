@@ -417,12 +417,18 @@ namespace PlotagemOpenGL
                     chamarTelinhaVid();
                     AnaliseCO2.GetPrimeiroCO2(Path.GetFileNameWithoutExtension(GlobVar.textFile));
                     F_Idioma();
+
+                    GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
+                    GlobVar.ConnectionBDdat.Open();
+
                 }
             }
             catch (Exception e)
             {
                 MessageBox.Show($"{e.ToString()}", "Erro", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
                 this.Close();
+                GlobVar.ConnectionBDdat.Close();
+
             }
         }
         void F_Idioma()
@@ -793,6 +799,8 @@ namespace PlotagemOpenGL
             iCelera.telinha.Hide();
             this.Dispose();
             this.Close();
+            GlobVar.ConnectionBDdat.Close();
+
         }
         //Metodo para inicializar os rectangle para fazer a realoc deles quando maximizado a tela
         private void rectangleLoad()
@@ -2722,6 +2730,7 @@ namespace PlotagemOpenGL
 
                     if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
+                        timer3.Stop();
                         timer2.Start();
                         isDrawing = true;
                         isDrawingRectangle = true;
@@ -2935,6 +2944,8 @@ namespace PlotagemOpenGL
             {
                 if (e != null)
                 {
+                    lbteste.Text = GlobVar.CodCanal.ToString();
+
                     this.musezin.X = e.X;
                     this.musezin.Y = e.Y;
 
@@ -3820,6 +3831,8 @@ namespace PlotagemOpenGL
                             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
 
                         }
+
+                        timer3.Start();
                     }
                     else if (isAnEvent)
                     {
@@ -4253,6 +4266,8 @@ namespace PlotagemOpenGL
                     {
                         case Keys.Escape:
                             this.Close();
+                            GlobVar.ConnectionBDdat.Close();
+
                             break;
 
                         case Keys.W:

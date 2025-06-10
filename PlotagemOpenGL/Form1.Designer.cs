@@ -357,6 +357,7 @@ namespace PlotagemOpenGL
             ferramentasToolStripMenuItem = new ToolStripMenuItem();
             configuracaoToolStripMenuItem = new ToolStripMenuItem();
             cadastroToolStripMenuItem = new ToolStripMenuItem();
+            lbteste = new Label();
             ((System.ComponentModel.ISupportInitialize)openglControl1).BeginInit();
             contextMenuStripOpenGl.SuspendLayout();
             painelExames.SuspendLayout();
@@ -2337,6 +2338,7 @@ namespace PlotagemOpenGL
             // pnGrand
             // 
             pnGrand.BorderStyle = BorderStyle.Fixed3D;
+            pnGrand.Controls.Add(lbteste);
             pnGrand.Controls.Add(Stringao);
             pnGrand.ForeColor = System.Drawing.SystemColors.ControlText;
             pnGrand.ImeMode = ImeMode.NoControl;
@@ -2462,8 +2464,6 @@ namespace PlotagemOpenGL
             // 
             // Amplislaoq
             // 
-            Amplislaoq.BackColor = System.Drawing.Color.LightCyan;
-            Amplislaoq.BackgroundImage = (System.Drawing.Image)resources.GetObject("Amplislaoq.BackgroundImage");
             Amplislaoq.BackgroundImageLayout = ImageLayout.Stretch;
             Amplislaoq.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Amplislaoq.Location = new System.Drawing.Point(238, 1);
@@ -3591,16 +3591,16 @@ namespace PlotagemOpenGL
             // 
             timer2.Interval = 33;
             timer2.Tick += timer2_Tick;
-            //
-            // tooltipTimer
-            //
-            tooltipTimer.Interval = 33;
-            tooltipTimer.Tick += TooltipTimer_Tick;
             // 
             // timer3
             // 
             timer3.Interval = 1;
             timer3.Tick += timer3_Tick;
+            // 
+            // tooltipTimer
+            // 
+            tooltipTimer.Interval = 33;
+            tooltipTimer.Tick += TooltipTimer_Tick;
             // 
             // timerClick
             // 
@@ -3739,6 +3739,16 @@ namespace PlotagemOpenGL
             cadastroToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
             cadastroToolStripMenuItem.Text = "Cadastro";
             // 
+            // lbteste
+            // 
+            lbteste.AutoSize = true;
+            lbteste.Location = new System.Drawing.Point(3, 2);
+            lbteste.Name = "lbteste";
+            lbteste.Size = new System.Drawing.Size(58, 20);
+            lbteste.TabIndex = 3;
+            lbteste.Text = "label24";
+            lbteste.Visible = false;
+            // 
             // Tela_Plotagem
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -3838,7 +3848,8 @@ namespace PlotagemOpenGL
         public static ToolStripItem item3ToolStripMenuItem;
         public static ToolStripMenuItem NenhumLow1;
         public static ToolStripMenuItem toolStripMenuItem3;
-        public static TextBox MouseLoc;
+        public static  TextBox MouseLoc;
+        public static Label lbteste;
         public static ToolStripMenuItem JanelaPrincipal;
         public static ToolStripMenuItem JanelaSeparada;
         public static ToolStripMenuItem NovaJanela;
@@ -3870,7 +3881,7 @@ namespace PlotagemOpenGL
         public static Timer timer1;
         public static Timer timer2;
         public static Timer timer3;
-        public static Timer tooltipTimer;        
+        public static Timer tooltipTimer;
         public static Timer timerClick;
         public static Timer timerComment;
         public static ComboBox TempoTimerAndar;

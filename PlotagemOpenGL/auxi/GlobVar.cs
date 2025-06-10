@@ -10,6 +10,7 @@ using System.Data.Odbc;
 using Connection = ADODB.Connection;
 using System.IO;
 using PlotagemOpenGL.Filtros;
+using System.Data.OleDb;
 
 
 
@@ -214,5 +215,7 @@ namespace PlotagemOpenGL.auxi
         public static float[] StartY;
         public static int canal;
         public static float[] loc;
+
+        public static OleDbConnection ConnectionBDdat;
     }
 }

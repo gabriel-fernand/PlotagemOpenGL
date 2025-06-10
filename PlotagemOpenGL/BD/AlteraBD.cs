@@ -25,13 +25,13 @@ namespace PlotagemOpenGL.BD
             try{
                 int i = -1;
                 using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
-                connectionDatBd.Open();
+                //connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE Seq = {Seq};";
 
-                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
-                DeleteCommand.ExecuteNonQuery();
+                //DeleteCommand.ExecuteNonQuery();
 
                 connectionDatBd.Close();
                 return i;
@@ -54,7 +54,7 @@ namespace PlotagemOpenGL.BD
                 string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
 
                 // Cria e abre o DataAdapter
-                using (OdbcDataAdapter adapter = new OdbcDataAdapter(strSQL, cnn))
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                 {
                     DataTable rs = new DataTable();
                     adapter.Fill(rs);
@@ -64,13 +64,13 @@ namespace PlotagemOpenGL.BD
                         // Buscar o próximo sequencial de evento
                         strSQL = "SELECT * FROM tbl_SeqEvento";
                         DataTable rs_seq = new DataTable();
-                        using (OdbcDataAdapter seqAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        using (OleDbDataAdapter seqAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                         {
                             seqAdapter.Fill(rs_seq);
                             if (rs_seq.Rows.Count == 0)
                             {
                                 seq_aux = 1;
-                                using (OdbcCommand cmdInsert = new OdbcCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", cnn))
+                                using (OleDbCommand cmdInsert = new OleDbCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", GlobVar.ConnectionBDdat))
                                 {
                                     cmdInsert.ExecuteNonQuery();
                                 }
@@ -78,7 +78,7 @@ namespace PlotagemOpenGL.BD
                             else
                             {
                                 seq_aux = (long)rs_seq.Rows[0]["ProxSeqEvento"];
-                                using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
+                                using (OleDbCommand cmdUpdate = new OleDbCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", GlobVar.ConnectionBDdat))
                                 {
                                     cmdUpdate.ExecuteNonQuery();
                                 }
@@ -88,7 +88,7 @@ namespace PlotagemOpenGL.BD
                         // Verifica se não existe um evento idêntico ao que está sendo incluído
                         strSQL = $"SELECT * FROM tbl_Eventos WHERE CodEvento = {CodEvento} AND CodCanal1 = {CodCanal1} AND CodCanal2 = {CodCanal2} AND NumPag = {NumPag} AND Inicio = {Inicio}";
                         DataTable rs_aux = new DataTable();
-                        using (OdbcDataAdapter auxAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        using (OleDbDataAdapter auxAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                         {
                             auxAdapter.Fill(rs_aux);
                             if (rs_aux.Rows.Count > 0)
@@ -140,17 +140,18 @@ namespace PlotagemOpenGL.BD
                     }
 
                     // Atualiza o DataTable com as alterações
-                    OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
+                    OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
                     adapter.Update(rs);
 
                     string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-                    using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+                    //using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+
                     string query = "SELECT * FROM tbl_Eventos";
-                    using var command = new OdbcCommand(query, connectionDatBd);
-                    using var adapterEventosDtNormal = new OdbcDataAdapter(command);
+                    using var command = new OleDbCommand(query, GlobVar.ConnectionBDdat);
+                    using var adapterEventosDtNormal = new OleDbDataAdapter(command);
                     GlobVar.eventos.Clear();
                     adapterEventosDtNormal.Fill(GlobVar.eventos);
-                    connectionDatBd.Close();
+                    //connectionDatBd.Close();
 
                 }
 
@@ -167,16 +168,16 @@ namespace PlotagemOpenGL.BD
             try
             {
                 int i = -1;
-                using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
-                connectionDatBd.Open();
+                //using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
+                //connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Comentarios WHERE Seq = {Seq};";
 
-                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
                 DeleteCommand.ExecuteNonQuery();
 
-                connectionDatBd.Close();
+                //connectionDatBd.Close();
                 return i;
             }
             catch { int i = 0; return i; }
@@ -186,7 +187,7 @@ namespace PlotagemOpenGL.BD
         {
             try
             {
-                using var cnn = new OdbcConnection(connectionStringDatBd);
+                //using var cnn = new OleDbConnection(connectionStringDatBd);
 
                 int seq_aux;
                 string strSQL;
@@ -194,7 +195,7 @@ namespace PlotagemOpenGL.BD
                 // Consulta para verificar se o comentário já existe com o Seq fornecido
                 strSQL = $"SELECT * FROM tbl_Comentarios WHERE Seq = {seq}";
 
-                using (OdbcDataAdapter adapter = new OdbcDataAdapter(strSQL, cnn))
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                 {
                     DataTable rs = new DataTable();
                     adapter.Fill(rs);
@@ -204,13 +205,13 @@ namespace PlotagemOpenGL.BD
                         // Buscar o próximo sequencial de evento
                         strSQL = "SELECT * FROM tbl_SeqEvento";
                         DataTable rs_seq = new DataTable();
-                        using (OdbcDataAdapter seqAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        using (OleDbDataAdapter seqAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                         {
                             seqAdapter.Fill(rs_seq);
                             if (rs_seq.Rows.Count == 0)
                             {
                                 seq_aux = 1;
-                                using (OdbcCommand cmdInsert = new OdbcCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", cnn))
+                                using (OleDbCommand cmdInsert = new OleDbCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", GlobVar.ConnectionBDdat))
                                 {
                                     cmdInsert.ExecuteNonQuery();
                                 }
@@ -218,7 +219,7 @@ namespace PlotagemOpenGL.BD
                             else
                             {
                                 seq_aux = Convert.ToInt32(rs_seq.Rows[0]["ProxSeqEvento"]);
-                                using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
+                                using (OleDbCommand cmdUpdate = new OleDbCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", GlobVar.ConnectionBDdat))
                                 {
                                     cmdUpdate.ExecuteNonQuery();
                                 }
@@ -262,7 +263,7 @@ namespace PlotagemOpenGL.BD
                     }
                     rs.Rows.Add(newRow);
 
-                    OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
+                    OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
                     adapter.Update(rs);
 
                 }
@@ -280,43 +281,41 @@ namespace PlotagemOpenGL.BD
         {
             try
             {
-                string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
+                //string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
 
-                using (OleDbConnection connection = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};"))
+                //connection.Open();
+
+                // Inicia uma transação
+                OleDbTransaction transaction = GlobVar.ConnectionBDdat.BeginTransaction();
+
+                try
                 {
-                    connection.Open();
+                    string sql = "UPDATE tbl_Paginas SET Estagio = @NovoEstagio WHERE NumPag = @NumPag";
 
-                    // Inicia uma transação
-                    OleDbTransaction transaction = connection.BeginTransaction();
-
-                    try
+                    using (OleDbCommand command = new OleDbCommand(sql, GlobVar.ConnectionBDdat, transaction))
                     {
-                        string sql = "UPDATE tbl_Paginas SET Estagio = @NovoEstagio WHERE NumPag = @NumPag";
+                        command.Parameters.Add("@NovoEstagio", OleDbType.Integer);
+                        command.Parameters.Add("@NumPag", OleDbType.Integer);
 
-                        using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                        // Executa todas as atualizações em uma transação
+                        foreach (var update in updates)
                         {
-                            command.Parameters.Add("@NovoEstagio", OleDbType.Integer);
-                            command.Parameters.Add("@NumPag", OleDbType.Integer);
-
-                            // Executa todas as atualizações em uma transação
-                            foreach (var update in updates)
-                            {
-                                command.Parameters["@NovoEstagio"].Value = update.Item2; // Novo Estagio
-                                command.Parameters["@NumPag"].Value = update.Item1; // NumPag
-                                command.ExecuteNonQuery();
-                            }
+                            command.Parameters["@NovoEstagio"].Value = update.Item2; // Novo Estagio
+                            command.Parameters["@NumPag"].Value = update.Item1; // NumPag
+                            command.ExecuteNonQuery();
                         }
+                    }
 
-                        // Confirma a transação
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        // Reverte a transação se algo der errado
-                        transaction.Rollback();
-                        throw;
-                    }
+                    // Confirma a transação
+                    transaction.Commit();
                 }
+                catch (Exception)
+                {
+                    // Reverte a transação se algo der errado
+                    transaction.Rollback();
+                    throw;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -329,56 +328,53 @@ namespace PlotagemOpenGL.BD
             // String de conexão com o banco de dados Access
             string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
 
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            try
             {
-                try
+                // Abrir a conexão com o banco de dados
+                //connection.Open();
+
+                // Percorrer cada linha do DataTable telaSelect
+                foreach (DataRow row in telaSelect.Rows)
                 {
-                    // Abrir a conexão com o banco de dados
-                    connection.Open();
+                    // Construir a lista de colunas e valores dinamicamente
+                    string columns = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => col.ColumnName));
+                    string parameterNames = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => "@" + col.ColumnName));
 
-                    // Percorrer cada linha do DataTable telaSelect
-                    foreach (DataRow row in telaSelect.Rows)
+                    // Preparar a query INSERT com os parâmetros
+                    string query = $"INSERT INTO tbl_SelImpressao ({columns}) VALUES ({parameterNames})";
+
+                    // Criar o comando para inserir os dados
+                    using (OleDbCommand command = new OleDbCommand(query, GlobVar.ConnectionBDdat))
                     {
-                        // Construir a lista de colunas e valores dinamicamente
-                        string columns = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => col.ColumnName));
-                        string parameterNames = string.Join(", ", telaSelect.Columns.Cast<DataColumn>().Select(col => "@" + col.ColumnName));
-
-                        // Preparar a query INSERT com os parâmetros
-                        string query = $"INSERT INTO tbl_SelImpressao ({columns}) VALUES ({parameterNames})";
-
-                        // Criar o comando para inserir os dados
-                        using (OleDbCommand command = new OleDbCommand(query, connection))
+                        // Adicionar os parâmetros ao comando dinamicamente
+                        foreach (DataColumn column in telaSelect.Columns)
                         {
-                            // Adicionar os parâmetros ao comando dinamicamente
-                            foreach (DataColumn column in telaSelect.Columns)
-                            {
-                                var value = row[column] ?? DBNull.Value;
-                                command.Parameters.AddWithValue("@" + column.ColumnName, value);
-                            }
-
-                            // Executar o comando
-                            command.ExecuteNonQuery();
+                            var value = row[column] ?? DBNull.Value;
+                            command.Parameters.AddWithValue("@" + column.ColumnName, value);
                         }
 
-                        string querySeq = "UPDATE tbl_SeqEvento SET ProxPagImp = @ProxPagImp";
-
-                        using (OleDbCommand command = new OleDbCommand(querySeq, connection))
-                        {
-                            command.Parameters.AddWithValue("@ProxPagImp", attSeq);
-
-                            command.ExecuteNonQuery();
-                        }
+                        // Executar o comando
+                        command.ExecuteNonQuery();
                     }
 
-                    // Fechar a conexão
-                    connection.Close();
-                    //System.Windows.Forms.MessageBox.Show("Dados inseridos com sucesso no banco de dados!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string querySeq = "UPDATE tbl_SeqEvento SET ProxPagImp = @ProxPagImp";
+
+                    using (OleDbCommand command = new OleDbCommand(querySeq, GlobVar.ConnectionBDdat))
+                    {
+                        command.Parameters.AddWithValue("@ProxPagImp", attSeq);
+
+                        command.ExecuteNonQuery();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // Caso ocorra algum erro, exibir a mensagem de erro
-                    //System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+
+                // Fechar a conexão
+                //connection.Close();
+                //System.Windows.Forms.MessageBox.Show("Dados inseridos com sucesso no banco de dados!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra algum erro, exibir a mensagem de erro
+                //System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         public static string ConnectionAlterarStringDatBd = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Caminho\\seuarquivo.mdb;";
@@ -390,56 +386,52 @@ namespace PlotagemOpenGL.BD
 
             string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
 
-            using (OleDbConnection conn = new OleDbConnection(connectionString))
+
+            // Garante que as colunas existam no banco
+            string checkSql = "SELECT * FROM tbl_DadosExame";
+            using (OleDbCommand checkCmd = new OleDbCommand(checkSql, GlobVar.ConnectionBDdat))
+            using (OleDbDataReader reader = checkCmd.ExecuteReader(CommandBehavior.SchemaOnly))
             {
-                conn.Open();
+                DataTable schemaTable = reader.GetSchemaTable();
+                HashSet<string> existingColumns = new HashSet<string>();
 
-                // Garante que as colunas existam no banco
-                string checkSql = "SELECT * FROM tbl_DadosExame";
-                using (OleDbCommand checkCmd = new OleDbCommand(checkSql, conn))
-                using (OleDbDataReader reader = checkCmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                foreach (DataRow rw in schemaTable.Rows)
                 {
-                    DataTable schemaTable = reader.GetSchemaTable();
-                    HashSet<string> existingColumns = new HashSet<string>();
-
-                    foreach (DataRow rw in schemaTable.Rows)
-                    {
-                        existingColumns.Add(rw["ColumnName"].ToString());
-                    }
-
-                    foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
-                    {
-                        if (!existingColumns.Contains(col.ColumnName))
-                        {
-                            string columnType = GetOleDbTypeFromSystemType(col.DataType);
-                            string alterSql = $"ALTER TABLE tbl_DadosExame ADD COLUMN [{col.ColumnName}] {columnType}";
-                            using (OleDbCommand cmd = new OleDbCommand(alterSql, conn))
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                    }
+                    existingColumns.Add(rw["ColumnName"].ToString());
                 }
-
-                // Monta o UPDATE manualmente
-                DataRow row = GlobVar.tbl_DadosExame.Rows[0];
-
-                List<string> assignments = new List<string>();
-                List<OleDbParameter> parameters = new List<OleDbParameter>();
 
                 foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
                 {
-                    assignments.Add($"[{col.ColumnName}] = ?");
-                    parameters.Add(new OleDbParameter("@" + col.ColumnName, row[col.ColumnName] ?? DBNull.Value));
+                    if (!existingColumns.Contains(col.ColumnName))
+                    {
+                        string columnType = GetOleDbTypeFromSystemType(col.DataType);
+                        string alterSql = $"ALTER TABLE tbl_DadosExame ADD COLUMN [{col.ColumnName}] {columnType}";
+                        using (OleDbCommand cmd = new OleDbCommand(alterSql, GlobVar.ConnectionBDdat))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                 }
+            }
 
-                string updateSql = $"UPDATE tbl_DadosExame SET {string.Join(", ", assignments)}";
+            // Monta o UPDATE manualmente
+            DataRow row = GlobVar.tbl_DadosExame.Rows[0];
 
-                using (OleDbCommand updateCmd = new OleDbCommand(updateSql, conn))
-                {
-                    updateCmd.Parameters.AddRange(parameters.ToArray());
-                    updateCmd.ExecuteNonQuery();
-                }
+            List<string> assignments = new List<string>();
+            List<OleDbParameter> parameters = new List<OleDbParameter>();
+
+            foreach (DataColumn col in GlobVar.tbl_DadosExame.Columns)
+            {
+                assignments.Add($"[{col.ColumnName}] = ?");
+                parameters.Add(new OleDbParameter("@" + col.ColumnName, row[col.ColumnName] ?? DBNull.Value));
+            }
+
+            string updateSql = $"UPDATE tbl_DadosExame SET {string.Join(", ", assignments)}";
+
+            using (OleDbCommand updateCmd = new OleDbCommand(updateSql, GlobVar.ConnectionBDdat))
+            {
+                updateCmd.Parameters.AddRange(parameters.ToArray());
+                updateCmd.ExecuteNonQuery();
             }
         }
         private static string GetOleDbTypeFromSystemType(Type type)
