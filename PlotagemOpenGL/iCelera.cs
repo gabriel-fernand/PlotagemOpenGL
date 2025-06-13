@@ -28,7 +28,7 @@ namespace PlotagemOpenGL
             AtualizarLabelsComArquivosRecentes();
             groupBox1.Paint += GroupBox1_Paint;
             groupBox2.Paint += GroupBox1_Paint;
-            ConfigurarMouseEventosParaLabels();    
+            ConfigurarMouseEventosParaLabels();
             exame = new Tela_Plotagem();
             telinha = new FormVideo();
             telinha.Owner = this;
@@ -72,7 +72,7 @@ namespace PlotagemOpenGL
                         string arquivoSelecionado = openFileDialog.FileName;
                         // Exibe o diretório do arquivo
                         string diretorioArquivo = Path.GetDirectoryName(arquivoSelecionado);
-                        string diretorioDatMdb = diretorioArquivo +"\\"+ nomeArquivo + ".mdb";
+                        string diretorioDatMdb = diretorioArquivo + "\\" + nomeArquivo + ".mdb";
 
                         //MessageBox.Show($"Arquivo selecionado: {arquivoSelecionado}\nDiretório: {diretorioArquivo}\nmdb diretorio: {diretorioDatMdb}");
 
@@ -308,11 +308,11 @@ namespace PlotagemOpenGL
         {
             if (sender is Label label)
             {
-                if(label.Tag != null)
+                if (label.Tag != null)
                 {
-                label.Cursor = Cursors.Hand; // Altera o cursor para a mão
-                label.ForeColor = Color.Blue; // Destaca a cor do texto
-                //label.Font = new Font(label.Font, FontStyle.Bold); // Torna o texto em negrito
+                    label.Cursor = Cursors.Hand; // Altera o cursor para a mão
+                    label.ForeColor = Color.Blue; // Destaca a cor do texto
+                                                  //label.Font = new Font(label.Font, FontStyle.Bold); // Torna o texto em negrito
                 }
             }
         }
@@ -325,6 +325,12 @@ namespace PlotagemOpenGL
                 label.ForeColor = SystemColors.ControlText; // Restaura a cor padrão
                 label.Font = new Font(label.Font, FontStyle.Regular); // Restaura o texto sem negrito
             }
+        }
+
+        private void groupBox10_Click(object sender, EventArgs e)
+        {
+            MontagemForm mtgForm = new MontagemForm();
+            mtgForm.ShowDialog();
         }
     }
 }

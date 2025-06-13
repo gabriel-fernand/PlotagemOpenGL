@@ -511,6 +511,7 @@
             groupBox10.Size = new System.Drawing.Size(133, 148);
             groupBox10.TabIndex = 3;
             groupBox10.TabStop = false;
+            groupBox10.Click += groupBox10_Click;
             // 
             // pictureBox8
             // 
@@ -521,6 +522,7 @@
             pictureBox8.Size = new System.Drawing.Size(74, 67);
             pictureBox8.TabIndex = 9;
             pictureBox8.TabStop = false;
+            pictureBox8.Click += groupBox10_Click;
             // 
             // label17
             // 
@@ -530,6 +532,7 @@
             label17.Size = new System.Drawing.Size(79, 17);
             label17.TabIndex = 0;
             label17.Text = "Montagens";
+            label17.Click += groupBox10_Click;
             // 
             // groupBox11
             // 
