@@ -1119,6 +1119,9 @@ namespace PlotagemOpenGL
             painelExames.Size = new System.Drawing.Size(97, 738);
             painelExames.TabIndex = 51;
             painelExames.MouseUp += Form1_MouseUp;
+            //painelExames.MouseMove += PainelExames_MouseMove;
+            //painelExames.MouseDown += PainelExames_MouseDown;
+            //painelExames.MouseUp += PainelExames_MouseUp;
             // 
             // panel1
             // 
@@ -2464,6 +2467,8 @@ namespace PlotagemOpenGL
             // 
             // Amplislaoq
             // 
+            Amplislaoq.BackColor = System.Drawing.Color.LightCyan;
+            Amplislaoq.BackgroundImage = (System.Drawing.Image)resources.GetObject("Amplislaoq.BackgroundImage");
             Amplislaoq.BackgroundImageLayout = ImageLayout.Stretch;
             Amplislaoq.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             Amplislaoq.Location = new System.Drawing.Point(238, 1);
@@ -3839,7 +3844,6 @@ namespace PlotagemOpenGL
             ResumeLayout(false);
             PerformLayout();
         }
-
 
 
         #endregion

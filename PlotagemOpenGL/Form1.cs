@@ -1362,6 +1362,48 @@ namespace PlotagemOpenGL
                 TelaClearAndReload();
             }
         }
+
+        private int margemBorda = 2; 
+        private bool redimensionando = false;
+        private int larguraMinima = 100;
+        private int larguraMaxima = 1000;
+        private void PainelExames_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Verifica se o mouse está perto da borda direita
+            if (e.X >= painelExames.Width - margemBorda && e.X <= painelExames.Width + margemBorda)
+            {
+                this.Cursor = Cursors.SizeWE;
+
+                if (redimensionando && e.Button == MouseButtons.Left)
+                {
+                    // Calcula a nova largura
+                    int novaLargura = painelExames.Left + e.X;
+                    novaLargura = Math.Max(larguraMinima, Math.Min(novaLargura, larguraMaxima));
+
+                    painelExames.Width = novaLargura;
+                }
+            }
+            else
+            {
+                if (!redimensionando)
+                    this.Cursor = Cursors.Default;
+            }
+        }
+
+        private void PainelExames_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.X >= painelExames.Width - margemBorda)
+            {
+                redimensionando = true;
+            }
+        }
+
+        private void PainelExames_MouseUp(object sender, MouseEventArgs e)
+        {
+            redimensionando = false;
+            this.Cursor = Cursors.Default;
+        }
+
         private void AdjustPanelsAfterResize(Panel resizedPanel)
         {
             int totalHeight = painelExames.ClientSize.Height; // Altura total do contêiner pai
@@ -2705,6 +2747,11 @@ namespace PlotagemOpenGL
         private bool isTelaClearAndReloadExecuted;
         ToolTip tooltipEvento = new ToolTip();
         Point mousePositionLocal;
+
+        Point posInicialMouse;
+        int larguraInicialPainel;
+        int larguraInicialOpenGL;
+        int posicaoInicialOpenGL;
         // Mostra o tooltip na posição do mouse (após o Timer disparar)
         private void TooltipTimer_Tick(object sender, EventArgs e)
         {
@@ -2728,7 +2775,7 @@ namespace PlotagemOpenGL
                     originalCursor = this.Cursor;
                     isMouseDown = true;
 
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro && !bordSize)
                     {
                         timer3.Stop();
                         timer2.Start();
@@ -2924,6 +2971,14 @@ namespace PlotagemOpenGL
                     {
                         isDrawing = true;
                     }
+                    else if (bordSize)
+                    {
+                        redimensionando = true;
+                        posInicialMouse = e.Location;
+                        larguraInicialPainel = painelExames.Width;
+                        larguraInicialOpenGL = openglControl1.Width;
+                        posicaoInicialOpenGL = openglControl1.Location.X;
+                    }
                 }
                 if (e.Button == MouseButtons.Right)
                 {
@@ -2938,6 +2993,7 @@ namespace PlotagemOpenGL
         Point locMuse;
         Point dimMouse;
         Point endEvent;
+        bool bordSize = false;
         private void OpenGLControl_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -2956,7 +3012,8 @@ namespace PlotagemOpenGL
                     float endX = Plotagem.endX;
                     //plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
                     mousePositionLocal = e.Location;
-                    if (!isDrawing) {
+                    if (!isDrawing && !bordSize)
+                    {
                         this.isAnEvent = plotEventos.IsThereAnEvent((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnStartEvent = plotEventos.IsInAnEventStart((int)endX, GlobVar.desenhoLoc, startY);
                         this.isAnEndEvent = plotEventos.IsInAnEventEnd((int)endX, GlobVar.desenhoLoc, startY);
@@ -2966,7 +3023,7 @@ namespace PlotagemOpenGL
                             isThereAComment = false;
                         }
                     }
-                    if (!isDrawing)
+                    if (!isDrawing && !bordSize)
                     {
                         if (!this.isAnEvent)
                         {
@@ -2992,15 +3049,24 @@ namespace PlotagemOpenGL
                     {
                         if (!isMouseDown)
                         {
-                            this.Cursor = Cursors.Default;
-                            Stringao.Text = "";
-
-                            if (!isTelaClearAndReloadExecuted)
+                            if (e.X >= 0 - 5 && e.X <= 0 + 5)
                             {
-                                TelaClearAndReload();
-                                UpdateInicioTela();
-                                iCelera.telinha.videoPlayer.Ctlcontrols.pause();
-                                isTelaClearAndReloadExecuted = true;
+                                this.Cursor = Cursors.SizeWE;
+                                bordSize = true;
+                            }
+                            else
+                            {
+                                bordSize = false;
+                                this.Cursor = Cursors.Default;
+                                Stringao.Text = "";
+
+                                if (!isTelaClearAndReloadExecuted)
+                                {
+                                    TelaClearAndReload();
+                                    UpdateInicioTela();
+                                    iCelera.telinha.videoPlayer.Ctlcontrols.pause();
+                                    isTelaClearAndReloadExecuted = true;
+                                }
                             }
                         }
                         toolTip1.RemoveAll();
@@ -3034,7 +3100,8 @@ namespace PlotagemOpenGL
                                 }
 
                             }
-                            else {
+                            else
+                            {
                                 if (GlobVar.endX >= GlobVar.startX)
                                 {
                                     if (e.X <= musezin.X)
@@ -3072,6 +3139,46 @@ namespace PlotagemOpenGL
                             }
                             //openglControl1.Invalidate();
                             //plotEventos.DrawingAnEvent(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+                        }
+                        if (redimensionando && bordSize)
+                        {
+                            // Posição absoluta do mouse em relação ao formulário
+                            int mouseXGlobal = this.PointToClient(Control.MousePosition).X;
+
+                            // Cálculo correto do novo width do painelExames
+                            int novaLarguraPainel = mouseXGlobal - painelExames.Left;
+
+                            // Define limites mínimos/máximos do painelExames
+                            int larguraMinimaPainel = 50;
+                            int larguraMaximaPainel = this.ClientSize.Width / 3;
+
+                            novaLarguraPainel = Math.Max(larguraMinimaPainel, Math.Min(novaLarguraPainel, larguraMaximaPainel));
+
+                            // Candidato à nova posição e largura do openglControl1
+                            int novaPosXOpenGL = novaLarguraPainel + 9;
+                            int novaLarguraOpenGL = this.ClientSize.Width - novaPosXOpenGL - 30;
+
+                            // Define limites mínimos/máximos do openglControl1
+                            int larguraMinimaOpenGL = this.ClientSize.Width / 3;
+                            int larguraMaximaOpenGL = this.ClientSize.Width - larguraMinimaPainel;
+
+                            novaLarguraOpenGL = Math.Max(larguraMinimaOpenGL, Math.Min(novaLarguraOpenGL, larguraMaximaOpenGL));
+
+                            // Só aplica se ainda respeita todos os limites
+                            if (novaLarguraOpenGL >= larguraMinimaOpenGL && novaLarguraPainel >= larguraMinimaPainel)
+                            {
+                                painelExames.Width = novaLarguraPainel;
+
+                                openglControl1.Location = new Point(novaPosXOpenGL, openglControl1.Location.Y);
+                                openglControl1.Width = novaLarguraOpenGL;
+
+                                AjustaPanelsX();
+
+                                GlobVar.sizeOpenGl.X = openglControl1.Width;
+                                GlobVar.sizeOpenGl.Y = openglControl1.Height;
+
+                                TelaClearAndReload();
+                            }
                         }
                     }
                     else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
@@ -3691,6 +3798,8 @@ namespace PlotagemOpenGL
                         }
 
                     }
+
+                    
                 }
 
                 //openglControl1.DoRender();
@@ -3738,7 +3847,7 @@ namespace PlotagemOpenGL
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
+                    if (!isAnEvent && !isAnStartEvent && !isAnEndEvent && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro && !redimensionando)
                     {
                         isDrawing = false;
                         isDrawingRectangle = false;
@@ -4029,6 +4138,12 @@ namespace PlotagemOpenGL
                         UpdateInicioTela();
 
                     }
+                    else if (redimensionando)
+                    {
+                        redimensionando = false;
+                        bordSize = false;
+                        this.Cursor = Cursors.Default;                    
+                    }
                 }
                 if (e.Button == MouseButtons.Right)
                 {
@@ -4211,6 +4326,33 @@ namespace PlotagemOpenGL
             catch
             {
 
+            }
+        }
+        public static void AjustaPanelsX()
+        {
+            foreach(Control ct in painelExames.Controls)
+            {
+                if(ct is Panel pn)
+                {
+                    pn.Width = painelExames.Width;
+                    foreach(Control crt in pn.Controls)
+                    {
+                        if(crt is Label lg)
+                        {
+                            if(lg.Tag != null)
+                            {
+                                if (lg.Tag.Equals("scala"))
+                                {
+                                    // Medir o tamanho do texto com a fonte atual
+                                    Size tamanhoTexto = TextRenderer.MeasureText(lg.Text, lg.Font);
+
+                                    int tamanho = Math.Abs((pn.Width - tamanhoTexto.Width) - 4);
+                                    lg.Location = new Point(tamanho, lg.Location.Y);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         private bool isScrollingRight = true;

@@ -101,7 +101,7 @@ namespace PlotagemOpenGL.auxi
                         btnPlus.Location = new System.Drawing.Point((int)GlobVar.locBut.X, plusLoc);
                         btnMinus.Location = new System.Drawing.Point((int)GlobVar.locBut.X, minusLoc);
                         scala.Tag = "scala";
-                        scala.Location = new System.Drawing.Point((int)GlobVar.locScale.X, labelLocY);
+                        scala.Location = new System.Drawing.Point((int)GlobVar.locScale.X - 4, labelLocY);
                         btnPlus.Tag = "+";
                         btnMinus.Tag = "-";
                     }
