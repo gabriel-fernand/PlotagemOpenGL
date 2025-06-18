@@ -216,6 +216,14 @@ namespace PlotagemOpenGL.auxi
         public static int canal;
         public static float[] loc;
 
+        public static int XRedimension;
+        public static float ponteiroRedimension;
+
+        public static int novaLarguraPainel;
+        public static int novaLarguraOpenGL;
+        public static int larguraMinimaOpenGL;
+        public static int larguraMinimaPainel;
+
         public static OleDbConnection ConnectionBDdat;
     }
 }

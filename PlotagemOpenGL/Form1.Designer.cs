@@ -538,8 +538,12 @@ namespace PlotagemOpenGL
             // 
             // openglControl1
             // 
+            openglControl1.BackColor = System.Drawing.Color.White;
+            openglControl1.BackgroundImage = Properties.Resources.Fundo_Recovered;
+            openglControl1.BackgroundImageLayout = ImageLayout.None;
             openglControl1.ContextMenuStrip = contextMenuStripOpenGl;
             openglControl1.DrawFPS = false;
+            openglControl1.ForeColor = System.Drawing.Color.Black;
             openglControl1.Location = new System.Drawing.Point(106, 200);
             openglControl1.Margin = new Padding(4, 5, 4, 5);
             openglControl1.Name = "openglControl1";

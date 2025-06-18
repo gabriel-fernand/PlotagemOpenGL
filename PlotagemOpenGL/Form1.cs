@@ -1364,7 +1364,7 @@ namespace PlotagemOpenGL
         }
 
         private int margemBorda = 2; 
-        private bool redimensionando = false;
+        public static bool redimensionando = false;
         private int larguraMinima = 100;
         private int larguraMaxima = 1000;
         private void PainelExames_MouseMove(object sender, MouseEventArgs e)
@@ -2973,11 +2973,14 @@ namespace PlotagemOpenGL
                     }
                     else if (bordSize)
                     {
+                        //openglControl1.Visible = false;
                         redimensionando = true;
                         posInicialMouse = e.Location;
                         larguraInicialPainel = painelExames.Width;
                         larguraInicialOpenGL = openglControl1.Width;
                         posicaoInicialOpenGL = openglControl1.Location.X;
+                        GlobVar.ponteiroRedimension = GlobVar.indice;
+                        GlobVar.XRedimension = openglControl1.Location.X;
                     }
                 }
                 if (e.Button == MouseButtons.Right)
@@ -3142,43 +3145,56 @@ namespace PlotagemOpenGL
                         }
                         if (redimensionando && bordSize)
                         {
+                            //TelaClearAndReload();
+                            gl.ClearColor(1, 1, 1, 1);
                             // Posição absoluta do mouse em relação ao formulário
                             int mouseXGlobal = this.PointToClient(Control.MousePosition).X;
 
                             // Cálculo correto do novo width do painelExames
-                            int novaLarguraPainel = mouseXGlobal - painelExames.Left;
+                            GlobVar.novaLarguraPainel = mouseXGlobal - painelExames.Left;
 
                             // Define limites mínimos/máximos do painelExames
-                            int larguraMinimaPainel = 50;
+                            GlobVar.larguraMinimaPainel = 50;
                             int larguraMaximaPainel = this.ClientSize.Width / 3;
 
-                            novaLarguraPainel = Math.Max(larguraMinimaPainel, Math.Min(novaLarguraPainel, larguraMaximaPainel));
+                            GlobVar.novaLarguraPainel = Math.Max(GlobVar.larguraMinimaPainel, Math.Min(GlobVar.novaLarguraPainel, larguraMaximaPainel));
 
                             // Candidato à nova posição e largura do openglControl1
-                            int novaPosXOpenGL = novaLarguraPainel + 9;
-                            int novaLarguraOpenGL = this.ClientSize.Width - novaPosXOpenGL - 30;
+                            int novaPosXOpenGL = GlobVar.novaLarguraPainel + 9;
+                            GlobVar.novaLarguraOpenGL = this.ClientSize.Width - novaPosXOpenGL - 30;
 
                             // Define limites mínimos/máximos do openglControl1
-                            int larguraMinimaOpenGL = this.ClientSize.Width / 3;
-                            int larguraMaximaOpenGL = this.ClientSize.Width - larguraMinimaPainel;
+                            GlobVar.larguraMinimaOpenGL = this.ClientSize.Width / 3;
+                            int larguraMaximaOpenGL = this.ClientSize.Width - GlobVar.larguraMinimaPainel;
 
-                            novaLarguraOpenGL = Math.Max(larguraMinimaOpenGL, Math.Min(novaLarguraOpenGL, larguraMaximaOpenGL));
+                            GlobVar.novaLarguraOpenGL = Math.Max(GlobVar.larguraMinimaOpenGL, Math.Min(GlobVar.novaLarguraOpenGL, larguraMaximaOpenGL));
+                                                        
+                            GlobVar.XRedimension = novaPosXOpenGL;
 
-                            // Só aplica se ainda respeita todos os limites
-                            if (novaLarguraOpenGL >= larguraMinimaOpenGL && novaLarguraPainel >= larguraMinimaPainel)
+                            float outX = 0;
+                            ConvertToOpenGLCoordinates(e.X, e.Y, out outX, out Plotagem.startY);
+
+                            float deltaX = outX - initialMousePosition.X;
+
+                            deltaX = GlobVar.ponteiroRedimension - outX;
+
+                            if (e.X < lastMousePosition.X)
                             {
-                                painelExames.Width = novaLarguraPainel;
-
-                                openglControl1.Location = new Point(novaPosXOpenGL, openglControl1.Location.Y);
-                                openglControl1.Width = novaLarguraOpenGL;
-
-                                AjustaPanelsX();
-
-                                GlobVar.sizeOpenGl.X = openglControl1.Width;
-                                GlobVar.sizeOpenGl.Y = openglControl1.Height;
-
-                                TelaClearAndReload();
+                                GlobVar.ponteiroRedimension -= ((int)Math.Abs(deltaX));
                             }
+                            else
+                            {
+                                GlobVar.ponteiroRedimension += ((int)Math.Abs(deltaX));
+                            }
+
+
+                            initialMousePosition.X = (int)outX;
+
+                            lastMousePosition = e.Location;
+
+                            openglControl1.Refresh();
+                            TelaClearAndReload();
+
                         }
                     }
                     else if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
@@ -4140,9 +4156,29 @@ namespace PlotagemOpenGL
                     }
                     else if (redimensionando)
                     {
+                        //openglControl1.Visible = true;
+
                         redimensionando = false;
                         bordSize = false;
-                        this.Cursor = Cursors.Default;                    
+                        this.Cursor = Cursors.Default;
+                        // Só aplica se ainda respeita todos os limites
+                        if (GlobVar.novaLarguraOpenGL >= GlobVar.larguraMinimaOpenGL && GlobVar.novaLarguraPainel >= GlobVar.larguraMinimaPainel)
+                        {
+                            //TelaClearAndReload();
+
+                            painelExames.Width = GlobVar.novaLarguraPainel;
+
+                            openglControl1.Location = new Point(GlobVar.XRedimension, openglControl1.Location.Y);
+                            openglControl1.Width = GlobVar.novaLarguraOpenGL;
+
+                            AjustaPanelsX();
+
+                            GlobVar.sizeOpenGl.X = openglControl1.Width;
+                            GlobVar.sizeOpenGl.Y = openglControl1.Height;
+
+                            //TelaClearAndReload();
+                        }
+
                     }
                 }
                 if (e.Button == MouseButtons.Right)

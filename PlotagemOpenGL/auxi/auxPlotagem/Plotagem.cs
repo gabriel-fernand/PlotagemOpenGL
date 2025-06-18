@@ -188,6 +188,18 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             gl.End();
 
 
+            if (Tela_Plotagem.redimensionando)
+            {
+                float x = GlobVar.ponteiroRedimension;
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Color(0, 0, 0);
+
+                gl.Begin(OpenGL.GL_LINE_STRIP);
+                gl.Vertex(x, 0);
+                gl.Vertex(x, GlobVar.sizeOpenGl.Y);
+                gl.End();
+            }
+
             if (Tela_Plotagem.Linha1Seg.Checked)
             {
                 int ind = 0;
