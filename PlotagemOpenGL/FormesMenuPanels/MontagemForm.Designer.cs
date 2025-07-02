@@ -49,16 +49,16 @@
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             Canais = new System.Windows.Forms.GroupBox();
-            comboBox4 = new System.Windows.Forms.ComboBox();
-            comboBox3 = new System.Windows.Forms.ComboBox();
-            comboBox2 = new System.Windows.Forms.ComboBox();
-            comboBox1 = new System.Windows.Forms.ComboBox();
+            TipoCanBox = new System.Windows.Forms.ComboBox();
+            TaxaBox = new System.Windows.Forms.ComboBox();
+            RefBox = new System.Windows.Forms.ComboBox();
+            CanalBox = new System.Windows.Forms.ComboBox();
             label9 = new System.Windows.Forms.Label();
             label8 = new System.Windows.Forms.Label();
             label7 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
-            textBox1 = new System.Windows.Forms.TextBox();
+            TituloBox = new System.Windows.Forms.TextBox();
             panelImagem = new System.Windows.Forms.Panel();
             DC4 = new System.Windows.Forms.RadioButton();
             DC3 = new System.Windows.Forms.RadioButton();
@@ -86,11 +86,9 @@
             C3 = new System.Windows.Forms.RadioButton();
             P3 = new System.Windows.Forms.RadioButton();
             O1 = new System.Windows.Forms.RadioButton();
-            REF = new System.Windows.Forms.RadioButton();
             Oz = new System.Windows.Forms.RadioButton();
             Pz = new System.Windows.Forms.RadioButton();
             Cz = new System.Windows.Forms.RadioButton();
-            TESTA = new System.Windows.Forms.RadioButton();
             Fz = new System.Windows.Forms.RadioButton();
             O2 = new System.Windows.Forms.RadioButton();
             P4 = new System.Windows.Forms.RadioButton();
@@ -111,20 +109,24 @@
             PernaEsquerda = new System.Windows.Forms.RadioButton();
             PernaDireita = new System.Windows.Forms.RadioButton();
             Masseter = new System.Windows.Forms.RadioButton();
-            Ep2 = new System.Windows.Forms.RadioButton();
+            Fp2 = new System.Windows.Forms.RadioButton();
             EOD = new System.Windows.Forms.RadioButton();
             Filtros = new System.Windows.Forms.GroupBox();
-            textBox3 = new System.Windows.Forms.TextBox();
-            textBox2 = new System.Windows.Forms.TextBox();
-            comboBox5 = new System.Windows.Forms.ComboBox();
+            pAltaBox = new System.Windows.Forms.TextBox();
+            pBaixaBox = new System.Windows.Forms.TextBox();
+            NotchBox = new System.Windows.Forms.ComboBox();
             label12 = new System.Windows.Forms.Label();
             label11 = new System.Windows.Forms.Label();
             label10 = new System.Windows.Forms.Label();
             Display = new System.Windows.Forms.GroupBox();
-            button1 = new System.Windows.Forms.Button();
-            checkBox2 = new System.Windows.Forms.CheckBox();
-            checkBox1 = new System.Windows.Forms.CheckBox();
-            comboBox6 = new System.Windows.Forms.ComboBox();
+            LMSuperior = new System.Windows.Forms.TextBox();
+            LMInferior = new System.Windows.Forms.TextBox();
+            lbSuperior = new System.Windows.Forms.Label();
+            lbInferior = new System.Windows.Forms.Label();
+            ButColor = new System.Windows.Forms.Button();
+            AutoEscala = new System.Windows.Forms.CheckBox();
+            invertSinal = new System.Windows.Forms.CheckBox();
+            AmplitudeBox = new System.Windows.Forms.ComboBox();
             label14 = new System.Windows.Forms.Label();
             label13 = new System.Windows.Forms.Label();
             dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -133,6 +135,8 @@
             Alterar = new System.Windows.Forms.Button();
             Exluir = new System.Windows.Forms.Button();
             Limpar = new System.Windows.Forms.Button();
+            cima = new System.Windows.Forms.Button();
+            baixo = new System.Windows.Forms.Button();
             Montagens.SuspendLayout();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -348,16 +352,16 @@
             // Canais
             // 
             Canais.BackColor = System.Drawing.Color.Transparent;
-            Canais.Controls.Add(comboBox4);
-            Canais.Controls.Add(comboBox3);
-            Canais.Controls.Add(comboBox2);
-            Canais.Controls.Add(comboBox1);
+            Canais.Controls.Add(TipoCanBox);
+            Canais.Controls.Add(TaxaBox);
+            Canais.Controls.Add(RefBox);
+            Canais.Controls.Add(CanalBox);
             Canais.Controls.Add(label9);
             Canais.Controls.Add(label8);
             Canais.Controls.Add(label7);
             Canais.Controls.Add(label6);
             Canais.Controls.Add(label5);
-            Canais.Controls.Add(textBox1);
+            Canais.Controls.Add(TituloBox);
             Canais.Font = new System.Drawing.Font("Arial", 9F);
             Canais.Location = new System.Drawing.Point(885, 57);
             Canais.Name = "Canais";
@@ -366,37 +370,37 @@
             Canais.TabStop = false;
             Canais.Text = "Canais";
             // 
-            // comboBox4
+            // TipoCanBox
             // 
-            comboBox4.FormattingEnabled = true;
-            comboBox4.Location = new System.Drawing.Point(158, 111);
-            comboBox4.Name = "comboBox4";
-            comboBox4.Size = new System.Drawing.Size(269, 25);
-            comboBox4.TabIndex = 13;
+            TipoCanBox.FormattingEnabled = true;
+            TipoCanBox.Location = new System.Drawing.Point(158, 111);
+            TipoCanBox.Name = "TipoCanBox";
+            TipoCanBox.Size = new System.Drawing.Size(269, 25);
+            TipoCanBox.TabIndex = 13;
             // 
-            // comboBox3
+            // TaxaBox
             // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new System.Drawing.Point(8, 111);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new System.Drawing.Size(136, 25);
-            comboBox3.TabIndex = 12;
+            TaxaBox.FormattingEnabled = true;
+            TaxaBox.Location = new System.Drawing.Point(8, 111);
+            TaxaBox.Name = "TaxaBox";
+            TaxaBox.Size = new System.Drawing.Size(136, 25);
+            TaxaBox.TabIndex = 12;
             // 
-            // comboBox2
+            // RefBox
             // 
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new System.Drawing.Point(158, 49);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new System.Drawing.Size(136, 25);
-            comboBox2.TabIndex = 11;
+            RefBox.FormattingEnabled = true;
+            RefBox.Location = new System.Drawing.Point(158, 49);
+            RefBox.Name = "RefBox";
+            RefBox.Size = new System.Drawing.Size(136, 25);
+            RefBox.TabIndex = 11;
             // 
-            // comboBox1
+            // CanalBox
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new System.Drawing.Point(8, 49);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new System.Drawing.Size(136, 25);
-            comboBox1.TabIndex = 10;
+            CanalBox.FormattingEnabled = true;
+            CanalBox.Location = new System.Drawing.Point(8, 49);
+            CanalBox.Name = "CanalBox";
+            CanalBox.Size = new System.Drawing.Size(136, 25);
+            CanalBox.TabIndex = 10;
             // 
             // label9
             // 
@@ -448,12 +452,12 @@
             label5.TabIndex = 5;
             label5.Text = "Canal";
             // 
-            // textBox1
+            // TituloBox
             // 
-            textBox1.Location = new System.Drawing.Point(315, 49);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new System.Drawing.Size(112, 25);
-            textBox1.TabIndex = 4;
+            TituloBox.Location = new System.Drawing.Point(315, 49);
+            TituloBox.Name = "TituloBox";
+            TituloBox.Size = new System.Drawing.Size(112, 25);
+            TituloBox.TabIndex = 4;
             // 
             // panelImagem
             // 
@@ -486,11 +490,9 @@
             panelImagem.Controls.Add(C3);
             panelImagem.Controls.Add(P3);
             panelImagem.Controls.Add(O1);
-            panelImagem.Controls.Add(REF);
             panelImagem.Controls.Add(Oz);
             panelImagem.Controls.Add(Pz);
             panelImagem.Controls.Add(Cz);
-            panelImagem.Controls.Add(TESTA);
             panelImagem.Controls.Add(Fz);
             panelImagem.Controls.Add(O2);
             panelImagem.Controls.Add(P4);
@@ -511,7 +513,7 @@
             panelImagem.Controls.Add(PernaEsquerda);
             panelImagem.Controls.Add(PernaDireita);
             panelImagem.Controls.Add(Masseter);
-            panelImagem.Controls.Add(Ep2);
+            panelImagem.Controls.Add(Fp2);
             panelImagem.Controls.Add(EOD);
             panelImagem.Location = new System.Drawing.Point(277, 57);
             panelImagem.Name = "panelImagem";
@@ -525,6 +527,7 @@
             DC4.Name = "DC4";
             DC4.Size = new System.Drawing.Size(17, 16);
             DC4.TabIndex = 52;
+            DC4.Tag = "23";
             DC4.UseVisualStyleBackColor = true;
             // 
             // DC3
@@ -534,6 +537,7 @@
             DC3.Name = "DC3";
             DC3.Size = new System.Drawing.Size(17, 16);
             DC3.TabIndex = 51;
+            DC3.Tag = "44";
             DC3.UseVisualStyleBackColor = true;
             // 
             // DC2
@@ -543,6 +547,7 @@
             DC2.Name = "DC2";
             DC2.Size = new System.Drawing.Size(17, 16);
             DC2.TabIndex = 50;
+            DC2.Tag = "20";
             DC2.UseVisualStyleBackColor = true;
             // 
             // DC1
@@ -552,6 +557,7 @@
             DC1.Name = "DC1";
             DC1.Size = new System.Drawing.Size(17, 16);
             DC1.TabIndex = 49;
+            DC1.Tag = "41";
             DC1.UseVisualStyleBackColor = true;
             // 
             // PL
@@ -561,6 +567,7 @@
             PL.Name = "PL";
             PL.Size = new System.Drawing.Size(17, 16);
             PL.TabIndex = 48;
+            PL.Tag = "76";
             PL.UseVisualStyleBackColor = true;
             // 
             // FC
@@ -570,6 +577,7 @@
             FC.Name = "FC";
             FC.Size = new System.Drawing.Size(17, 16);
             FC.TabIndex = 47;
+            FC.Tag = "67";
             FC.UseVisualStyleBackColor = true;
             // 
             // SAT
@@ -579,6 +587,7 @@
             SAT.Name = "SAT";
             SAT.Size = new System.Drawing.Size(17, 16);
             SAT.TabIndex = 46;
+            SAT.Tag = "66";
             SAT.UseVisualStyleBackColor = true;
             // 
             // CPAP_Manual
@@ -588,6 +597,7 @@
             CPAP_Manual.Name = "CPAP_Manual";
             CPAP_Manual.Size = new System.Drawing.Size(17, 16);
             CPAP_Manual.TabIndex = 45;
+            CPAP_Manual.Tag = "65";
             CPAP_Manual.UseVisualStyleBackColor = true;
             // 
             // Posicao
@@ -597,6 +607,7 @@
             Posicao.Name = "Posicao";
             Posicao.Size = new System.Drawing.Size(17, 16);
             Posicao.TabIndex = 44;
+            Posicao.Tag = "14";
             Posicao.UseVisualStyleBackColor = true;
             // 
             // Fluxo_Aereo
@@ -606,6 +617,7 @@
             Fluxo_Aereo.Name = "Fluxo_Aereo";
             Fluxo_Aereo.Size = new System.Drawing.Size(17, 16);
             Fluxo_Aereo.TabIndex = 43;
+            Fluxo_Aereo.Tag = "35";
             Fluxo_Aereo.UseVisualStyleBackColor = true;
             // 
             // Ronco
@@ -615,6 +627,7 @@
             Ronco.Name = "Ronco";
             Ronco.Size = new System.Drawing.Size(17, 16);
             Ronco.TabIndex = 42;
+            Ronco.Tag = "5";
             Ronco.UseVisualStyleBackColor = true;
             // 
             // Torax
@@ -624,6 +637,7 @@
             Torax.Name = "Torax";
             Torax.Size = new System.Drawing.Size(17, 16);
             Torax.TabIndex = 41;
+            Torax.Tag = "29";
             Torax.UseVisualStyleBackColor = true;
             // 
             // Abdomen
@@ -633,6 +647,7 @@
             Abdomen.Name = "Abdomen";
             Abdomen.Size = new System.Drawing.Size(17, 16);
             Abdomen.TabIndex = 40;
+            Abdomen.Tag = "8";
             Abdomen.UseVisualStyleBackColor = true;
             // 
             // Canula
@@ -642,6 +657,7 @@
             Canula.Name = "Canula";
             Canula.Size = new System.Drawing.Size(17, 16);
             Canula.TabIndex = 39;
+            Canula.Tag = "150";
             Canula.UseVisualStyleBackColor = true;
             // 
             // E4
@@ -651,6 +667,7 @@
             E4.Name = "E4";
             E4.Size = new System.Drawing.Size(17, 16);
             E4.TabIndex = 38;
+            E4.Tag = "33";
             E4.UseVisualStyleBackColor = true;
             // 
             // E3
@@ -660,6 +677,7 @@
             E3.Name = "E3";
             E3.Size = new System.Drawing.Size(17, 16);
             E3.TabIndex = 37;
+            E3.Tag = "30";
             E3.UseVisualStyleBackColor = true;
             // 
             // EOE
@@ -669,6 +687,7 @@
             EOE.Name = "EOE";
             EOE.Size = new System.Drawing.Size(17, 16);
             EOE.TabIndex = 36;
+            EOE.Tag = "34";
             EOE.UseVisualStyleBackColor = true;
             // 
             // A1
@@ -678,6 +697,7 @@
             A1.Name = "A1";
             A1.Size = new System.Drawing.Size(17, 16);
             A1.TabIndex = 35;
+            A1.Tag = "13";
             A1.UseVisualStyleBackColor = true;
             // 
             // T5
@@ -687,6 +707,7 @@
             T5.Name = "T5";
             T5.Size = new System.Drawing.Size(17, 16);
             T5.TabIndex = 34;
+            T5.Tag = "21";
             T5.UseVisualStyleBackColor = true;
             // 
             // T3
@@ -696,6 +717,7 @@
             T3.Name = "T3";
             T3.Size = new System.Drawing.Size(17, 16);
             T3.TabIndex = 33;
+            T3.Tag = "36";
             T3.UseVisualStyleBackColor = true;
             // 
             // F7
@@ -705,6 +727,7 @@
             F7.Name = "F7";
             F7.Size = new System.Drawing.Size(17, 16);
             F7.TabIndex = 32;
+            F7.Tag = "6";
             F7.UseVisualStyleBackColor = true;
             // 
             // Fp1
@@ -714,6 +737,7 @@
             Fp1.Name = "Fp1";
             Fp1.Size = new System.Drawing.Size(17, 16);
             Fp1.TabIndex = 31;
+            Fp1.Tag = "3";
             Fp1.UseVisualStyleBackColor = true;
             // 
             // F3
@@ -723,6 +747,7 @@
             F3.Name = "F3";
             F3.Size = new System.Drawing.Size(17, 16);
             F3.TabIndex = 30;
+            F3.Tag = "16";
             F3.UseVisualStyleBackColor = true;
             // 
             // C3
@@ -732,6 +757,7 @@
             C3.Name = "C3";
             C3.Size = new System.Drawing.Size(17, 16);
             C3.TabIndex = 29;
+            C3.Tag = "38";
             C3.UseVisualStyleBackColor = true;
             // 
             // P3
@@ -741,6 +767,7 @@
             P3.Name = "P3";
             P3.Size = new System.Drawing.Size(17, 16);
             P3.TabIndex = 28;
+            P3.Tag = "45";
             P3.UseVisualStyleBackColor = true;
             // 
             // O1
@@ -750,16 +777,8 @@
             O1.Name = "O1";
             O1.Size = new System.Drawing.Size(17, 16);
             O1.TabIndex = 27;
+            O1.Tag = "31";
             O1.UseVisualStyleBackColor = true;
-            // 
-            // REF
-            // 
-            REF.AutoSize = true;
-            REF.Location = new System.Drawing.Point(349, 317);
-            REF.Name = "REF";
-            REF.Size = new System.Drawing.Size(17, 16);
-            REF.TabIndex = 26;
-            REF.UseVisualStyleBackColor = true;
             // 
             // Oz
             // 
@@ -768,6 +787,7 @@
             Oz.Name = "Oz";
             Oz.Size = new System.Drawing.Size(17, 16);
             Oz.TabIndex = 25;
+            Oz.Tag = "28";
             Oz.UseVisualStyleBackColor = true;
             // 
             // Pz
@@ -777,6 +797,7 @@
             Pz.Name = "Pz";
             Pz.Size = new System.Drawing.Size(17, 16);
             Pz.TabIndex = 24;
+            Pz.Tag = "1";
             Pz.UseVisualStyleBackColor = true;
             // 
             // Cz
@@ -786,16 +807,8 @@
             Cz.Name = "Cz";
             Cz.Size = new System.Drawing.Size(17, 16);
             Cz.TabIndex = 23;
+            Cz.Tag = "39";
             Cz.UseVisualStyleBackColor = true;
-            // 
-            // TESTA
-            // 
-            TESTA.AutoSize = true;
-            TESTA.Location = new System.Drawing.Point(349, 81);
-            TESTA.Name = "TESTA";
-            TESTA.Size = new System.Drawing.Size(17, 16);
-            TESTA.TabIndex = 22;
-            TESTA.UseVisualStyleBackColor = true;
             // 
             // Fz
             // 
@@ -804,6 +817,7 @@
             Fz.Name = "Fz";
             Fz.Size = new System.Drawing.Size(17, 16);
             Fz.TabIndex = 21;
+            Fz.Tag = "9";
             Fz.UseVisualStyleBackColor = true;
             // 
             // O2
@@ -813,6 +827,7 @@
             O2.Name = "O2";
             O2.Size = new System.Drawing.Size(17, 16);
             O2.TabIndex = 20;
+            O2.Tag = "7";
             O2.UseVisualStyleBackColor = true;
             // 
             // P4
@@ -822,6 +837,7 @@
             P4.Name = "P4";
             P4.Size = new System.Drawing.Size(17, 16);
             P4.TabIndex = 19;
+            P4.Tag = "25";
             P4.UseVisualStyleBackColor = true;
             // 
             // C4
@@ -831,6 +847,7 @@
             C4.Name = "C4";
             C4.Size = new System.Drawing.Size(17, 16);
             C4.TabIndex = 18;
+            C4.Tag = "17";
             C4.UseVisualStyleBackColor = true;
             // 
             // F4
@@ -840,6 +857,7 @@
             F4.Name = "F4";
             F4.Size = new System.Drawing.Size(17, 16);
             F4.TabIndex = 17;
+            F4.Tag = "40";
             F4.UseVisualStyleBackColor = true;
             // 
             // T6
@@ -849,6 +867,7 @@
             T6.Name = "T6";
             T6.Size = new System.Drawing.Size(17, 16);
             T6.TabIndex = 16;
+            T6.Tag = "4";
             T6.UseVisualStyleBackColor = true;
             // 
             // T4
@@ -858,6 +877,7 @@
             T4.Name = "T4";
             T4.Size = new System.Drawing.Size(17, 16);
             T4.TabIndex = 15;
+            T4.Tag = "42";
             T4.UseVisualStyleBackColor = true;
             // 
             // F8
@@ -867,6 +887,7 @@
             F8.Name = "F8";
             F8.Size = new System.Drawing.Size(17, 16);
             F8.TabIndex = 14;
+            F8.Tag = "12";
             F8.UseVisualStyleBackColor = true;
             // 
             // E2
@@ -876,6 +897,7 @@
             E2.Name = "E2";
             E2.Size = new System.Drawing.Size(17, 16);
             E2.TabIndex = 13;
+            E2.Tag = "24";
             E2.UseVisualStyleBackColor = true;
             // 
             // E1
@@ -885,6 +907,7 @@
             E1.Name = "E1";
             E1.Size = new System.Drawing.Size(17, 16);
             E1.TabIndex = 12;
+            E1.Tag = "0";
             E1.UseVisualStyleBackColor = true;
             // 
             // A2
@@ -894,6 +917,7 @@
             A2.Name = "A2";
             A2.Size = new System.Drawing.Size(17, 16);
             A2.TabIndex = 11;
+            A2.Tag = "37";
             A2.UseVisualStyleBackColor = true;
             // 
             // Queixo
@@ -907,6 +931,7 @@
             Queixo.Name = "Queixo";
             Queixo.Size = new System.Drawing.Size(17, 16);
             Queixo.TabIndex = 2;
+            Queixo.Tag = "22";
             Queixo.UseVisualStyleBackColor = false;
             // 
             // LA
@@ -916,11 +941,13 @@
             LA.Name = "LA";
             LA.Size = new System.Drawing.Size(17, 16);
             LA.TabIndex = 10;
+            LA.Tag = "43";
             LA.UseVisualStyleBackColor = true;
             // 
             // LL
             // 
             LL.AutoSize = true;
+            LL.Enabled = false;
             LL.Location = new System.Drawing.Point(41, 501);
             LL.Name = "LL";
             LL.Size = new System.Drawing.Size(17, 16);
@@ -934,6 +961,7 @@
             RA.Name = "RA";
             RA.Size = new System.Drawing.Size(17, 16);
             RA.TabIndex = 8;
+            RA.Tag = "19";
             RA.UseVisualStyleBackColor = true;
             // 
             // EMG_B
@@ -943,6 +971,7 @@
             EMG_B.Name = "EMG_B";
             EMG_B.Size = new System.Drawing.Size(17, 16);
             EMG_B.TabIndex = 7;
+            EMG_B.Tag = "18";
             EMG_B.UseVisualStyleBackColor = true;
             // 
             // EMG_A
@@ -952,6 +981,7 @@
             EMG_A.Name = "EMG_A";
             EMG_A.Size = new System.Drawing.Size(17, 16);
             EMG_A.TabIndex = 6;
+            EMG_A.Tag = "15";
             EMG_A.UseVisualStyleBackColor = true;
             // 
             // PernaEsquerda
@@ -961,6 +991,7 @@
             PernaEsquerda.Name = "PernaEsquerda";
             PernaEsquerda.Size = new System.Drawing.Size(17, 16);
             PernaEsquerda.TabIndex = 5;
+            PernaEsquerda.Tag = "26";
             PernaEsquerda.UseVisualStyleBackColor = true;
             // 
             // PernaDireita
@@ -970,6 +1001,7 @@
             PernaDireita.Name = "PernaDireita";
             PernaDireita.Size = new System.Drawing.Size(17, 16);
             PernaDireita.TabIndex = 4;
+            PernaDireita.Tag = "2";
             PernaDireita.UseVisualStyleBackColor = true;
             // 
             // Masseter
@@ -979,16 +1011,18 @@
             Masseter.Name = "Masseter";
             Masseter.Size = new System.Drawing.Size(17, 16);
             Masseter.TabIndex = 3;
+            Masseter.Tag = "46";
             Masseter.UseVisualStyleBackColor = true;
             // 
-            // Ep2
+            // Fp2
             // 
-            Ep2.AutoSize = true;
-            Ep2.Location = new System.Drawing.Point(300, 81);
-            Ep2.Name = "Ep2";
-            Ep2.Size = new System.Drawing.Size(17, 16);
-            Ep2.TabIndex = 1;
-            Ep2.UseVisualStyleBackColor = true;
+            Fp2.AutoSize = true;
+            Fp2.Location = new System.Drawing.Point(300, 81);
+            Fp2.Name = "Fp2";
+            Fp2.Size = new System.Drawing.Size(17, 16);
+            Fp2.TabIndex = 1;
+            Fp2.Tag = "27";
+            Fp2.UseVisualStyleBackColor = true;
             // 
             // EOD
             // 
@@ -997,14 +1031,15 @@
             EOD.Name = "EOD";
             EOD.Size = new System.Drawing.Size(17, 16);
             EOD.TabIndex = 0;
+            EOD.Tag = "10";
             EOD.UseVisualStyleBackColor = true;
             // 
             // Filtros
             // 
             Filtros.BackColor = System.Drawing.Color.Transparent;
-            Filtros.Controls.Add(textBox3);
-            Filtros.Controls.Add(textBox2);
-            Filtros.Controls.Add(comboBox5);
+            Filtros.Controls.Add(pAltaBox);
+            Filtros.Controls.Add(pBaixaBox);
+            Filtros.Controls.Add(NotchBox);
             Filtros.Controls.Add(label12);
             Filtros.Controls.Add(label11);
             Filtros.Controls.Add(label10);
@@ -1016,27 +1051,27 @@
             Filtros.TabStop = false;
             Filtros.Text = "Filtros";
             // 
-            // textBox3
+            // pAltaBox
             // 
-            textBox3.Location = new System.Drawing.Point(158, 49);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new System.Drawing.Size(136, 25);
-            textBox3.TabIndex = 15;
+            pAltaBox.Location = new System.Drawing.Point(158, 49);
+            pAltaBox.Name = "pAltaBox";
+            pAltaBox.Size = new System.Drawing.Size(136, 25);
+            pAltaBox.TabIndex = 15;
             // 
-            // textBox2
+            // pBaixaBox
             // 
-            textBox2.Location = new System.Drawing.Point(8, 49);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new System.Drawing.Size(136, 25);
-            textBox2.TabIndex = 14;
+            pBaixaBox.Location = new System.Drawing.Point(8, 49);
+            pBaixaBox.Name = "pBaixaBox";
+            pBaixaBox.Size = new System.Drawing.Size(136, 25);
+            pBaixaBox.TabIndex = 14;
             // 
-            // comboBox5
+            // NotchBox
             // 
-            comboBox5.FormattingEnabled = true;
-            comboBox5.Location = new System.Drawing.Point(315, 49);
-            comboBox5.Name = "comboBox5";
-            comboBox5.Size = new System.Drawing.Size(112, 25);
-            comboBox5.TabIndex = 11;
+            NotchBox.FormattingEnabled = true;
+            NotchBox.Location = new System.Drawing.Point(315, 49);
+            NotchBox.Name = "NotchBox";
+            NotchBox.Size = new System.Drawing.Size(112, 25);
+            NotchBox.TabIndex = 11;
             // 
             // label12
             // 
@@ -1071,10 +1106,14 @@
             // Display
             // 
             Display.BackColor = System.Drawing.Color.Transparent;
-            Display.Controls.Add(button1);
-            Display.Controls.Add(checkBox2);
-            Display.Controls.Add(checkBox1);
-            Display.Controls.Add(comboBox6);
+            Display.Controls.Add(LMSuperior);
+            Display.Controls.Add(LMInferior);
+            Display.Controls.Add(lbSuperior);
+            Display.Controls.Add(lbInferior);
+            Display.Controls.Add(ButColor);
+            Display.Controls.Add(AutoEscala);
+            Display.Controls.Add(invertSinal);
+            Display.Controls.Add(AmplitudeBox);
             Display.Controls.Add(label14);
             Display.Controls.Add(label13);
             Display.Font = new System.Drawing.Font("Arial", 9F);
@@ -1085,50 +1124,90 @@
             Display.TabStop = false;
             Display.Text = "Display";
             // 
-            // button1
+            // LMSuperior
             // 
-            button1.Location = new System.Drawing.Point(158, 47);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(116, 29);
-            button1.TabIndex = 16;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            LMSuperior.Location = new System.Drawing.Point(158, 100);
+            LMSuperior.Name = "LMSuperior";
+            LMSuperior.Size = new System.Drawing.Size(136, 25);
+            LMSuperior.TabIndex = 20;
+            LMSuperior.Visible = false;
             // 
-            // checkBox2
+            // LMInferior
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            checkBox2.Location = new System.Drawing.Point(280, 63);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new System.Drawing.Size(108, 21);
-            checkBox2.TabIndex = 13;
-            checkBox2.Text = "Auto Escala";
-            checkBox2.UseVisualStyleBackColor = true;
+            LMInferior.Location = new System.Drawing.Point(8, 100);
+            LMInferior.Name = "LMInferior";
+            LMInferior.Size = new System.Drawing.Size(136, 25);
+            LMInferior.TabIndex = 19;
+            LMInferior.Visible = false;
             // 
-            // checkBox1
+            // lbSuperior
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            checkBox1.Location = new System.Drawing.Point(280, 36);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(109, 21);
-            checkBox1.TabIndex = 12;
-            checkBox1.Text = "Inverte Sinal";
-            checkBox1.UseVisualStyleBackColor = true;
+            lbSuperior.AutoSize = true;
+            lbSuperior.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            lbSuperior.Location = new System.Drawing.Point(158, 78);
+            lbSuperior.Name = "lbSuperior";
+            lbSuperior.Size = new System.Drawing.Size(111, 17);
+            lbSuperior.TabIndex = 18;
+            lbSuperior.Text = "Limete Superior";
+            lbSuperior.Visible = false;
             // 
-            // comboBox6
+            // lbInferior
             // 
-            comboBox6.FormattingEnabled = true;
-            comboBox6.Location = new System.Drawing.Point(8, 50);
-            comboBox6.Name = "comboBox6";
-            comboBox6.Size = new System.Drawing.Size(136, 25);
-            comboBox6.TabIndex = 11;
+            lbInferior.AutoSize = true;
+            lbInferior.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            lbInferior.Location = new System.Drawing.Point(8, 78);
+            lbInferior.Name = "lbInferior";
+            lbInferior.Size = new System.Drawing.Size(95, 17);
+            lbInferior.TabIndex = 17;
+            lbInferior.Tag = "";
+            lbInferior.Text = "Limite Inferior";
+            lbInferior.Visible = false;
+            // 
+            // ButColor
+            // 
+            ButColor.BackColor = System.Drawing.Color.Black;
+            ButColor.Location = new System.Drawing.Point(158, 45);
+            ButColor.Name = "ButColor";
+            ButColor.Size = new System.Drawing.Size(116, 29);
+            ButColor.TabIndex = 16;
+            ButColor.UseVisualStyleBackColor = false;
+            ButColor.Click += ButColor_Click;
+            // 
+            // AutoEscala
+            // 
+            AutoEscala.AutoSize = true;
+            AutoEscala.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            AutoEscala.Location = new System.Drawing.Point(280, 63);
+            AutoEscala.Name = "AutoEscala";
+            AutoEscala.Size = new System.Drawing.Size(108, 21);
+            AutoEscala.TabIndex = 13;
+            AutoEscala.Text = "Auto Escala";
+            AutoEscala.UseVisualStyleBackColor = true;
+            // 
+            // invertSinal
+            // 
+            invertSinal.AutoSize = true;
+            invertSinal.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            invertSinal.Location = new System.Drawing.Point(280, 36);
+            invertSinal.Name = "invertSinal";
+            invertSinal.Size = new System.Drawing.Size(109, 21);
+            invertSinal.TabIndex = 12;
+            invertSinal.Text = "Inverte Sinal";
+            invertSinal.UseVisualStyleBackColor = true;
+            // 
+            // AmplitudeBox
+            // 
+            AmplitudeBox.FormattingEnabled = true;
+            AmplitudeBox.Location = new System.Drawing.Point(8, 48);
+            AmplitudeBox.Name = "AmplitudeBox";
+            AmplitudeBox.Size = new System.Drawing.Size(136, 25);
+            AmplitudeBox.TabIndex = 11;
             // 
             // label14
             // 
             label14.AutoSize = true;
             label14.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label14.Location = new System.Drawing.Point(158, 27);
+            label14.Location = new System.Drawing.Point(158, 25);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(32, 17);
             label14.TabIndex = 3;
@@ -1138,7 +1217,7 @@
             // 
             label13.AutoSize = true;
             label13.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label13.Location = new System.Drawing.Point(8, 27);
+            label13.Location = new System.Drawing.Point(8, 25);
             label13.Name = "label13";
             label13.Size = new System.Drawing.Size(72, 17);
             label13.TabIndex = 2;
@@ -1150,7 +1229,7 @@
             dataGridView1.Location = new System.Drawing.Point(18, 669);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new System.Drawing.Size(1324, 188);
+            dataGridView1.Size = new System.Drawing.Size(1202, 188);
             dataGridView1.TabIndex = 3;
             // 
             // label4
@@ -1173,6 +1252,7 @@
             Incluir.TabIndex = 14;
             Incluir.Text = "Incluir";
             Incluir.UseVisualStyleBackColor = true;
+            Incluir.Click += incluir_Click;
             // 
             // Alterar
             // 
@@ -1182,6 +1262,7 @@
             Alterar.TabIndex = 15;
             Alterar.Text = "Alterar";
             Alterar.UseVisualStyleBackColor = true;
+            Alterar.Click += alterar_Click;
             // 
             // Exluir
             // 
@@ -1191,6 +1272,7 @@
             Exluir.TabIndex = 16;
             Exluir.Text = "Exluir";
             Exluir.UseVisualStyleBackColor = true;
+            Exluir.Click += btnExcluir_Click;
             // 
             // Limpar
             // 
@@ -1200,6 +1282,30 @@
             Limpar.TabIndex = 17;
             Limpar.Text = "Limpar";
             Limpar.UseVisualStyleBackColor = true;
+            Limpar.Click += limpar_Click;
+            // 
+            // cima
+            // 
+            cima.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
+            cima.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            cima.Location = new System.Drawing.Point(1226, 669);
+            cima.Name = "cima";
+            cima.Size = new System.Drawing.Size(48, 48);
+            cima.TabIndex = 18;
+            cima.Text = "ã";
+            cima.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            cima.UseVisualStyleBackColor = true;
+            // 
+            // baixo
+            // 
+            baixo.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
+            baixo.Location = new System.Drawing.Point(1226, 809);
+            baixo.Name = "baixo";
+            baixo.Size = new System.Drawing.Size(48, 48);
+            baixo.TabIndex = 19;
+            baixo.Text = "ä";
+            baixo.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            baixo.UseVisualStyleBackColor = true;
             // 
             // MontagemForm
             // 
@@ -1208,6 +1314,8 @@
             BackgroundImage = (System.Drawing.Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             ClientSize = new System.Drawing.Size(1348, 872);
+            Controls.Add(baixo);
+            Controls.Add(cima);
             Controls.Add(Limpar);
             Controls.Add(Exluir);
             Controls.Add(Alterar);
@@ -1219,7 +1327,7 @@
             Controls.Add(panelImagem);
             Controls.Add(Canais);
             Controls.Add(Montagens);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "MontagemForm";
             Text = "Montagem";
@@ -1249,7 +1357,7 @@
         private System.Windows.Forms.RadioButton PernaEsquerda;
         private System.Windows.Forms.RadioButton PernaDireita;
         private System.Windows.Forms.RadioButton Masseter;
-        private System.Windows.Forms.RadioButton Ep2;
+        private System.Windows.Forms.RadioButton Fp2;
         private System.Windows.Forms.RadioButton LA;
         private System.Windows.Forms.RadioButton LL;
         private System.Windows.Forms.RadioButton RA;
@@ -1267,11 +1375,9 @@
         private System.Windows.Forms.RadioButton C3;
         private System.Windows.Forms.RadioButton P3;
         private System.Windows.Forms.RadioButton O1;
-        private System.Windows.Forms.RadioButton REF;
         private System.Windows.Forms.RadioButton Oz;
         private System.Windows.Forms.RadioButton Pz;
         private System.Windows.Forms.RadioButton Cz;
-        private System.Windows.Forms.RadioButton TESTA;
         private System.Windows.Forms.RadioButton Fz;
         private System.Windows.Forms.RadioButton O2;
         private System.Windows.Forms.RadioButton P4;
@@ -1330,22 +1436,30 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox TituloBox;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox5;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.ComboBox TipoCanBox;
+        private System.Windows.Forms.ComboBox TaxaBox;
+        private System.Windows.Forms.ComboBox RefBox;
+        private System.Windows.Forms.ComboBox CanalBox;
+        private System.Windows.Forms.ComboBox NotchBox;
+        private System.Windows.Forms.TextBox pAltaBox;
+        private System.Windows.Forms.TextBox pBaixaBox;
+        private System.Windows.Forms.Button ButColor;
+        private System.Windows.Forms.CheckBox AutoEscala;
+        private System.Windows.Forms.CheckBox invertSinal;
+        private System.Windows.Forms.ComboBox AmplitudeBox;
+        private System.Windows.Forms.TextBox LMSuperior;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.ComboBox comboBox6;
+        private System.Windows.Forms.Label lbSuperior;
+        private System.Windows.Forms.Label lb;
+        private System.Windows.Forms.TextBox LMInferior;
+        private System.Windows.Forms.Label lbInferior;
+        private System.Windows.Forms.Button cima;
+        private System.Windows.Forms.Button baixo;
     }
 }

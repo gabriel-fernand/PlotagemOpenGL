@@ -172,6 +172,7 @@ public class LeituraBanco
             adapterConfig.Fill(GlobVar.tbl_CadCanal);
             adapterTbl_MontCanal.Fill(GlobVar.tbl_MontCanal);
             adapterTbl_Montagem.Fill(GlobVar.tbl_Montagem);
+            adapterTbl_Montagem.Fill(GlobVar.tbl_MontagemOriginal);
             adapterTbl_TipeExam.Fill(GlobVar.tbl_TipoExame);
             adapterTbl_CadTipoCanal.Fill(GlobVar.tbl_CadTipoCanal);
             adapterCadExame.Fill(GlobVar.tbl_CadEvento);

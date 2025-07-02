@@ -114,6 +114,7 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_EventoTipoCanal = new DataTable();
 
         public static DataTable tbl_Montagem = new DataTable();
+        public static DataTable tbl_MontagemOriginal = new DataTable();
         public static DataTable tbl_MontCanal = new DataTable();
         public static DataTable tbl_MontGrav = new DataTable();
         public static DataTable tbl_TipoExame = new DataTable();
