@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MontagemForm));
             Montagens = new System.Windows.Forms.GroupBox();
             panel1 = new System.Windows.Forms.Panel();
+            button1 = new System.Windows.Forms.Button();
             Copiar = new System.Windows.Forms.Button();
             NovaMontagem = new System.Windows.Forms.TextBox();
             label3 = new System.Windows.Forms.Label();
@@ -137,6 +138,7 @@
             Limpar = new System.Windows.Forms.Button();
             cima = new System.Windows.Forms.Button();
             baixo = new System.Windows.Forms.Button();
+            Fechar = new System.Windows.Forms.Button();
             Montagens.SuspendLayout();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -171,6 +173,7 @@
             // panel1
             // 
             panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            panel1.Controls.Add(button1);
             panel1.Controls.Add(Copiar);
             panel1.Controls.Add(NovaMontagem);
             panel1.Controls.Add(label3);
@@ -179,11 +182,21 @@
             panel1.Size = new System.Drawing.Size(247, 101);
             panel1.TabIndex = 9;
             // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(7, 63);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(112, 29);
+            button1.TabIndex = 13;
+            button1.Text = "Criar";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Copiar
             // 
-            Copiar.Location = new System.Drawing.Point(62, 63);
+            Copiar.Location = new System.Drawing.Point(126, 63);
             Copiar.Name = "Copiar";
-            Copiar.Size = new System.Drawing.Size(120, 29);
+            Copiar.Size = new System.Drawing.Size(116, 29);
             Copiar.TabIndex = 12;
             Copiar.Text = "Copiar";
             Copiar.UseVisualStyleBackColor = true;
@@ -213,6 +226,7 @@
             AssociarLaudo.TabIndex = 8;
             AssociarLaudo.Text = "Associar Laudo";
             AssociarLaudo.UseVisualStyleBackColor = true;
+            AssociarLaudo.Click += AssociarLaudo_Click;
             // 
             // Excluir
             // 
@@ -222,6 +236,7 @@
             Excluir.TabIndex = 7;
             Excluir.Text = "Excluir";
             Excluir.UseVisualStyleBackColor = true;
+            Excluir.Click += Excluir_Click;
             // 
             // Gravar
             // 
@@ -255,6 +270,7 @@
             aEEG.Size = new System.Drawing.Size(68, 21);
             aEEG.TabIndex = 4;
             aEEG.TabStop = true;
+            aEEG.Tag = "A";
             aEEG.Text = "aEEG";
             aEEG.UseVisualStyleBackColor = true;
             // 
@@ -266,6 +282,7 @@
             EEG.Size = new System.Drawing.Size(60, 21);
             EEG.TabIndex = 3;
             EEG.TabStop = true;
+            EEG.Tag = "E";
             EEG.Text = "EEG";
             EEG.UseVisualStyleBackColor = true;
             // 
@@ -277,6 +294,7 @@
             Respiratorio.Size = new System.Drawing.Size(108, 21);
             Respiratorio.TabIndex = 2;
             Respiratorio.TabStop = true;
+            Respiratorio.Tag = "R";
             Respiratorio.Text = "Respiratorio";
             Respiratorio.UseVisualStyleBackColor = true;
             // 
@@ -288,6 +306,7 @@
             MultiplaLatencia.Size = new System.Drawing.Size(136, 21);
             MultiplaLatencia.TabIndex = 1;
             MultiplaLatencia.TabStop = true;
+            MultiplaLatencia.Tag = "M";
             MultiplaLatencia.Text = "Multipla Latencia";
             MultiplaLatencia.UseVisualStyleBackColor = true;
             // 
@@ -299,6 +318,7 @@
             Polissonografia.Size = new System.Drawing.Size(129, 21);
             Polissonografia.TabIndex = 0;
             Polissonografia.TabStop = true;
+            Polissonografia.Tag = "P";
             Polissonografia.Text = "Polissonografia";
             Polissonografia.UseVisualStyleBackColor = true;
             // 
@@ -1229,7 +1249,7 @@
             dataGridView1.Location = new System.Drawing.Point(18, 669);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new System.Drawing.Size(1202, 188);
+            dataGridView1.Size = new System.Drawing.Size(1161, 188);
             dataGridView1.TabIndex = 3;
             // 
             // label4
@@ -1288,7 +1308,7 @@
             // 
             cima.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
             cima.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            cima.Location = new System.Drawing.Point(1226, 669);
+            cima.Location = new System.Drawing.Point(1185, 669);
             cima.Name = "cima";
             cima.Size = new System.Drawing.Size(48, 48);
             cima.TabIndex = 18;
@@ -1299,13 +1319,23 @@
             // baixo
             // 
             baixo.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
-            baixo.Location = new System.Drawing.Point(1226, 809);
+            baixo.Location = new System.Drawing.Point(1185, 809);
             baixo.Name = "baixo";
             baixo.Size = new System.Drawing.Size(48, 48);
             baixo.TabIndex = 19;
             baixo.Text = "ä";
             baixo.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             baixo.UseVisualStyleBackColor = true;
+            // 
+            // Fechar
+            // 
+            Fechar.Location = new System.Drawing.Point(1236, 809);
+            Fechar.Name = "Fechar";
+            Fechar.Size = new System.Drawing.Size(100, 48);
+            Fechar.TabIndex = 20;
+            Fechar.Text = "Fechar";
+            Fechar.UseVisualStyleBackColor = true;
+            Fechar.Click += Fechar_Click;
             // 
             // MontagemForm
             // 
@@ -1314,6 +1344,7 @@
             BackgroundImage = (System.Drawing.Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             ClientSize = new System.Drawing.Size(1348, 872);
+            Controls.Add(Fechar);
             Controls.Add(baixo);
             Controls.Add(cima);
             Controls.Add(Limpar);
@@ -1461,5 +1492,7 @@
         private System.Windows.Forms.Label lbInferior;
         private System.Windows.Forms.Button cima;
         private System.Windows.Forms.Button baixo;
+        private System.Windows.Forms.Button Fechar;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -22,7 +22,7 @@ namespace PlotagemOpenGL.auxi
         public static Point DimXY;
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
-        public static string configBD = @"C:\Users\dev_i\source\repos\Dat\Configuração.mdb";
+        public static string configBD = @"C:\Temp\Dat\Configuração.mdb";
         public static string cabecalho;
         public static int npagin; 
         public static string npag;
@@ -226,5 +226,6 @@ namespace PlotagemOpenGL.auxi
         public static int larguraMinimaPainel;
 
         public static OleDbConnection ConnectionBDdat;
+        public static OleDbConnection ConnectionConfig;
     }
 }

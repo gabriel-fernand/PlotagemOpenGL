@@ -2,10 +2,12 @@
 using Microsoft.Office.Interop.Word;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.Filtros;
+using PlotagemOpenGL.FormesMenuPanels.AuxiMontagemForm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -43,6 +45,10 @@ namespace PlotagemOpenGL.FormesMenuPanels
             CanalBox.SelectedIndexChanged += CanalBoxSelectedIndexChanged;
             RefBox.SelectedIndexChanged += RefBox_SelectedIndexChanged;
             this.MaximizeBox = false; // Remove o botão maximizar
+
+            GlobVar.ConnectionConfig = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};");
+            GlobVar.ConnectionConfig.Open();
+
         }
 
         private void RefBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -182,10 +188,10 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 int tag = Convert.ToInt32(checado.Tag);
                 var rowTag = GlobVar.tbl_CadCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == tag).FirstOrDefault();
                 //var selecionados = panelImagem.Controls
-                  //                  .OfType<RadioButton>()
-                    //                .Where(r => r.Checked)
-                      //              .ToList();
-                if(selecionados.Count == 1 || selecionados.Count > 2)
+                //                  .OfType<RadioButton>()
+                //                .Where(r => r.Checked)
+                //              .ToList();
+                if (selecionados.Count == 1 || selecionados.Count > 2)
                 {
                     var canalValue = rowTag["NomeCanal"].ToString();
                     int idx = 0;
@@ -203,7 +209,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
 
                 }
-                else if(selecionados.Count == 2)
+                else if (selecionados.Count == 2)
                 {
                     var TipocanalValue = rowTag["NomeCanal"].ToString();
                     int idx = 0;
@@ -251,9 +257,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
             if (!string.IsNullOrWhiteSpace(notch))
             {
                 string[] valores = notch.Split(";");
-                foreach(var valor in valores)
+                foreach (var valor in valores)
                 {
-                    if(int.TryParse(valor.Trim(),out int numero))
+                    if (int.TryParse(valor.Trim(), out int numero))
                     {
                         NotchBox.Items.Add(numero);
                     }
@@ -261,7 +267,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             }
 
             // Pegando as montagem, que ja existem no banco de dados
-            if(GlobVar.tbl_MontagemOriginal != null)
+            if (GlobVar.tbl_MontagemOriginal != null)
             {
                 var tblOrdenado = GlobVar.tbl_MontagemOriginal
                                         .AsEnumerable()
@@ -279,7 +285,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 }
             }
 
-            if(GlobVar.tbl_CadCanal != null)
+            if (GlobVar.tbl_CadCanal != null)
             {
                 var tblOrdenado = GlobVar.tbl_CadCanal
                     .AsEnumerable()
@@ -290,7 +296,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 RefBox.Items.Clear();
                 RefBox.Items.Add("");
 
-                foreach(DataRow row in tblOrdenado.Rows)
+                foreach (DataRow row in tblOrdenado.Rows)
                 {
                     string NomeCanal = row["NomeCanal"].ToString();
                     var tag = row["CodCanal"]; // Ou qualquer campo/tag que queira associar
@@ -330,7 +336,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 // Agora você pode usar a tag para qualquer lógica adicional
                 //MessageBox.Show($"Tag: {minhaTag}");
                 var rowTblMontagem = GlobVar.tbl_Montagem.AsEnumerable().Where(rw => rw.Field<int>("CodMontagem") == Convert.ToInt32(minhaTag)).FirstOrDefault();
-                if(rowTblMontagem != null)
+                if (rowTblMontagem != null)
                 {
                     if (Convert.ToInt32(rowTblMontagem["TeclaRapida"]) != -1)
                     {
@@ -387,7 +393,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 dataGridView1.Rows.Clear();
 
 
-                foreach(DataRow dr in dt.Rows)
+                foreach (DataRow dr in dt.Rows)
                 {
                     //Canal
                     var rwCanal = GlobVar.tbl_CadCanal.AsEnumerable().Where(rw => rw.Field<int>("CodCanal") == Convert.ToInt32(dr["CodCanal1"])).FirstOrDefault();
@@ -588,7 +594,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         int r = corInt & 0xFF;
 
                         color = System.Drawing.Color.FromArgb(r, g, b);
-                    }                    
+                    }
                 }
 
                 // Atribui à cor do botão:
@@ -880,13 +886,24 @@ namespace PlotagemOpenGL.FormesMenuPanels
         }
         private void incluir_Click(Object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(CanalBox.Text))
+            {
+                MessageBox.Show($"Selecione um canal", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
+            }
+            if (TodasLinhasVazias(dataGridView1))
+            {
+                dataGridView1.Rows.Clear();
+            }
+
             Color cor = ButColor.BackColor;
             int a = cor.A;
             int r = cor.B;
             int g = cor.G;
             int b = cor.R;
-            int valorEmInt = (a << 24) | (r << 16) | (g << 8) | b; 
-            
+            int valorEmInt = (a << 24) | (r << 16) | (g << 8) | b;
+
             dataGridView1.Rows.Add(CanalBox.Text, RefBox.Text, TituloBox.Text, TaxaBox.Text, TipoCanBox.Text, AmplitudeBox.Text, invertSinal.Checked, AutoEscala.Checked, pBaixaBox.Text, pAltaBox.Text, NotchBox.Text, valorEmInt);
             int rowIndex = dataGridView1.Rows.Count - 1;
             dataGridView1.ClearSelection();
@@ -895,7 +912,26 @@ namespace PlotagemOpenGL.FormesMenuPanels
             //dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(0, rowIndex));
         }
 
+        bool TodasLinhasVazias(DataGridView dgv)
+        {
+            // Percorre cada linha (ignorando a linha de inserção nova)
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
 
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    // Se alguma célula tiver valor não nulo e não vazia, retorna falso
+                    if (cell.Value != null &&
+                        !string.IsNullOrWhiteSpace(cell.Value.ToString()))
+                    {
+                        return false;
+                    }
+                }
+            }
+            // Se chegou aqui, todas as linhas/células estão vazias
+            return true;
+        }
 
 
 
@@ -909,6 +945,362 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
         }
 
+        private void AssociarLaudo_Click(object sender, EventArgs e)
+        {
+            if (Montagem.Text == null)
+            {
+                MessageBox.Show($"Selecione uma Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var row = GlobVar.tbl_Montagem.AsEnumerable().Where(rw => rw.Field<string>("DescrMontagem").Equals(Montagem.Text)).FirstOrDefault();
+            string LaudoJaAssociado = "";
+            if (row != null)
+            {
+                LaudoJaAssociado = row["LaudoPadrao"].ToString();
+            }
+
+            AssociarLaudo assoc = new AssociarLaudo();
+
+            if (LaudoJaAssociado != null)
+            {
+                int index = assoc.listLaudosDisponiveis.Items.IndexOf(LaudoJaAssociado);
+                assoc.listLaudosDisponiveis.SelectedIndex = index;
+            }
+
+            assoc.ShowDialog();
+
+            string valorSelecionado = assoc.LaudoSelecionado.Text;
+
+            // Confere se existe texto no Montagem.Text
+            if (string.IsNullOrWhiteSpace(Montagem.Text))
+                return; // Se estiver vazio, não faz nada
+
+            string montagemValor = Montagem.Text.Trim();
+
+            object valorParaSalvar = string.IsNullOrWhiteSpace(valorSelecionado) ? DBNull.Value : (object)valorSelecionado;
+            // Monta seu comando SQL de atualização
+            string sql = "UPDATE tbl_Montagem SET LaudoPadrao = ? WHERE DescrMontagem = ?";
+
+            // Dica: troque NomeMontagem pelo nome real da coluna que corresponde ao Montagem.Text
+
+            using (OleDbCommand cmd = new OleDbCommand(sql, GlobVar.ConnectionConfig))
+            {
+                // Parâmetros na ordem das interrogações
+                cmd.Parameters.AddWithValue("?", valorParaSalvar);
+                cmd.Parameters.AddWithValue("?", montagemValor);
+
+                try
+                {
+
+                    int linhasAfetadas = cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao atualizar o banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                }
+            }
+        }
+
+        private void Fechar_Click(object sender, EventArgs e)
+        {
+            GlobVar.ConnectionConfig.Close();
+            this.Close();
+        }
+
+        private void Excluir_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Montagem.Text))
+            {
+                MessageBox.Show("Selecione uma Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var row = GlobVar.tbl_Montagem.AsEnumerable()
+                .Where(rw => rw.Field<string>("DescrMontagem") == Montagem.Text)
+                .FirstOrDefault();
+
+            if (row == null)
+            {
+                MessageBox.Show("Montagem não encontrada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int CodMontagem = Convert.ToInt32(row["CodMontagem"]);
+
+            // Comandos SQL de exclusão
+            string sqlCanal = "DELETE FROM tbl_MontCanal WHERE CodMontagem = ?";
+            string sqlMontagem = "DELETE FROM tbl_Montagem WHERE CodMontagem = ?";
+            // Ordem: primeiro tbl_MontCanal, depois tbl_Montagem (por integridade referencial)
+            try
+            {
+
+                // Exclui canais vinculados
+                using (OleDbCommand cmdCanal = new OleDbCommand(sqlCanal, GlobVar.ConnectionConfig))
+                {
+                    cmdCanal.Parameters.AddWithValue("?", CodMontagem);
+                    cmdCanal.ExecuteNonQuery();
+                }
+
+                // Exclui montagem
+                using (OleDbCommand cmdMontagem = new OleDbCommand(sqlMontagem, GlobVar.ConnectionConfig))
+                {
+                    cmdMontagem.Parameters.AddWithValue("?", CodMontagem);
+                    int linhasExcluidas = cmdMontagem.ExecuteNonQuery();
+                    if (linhasExcluidas == 0)
+                    {
+                        MessageBox.Show("Não foi possível excluir a montagem.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Montagem excluída com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        int locAtual = Montagem.SelectedIndex;
+                        Montagem.Items.RemoveAt(locAtual);
+                        Montagem.SelectedIndex = 0;
+                        Limpar.PerformClick();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao excluir: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+            }
+        }
+
+        private void criandoMontCanal(int novoCodMontagem)
+        {
+            // Assumindo novaMontagem já inserida e novoCodMontagem calculado:
+
+            int qtdRows = dataGridView1.Rows.Count;
+            if (dataGridView1.AllowUserToAddRows) // remove linha em branco do DataGrid se houver
+                qtdRows--;
+
+            if (qtdRows == 0)
+                return;
+
+            double altura = 100.0 / qtdRows;
+            int ordem = 1;
+
+            for (int i = 0; i < qtdRows; i++)
+            {
+                DataGridViewRow dgvRow = dataGridView1.Rows[i];
+
+                // --- CodCanal1
+                string canalNome1 = dgvRow.Cells["Canal"].Value?.ToString() ?? "";
+                var foundRows1 = GlobVar.tbl_CadCanal.Select($"NomeCanal = '{canalNome1.Replace("'", "''")}'"); // Protege de aspas simples
+                int codCanal1 = foundRows1.Length > 0 ? Convert.ToInt32(foundRows1[0]["CodCanal"]) : -1;
+
+                // --- CodCanal2 (referência)
+                string canalNome2 = dgvRow.Cells["Referencia"].Value?.ToString() ?? "";
+                int codCanal2 = -1;
+                if (!string.IsNullOrWhiteSpace(canalNome2))
+                {
+                    var foundRows2 = GlobVar.tbl_CadCanal.Select($"NomeCanal = '{canalNome2.Replace("'", "''")}'");
+                    codCanal2 = foundRows2.Length > 0 ? Convert.ToInt32(foundRows2[0]["CodCanal"]) : -1;
+                }
+
+                // --- QtdAmostras
+                int qtdAmostras = Convert.ToInt32(dgvRow.Cells["QtdAmostras"].Value);
+
+                // --- CodTipoCanal
+                string tipoCanal = dgvRow.Cells["TipoCanal"].Value?.ToString() ?? "";
+                var foundTipo = GlobVar.tbl_CadTipoCanal.Select($"DescrTipo = '{tipoCanal.Replace("'", "''")}'");
+                int codTipoCanal = foundTipo.Length > 0 ? Convert.ToInt32(foundTipo[0]["CodTipo"]) : -1;
+
+                // --- Legenda (Título)
+                string legenda = dgvRow.Cells["Titulo"].Value?.ToString() ?? "";
+
+                // --- AmplitudeMin/Max (usando o mesmo valor)
+                int amplitude = Convert.ToInt32(dgvRow.Cells["Amplitude"].Value);
+
+                // --- Cor
+                int cor = Math.Abs(Convert.ToInt32(dgvRow.Cells["Cor"].Value));
+
+                // --- InverteSinal e AutoEscala
+                bool inverteSinal = Convert.ToBoolean(dgvRow.Cells["InverteSinal"].Value);
+                bool autoEscala = Convert.ToBoolean(dgvRow.Cells["AutoEscala"].Value);
+
+                int? GetNullableInt(object cellValue)
+                {
+                    if (cellValue == null || string.IsNullOrWhiteSpace(cellValue.ToString()))
+                        return null;
+                    if (int.TryParse(cellValue.ToString(), out int result))
+                        return result;
+                    return null;
+                }
+
+                // Exemplo de uso:
+                var passaBaixa = GetNullableInt(dgvRow.Cells["PassaBaixa"].Value);
+                var passaAlta = GetNullableInt(dgvRow.Cells["PassaAlta"].Value);
+                var notch = GetNullableInt(dgvRow.Cells["Notch"].Value);
+                
+                // --- Ordem
+                int ordemAtual = ordem++;
+
+                // --- Altura (mesmo valor para todos)
+                double alturaValor = altura;
+
+                // --- Comando SQL
+                string sql = @"INSERT INTO tbl_MontCanal (
+    CodMontagem, CodCanal1, CodCanal2, QtdAmostras, CodTipoCanal, Legenda, AmplitudeMin, AmplitudeMax, Cor, Ordem, Altura, InverteSinal, AutoEscala, PassaBaixa, PassaAlta, EliminaFreqInf, EliminaFreqSup, Notch, LimiteInferior, LimiteSuperior
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                using (var cmd = new OleDbCommand(sql, GlobVar.ConnectionConfig))
+                {
+                    cmd.Parameters.AddWithValue("?", (int)novoCodMontagem);
+                    cmd.Parameters.AddWithValue("?", (int)codCanal1);
+                    cmd.Parameters.AddWithValue("?", (int)codCanal2);
+                    cmd.Parameters.AddWithValue("?", (int)qtdAmostras);
+                    cmd.Parameters.AddWithValue("?", (int)codTipoCanal);
+                    cmd.Parameters.AddWithValue("?", legenda ?? "");
+                    cmd.Parameters.AddWithValue("?", Convert.ToDouble(amplitude));
+                    cmd.Parameters.AddWithValue("?", Convert.ToDouble(amplitude));
+                    cmd.Parameters.AddWithValue("?", (int)cor);
+                    cmd.Parameters.AddWithValue("?", (int)ordemAtual);
+                    cmd.Parameters.AddWithValue("?", Convert.ToDouble(alturaValor));
+                    cmd.Parameters.AddWithValue("?", Convert.ToBoolean(inverteSinal));
+                    cmd.Parameters.AddWithValue("?", Convert.ToBoolean(autoEscala));
+                    cmd.Parameters.AddWithValue("?", (object)passaBaixa ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", (object)passaAlta ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", DBNull.Value); 
+                    cmd.Parameters.AddWithValue("?", (object)notch ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", DBNull.Value);
+
+                    cmd.ExecuteNonQuery();
+                }
+                // --- Atualizando DataTable na memória
+                DataRow novaRow = GlobVar.tbl_MontCanal.NewRow();
+                novaRow["CodMontagem"] = novoCodMontagem;
+                novaRow["CodCanal1"] = codCanal1;
+                novaRow["CodCanal2"] = codCanal2;
+                novaRow["QtdAmostras"] = qtdAmostras;
+                novaRow["CodTipoCanal"] = codTipoCanal;
+                novaRow["Legenda"] = legenda;
+                novaRow["AmplitudeMin"] = amplitude;
+                novaRow["AmplitudeMax"] = amplitude;
+                novaRow["Cor"] = cor;
+                novaRow["Ordem"] = ordemAtual;
+                novaRow["Altura"] = alturaValor;
+                novaRow["InverteSinal"] = inverteSinal;
+                novaRow["AutoEscala"] = autoEscala;
+                novaRow["PassaBaixa"] = (object)passaBaixa ?? DBNull.Value;
+                novaRow["PassaAlta"] = (object)passaAlta ?? DBNull.Value;
+                novaRow["EliminaFreqInf"] = DBNull.Value;
+                novaRow["EliminaFreqSup"] = DBNull.Value;
+                novaRow["Notch"] = (object)notch ?? DBNull.Value;
+                novaRow["LimiteInferior"] = DBNull.Value;
+                novaRow["LimiteSuperior"] = DBNull.Value;
+
+                GlobVar.tbl_MontCanal.Rows.Add(novaRow);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (TodasLinhasVazias(dataGridView1))
+            {
+                MessageBox.Show("Crie um canal para para a nova Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (string.IsNullOrEmpty(NovaMontagem.Text))
+            {
+                MessageBox.Show("Escolha um nome para a sua Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int maximo = 0;
+            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+            {
+                if (row["CodMontagem"] != DBNull.Value && !string.IsNullOrWhiteSpace(row["CodMontagem"].ToString()))
+                {
+                    int valorAtual;
+                    if (int.TryParse(row["CodMontagem"].ToString(), out valorAtual))
+                    {
+                        if (valorAtual > maximo)
+                            maximo = valorAtual;
+                    }
+                }
+            }
+            int novoCodMontagem = maximo + 1;
+
+            string descrMontagem = NovaMontagem.Text.Trim();
+            bool padrao = MontagemPadrao.Checked;
+
+            int teclaRapida = -1;
+            if (!string.IsNullOrWhiteSpace(TeclaRapida.Text))
+            {
+                int tmp;
+                if (int.TryParse(TeclaRapida.Text, out tmp))
+                    teclaRapida = tmp;
+            }
+
+            object tipoMontagem = DBNull.Value;
+            foreach (RadioButton rb in groupBox1.Controls.OfType<RadioButton>())
+            {
+                if (rb.Checked)
+                {
+                    tipoMontagem = rb.Tag ?? DBNull.Value;
+                    break;
+                }
+            }
+
+            object laudoPadrao = DBNull.Value;
+
+            // Comando SQL, ajuste os nomes dos campos se necessário!
+            string insertSql = "INSERT INTO tbl_Montagem (CodMontagem, DescrMontagem, Padrao, TeclaRapida, TipoMontagem, LaudoPadrao) " +
+                               "VALUES (?, ?, ?, ?, ?, ?)";
+
+            string insertSqlMontagem = "INSERT INTO tbl_MontCanal";
+            criandoMontCanal(novoCodMontagem);
+            try
+            {
+                using (OleDbCommand cmd = new OleDbCommand(insertSql, GlobVar.ConnectionConfig))
+                {
+                    cmd.Parameters.AddWithValue("?", novoCodMontagem);
+                    cmd.Parameters.AddWithValue("?", descrMontagem);
+                    cmd.Parameters.AddWithValue("?", padrao); // OleDb aceita bool como true/false direto
+                    cmd.Parameters.AddWithValue("?", teclaRapida);
+                    cmd.Parameters.AddWithValue("?", tipoMontagem ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", laudoPadrao);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected == 1)
+                    {
+                        // Atualiza a tabela na memória, se desejar manter sincronizado:
+                        DataRow novaRow = GlobVar.tbl_Montagem.NewRow();
+                        novaRow["CodMontagem"] = novoCodMontagem;
+                        novaRow["DescrMontagem"] = descrMontagem;
+                        novaRow["Padrao"] = padrao;
+                        novaRow["TeclaRapida"] = teclaRapida;
+                        novaRow["TipoMontagem"] = tipoMontagem ?? DBNull.Value;
+                        novaRow["LaudoPadrao"] = laudoPadrao;
+                        GlobVar.tbl_Montagem.Rows.Add(novaRow);
+
+                        Montagem.Items.Add(new ComboItem(descrMontagem, novoCodMontagem));
+                        Montagem.SelectedIndex = Montagem.Items.Count - 1;
+
+                        MessageBox.Show("Montagem cadastrada e salva no banco com sucesso!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Erro ao salvar no banco: Nenhuma linha afetada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao salvar no banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
 
