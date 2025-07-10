@@ -49,6 +49,13 @@ namespace PlotagemOpenGL.FormesMenuPanels
             GlobVar.ConnectionConfig = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};");
             GlobVar.ConnectionConfig.Open();
 
+            this.FormClosing += MontagemForm_FormClosing;
+
+        }
+
+        private void MontagemForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            GlobVar.ConnectionConfig.Close();
         }
 
         private void RefBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1140,7 +1147,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 var passaBaixa = GetNullableInt(dgvRow.Cells["PassaBaixa"].Value);
                 var passaAlta = GetNullableInt(dgvRow.Cells["PassaAlta"].Value);
                 var notch = GetNullableInt(dgvRow.Cells["Notch"].Value);
-                
+
                 // --- Ordem
                 int ordemAtual = ordem++;
 
@@ -1170,7 +1177,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     cmd.Parameters.AddWithValue("?", (object)passaBaixa ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("?", (object)passaAlta ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("?", DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", DBNull.Value); 
+                    cmd.Parameters.AddWithValue("?", DBNull.Value);
                     cmd.Parameters.AddWithValue("?", (object)notch ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("?", DBNull.Value);
                     cmd.Parameters.AddWithValue("?", DBNull.Value);
@@ -1288,19 +1295,167 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         Montagem.Items.Add(new ComboItem(descrMontagem, novoCodMontagem));
                         Montagem.SelectedIndex = Montagem.Items.Count - 1;
 
-                        MessageBox.Show("Montagem cadastrada e salva no banco com sucesso!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Montagem cadastrada e salva com sucesso!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show("Erro ao salvar no banco: Nenhuma linha afetada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Erro ao salvar: Nenhuma linha afetada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao salvar no banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Erro ao salvar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void Copiar_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Montagem.Text))
+            {
+                MessageBox.Show("Selecione uma montagem que deseja copiar", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (string.IsNullOrEmpty(NovaMontagem.Text))
+            {
+                MessageBox.Show("Escolha um nome para a sua Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int maximo = 0;
+            foreach (DataRow row in GlobVar.tbl_Montagem.Rows)
+            {
+                if (row["CodMontagem"] != DBNull.Value && !string.IsNullOrWhiteSpace(row["CodMontagem"].ToString()))
+                {
+                    int valorAtual;
+                    if (int.TryParse(row["CodMontagem"].ToString(), out valorAtual))
+                    {
+                        if (valorAtual > maximo)
+                            maximo = valorAtual;
+                    }
+                }
+            }
+            int novoCodMontagem = maximo + 1;
+
+            string descrMontagem = NovaMontagem.Text.Trim();
+            bool padrao = MontagemPadrao.Checked;
+
+            int teclaRapida = -1;
+            if (!string.IsNullOrWhiteSpace(TeclaRapida.Text))
+            {
+                int tmp;
+                if (int.TryParse(TeclaRapida.Text, out tmp))
+                    teclaRapida = tmp;
+            }
+
+            object tipoMontagem = DBNull.Value;
+            foreach (RadioButton rb in groupBox1.Controls.OfType<RadioButton>())
+            {
+                if (rb.Checked)
+                {
+                    tipoMontagem = rb.Tag ?? DBNull.Value;
+                    break;
+                }
+            }
+
+            object laudoPadrao = DBNull.Value;
+
+            // Comando SQL, ajuste os nomes dos campos se necessário!
+            string insertSql = "INSERT INTO tbl_Montagem (CodMontagem, DescrMontagem, Padrao, TeclaRapida, TipoMontagem, LaudoPadrao) " +
+                               "VALUES (?, ?, ?, ?, ?, ?)";
+
+            string insertSqlMontagem = "INSERT INTO tbl_MontCanal";
+            criandoMontCanal(novoCodMontagem);
+            try
+            {
+                using (OleDbCommand cmd = new OleDbCommand(insertSql, GlobVar.ConnectionConfig))
+                {
+                    cmd.Parameters.AddWithValue("?", novoCodMontagem);
+                    cmd.Parameters.AddWithValue("?", descrMontagem);
+                    cmd.Parameters.AddWithValue("?", padrao); // OleDb aceita bool como true/false direto
+                    cmd.Parameters.AddWithValue("?", teclaRapida);
+                    cmd.Parameters.AddWithValue("?", tipoMontagem ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", laudoPadrao);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected == 1)
+                    {
+                        // Atualiza a tabela na memória, se desejar manter sincronizado:
+                        DataRow novaRow = GlobVar.tbl_Montagem.NewRow();
+                        novaRow["CodMontagem"] = novoCodMontagem;
+                        novaRow["DescrMontagem"] = descrMontagem;
+                        novaRow["Padrao"] = padrao;
+                        novaRow["TeclaRapida"] = teclaRapida;
+                        novaRow["TipoMontagem"] = tipoMontagem ?? DBNull.Value;
+                        novaRow["LaudoPadrao"] = laudoPadrao;
+                        GlobVar.tbl_Montagem.Rows.Add(novaRow);
+
+                        Montagem.Items.Add(new ComboItem(descrMontagem, novoCodMontagem));
+                        Montagem.SelectedIndex = Montagem.Items.Count - 1;
+
+                        MessageBox.Show("Montagem copiada e salva com sucesso!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Erro ao salvar: Nenhuma linha afetada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao salvar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
+        private void Gravar_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Montagem.Text))
+            {
+                MessageBox.Show("Selecione uma Montagem", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var row = GlobVar.tbl_Montagem.AsEnumerable()
+                .Where(rw => rw.Field<string>("DescrMontagem") == Montagem.Text)
+                .FirstOrDefault();
+
+            if (row == null)
+            {
+                MessageBox.Show("Montagem não encontrada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int CodMontagem = Convert.ToInt32(row["CodMontagem"]);
+
+            string sqlCanal = "DELETE FROM tbl_MontCanal WHERE CodMontagem = ?";
+
+            // Ordem: primeiro tbl_MontCanal, depois tbl_Montagem (por integridade referencial)
+            try
+            {
+
+                // Exclui canais vinculados
+                using (OleDbCommand cmdCanal = new OleDbCommand(sqlCanal, GlobVar.ConnectionConfig))
+                {
+                    cmdCanal.Parameters.AddWithValue("?", CodMontagem);
+                    cmdCanal.ExecuteNonQuery();
+                }
+
+                criandoMontCanal(CodMontagem);
+
+                MessageBox.Show("Aletracoes salvas", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao gravar mudancas na montagem: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+            }
+
+
+        }
+
     }
 }
 

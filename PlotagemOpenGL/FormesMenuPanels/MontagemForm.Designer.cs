@@ -200,6 +200,7 @@
             Copiar.TabIndex = 12;
             Copiar.Text = "Copiar";
             Copiar.UseVisualStyleBackColor = true;
+            Copiar.Click += Copiar_Click;
             // 
             // NovaMontagem
             // 
@@ -246,6 +247,7 @@
             Gravar.TabIndex = 6;
             Gravar.Text = "Gravar";
             Gravar.UseVisualStyleBackColor = true;
+            Gravar.Click += Gravar_Click;
             // 
             // groupBox1
             // 
