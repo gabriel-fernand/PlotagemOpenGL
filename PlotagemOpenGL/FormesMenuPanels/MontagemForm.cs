@@ -1014,7 +1014,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
         private void Fechar_Click(object sender, EventArgs e)
         {
-            GlobVar.ConnectionConfig.Close();
             this.Close();
         }
 
