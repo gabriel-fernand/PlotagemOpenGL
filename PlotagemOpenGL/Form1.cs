@@ -37,6 +37,7 @@ using PlotagemOpenGL.BD;
 using System.Threading;
 using PlotagemOpenGL.Hipnograma;
 using PlotagemOpenGL.LaudoForm;
+using System.Runtime.InteropServices;
 //using KeyCode = UnityEngine.KeyCode;
 
 
@@ -199,7 +200,18 @@ namespace PlotagemOpenGL
 
         [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
         static extern int LoadNvApi32();
+        // Constantes Win32
+        private const int WM_SYSCOMMAND = 0x0112;
+        private const int SC_MAXIMIZE = 0xF030;
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+        // Chame este método para maximizar como se fosse o usuário clicando no botão!
+        private void MaximizarComoBotao()
+        {
+            SendMessage(this.Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+        }
         private KeyChecker keyChecker;
         public static Tela_Plotagem Instance { get; private set; }
         public static bool videoIni = false;
@@ -208,6 +220,13 @@ namespace PlotagemOpenGL
         {
             try
             {
+                using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
+                {
+                    InitializeComponent();
+                    ConfigurarTooltips(painelComando); // Configura os tooltips para todos os botões do painel principal
+                    toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 página");
+                }
+                /*
                 // Obtém as dimensões da tela principal
                 int larguraTela = Screen.PrimaryScreen.WorkingArea.Width;
                 int alturaTela = Screen.PrimaryScreen.WorkingArea.Height;
@@ -216,13 +235,7 @@ namespace PlotagemOpenGL
                 this.StartPosition = FormStartPosition.Manual;
                 this.Size = new Size((int)(larguraTela * 0.8), (int)(alturaTela * 0.8)); // 80% da largura e altura da tela
                 this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
-
-                using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
-                {
-                    InitializeComponent();
-                    ConfigurarTooltips(painelComando); // Configura os tooltips para todos os botões do painel principal
-                    toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 página");
-                }
+                */
             }
             catch (Exception e)
             {
@@ -417,6 +430,19 @@ namespace PlotagemOpenGL
                     chamarTelinhaVid();
                     AnaliseCO2.GetPrimeiroCO2(Path.GetFileNameWithoutExtension(GlobVar.textFile));
                     F_Idioma();
+                    //this.WindowState = FormWindowState.Maximized;
+                    // Obtém as dimensões da tela principal
+
+                    //MaximizarComoBotao();
+                    // Obtém as dimensões da tela principal
+                    int larguraTela = Screen.PrimaryScreen.WorkingArea.Width;
+                    int alturaTela = Screen.PrimaryScreen.WorkingArea.Height;
+
+                    // Define o tamanho e a posição inicial do formulário
+                    this.StartPosition = FormStartPosition.Manual;
+                    this.Size = new Size((int)(larguraTela * 0.95), (int)(alturaTela * 0.95)); // 80% da largura e altura da tela
+                    this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
+                    //MaximizarComoBotao();
 
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
                     GlobVar.ConnectionBDdat.Open();
@@ -2473,6 +2499,9 @@ namespace PlotagemOpenGL
 
                 using (CarregandoAltMontagem telaLoad = new CarregandoAltMontagem())
                 {
+                    if (MarcaDAguaNaTelaAtiva) {
+                    MarcaDAguaNaTela_Click(Tela_Plotagem.MarcaNoGraf, EventArgs.Empty);
+                    }
                     // Processo principal
                     cronometro4.Reset();
                     concluido = "";
@@ -5020,7 +5049,7 @@ namespace PlotagemOpenGL
         }
         public static bool MarcaDAguaNaTelaAtiva = false;
         private const string NomePainelMarcaDagua = "painelMarcaDagua";
-        private const int AlturaMarcaDagua = 30; // altura desejada do painel transparente
+        public static int AlturaMarcaDagua = 30; // altura desejada do painel transparente
 
         private void MarcaDAguaNaTela_Click(object sender, EventArgs e)
         {
@@ -5107,11 +5136,13 @@ namespace PlotagemOpenGL
 
                 // Painel transparente precisa ser o primeiro na lista de Controls (z-order)
                 painelExames.Controls.Add(marca);
-                painelExames.Controls.SetChildIndex(marca, 0); // Garante que ele fique atrás se for necessário
+                painelExames.Controls.SetChildIndex(marca, 0);
+
                 marca.Visible = false;
                 // Conta apenas os painéis de canais (ignorando o da marca d'água)
                 var paineisCanais = painelExames.Controls
                     .OfType<Panel>()
+                    .Where(p => p.Location.X != -500)
                     .OrderBy(p => p.Top)
                     .ToList();
                 int qtd = MarcaDAguaNaTelaAtiva ? paineisCanais.Count : GlobVar.tbl_MontagemSelecionada.Rows.Count;
@@ -5119,9 +5150,13 @@ namespace PlotagemOpenGL
                 int normalSize = painelExames.Height / qtd;
 
                 int lastTop = 0;
-
+                
                 foreach (Panel pn in painelExames.Controls)
                 {
+                    if(pn.Location.X < 0)
+                    {
+                        continue;
+                    }
                     pn.Top = lastTop;
                     pn.Height = normalSize;
                     lastTop += normalSize;
@@ -5130,6 +5165,10 @@ namespace PlotagemOpenGL
                 int indiot = 0;
                 foreach (Panel pn in Tela_Plotagem.painelExames.Controls)
                 {
+                    if (pn.Location.X < 0)
+                    {
+                        continue;
+                    }
                     int topPn = pn.Top;
                     int auuuu = Math.Abs(pn.Top - Tela_Plotagem.painelExames.Height);
 
@@ -5142,27 +5181,73 @@ namespace PlotagemOpenGL
                 }
                 UpdatePanelHeightInDataTable();
                 AjustarFonteDosLabels();
-
                 UpdatePanelHeightInDataTable();
                 AjustarFonteDosLabels();
                 AjustarBotoesMinusEPlus();
-                RepositionPanels();
+                ReorganizaPaineis(marca);
             }
 
             UpdateInicioTela();
             TelaClearAndReload();
         }
-        private void ReorganizaPaineis()
+        private void ReorganizaPaineis(Panel marca)
         {
             int offsetY = MarcaDAguaNaTelaAtiva ? AlturaMarcaDagua : 0;
 
+            List<Panel> listaPainels = new List<Panel>();
+            listaPainels.Add(marca);
             foreach (Control ctrl in painelExames.Controls)
             {
-                if (ctrl is Panel p && p.Name != NomePainelMarcaDagua)
+                if (ctrl is Panel p)
                 {
-                    p.Location = new Point(p.Location.X, offsetY);
+                    if(p.Location.X != -500 || !p.Visible)
+                    {
+                        if (p.Visible)
+                        {
+                            listaPainels.Add(p);
+                        }
+                    }
                 }
             }
+
+
+            const int spacing = 0;
+            int y = 0; // Coordenada inicial Y para o reposicionamento
+            foreach (Panel panel in listaPainels)
+            {
+                // Atualizar a posição Y do painel
+                panel.Top = y;
+
+                // Atualizar a posição Y para o próximo painel, considerando o espaçamento
+                y = panel.Bottom + spacing;
+            }
+
+            List<int> agor = new List<int>();
+            // Atualizar o array `desenhoLoc` com a nova posição dos painéis visíveis
+            int index = 0;
+            foreach (Panel pn in listaPainels)
+            {
+                // Calcular a posição do centro do painel e armazenar em `GlobVar.desenhoLoc`
+                int meioPn = pn.Top + (pn.Height / 2);
+                agor.Add(meioPn);
+
+                index++;
+            }
+            GlobVar.desenhoLoc = new float[agor.Count];
+            index = 0;
+            for (int i = 0; i < GlobVar.desenhoLoc.Length; i++)
+            {
+                GlobVar.desenhoLoc[i] = agor[i];
+            }
+            // Caso tenha menos painéis visíveis do que o tamanho original de `GlobVar.desenhoLoc`,
+            // zera os valores restantes
+            for (int i = index; i < GlobVar.desenhoLoc.Length; i++)
+            {
+                GlobVar.desenhoLoc[i] = 0;
+            }
+
+
+
         }
 
         public void CalcularQtdImpressao()

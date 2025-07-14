@@ -3762,7 +3762,7 @@ namespace PlotagemOpenGL
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1920, 991);
+            ClientSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
             Controls.Add(menuStrip1);
             Controls.Add(painelExames);
             Controls.Add(painelTelaGl);
@@ -3773,7 +3773,7 @@ namespace PlotagemOpenGL
             Name = "Tela_Plotagem";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tela_Plotagem";
-            WindowState = FormWindowState.Maximized;
+            //WindowState = FormWindowState.Maximized;
             ResizeBegin += Tela_Plotagem_ResizeBegin;
             ((System.ComponentModel.ISupportInitialize)openglControl1).EndInit();
             contextMenuStripOpenGl.ResumeLayout(false);

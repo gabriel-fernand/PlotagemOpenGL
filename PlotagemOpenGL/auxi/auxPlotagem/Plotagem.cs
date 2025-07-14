@@ -429,7 +429,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     // Aqui você pode ajustar manualmente o fator para centralizar o texto
                     // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
                     int posX = ((larguraTela / (tempoEmTela) - ((int)fontsize / 2))) / 2;  // Ajuste para centralizar horizontalmente
-                    int posY = (int)(GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1] - (int)tamanhostring.Height / 6);
+                    int posY = (int)((Tela_Plotagem.painelExames.Height - (Tela_Plotagem.AlturaMarcaDagua / 2)) - (int)tamanhostring.Height / 6);
                     Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
                     // Primeira chamada para preparar o OpenGL para o texto
                     gl.DrawText(0, posY, color[0], color[1], color[2], "Arial Narrow", meh, ""); // Prepara o OpenGL
@@ -447,15 +447,15 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     // Linha da esquerda até o meio
                     gl.Color(color[0], color[1], color[2]);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
-                    gl.Vertex(GlobVar.indice + midTras, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.Vertex(GlobVar.indice, (Tela_Plotagem.painelExames.Height - (Tela_Plotagem.AlturaMarcaDagua / 2)));
+                    gl.Vertex(GlobVar.indice + midTras, (Tela_Plotagem.painelExames.Height - (Tela_Plotagem.AlturaMarcaDagua / 2)));
                     gl.End();
 
                     // Linha do meio até a direita
                     gl.Color(color[0], color[1], color[2]);
                     gl.Begin(OpenGL.GL_LINE_STRIP);
-                    gl.Vertex(GlobVar.indice + midFrente, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
-                    gl.Vertex(GlobVar.maximaVect, GlobVar.desenhoLoc[GlobVar.desenhoLoc.Length - 1]);
+                    gl.Vertex(GlobVar.indice + midFrente, (Tela_Plotagem.painelExames.Height - (Tela_Plotagem.AlturaMarcaDagua / 2)));
+                    gl.Vertex(GlobVar.maximaVect, (Tela_Plotagem.painelExames.Height - (Tela_Plotagem.AlturaMarcaDagua / 2)));
                     gl.End();
 
                     // Finaliza o desenho
