@@ -226,7 +226,6 @@ namespace PlotagemOpenGL
                     ConfigurarTooltips(painelComando); // Configura os tooltips para todos os botões do painel principal
                     toolTip2.SetToolTip(QuatroAnterior, "Voltar 1 página");
                 }
-                /*
                 // Obtém as dimensões da tela principal
                 int larguraTela = Screen.PrimaryScreen.WorkingArea.Width;
                 int alturaTela = Screen.PrimaryScreen.WorkingArea.Height;
@@ -235,7 +234,6 @@ namespace PlotagemOpenGL
                 this.StartPosition = FormStartPosition.Manual;
                 this.Size = new Size((int)(larguraTela * 0.8), (int)(alturaTela * 0.8)); // 80% da largura e altura da tela
                 this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
-                */
             }
             catch (Exception e)
             {
@@ -433,15 +431,6 @@ namespace PlotagemOpenGL
                     //this.WindowState = FormWindowState.Maximized;
                     // Obtém as dimensões da tela principal
 
-                    //MaximizarComoBotao();
-                    // Obtém as dimensões da tela principal
-                    int larguraTela = Screen.PrimaryScreen.WorkingArea.Width;
-                    int alturaTela = Screen.PrimaryScreen.WorkingArea.Height;
-
-                    // Define o tamanho e a posição inicial do formulário
-                    this.StartPosition = FormStartPosition.Manual;
-                    this.Size = new Size((int)(larguraTela * 0.95), (int)(alturaTela * 0.95)); // 80% da largura e altura da tela
-                    this.Location = new Point((larguraTela - this.Width) / 2, (alturaTela - this.Height) / 2); // Centraliza o formulário na tela
                     //MaximizarComoBotao();
 
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");

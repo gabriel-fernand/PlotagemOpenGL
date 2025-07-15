@@ -50,12 +50,8 @@
             PgparaImpressao = new System.Windows.Forms.TextBox();
             PeriodosDeMapeamento = new System.Windows.Forms.TextBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
-            Bebe = new System.Windows.Forms.RadioButton();
-            Infantil = new System.Windows.Forms.RadioButton();
-            Adulto = new System.Windows.Forms.RadioButton();
             txtArquivo = new System.Windows.Forms.TextBox();
             Arquivo = new System.Windows.Forms.Label();
-            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // txtNome
@@ -368,51 +364,12 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(Bebe);
-            groupBox1.Controls.Add(Infantil);
-            groupBox1.Controls.Add(Adulto);
             groupBox1.Font = new System.Drawing.Font("Arial", 10.2F);
             groupBox1.Location = new System.Drawing.Point(517, 113);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(123, 133);
             groupBox1.TabIndex = 30;
             groupBox1.TabStop = false;
-            // 
-            // Bebe
-            // 
-            Bebe.AutoSize = true;
-            Bebe.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Bebe.Location = new System.Drawing.Point(15, 84);
-            Bebe.Name = "Bebe";
-            Bebe.Size = new System.Drawing.Size(68, 23);
-            Bebe.TabIndex = 2;
-            Bebe.TabStop = true;
-            Bebe.Text = "Bebe";
-            Bebe.UseVisualStyleBackColor = true;
-            // 
-            // Infantil
-            // 
-            Infantil.AutoSize = true;
-            Infantil.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Infantil.Location = new System.Drawing.Point(15, 55);
-            Infantil.Name = "Infantil";
-            Infantil.Size = new System.Drawing.Size(78, 23);
-            Infantil.TabIndex = 1;
-            Infantil.TabStop = true;
-            Infantil.Text = "Infantil";
-            Infantil.UseVisualStyleBackColor = true;
-            // 
-            // Adulto
-            // 
-            Adulto.AutoSize = true;
-            Adulto.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            Adulto.Location = new System.Drawing.Point(15, 26);
-            Adulto.Name = "Adulto";
-            Adulto.Size = new System.Drawing.Size(75, 23);
-            Adulto.TabIndex = 0;
-            Adulto.TabStop = true;
-            Adulto.Text = "Adulto";
-            Adulto.UseVisualStyleBackColor = true;
             // 
             // txtArquivo
             // 
@@ -472,8 +429,6 @@
             Controls.Add(dtpDataExame);
             Name = "ProfileForm";
             Text = "Dados do Exame";
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -495,9 +450,6 @@
         private System.Windows.Forms.TextBox PgparaImpressao;
         private System.Windows.Forms.TextBox PeriodosDeMapeamento;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton Bebe;
-        private System.Windows.Forms.RadioButton Infantil;
-        private System.Windows.Forms.RadioButton Adulto;
         private System.Windows.Forms.TextBox txtArquivo;
         private System.Windows.Forms.Label Arquivo;
     }

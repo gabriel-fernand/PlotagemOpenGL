@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.OleDb;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,9 +15,22 @@ namespace PlotagemOpenGL.FormesMenuPanels
         private DataRow resumoExame;
         int codPaci;
 
+        private BloqueavelRadioButton Adulto;
+        private BloqueavelRadioButton Infantil;
+        private BloqueavelRadioButton Bebe;
+
         public ProfileForm(int codPaciente)
         {
             InitializeComponent();
+            Adulto = new BloqueavelRadioButton() { Text = "Adulto", Location = new Point(15, 26), Tag = "A" };
+            Infantil = new BloqueavelRadioButton() { Text = "Infantil", Location = new Point(15, 55), Tag = "I" };
+            Bebe = new BloqueavelRadioButton() { Text = "Bebê", Location = new Point(15, 84), Tag = "B" };
+            groupBox1.Controls.AddRange(new Control[] { Adulto, Infantil, Bebe });
+
+            Adulto.CheckedChanged += RadioGroup_CheckedChanged;
+            Infantil.CheckedChanged += RadioGroup_CheckedChanged;
+            Bebe.CheckedChanged += RadioGroup_CheckedChanged;
+
             codPaci = codPaciente;
             txtNome.MaxLength = 50; // Limite de 50 caracteres para o nome
             txtEmail.MaxLength = 80; // Limite para o email, ajuste conforme necessário
@@ -48,6 +62,26 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 txtObservacao.Text = dadosExame.Field<string>("Observacao") ?? string.Empty;
                 txtArquivo.Text = GlobVar.textFile.Substring(12, 8);
 
+                string ADInf = dadosExame["AdInf"].ToString();
+                if (!string.IsNullOrEmpty(ADInf))
+                {
+                    switch (ADInf)
+                    {
+                        case "A":
+                            Adulto.Checked = true;
+                            break;
+                        case "I":
+                            Infantil.Checked = true;
+                            break;
+                        case "B":
+                            Bebe.Checked = true;
+                            break;
+                        case "C":
+                            Infantil.Checked = true;
+                            break;
+                    }
+                }
+
                 var pagSel = GlobVar.tbl_SelImpressao.AsEnumerable().OrderByDescending(row => row.Field<int>("CodImpressao")).First();
 
                 // Obtém os horários de início e fim do exame
@@ -66,9 +100,66 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 // Atribui a duração ao campo txtDuracao
                 txtDuracao.Text = duracao.ToString(@"hh\:mm\:ss");
                 PgparaImpressao.Text = Convert.ToString(pagSel[0]);
+
+                bloqueio = true;
+                SetBloqueioRadioButtonsNoGroupBox(true); // Deslbloqueia todos do groupBox1
+                BloquearRadioButtons(true);
+
             }
         }
+        private bool bloqueio = true;
 
+        private void SetBloqueioRadioButtonsNoGroupBox(bool bloqueio)
+        {
+            foreach (Control ctrl in groupBox1.Controls)
+            {
+                if (ctrl is BloqueavelRadioButton rb)
+                    rb.Bloqueado = bloqueio;
+            }
+        }
+        private Panel overlayPanel = null;
+
+
+
+        private void BloquearRadioButtons(bool bloquear)
+        {
+            if (bloquear)
+            {
+                if (overlayPanel == null)
+                {
+                    overlayPanel = new Panel
+                    {
+                        BackColor = Color.Transparent,
+                        Location = groupBox1.Location,
+                        Size = groupBox1.ClientSize,
+                        Cursor = Cursors.No // Opcional: mostra cursor de bloqueado
+                    };
+                    overlayPanel.BringToFront();
+                    groupBox1.Controls.Add(overlayPanel);
+                    overlayPanel.BringToFront();
+                }
+            }
+            else
+            {
+                if (overlayPanel != null)
+                {
+                    groupBox1.Controls.Remove(overlayPanel);
+                    overlayPanel.Dispose();
+                    overlayPanel = null;
+                }
+            }
+        }
+        private void RadioGroup_CheckedChanged(object sender, EventArgs e)
+        {
+            /*
+            if (bloqueio)
+            {
+                var rb = (RadioButton)sender;
+                rb.Checked = dadosExame["AdInf"].ToString() == rb.Tag.ToString();
+            }
+            */
+        }
+        // Associe para os três
         private void btnAlterar_Click(object sender, EventArgs e)
         {
             // Alterna o modo de edição
@@ -84,6 +175,10 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 txtMedicoSolicitante.ReadOnly = false;
                 txtRg.ReadOnly = false;
                 txtObservacao.ReadOnly = false;
+                bloqueio = false;
+
+                SetBloqueioRadioButtonsNoGroupBox(false); // Bloqueia todos do groupBox1
+                BloquearRadioButtons(false);
             }
             else
             {
@@ -95,6 +190,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 txtMedicoSolicitante.ReadOnly = true;
                 txtRg.ReadOnly = true;
                 txtObservacao.ReadOnly = true;
+                bloqueio = true;
+                SetBloqueioRadioButtonsNoGroupBox(true); // Deslbloqueia todos do groupBox1
+                BloquearRadioButtons(true);
             }
 
             dtpDataNascimento.Enabled = editMode;
@@ -120,8 +218,33 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 dadosExame["MedicoSolicitante"] = string.IsNullOrWhiteSpace(txtMedicoSolicitante.Text) ? DBNull.Value : txtMedicoSolicitante.Text;
                 dadosExame["Rg"] = string.IsNullOrWhiteSpace(txtRg.Text) ? DBNull.Value : txtRg.Text;
                 dadosExame["Observacao"] = string.IsNullOrWhiteSpace(txtObservacao.Text) ? DBNull.Value : txtObservacao.Text;
+                dadosExame["AdInf"] = Adulto.Checked ? "A" : Infantil.Checked ? "I" : "B";
+                //AtualizarDadosExame(codPaci);
 
-                AtualizarDadosExame(codPaci);
+                string sql = @"UPDATE tbl_DadosExame SET
+        Nome = ?, Altura = ?, Peso = ?, DataNascimento = ?, IdadeAno = ?, Sexo = ?, DataRealizacao = ?,
+        Email = ?, Cpf = ?, MedicoSolicitante = ?, Rg = ?, Observacao = ?, AdInf = ?
+        WHERE CodPaciente = ?"; // Ajuste conforme o nome da PK!
+
+                using (var cmd = new OleDbCommand(sql, GlobVar.ConnectionBDdat))
+                {
+                    cmd.Parameters.AddWithValue("?", dadosExame["Nome"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Altura"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Peso"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["DataNascimento"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["IdadeAno"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Sexo"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["DataRealizacao"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Email"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Cpf"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["MedicoSolicitante"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Rg"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["Observacao"]);
+                    cmd.Parameters.AddWithValue("?", dadosExame["AdInf"]);
+                    cmd.Parameters.AddWithValue("?", codPaci); // ou outro PK
+
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -340,4 +463,21 @@ namespace PlotagemOpenGL.FormesMenuPanels
         }
 
     }
+}
+
+
+public class BloqueavelRadioButton : RadioButton
+{
+    public bool Bloqueado { get; set; } = false;
+
+    protected override void WndProc(ref Message m)
+    {
+        // 0x201 = WM_LBUTTONDOWN
+        // 0x203 = WM_LBUTTONDBLCLK
+        if (Bloqueado && (m.Msg == 0x201 || m.Msg == 0x203))
+            return;
+        base.WndProc(ref m);
+    }
+
+
 }
