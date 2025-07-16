@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Odbc;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -44,29 +45,25 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 GlobVar.tbl_ParametrosParaAnalisar.AcceptChanges(); // Confirma as alterações no DataTable
 
                 // Atualiza os valores na tabela do banco de dados
-                using (OdbcConnection conn = new OdbcConnection(connectionStringConfigBd))
+                string sql = @"
+                    UPDATE tbl_ParametrosParaAnalise 
+                    SET 
+                    Sat_QuedaAbaixoDe = ?, 
+                    Sat_Recalcular = ?, 
+                    Sat_DesprezarAbaixo = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, GlobVar.ConnectionConfig))
                 {
-                    conn.Open();
-                    string sql = @"
-                        UPDATE tbl_ParametrosParaAnalise 
-                        SET 
-                        Sat_QuedaAbaixoDe = ?, 
-                        Sat_Recalcular = ?, 
-                        Sat_DesprezarAbaixo = ?,";
+                    cmd.Parameters.AddWithValue("@Sat_QuedaAbaixoDe", quedaSup.Text);
+                    cmd.Parameters.AddWithValue("@Sat_Recalcular", limRec.Text);
+                    cmd.Parameters.AddWithValue("@Sat_DesprezarAbaixo", Desprezar.Text);
 
-                    using (OdbcCommand cmd = new OdbcCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Sat_QuedaAbaixoDe", quedaSup.Text);
-                        cmd.Parameters.AddWithValue("@Sat_Recalcular", limRec.Text);
-                        cmd.Parameters.AddWithValue("@Sat_DesprezarAbaixo", Desprezar.Text);
+                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                            MessageBox.Show("Parâmetros atualizados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        else
-                            MessageBox.Show("Nenhum registro foi atualizado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    if (rowsAffected > 0)
+                        MessageBox.Show("Parâmetros atualizados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    else
+                        MessageBox.Show("Nenhum registro foi atualizado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)

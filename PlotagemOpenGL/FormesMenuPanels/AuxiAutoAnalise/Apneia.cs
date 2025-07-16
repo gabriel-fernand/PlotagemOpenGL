@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Odbc;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -50,35 +51,31 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 GlobVar.tbl_ParametrosParaAnalisar.AcceptChanges(); // Confirma as alterações no DataTable
 
                 // Atualiza os valores na tabela do banco de dados
-                using (OdbcConnection conn = new OdbcConnection(connectionStringConfigBd))
+                string sql = @"
+                    UPDATE tbl_ParametrosParaAnalise 
+                    SET 
+                    ApHip_LimiarAp = ?, 
+                    ApHip_LimiarHip = ?, 
+                    ApHip_DuracaoMin = ?, 
+                    ApHip_IntervMin = ?, 
+                    ApHip_Dur_Jan_Basal = ?, 
+                    ApHip_Dur_Jan_Evento = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, GlobVar.ConnectionConfig))
                 {
-                    conn.Open();
-                    string sql = @"
-                        UPDATE tbl_ParametrosParaAnalise 
-                        SET 
-                        ApHip_LimiarAp = ?, 
-                        ApHip_LimiarHip = ?, 
-                        ApHip_DuracaoMin = ?, 
-                        ApHip_IntervMin = ?, 
-                        ApHip_Dur_Jan_Basal = ?, 
-                        ApHip_Dur_Jan_Evento = ?";
+                    cmd.Parameters.AddWithValue("@ApHip_LimiarAp", limApn.Text);
+                    cmd.Parameters.AddWithValue("@ApHip_LimiarHip", limHipo.Text);
+                    cmd.Parameters.AddWithValue("@ApHip_DuracaoMin", DurMin.Text);
+                    cmd.Parameters.AddWithValue("@ApHip_IntervMin", Inter.Text);
+                    cmd.Parameters.AddWithValue("@ApHip_Dur_Jan_Basal", tmJanelBasal.Text);
+                    cmd.Parameters.AddWithValue("@ApHip_Dur_Jan_Evento", tmJanelaEventos.Text);
 
-                    using (OdbcCommand cmd = new OdbcCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ApHip_LimiarAp", limApn.Text);
-                        cmd.Parameters.AddWithValue("@ApHip_LimiarHip", limHipo.Text);
-                        cmd.Parameters.AddWithValue("@ApHip_DuracaoMin", DurMin.Text);
-                        cmd.Parameters.AddWithValue("@ApHip_IntervMin", Inter.Text);
-                        cmd.Parameters.AddWithValue("@ApHip_Dur_Jan_Basal", tmJanelBasal.Text);
-                        cmd.Parameters.AddWithValue("@ApHip_Dur_Jan_Evento", tmJanelaEventos.Text);
+                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                            MessageBox.Show("Parâmetros atualizados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        else
-                            MessageBox.Show("Nenhum registro foi atualizado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    if (rowsAffected > 0)
+                        MessageBox.Show("Parâmetros atualizados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    else
+                        MessageBox.Show("Nenhum registro foi atualizado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
