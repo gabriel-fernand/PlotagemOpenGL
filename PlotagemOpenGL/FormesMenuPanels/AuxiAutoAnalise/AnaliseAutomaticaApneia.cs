@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
+using System.Data.OleDb;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -511,10 +512,6 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             }
 
             total = eventosTemporarios.Count; loc = 0; ultimoValor = -1; progressoAtual += tamanhoEtapa;
-            cnn = new OdbcConnection(connectionStringDatBd);
-            connectionDatBd = new OdbcConnection(connectionStringDatBd);
-            connectionDatBd.Open();
-
             // Inserir todos os eventos no banco de uma vez
             foreach (var ev in eventosTemporarios)
             {
@@ -530,21 +527,16 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             }
 
             string query = "SELECT * FROM tbl_Eventos";
-            using var command = new OdbcCommand(query, connectionDatBd);
-            using var adapterEventosDtNormal = new OdbcDataAdapter(command);
+            using var command = new OleDbCommand(query, GlobVar.ConnectionBDdat);
+            using var adapterEventosDtNormal = new OleDbDataAdapter(command);
             GlobVar.eventos.Clear();
             adapterEventosDtNormal.Fill(GlobVar.eventos);
-            connectionDatBd.Close();
-
 
             g_porc = 100;
             Application.DoEvents();
             owner.AtualizarProgresso(99);
 
         }
-        static OdbcConnection cnn;
-        static OdbcConnection connectionDatBd;
-        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
 
         public static void AdicionarEventoAoDataTable(int inicio, int termino, int codEvento, int codcanal1, int taxa)
         {
@@ -610,7 +602,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
 
                 // Cria e abre o DataAdapter
-                using (OdbcDataAdapter adapter = new OdbcDataAdapter(strSQL, cnn))
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                 {
                     DataTable rs = new DataTable();
                     adapter.Fill(rs);
@@ -620,13 +612,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         // Buscar o próximo sequencial de evento
                         strSQL = "SELECT * FROM tbl_SeqEvento";
                         DataTable rs_seq = new DataTable();
-                        using (OdbcDataAdapter seqAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        using (OleDbDataAdapter seqAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                         {
                             seqAdapter.Fill(rs_seq);
                             if (rs_seq.Rows.Count == 0)
                             {
                                 seq_aux = 1;
-                                using (OdbcCommand cmdInsert = new OdbcCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", cnn))
+                                using (OleDbCommand cmdInsert = new OleDbCommand("INSERT INTO tbl_SeqEvento (ProxSeqEvento) VALUES (2)", GlobVar.ConnectionBDdat))
                                 {
                                     cmdInsert.ExecuteNonQuery();
                                 }
@@ -634,7 +626,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                             else
                             {
                                 seq_aux = (long)rs_seq.Rows[0]["ProxSeqEvento"];
-                                using (OdbcCommand cmdUpdate = new OdbcCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", cnn))
+                                using (OleDbCommand cmdUpdate = new OleDbCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", GlobVar.ConnectionBDdat))
                                 {
                                     cmdUpdate.ExecuteNonQuery();
                                 }
@@ -644,7 +636,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                         // Verifica se não existe um evento idêntico ao que está sendo incluído
                         strSQL = $"SELECT * FROM tbl_Eventos WHERE CodEvento = {CodEvento} AND CodCanal1 = {CodCanal1} AND CodCanal2 = {CodCanal2} AND NumPag = {NumPag} AND Inicio = {Inicio}";
                         DataTable rs_aux = new DataTable();
-                        using (OdbcDataAdapter auxAdapter = new OdbcDataAdapter(strSQL, cnn))
+                        using (OleDbDataAdapter auxAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
                         {
                             auxAdapter.Fill(rs_aux);
                             if (rs_aux.Rows.Count > 0)
@@ -697,7 +689,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                     }
 
                     // Atualiza o DataTable com as alterações
-                    OdbcCommandBuilder commandBuilder = new OdbcCommandBuilder(adapter);
+                    OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
                     adapter.Update(rs);
                     /*
                     string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
@@ -728,7 +720,7 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE Seq = {Seq};";
 
-                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
                 DeleteCommand.ExecuteNonQuery();
 
@@ -758,16 +750,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             try
             {
                 int i = -1;
-                using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
-                connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodCanal1 = {codCanal} AND CodEvento = {codEvento};";
 
-                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
                 DeleteCommand.ExecuteNonQuery();
 
-                connectionDatBd.Close();
                 return i;
             }
             catch { int i = 0; return i; }

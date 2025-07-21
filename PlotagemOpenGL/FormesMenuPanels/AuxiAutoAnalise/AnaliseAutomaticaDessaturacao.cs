@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -501,21 +502,17 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
             try
             {
                 int i = -1;
-                using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
-                connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodEvento = {codEvento};";
 
-                using var DeleteCommand = new OdbcCommand(queryDelete, connectionDatBd);
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
                 DeleteCommand.ExecuteNonQuery();
 
-                connectionDatBd.Close();
                 return i;
             }
             catch { int i = 0; return i; }
         }
-        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
 
         private void DetectarEvento(int pag, float valor)
         {

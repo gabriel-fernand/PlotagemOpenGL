@@ -22,7 +22,7 @@ namespace PlotagemOpenGL
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new backLog());
             //Application.Run(new Tela_Plotagem());
-            Application.Run(new iCelera());
+             Application.Run(new iCelera());
         }
     }
 }

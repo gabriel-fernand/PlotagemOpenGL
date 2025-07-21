@@ -22,6 +22,7 @@ namespace PlotagemOpenGL
 
         public iCelera()
         {
+
             InitializeComponent();
             LeitorDiretorio.LeituraDiretorio();
             LeituraBanco.BancoConifg();
@@ -183,6 +184,7 @@ namespace PlotagemOpenGL
 
                 // Atualizar ARQUIVOS RECENTES no config.ini
                 AtualizarArquivosRecentes(diretorioDat);
+
 
                 // Iniciar exame
                 await exame.InitializeAsync();

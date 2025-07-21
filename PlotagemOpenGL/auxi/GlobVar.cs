@@ -49,6 +49,9 @@ namespace PlotagemOpenGL.auxi
         public static string diretorioEstagioAtual2 = @"C:\Temp\Icones\IcoNumericos\IcoN2Select.png";
         public static string diretorioEstagioAtual3 = @"C:\Temp\Icones\IcoNumericos\IcoN3Select.png";
         public static string diretorioEstagioAtualR = @"C:\Temp\Icones\IcoNumericos\IcoNRSelect.png";
+        public static string diretorioEstagioAtualT = @"C:\Temp\Icones\IcoNumericos\IcoNTSelect.png";
+        public static string diretorioEstagioAtualN = @"C:\Temp\Icones\IcoNumericos\IcoNNSelect.png";
+
 
         public static string diretorioEstagioAnteriorProximoNada = @"C:\Temp\Icones\IcoNumericos\IcoNVazio.png";
         public static string diretorioEstagioAnteriorProximo0 =    @"C:\Temp\Icones\IcoNumericos\IcoN0.png";
@@ -56,6 +59,9 @@ namespace PlotagemOpenGL.auxi
         public static string diretorioEstagioAnteriorProximo2 =    @"C:\Temp\Icones\IcoNumericos\IcoN2.png";
         public static string diretorioEstagioAnteriorProximo3 =    @"C:\Temp\Icones\IcoNumericos\IcoN3.png";
         public static string diretorioEstagioAnteriorProximoR =    @"C:\Temp\Icones\IcoNumericos\IcoNR.png";
+        public static string diretorioEstagioAnteriorProximoT = @"C:\Temp\Icones\IcoNumericos\IcoNT.png";
+        public static string diretorioEstagioAnteriorProximoN = @"C:\Temp\Icones\IcoNumericos\IcoNN.png";
+
 
         public static string g_Traducoes = "";
 

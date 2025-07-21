@@ -102,7 +102,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             if (Ronco.Checked) a++;
             if (MovPernaPLM.Checked) a++;
             if (AplicaRegraPLM.Checked) a++;
-
+            else if (DeleteApnHip.Checked || DeleteDess.Checked || DeleteMovPPLM.Checked || DeleteRonco.Checked) a++;
             sizeP = 100 / a;
             return sizeP;
         }
@@ -127,7 +127,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
                     if (ApHipo.Checked)
                     {
-                        Invoke(() => {
+                        Invoke(() =>
+                        {
                             Analisando.Text = "Analisando Apneia e Hipopneia";
                             realoctxt();
                         });
@@ -140,6 +141,37 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         valorBar += (int)incremento;
                         AtualizarProgresso(valorBar);
                     }
+                    else if (DeleteApnHip.Checked) 
+                    {
+                        Invoke(() =>
+                        {
+                            Analisando.Text = "Apagando Eventos de Apneia e Hipopneia";
+                            realoctxt();
+                        });
+
+                        int QualAnalisar = ap.Canula.Checked ? 13 : 8;
+                        var rw = GlobVar.tbl_MontagemSelecionada.AsEnumerable().FirstOrDefault(r => r.Field<int>("CodTipoCanal") == QualAnalisar);
+                        codCanal = Convert.ToInt32(rw["CodCanal1"]);
+
+                        List<int> codigosExcluir = new List<int> { 2, 5, 1, 3, 4, 6, 101 };
+
+                        foreach (int a in codigosExcluir)
+                        {
+                            if (cancellationToken.IsCancellationRequested) return;
+                            ExcluiEvento(a, codCanal);
+                        }
+                        foreach (DataRow row in GlobVar.eventosUpdate.Rows.Cast<DataRow>().ToList())
+                        {
+                            if (cancellationToken.IsCancellationRequested) return;
+                            if (codigosExcluir.Contains(Convert.ToInt32(row["CodEvento"])) && Convert.ToInt32(row["CodCanal1"]) == codCanal)
+                            {
+                                GlobVar.eventosUpdate.Rows.Remove(row);
+                            }
+                        }
+
+                        GlobVar.eventosUpdate.AcceptChanges();
+
+                    };
 
                     if (cancellationToken.IsCancellationRequested) return;
 
@@ -154,6 +186,36 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         valorBar += (int)incremento;
                         AtualizarProgresso(valorBar);
                     }
+                    else if (DeleteDess.Checked) 
+                    {
+                        Invoke(() => {
+                            Analisando.Text = "Apagando Eventos de Dessaturação";
+                            realoctxt();
+                        });
+
+                        List<int> codigosExcluir = new List<int> { 17 };
+
+                        foreach (int a in codigosExcluir)
+                        {
+
+                            string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodEvento = {a};";
+
+                            using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
+
+                            DeleteCommand.ExecuteNonQuery();
+
+                        }
+                        foreach (DataRow row in GlobVar.eventosUpdate.Rows.Cast<DataRow>().ToList())
+                        {
+                            if (codigosExcluir.Contains(Convert.ToInt32(row["CodEvento"])))
+                            {
+                                GlobVar.eventosUpdate.Rows.Remove(row);
+                            }
+                        }
+
+                        GlobVar.eventosUpdate.AcceptChanges();
+
+                    };
 
                     if (cancellationToken.IsCancellationRequested) return;
 
@@ -182,6 +244,39 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         valorBar += (int)incremento;
                         AtualizarProgresso(valorBar);
                     }
+                    else if (DeleteMovPPLM.Checked) 
+                    {
+                        int QualAnalisar;
+                        if (plm.PnAmbas.Checked)
+                        {
+                            List<int> codigosExcluir = new List<int> { 12, 26 };
+
+                            QualAnalisar = 2;
+                            foreach(int a in codigosExcluir)
+                            {
+                                ExcluiEvento(a, QualAnalisar);
+                            }
+                            QualAnalisar = 26;
+                            foreach (int a in codigosExcluir)
+                            {
+                                ExcluiEvento(a, QualAnalisar);
+                            }
+
+                        }
+                        else
+                        {
+                            List<int> codigosExcluir = new List<int> { 12, 26 };
+
+                            QualAnalisar = plm.PnDireita.Checked ? 2 : 26;
+                            anPLM = new AutoAnalisePLM(QualAnalisar, DeleteMovPPLM.Checked, this);
+                            foreach (int a in codigosExcluir)
+                            {
+                                ExcluiEvento(a, QualAnalisar);
+                            }
+
+                        }
+
+                    };
 
                     if (cancellationToken.IsCancellationRequested) return;
 
@@ -225,6 +320,12 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         valorBar += (int)incremento;
                         AtualizarProgresso(valorBar);
                     }
+                    else if (DeleteRonco.Checked) 
+                    {
+                        int QualAnalisar = ronc.microfone.Checked ? 5 : 32;
+                        anRonco = new AnaliseAutomaticaRonco(QualAnalisar, DeleteRonco.Checked, this);
+                        ExcluiEvento(13, codCanal);
+                    };
 
                     AtualizarProgresso(100);
                 });
@@ -240,6 +341,24 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 cancellationTokenSource.Dispose();
             }
         }
+
+        public static int ExcluiEvento(int codEvento, int codCanal)
+        {
+            try
+            {
+                int i = -1;
+
+                string queryDelete = $"DELETE FROM tbl_Eventos WHERE CodCanal1 = {codCanal} AND CodEvento = {codEvento};";
+
+                using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
+
+                DeleteCommand.ExecuteNonQuery();
+
+                return i;
+            }
+            catch { int i = 0; return i; }
+        }
+
         private void Cancelar_Click(object sender, EventArgs e)
         {
             if (Convert.ToInt32(Cancelar.Tag) != 0) // Faz com que o cancele sirva tanto para cancelar o processo, como para fechar separadamente

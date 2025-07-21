@@ -24,7 +24,6 @@ namespace PlotagemOpenGL.BD
         {
             try{
                 int i = -1;
-                using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
                 //connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE Seq = {Seq};";
@@ -33,7 +32,17 @@ namespace PlotagemOpenGL.BD
 
                 //DeleteCommand.ExecuteNonQuery();
 
-                connectionDatBd.Close();
+                // Exclui do DataTable
+                DataRow[] rows = GlobVar.eventosUpdate.Select($"Seq = {Seq}");
+                foreach (DataRow row in rows)
+                {
+                    GlobVar.eventosUpdate.Rows.Remove(row);
+                }
+
+                // Se quiser garantir atualização visual de DataGridView vinculado, pode chamar AcceptChanges se necessário:
+                GlobVar.eventosUpdate.AcceptChanges();
+
+
                 return i;
             }
             catch { int i = 0; return i; }

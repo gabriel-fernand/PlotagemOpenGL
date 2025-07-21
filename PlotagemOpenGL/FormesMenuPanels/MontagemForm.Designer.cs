@@ -1251,7 +1251,7 @@
             dataGridView1.Location = new System.Drawing.Point(18, 669);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new System.Drawing.Size(1161, 188);
+            dataGridView1.Size = new System.Drawing.Size(1264, 188);
             dataGridView1.TabIndex = 3;
             // 
             // label4
@@ -1268,9 +1268,9 @@
             // 
             // Incluir
             // 
-            Incluir.Location = new System.Drawing.Point(885, 494);
+            Incluir.Location = new System.Drawing.Point(1003, 491);
             Incluir.Name = "Incluir";
-            Incluir.Size = new System.Drawing.Size(100, 29);
+            Incluir.Size = new System.Drawing.Size(100, 50);
             Incluir.TabIndex = 14;
             Incluir.Text = "Incluir";
             Incluir.UseVisualStyleBackColor = true;
@@ -1278,9 +1278,9 @@
             // 
             // Alterar
             // 
-            Alterar.Location = new System.Drawing.Point(1002, 494);
+            Alterar.Location = new System.Drawing.Point(1003, 588);
             Alterar.Name = "Alterar";
-            Alterar.Size = new System.Drawing.Size(100, 29);
+            Alterar.Size = new System.Drawing.Size(100, 50);
             Alterar.TabIndex = 15;
             Alterar.Text = "Alterar";
             Alterar.UseVisualStyleBackColor = true;
@@ -1288,9 +1288,9 @@
             // 
             // Exluir
             // 
-            Exluir.Location = new System.Drawing.Point(1120, 494);
+            Exluir.Location = new System.Drawing.Point(1142, 491);
             Exluir.Name = "Exluir";
-            Exluir.Size = new System.Drawing.Size(100, 29);
+            Exluir.Size = new System.Drawing.Size(100, 50);
             Exluir.TabIndex = 16;
             Exluir.Text = "Exluir";
             Exluir.UseVisualStyleBackColor = true;
@@ -1298,9 +1298,9 @@
             // 
             // Limpar
             // 
-            Limpar.Location = new System.Drawing.Point(1236, 494);
+            Limpar.Location = new System.Drawing.Point(1142, 588);
             Limpar.Name = "Limpar";
-            Limpar.Size = new System.Drawing.Size(100, 29);
+            Limpar.Size = new System.Drawing.Size(100, 50);
             Limpar.TabIndex = 17;
             Limpar.Text = "Limpar";
             Limpar.UseVisualStyleBackColor = true;
@@ -1310,7 +1310,7 @@
             // 
             cima.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
             cima.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            cima.Location = new System.Drawing.Point(1185, 669);
+            cima.Location = new System.Drawing.Point(1288, 669);
             cima.Name = "cima";
             cima.Size = new System.Drawing.Size(48, 48);
             cima.TabIndex = 18;
@@ -1321,7 +1321,7 @@
             // baixo
             // 
             baixo.Font = new System.Drawing.Font("Wingdings 3", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 2);
-            baixo.Location = new System.Drawing.Point(1185, 809);
+            baixo.Location = new System.Drawing.Point(1288, 809);
             baixo.Name = "baixo";
             baixo.Size = new System.Drawing.Size(48, 48);
             baixo.TabIndex = 19;
@@ -1331,12 +1331,13 @@
             // 
             // Fechar
             // 
-            Fechar.Location = new System.Drawing.Point(1236, 809);
+            Fechar.BackColor = System.Drawing.Color.Transparent;
+            Fechar.Location = new System.Drawing.Point(1236, 12);
             Fechar.Name = "Fechar";
             Fechar.Size = new System.Drawing.Size(100, 48);
             Fechar.TabIndex = 20;
             Fechar.Text = "Fechar";
-            Fechar.UseVisualStyleBackColor = true;
+            Fechar.UseVisualStyleBackColor = false;
             Fechar.Click += Fechar_Click;
             // 
             // MontagemForm
