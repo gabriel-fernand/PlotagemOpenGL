@@ -215,6 +215,7 @@ namespace PlotagemOpenGL
         private KeyChecker keyChecker;
         public static Tela_Plotagem Instance { get; private set; }
         public static bool videoIni = false;
+        private System.Windows.Forms.Timer timerAposAbrir;
 
         public Tela_Plotagem()
         {
@@ -433,11 +434,14 @@ namespace PlotagemOpenGL
                     chamarTelinhaVid();
                     AnaliseCO2.GetPrimeiroCO2(Path.GetFileNameWithoutExtension(GlobVar.textFile));
                     F_Idioma();
-                    toolStripMenuItem8.Checked = false;
-                    toolStripMenuItem8.PerformClick();
-                    this.WindowState = FormWindowState.Maximized;
-                    // Obtém as dimensões da tela principal
 
+                    this.WindowState = FormWindowState.Maximized;
+                    // Instancia o Timer
+                    timerAposAbrir = new System.Windows.Forms.Timer();
+                    timerAposAbrir.Interval = 2; // 2 msft
+                    timerAposAbrir.Tick += TimerAposAbrir_Tick;
+                    // Obtém as dimensões da tela principal
+                    timerAposAbrir.Start();
 
 
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
@@ -453,7 +457,15 @@ namespace PlotagemOpenGL
 
             }
         }
+        private void TimerAposAbrir_Tick(object sender, EventArgs e)
+        {
 
+            toolStripMenuItem8.Checked = false;
+            toolStripMenuItem8.PerformClick();
+
+            timerAposAbrir.Stop(); // Para garantir que roda só uma vez
+
+        }
         void AjustaNomesBut()
         {
             Amplislaoq.Name = "Mede Amplitude e frequencia do período marcado";
