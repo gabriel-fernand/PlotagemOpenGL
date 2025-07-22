@@ -383,7 +383,7 @@ public class LeituraBanco
     }
     public static void AlteraTable()
     {
-
+        if(GlobVar.eventosUpdate != null) { GlobVar.eventosUpdate.Clear();}
         // Supondo que GlobVar.eventos seja o DataTable original
         DataTable eventos = GlobVar.eventos;
         //DataTable eventosUpdate = new DataTable();

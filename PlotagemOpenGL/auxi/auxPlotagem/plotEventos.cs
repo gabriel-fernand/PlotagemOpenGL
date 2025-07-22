@@ -183,8 +183,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     string posi = Posicao(numPagInicio, numPagTermino);                    
 
                     // Adicionar dados ao DataTable
-                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.CodCanal, inicio, termino, minSat, posi);
                     AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.CodCanal, inicio, termino, minSat, posi);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
                     //CreateCSVFile(GlobVar.eventosUpdate, excelFilePath);
@@ -214,10 +214,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             int minSat = GlobVar.minSat.Min();
             string posi = Posicao(inicio, termino);
 
-            GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
             int Inicio = (int)inicio / 512;
             int numPagTermino = (int)termino / 512;
             AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+            GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
         public static void ChangeEventType(int codCanal, int seq, int codEvento)
@@ -234,25 +234,25 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                                  .Where(row => row.Field<int>("CodEvento") == codEvento);
                 if (CanHaveAnEvent.Any())
                 {
-                    DataRow[] rowsToUpdate = GlobVar.eventosUpdate.Select($"Seq = {seq}");
+                    DataRow row = GlobVar.eventosUpdate.Select($"Seq = {seq}").FirstOrDefault();
 
-                    foreach (DataRow row in rowsToUpdate)
-                    {
-                        // Altera o valor da coluna 'CodEvento' para 'newCodEvento'
-                        row["CodEvento"] = codEvento;
+                    // Altera o valor da coluna 'CodEvento' para 'newCodEvento'
+                    row["CodEvento"] = codEvento;
 
-                        int codCanal1 = (int)row["CodCanal1"];
-                        int inicio = (int)row["Inicio"];
-                        int termino = (int)row["Duracao"];
-                        int Inicio = (int)row["inicio"] / 521;
-                        int numPagTermino = (int)termino / 512;
-                        int minSat = (int)row["MenorSat"];
-                        string posi = row["Posicao"].ToString();
 
-                        AlteraBD.GravaEvento(seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
-                    }
+                    int codCanal1 = (int)row["CodCanal1"];
+                    int inicio = (int)row["Inicio"];
+                    int termino = (int)row["Duracao"];
+                    int Inicio = inicio / 512;
+                    int numPagTermino = (int)termino / 512;
+                    int minSat = (int)row["MenorSat"];
+                    string posi = row["Posicao"].ToString();
 
-                    // Se necessário, aceite as alterações na tabela
+                    string NumPagEvent = row["NumPag"].ToString();
+                    AlteraBD.GravaEvento(seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    GlobVar.eventosUpdate.Rows.Add(seq, NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
+
+
                     GlobVar.eventosUpdate.AcceptChanges();
                     GlobVar.EventHasChange = true;
                 }
@@ -1001,8 +1001,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 string posi = Posicao(numPagInicio, numPagTermino);
 
                 // Adicionar dados ao DataTable
-                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB, minSat, posi);
                 AlteraBD.GravaEvento(seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi);
+                GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB, minSat, posi);
 
                 // Exportar DataTable para Excel
                 string excelFilePath = @"C:\Teste\Teste";

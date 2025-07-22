@@ -3137,7 +3137,7 @@ namespace PlotagemOpenGL
                     GlobVar.DimXY.Y = (int)Plotagem.startY;
                     int startY = (int)Plotagem.startY;
                     float endX = Plotagem.endX;
-                    //plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
+                    plotEventos.LastEvent(GlobVar.desenhoLoc, startY);
                     mousePositionLocal = e.Location;
                     if (!isDrawing && !bordSize)
                     {
@@ -4852,10 +4852,10 @@ namespace PlotagemOpenGL
 
 
                         case Keys.N:
-                            if (AdInf.Equals("B") || AdInf.Equals("C")) N.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("C") || AdInf.Equals("I")) N.PerformClick();
                             break;
                         case Keys.T:
-                            if (AdInf.Equals("B") || AdInf.Equals("C")) T.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("C") || AdInf.Equals("I")) T.PerformClick();
                             break;
 
                     }

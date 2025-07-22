@@ -11,6 +11,7 @@ using PlotagemOpenGL.auxi.auxPlotagem;
 using System.Data.OleDb;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Accord.Math.Geometry;
 
 namespace PlotagemOpenGL.BD
 {
@@ -30,7 +31,7 @@ namespace PlotagemOpenGL.BD
 
                 using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
-                //DeleteCommand.ExecuteNonQuery();
+                DeleteCommand.ExecuteNonQuery();
 
                 // Exclui do DataTable
                 DataRow[] rows = GlobVar.eventosUpdate.Select($"Seq = {Seq}");
@@ -51,14 +52,13 @@ namespace PlotagemOpenGL.BD
         {
             try
             {
-                using var cnn = new OdbcConnection(connectionStringDatBd);
-
                 long seq_aux;
                 int codret = 0;
                 //string Posicao = ".";
                 duracao = (duracao - Inicio);// / LasPag;
                 int auxInicio = Inicio / sizepag;
                 Inicio = Inicio - (auxInicio * sizepag);
+
 
                 string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
 
@@ -148,7 +148,7 @@ namespace PlotagemOpenGL.BD
                         NumPag++;
                     }
 
-                    // Atualiza o DataTable com as alterações
+                    // Atualiza o Banco com as alterações
                     OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
                     adapter.Update(rs);
 

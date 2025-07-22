@@ -218,7 +218,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 dadosExame["MedicoSolicitante"] = string.IsNullOrWhiteSpace(txtMedicoSolicitante.Text) ? DBNull.Value : txtMedicoSolicitante.Text;
                 dadosExame["Rg"] = string.IsNullOrWhiteSpace(txtRg.Text) ? DBNull.Value : txtRg.Text;
                 dadosExame["Observacao"] = string.IsNullOrWhiteSpace(txtObservacao.Text) ? DBNull.Value : txtObservacao.Text;
-                dadosExame["AdInf"] = Adulto.Checked ? "A" : Infantil.Checked ? "I" : "B";
+                dadosExame["AdInf"] = Adulto.Checked ? "A" : Infantil.Checked ? "C" : "B";
                 //AtualizarDadosExame(codPaci);
 
                 string sql = @"UPDATE tbl_DadosExame SET
