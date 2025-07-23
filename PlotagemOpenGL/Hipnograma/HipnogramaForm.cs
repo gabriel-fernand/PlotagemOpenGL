@@ -1593,6 +1593,14 @@ namespace PlotagemOpenGL.Hipnograma
                     estagioStrip.Checked = true;
                     estagioStrip.Tag = 9;
                     var dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                    if (Tela_Plotagem.AdInf.Equals("A"))
+                    {
+                        dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                    }
+                    else
+                    {
+                        dte = GlobVar.tbl_EstagiosInfatil.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                    }
                     qt = dte.Rows.Count;
                     var rwest = MontagemJanela.AsEnumerable()
                      .FirstOrDefault(r => r.Field<int>("CodGrupo") == codGrupo);
@@ -1607,15 +1615,39 @@ namespace PlotagemOpenGL.Hipnograma
 
                         int CodEstagio = estagio[esta];
                         // Filtra a linha do DataTable
-                        var row = GlobVar.tbl_Estagios.AsEnumerable()
-                                    .FirstOrDefault(r => r.Field<int>("Estagio") == CodEstagio);
+                        DataRow row;
+                        // Filtra a linha do DataTable
+                        if (Tela_Plotagem.AdInf.Equals("A"))
+                        {
 
-                        var dt = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                            row = GlobVar.tbl_Estagios.AsEnumerable()
+                                        .FirstOrDefault(r => r.Field<int>("Estagio") == CodEstagio);
+                        }
+                        else
+                        {
+                            int ajust = CodEstagio == 0 ? 0 : CodEstagio == 5 ? 7 : CodEstagio == 4 ? 8 : 9;
+                            row = GlobVar.tbl_EstagiosInfatil.AsEnumerable().FirstOrDefault(r => r.Field<short>("Estagio") == (short)ajust);
+                        }
 
-                        // Procura o índice da linha correspondente ao CodEstagio no DataTable
-                        int ind = dt.AsEnumerable()
-                                     .Select((r, idx) => new { Row = r, Index = idx }) // Combina linha e índice
-                                     .FirstOrDefault(x => x.Row.Field<int>("Estagio") == CodEstagio)?.Index ?? -1;
+                        DataTable dt;
+                        int ind;
+                        if (Tela_Plotagem.AdInf.Equals("A"))
+                        {
+                            dt = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                            ind = dt.AsEnumerable()
+                                    .Select((r, idx) => new { Row = r, Index = idx })
+                                    .FirstOrDefault(x => x.Row.Field<int>("Estagio") == CodEstagio)?.Index ?? -1; gl.Color(0, 0, 0);
+
+                        }
+                        else
+                        {
+                            dt = GlobVar.tbl_EstagiosInfatil.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                            ind = dt.AsEnumerable()
+                                     .Select((r, idx) => new { Row = r, Index = idx })
+                                     .FirstOrDefault(x => x.Row.Field<short>("Estagio") == (short)CodEstagio)?.Index ?? -1; gl.Color(0, 0, 0);
+                        }
+
+
                         gl.Color(0, 0, 0);
 
                         if (ultimoestagio != CodEstagio)

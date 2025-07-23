@@ -128,6 +128,7 @@ public class LeituraBanco
             string queryTbl_RelatResumoItem = "SELECT * FROM tbl_RelatResumoItem";
             string queryTbl_DadosClinica = "SELECT * FROM tbl_DadosClinica";
             string queryTbl_HipnoLaudos = "SELECT * FROM tbl_HipnoLaudos";
+            string queryTbl_EstagioInf = "SELECT * FROM tbl_Estagios_Infantil";
 
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
@@ -147,6 +148,7 @@ public class LeituraBanco
             using var commandTbl_Estagios = new OdbcCommand(queryTbl_Estagios, connectionConfigBd);
             using var commandTbl_HipnoLaudos = new OdbcCommand(queryTbl_HipnoLaudos, connectionConfigBd);
             using var commandTbl_DadosClinica = new OdbcCommand(queryTbl_DadosClinica, connectionConfigBd);
+            using var commandTbl_EstagiosInf = new OdbcCommand(queryTbl_EstagioInf, connectionConfigBd);
 
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
@@ -166,7 +168,9 @@ public class LeituraBanco
             using var adaptertbl_ParametrosParaAnalise = new OdbcDataAdapter(commandtbl_ParametrosParaAnalise);
             using var adaptertbl_HipnoLaudo = new OdbcDataAdapter(commandTbl_HipnoLaudos);
             using var adaptertbl_DadosClinica = new OdbcDataAdapter(commandTbl_DadosClinica);
+            using var adapterTbl_EstagiosInf = new OdbcDataAdapter(commandTbl_EstagiosInf);
 
+            adapterTbl_EstagiosInf.Fill(GlobVar.tbl_EstagiosInfatil);
             adaptertbl_DadosClinica.Fill(GlobVar.tbl_DadosClinica);
             adaptertbl_HipnoLaudo.Fill(GlobVar.tbl_HipnoLaudo);
             adapterConfig.Fill(GlobVar.tbl_CadCanal);
@@ -421,7 +425,17 @@ public class LeituraBanco
             int duracao = lastRow.Field<int>("Duracao");
             duracao += ((lastRow.Field<int>("NumPag")) * 512);
 
-            int? satu = Convert.ToInt32(firstRow.Field<float>("MenorSat"));
+            int satu = 0;
+
+            if (firstRow["MenorSat"] == DBNull.Value)
+            {
+
+            }
+            else
+            {
+                satu = Convert.ToInt32(firstRow.Field<float>("MenorSat"));
+            }
+
             string posi = firstRow.Field<string>("Posicao");
 
             DataRow newRow = GlobVar.eventosUpdate.NewRow();

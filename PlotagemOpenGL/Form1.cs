@@ -30,6 +30,7 @@ using PlotagemOpenGL.FormesMenuPanels;
 using Cyotek.Windows.Forms;
 using System.Data.OleDb;
 using Image = System.Drawing.Image;
+using MessageBoxIcon = System.Windows.Forms.MessageBoxIcon;
 using System.Threading.Tasks;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
@@ -285,6 +286,7 @@ namespace PlotagemOpenGL
                     telaLoad.AtualizarProgresso(50);
 
                     AdInf = GlobVar.tbl_DadosExame.Rows[0]["AdInf"].ToString();
+                    ArrumarTbl_Estagios();
                     AjustaBotoesParaTipoExadeAdInf();
 
                     atualizaJanelaResumo();
@@ -560,6 +562,36 @@ namespace PlotagemOpenGL
             }
         }
 
+        void ArrumarTbl_Estagios()
+        {
+            if (AdInf.Equals("A"))
+            {
+                // Busca a linha com Estagio == 4 (se houver)
+                var row = GlobVar.tbl_Estagios.AsEnumerable()
+                    .FirstOrDefault(r => r.Field<int>("Estagio") == 4);
+
+                // Se encontrou, remove do DataTable
+                if (row != null)
+                    GlobVar.tbl_Estagios.Rows.Remove(row);
+            }
+            else if (AdInf.Equals("I"))
+            {
+                // Se NÃO existe Estagio == 4, cria uma nova linha
+                if (!GlobVar.tbl_Estagios.AsEnumerable().Any(r => r.Field<int>("Estagio") == 4))
+                {
+                    DataRow newRow = GlobVar.tbl_Estagios.NewRow();
+                    newRow["Estagio"] = 4;
+                    newRow["Legenda"] = "NREM";
+                    newRow["Cor"] = 4227072;
+                    newRow["Ordem"] = 7;
+                    newRow["OrdemA"] = 6;
+                    newRow["OrdemC"] = 7;
+                    newRow["OrdemB"] = 4;
+
+                    GlobVar.tbl_Estagios.Rows.Add(newRow);
+                }
+            }
+        }
         public void atualizaJanelaResumo()
         {
             try
@@ -614,8 +646,20 @@ namespace PlotagemOpenGL
                 // Obtém o valor do Tag do ToolStripMenuItem
                 if (menuItem.Tag is int a)
                 {
-                    Janela = new HipnogramaForm(a);
-                    Janela.Show(this);
+                    try
+                    {
+                        Janela = new HipnogramaForm(a);
+                        Janela.Show(this);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(
+                            "O Exame está com estágio diferente do padrão para o tipo de exame, por favor ajuste.",
+                            "Erro de Estágio",
+                            (MessageBoxButton)MessageBoxButton.OK,
+                            (MessageBoxImage)MessageBoxIcon.Error
+                        );
+                    }
                 }
                 else
                 {                }
@@ -4832,22 +4876,22 @@ namespace PlotagemOpenGL
                             break;
 
                         case Keys.NumPad1:
-                            if (AdInf.Equals("A")) Marcar1.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar1.PerformClick();
                             break;
                         case Keys.D1:
-                            if (AdInf.Equals("A")) Marcar1.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar1.PerformClick();
                             break;
                         case Keys.NumPad2:
-                            if (AdInf.Equals("A")) Marcar2.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar2.PerformClick();
                             break;
                         case Keys.D2:
-                            if (AdInf.Equals("A")) Marcar2.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar2.PerformClick();
                             break;
                         case Keys.NumPad3:
-                            if (AdInf.Equals("A")) Marcar3.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar3.PerformClick();
                             break;
                         case Keys.D3:
-                            if (AdInf.Equals("A")) Marcar3.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar3.PerformClick();
                             break;
 
 
@@ -5620,6 +5664,113 @@ namespace PlotagemOpenGL
                     }
                 }
             }
+            else if (AdInf.Equals("I"))
+            {
+                List<int> AdultoButEstagio = new List<int> { 0, 1, 2, 3, 5 };
+                int TamanhoPanel = 7 * 47 + 2 + 6;
+                PainelMarca.Size = new Size(TamanhoPanel, PainelMarca.Size.Height);
+
+                foreach (Button bt in PainelMarca.Controls)
+                {
+                    if (Convert.ToInt32(bt.Tag) == 0)
+                    {
+                        bt.Location = new Point(1, 1);
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == 1)
+                    {
+                        bt.Location = new Point(48, 1);
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == 2)
+                    {
+                        bt.Location = new Point(95, 1);
+
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == 3)
+                    {
+                        bt.Location = new Point(142, 1);
+
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == 5)
+                    {
+                        bt.Location = new Point(189, 1);
+
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == 4)
+                    {
+                        bt.Location = new Point(236, 1);
+
+                        bt.Visible = true;
+                    }
+                    else if (Convert.ToInt32(bt.Tag) == -1)
+                    {
+                        bt.Location = new Point(289, 1);
+
+                        bt.Visible = true;
+                    }
+                    else
+                    {
+                        bt.Visible = false;
+                    }
+                }
+                TamanhoPanel = 13 * Tamanho + (locX * 2) + 6;
+                PainelMarcaAntProx.Size = new Size(TamanhoPanel, PainelMarcaAntProx.Size.Height);
+                // Lista de regras: cada regra tem predicate (condição) e ação associada
+                var regras = new List<(Predicate<Button> condicao, Action<Button> acao)>
+                {
+                    // Tag==0
+                    (bt => ObterTag(bt) == 0 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(1, 1);      bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 0 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(48, 1);     bt.Visible = true; }),
+
+                    // Tag==1
+                    (bt => ObterTag(bt) == 1 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(95, 1);     bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 1 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(142, 1);    bt.Visible = true; }),
+
+                    // Tag==2
+                    (bt => ObterTag(bt) == 2 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(189, 1);    bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 2 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(236, 1);    bt.Visible = true; }),
+
+                    // Tag==3
+                    (bt => ObterTag(bt) == 3 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(283, 1);    bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 3 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(330, 1);    bt.Visible = true; }),
+
+                    // Tag==5 (supondo R significa Tag 5)
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(377, 1);    bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(424, 1);    bt.Visible = true; }),
+                    // Tag 4
+                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "anterior"), bt =>{ bt.Location = new Point(471, 1); bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "seguinte"), bt => { bt.Location = new Point(518, 1); bt.Visible = true; }),
+
+                    // Diferenças
+                    (bt => ContemNome(bt, "anterior diferente"), bt => { bt.Location = new Point(565, 1);    bt.Visible = true; }),
+                    (bt => ContemNome(bt, "seguinte diferente"),  bt => { bt.Location = new Point(612, 1);    bt.Visible = true; }),
+
+                    // Tag==-1
+                    (bt => ObterTag(bt) == -1, bt => { bt.Location = new Point(665, 1); bt.Visible = true; }),
+                };
+
+                foreach (Button bt in PainelMarcaAntProx.Controls.OfType<Button>())
+                {
+                    // Procura a primeira regra que bate
+                    var regra = regras.FirstOrDefault(map => map.condicao(bt));
+
+                    if (regra.acao != null)
+                    {
+                        // Se casou alguma regra, aplica a ação
+                        regra.acao(bt);
+                    }
+                    else
+                    {
+                        // Caso nenhum match, esconda
+                        bt.Visible = false;
+                    }
+                }
+
+            }
             else
             {
                 List<int> CriancaoButEstagio = new List<int> { 0, 5, 4, 6 };
@@ -6158,6 +6309,7 @@ namespace PlotagemOpenGL
             profileForm.ShowDialog();
 
             AdInf = GlobVar.tbl_DadosExame.Rows[0]["AdInf"].ToString();
+            ArrumarTbl_Estagios();
             AjustaBotoesParaTipoExadeAdInf();
             ReorganizarPainelComando();
 
@@ -6173,6 +6325,7 @@ namespace PlotagemOpenGL
 
             // Chamar o método para capturar a tela e salvar como BMP
             SalvarPrintTela(caminhoPasta, nomeBaseArquivo);
+
         }
         private void SalvarPrintTela(string caminhoPasta, string nomeBaseArquivo)
         {
@@ -10607,3 +10760,5 @@ namespace PlotagemOpenGL
         }
     }
 }
+
+
