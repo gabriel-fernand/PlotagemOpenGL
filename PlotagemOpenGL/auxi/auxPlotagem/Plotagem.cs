@@ -330,7 +330,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 //Marca apenas uma vez
                 if(tempoEmTela == 1)
                 {
-                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
                     int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
                     int alturaTela = Tela_Plotagem.openglControl1.Height;
                     int tamanhoFonte = (int)(alturaTela * 0.8f);
@@ -377,7 +377,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     // Distribuir as instâncias horizontalmente
                     for (int i = 0; i < tempoEmTela; i++)
                     {
-                        texto = Tela_Plotagem.estagios[i].Equals("5") ? "R" : Tela_Plotagem.estagios[i];
+                        texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
                         Font font = new Font("Arial Narrow", tamanhoFonte);
 
                         SizeF tamanhoTxt;
@@ -417,7 +417,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     float[] color = new float[3];
                     color = ValorDecimalParaRGB(Convert.ToInt32(rw["Cor"]));
 
-                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
                     int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
                     int alturaTela = Tela_Plotagem.openglControl1.Height;
 

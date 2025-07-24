@@ -3,7 +3,9 @@ using System;
 using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
+using Point = System.Drawing.Point;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace PlotagemOpenGL.FormesMenuPanels
@@ -75,9 +77,6 @@ namespace PlotagemOpenGL.FormesMenuPanels
                             break;
                         case "B":
                             Bebe.Checked = true;
-                            break;
-                        case "C":
-                            Infantil.Checked = true;
                             break;
                     }
                 }
@@ -205,7 +204,71 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
             if (!editMode)
             {
-                // Salvamos as alterações no DataTable
+                string AdInfant = dadosExame["AdInf"].ToString();
+                string AdInfalt = Adulto.Checked ? "A" : Infantil.Checked ? "I" : "B";
+
+                if (!AdInfant.Equals(AdInfalt))
+                {
+                    DialogResult result = DialogResult.None;
+
+                    if (AdInfalt.Equals("B"))
+                    {
+                        if (AdInfant.Equals("A"))
+                        {
+                            result = System.Windows.Forms.MessageBox.Show(
+                                "Os estágios, salvos N1, N2, N3 serão alterados para Vigília (N0)",
+                                "Informação",
+                                MessageBoxButtons.OKCancel,
+                                MessageBoxIcon.Information
+                            );
+                            if (result == DialogResult.Cancel)
+                                return;
+                            else
+                            {
+                                for(int i = 1; i <= 3; i++)
+                                {
+                                    alteraEstagio(i);
+                                }
+                            }
+                        }
+                    }
+                    else if (AdInfalt.Equals("A"))
+                    {
+                        if (AdInfant.Equals("I"))
+                        {
+                            result = System.Windows.Forms.MessageBox.Show(
+                                "Os estágios, salvos NREM serão alterados para Vigília (N0)",
+                                "Informação",
+                                MessageBoxButtons.OKCancel,
+                                MessageBoxIcon.Information
+                            );
+                            if (result == DialogResult.Cancel)
+                                return;
+                            else
+                            {
+                                alteraEstagio(4);
+                            }
+                        }
+                        else if (AdInfant.Equals("B"))
+                        {
+                            result = System.Windows.Forms.MessageBox.Show(
+                                "Os estágios, salvos NREM, Transicional serão alterados para Vigília (N0)",
+                                "Informação",
+                                MessageBoxButtons.OKCancel,
+                                MessageBoxIcon.Information
+                            );
+                            if (result == DialogResult.Cancel)
+                                return;
+                            else
+                            {
+                                alteraEstagio(4);
+                                alteraEstagio(6);
+                            }
+                        }
+                    }
+
+                    // Se clicou em Cancelar, interrompe o processo
+                }                // Salvamos as alterações no DataTable
                 dadosExame["Nome"] = string.IsNullOrWhiteSpace(txtNome.Text) ? DBNull.Value : txtNome.Text;
                 dadosExame["Altura"] = double.TryParse(txtAltura.Text, out double altura) ? (object)altura : DBNull.Value;
                 dadosExame["Peso"] = int.TryParse(txtPeso.Text, out int peso) ? (object)peso : DBNull.Value;
@@ -218,13 +281,13 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 dadosExame["MedicoSolicitante"] = string.IsNullOrWhiteSpace(txtMedicoSolicitante.Text) ? DBNull.Value : txtMedicoSolicitante.Text;
                 dadosExame["Rg"] = string.IsNullOrWhiteSpace(txtRg.Text) ? DBNull.Value : txtRg.Text;
                 dadosExame["Observacao"] = string.IsNullOrWhiteSpace(txtObservacao.Text) ? DBNull.Value : txtObservacao.Text;
-                dadosExame["AdInf"] = Adulto.Checked ? "A" : Infantil.Checked ? "C" : "B";
+                dadosExame["AdInf"] = Adulto.Checked ? "A" : Infantil.Checked ? "I" : "B";
                 //AtualizarDadosExame(codPaci);
 
                 string sql = @"UPDATE tbl_DadosExame SET
-        Nome = ?, Altura = ?, Peso = ?, DataNascimento = ?, IdadeAno = ?, Sexo = ?, DataRealizacao = ?,
-        Email = ?, Cpf = ?, MedicoSolicitante = ?, Rg = ?, Observacao = ?, AdInf = ?
-        WHERE CodPaciente = ?"; // Ajuste conforme o nome da PK!
+                            Nome = ?, Altura = ?, Peso = ?, DataNascimento = ?, IdadeAno = ?, Sexo = ?, DataRealizacao = ?,
+                            Email = ?, Cpf = ?, MedicoSolicitante = ?, Rg = ?, Observacao = ?, AdInf = ?
+                            WHERE CodPaciente = ?"; // Ajuste conforme o nome da PK!
 
                 using (var cmd = new OleDbCommand(sql, GlobVar.ConnectionBDdat))
                 {
@@ -245,9 +308,32 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
                     cmd.ExecuteNonQuery();
                 }
+
             }
         }
 
+        void alteraEstagio(int EstagioAlterar)
+        {
+            // 1. Alterar no DataTable em memória
+            foreach (DataRow row in GlobVar.tbl_Paginas.Rows)
+            {
+                if (row.Field<int>("Estagio") == EstagioAlterar)
+                {
+                    row.SetField("Estagio", 0);
+                }
+            }
+
+            // 2. Alterar no banco de dados
+            string sql = "UPDATE tbl_Paginas SET Estagio = 0 WHERE Estagio = ?";
+            using (OleDbCommand cmd = new OleDbCommand(sql, GlobVar.ConnectionBDdat))
+            {
+                cmd.Parameters.AddWithValue("@p1", EstagioAlterar);
+
+                // Pode-se colocar em um try-catch, se necessário
+                int rowsAffected = cmd.ExecuteNonQuery();
+                // Opcional: você pode usar rowsAffected para saber quantas linhas foram alteradas.
+            }
+        }
         private void btnOk_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -451,14 +537,14 @@ namespace PlotagemOpenGL.FormesMenuPanels
                         catch (Exception ex)
                         {
                             transaction.Rollback();
-                            MessageBox.Show($"Erro ao atualizar os dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            System.Windows.Forms.MessageBox.Show($"Erro ao atualizar os dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao conectar ao banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show($"Erro ao conectar ao banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
