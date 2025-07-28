@@ -25,6 +25,7 @@ public class AnaliseCO2
     {
         _arquivoIni = @"C:\Temp\Config.ini";
         _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
+        string _direct = Path.GetDirectoryName(GlobVar.textFile);
         _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
         _tblEventos = GlobVar.eventos.AsEnumerable().CopyToDataTable();
 
@@ -46,7 +47,7 @@ public class AnaliseCO2
         }
 
         // Lê o arquivo .CO2
-        string arquivoCo2 = _arquivoExame + ".CO2";
+        string arquivoCo2 =Path.Combine(_direct + $"{_arquivoExame}.CO2");
         if (!File.Exists(arquivoCo2))
             throw new FileNotFoundException("Arquivo CO2 não encontrado.", arquivoCo2);
 
