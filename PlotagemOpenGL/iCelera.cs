@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,6 +26,7 @@ namespace PlotagemOpenGL
         {
 
             InitializeComponent();
+            RestartAsAdmin();
             LeitorDiretorio.LeituraDiretorio();
             LeituraBanco.BancoConifg();
             AtualizarLabelsComArquivosRecentes();
@@ -49,7 +52,31 @@ namespace PlotagemOpenGL
             // Forçar saída, se necessário
             Application.Exit();
         }
+        public static void RestartAsAdmin()
+        {
+            var wi = WindowsIdentity.GetCurrent();
+            var wp = new WindowsPrincipal(wi);
 
+            if (!wp.IsInRole(WindowsBuiltInRole.Administrator))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                    UseShellExecute = true,
+                    Verb = "runas" // isso pede a elevação
+                };
+                try
+                {
+                    Process.Start(psi);
+                }
+                catch
+                {
+                    // O usuário cancelou UAC
+                    return;
+                }
+                Environment.Exit(0); // Fecha esse processo original
+            }
+        }
         private void label24_Click(object sender, EventArgs e)
         {
 

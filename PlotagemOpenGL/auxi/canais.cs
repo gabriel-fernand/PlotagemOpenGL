@@ -80,6 +80,66 @@ namespace PlotagemOpenGL.auxi
                 //}
             }
         }
+        public static void ajustaIniFimEx()
+        {
+            int noite = Get_BoaNoite();
+            int dia = Get_BomDia();
+
+            DateTime ini, fim;
+
+            // 1. Buscar infos direto do banco:
+            using (var cmdIni = GlobVar.ConnectionBDdat.CreateCommand())
+            {
+                cmdIni.CommandText = "SELECT TOP 1 Horario FROM tbl_Paginas WHERE NumPag = ?";
+                cmdIni.Parameters.AddWithValue("?", noite);
+
+                using (var reader = cmdIni.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        ini = reader.GetDateTime(0);
+                    }
+                    else
+                    {
+                        throw new Exception("Não achou Noite!");
+                    }
+                }
+            }
+
+            using (var cmdFim = GlobVar.ConnectionBDdat.CreateCommand())
+            {
+                cmdFim.CommandText = "SELECT TOP 1 Horario FROM tbl_Paginas WHERE NumPag = ?";
+                cmdFim.Parameters.AddWithValue("?", dia);
+
+                using (var reader = cmdFim.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        fim = reader.GetDateTime(0);
+                    }
+                    else
+                    {
+                        throw new Exception("Não achou Dia!");
+                    }
+                }
+            }
+
+            // 2. Atualizar DataTable em memória (ajuste a busca conforme identificação do seu ResumoExame)
+            var rowResumo = GlobVar.tbl_ResumoExame.Rows[0]; // ou faça um filtro se houver mais de um exame
+            rowResumo["Ini_Exame"] = ini;
+            rowResumo["Fim_Exame"] = fim;
+
+            // 3. Atualizar no banco de dados (ajuste WHERE para identificar a linha correta)
+            using (var cmdUpdate = GlobVar.ConnectionBDdat.CreateCommand())
+            {
+                cmdUpdate.CommandText = "UPDATE tbl_ResumoExame SET Ini_Exame = ?, Fim_Exame = ?";
+                cmdUpdate.Parameters.AddWithValue("?", ini);
+                cmdUpdate.Parameters.AddWithValue("?", fim);
+
+                cmdUpdate.ExecuteNonQuery();
+            }
+        }
+
         public void reloc()
         {
             for (int i = 1; i <= 23; i++) //Relaloca os Label's os butoes dentro do panel
@@ -296,28 +356,47 @@ namespace PlotagemOpenGL.auxi
 
         public static int Get_BoaNoite()
         {
-            int BoaNoite = 0;
-
-            var Row_BoaNoite = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 18).FirstOrDefault();
-            if(Row_BoaNoite != null)
+            int boaNoite = 0;
+            using (var cmd = GlobVar.ConnectionBDdat.CreateCommand())
             {
-                BoaNoite = Convert.ToInt32(Row_BoaNoite["NumPag"]);
+                cmd.CommandText = "SELECT TOP 1 NumPag FROM tbl_Eventos WHERE CodEvento = 18";
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        boaNoite = reader.GetInt32(0);
+                    }
+                }
             }
-
-            return BoaNoite;
+            return boaNoite;
         }
         public static int Get_BomDia()
         {
-            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().OrderByDescending(row => row.Field<int>("NumPag")).CopyToDataTable();
-            int BomDia = Convert.ToInt32(lastRow.Rows[0]["NumPag"]);
+            int bomDia = 0;
 
-            var Row_BomDia = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 19).FirstOrDefault();
-            if (Row_BomDia != null)
+            // Pega o maior NumPag da tabela tbl_Paginas
+            using (var cmd = GlobVar.ConnectionBDdat.CreateCommand())
             {
-                BomDia = Convert.ToInt32(Row_BomDia["NumPag"]);
+                cmd.CommandText = "SELECT MAX(NumPag) FROM tbl_Paginas";
+                object result = cmd.ExecuteScalar();
+                if (result != DBNull.Value)
+                    bomDia = Convert.ToInt32(result);
             }
 
-            return BomDia;
+            // Caso exista CodEvento=19 em tbl_Eventos, sobrescreve com esse valor
+            using (var cmd2 = GlobVar.ConnectionBDdat.CreateCommand())
+            {
+                cmd2.CommandText = "SELECT TOP 1 NumPag FROM tbl_Eventos WHERE CodEvento = 19";
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        bomDia = reader.GetInt32(0);
+                    }
+                }
+            }
+
+            return bomDia;
         }
         public static int Get_InicioCPAP()
         {

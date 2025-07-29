@@ -449,6 +449,8 @@ namespace PlotagemOpenGL
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
                     GlobVar.ConnectionBDdat.Open();
 
+
+                    Canais.ajustaIniFimEx();
                 }
             }
             catch (Exception e)
@@ -6222,8 +6224,22 @@ namespace PlotagemOpenGL
             int linhaSaturacao = GlobVar.codSelected.IndexOf(66); // A linha que você quer verificar
             int menorValor = 100; // Inicializa com o maior valor possível
             int posicaoMenorValor = -1; // Armazena a posição do menor valor
+            int numPagMenorValro = -1;
+            foreach(DataRow rw in GlobVar.tbl_Paginas.Rows)
+            {
+                int valorAtual = Convert.ToInt32(rw["SatBasal"]);
+                int numPagAtual = Convert.ToInt32(rw["NumPag"]);
 
-
+                if (!numsDesprezar.Contains(numPagAtual))
+                {
+                    if (valorAtual >= 20 && valorAtual < menorValor)
+                    {
+                        menorValor = valorAtual;
+                        numPagMenorValro = numPagAtual;
+                    }
+                }
+            }
+            /*
             for (int i = 0; i < GlobVar.matrizCanal.GetLength(1); i += GlobVar.namosNumerico)
             {
                 int valorAtual = GlobVar.matrizCanal[linhaSaturacao, i];
@@ -6240,7 +6256,10 @@ namespace PlotagemOpenGL
                     }
                 }
             }
-            int proxPag = (posicaoMenorValor / GlobVar.numeroAmos) / 30;
+            */
+            int proxPag = numPagMenorValro / GlobVar.segundos;// (posicaoMenorValor / GlobVar.numeroAmos) / 30;
+
+
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
                 int NovaLoc = GlobVar.namos * proxPag * GlobVar.segundos;
@@ -6266,7 +6285,7 @@ namespace PlotagemOpenGL
             }
 
             // Se encontrou um valor mínimo válido
-            if (posicaoMenorValor != -1)
+            if (numPagMenorValro != -1)
             {
                 AutoCloseMessageBox.Show(
                     $"Menor valor encontrado: {menorValor}",
@@ -6665,6 +6684,7 @@ namespace PlotagemOpenGL
 
                     MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
                 }
+                ImprimeLogo = false; // continua sem logo
             }
         }
         private void ImprimeTudo_Click(string caminhoArquivo)
@@ -7338,7 +7358,7 @@ namespace PlotagemOpenGL
                     break;
                 }
             }
-
+            if (startNovoEstagio == 0 || startNovoEstagio == 1) return;
             if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
             {
                 int NovaLoc = GlobVar.namos * startNovoEstagio;

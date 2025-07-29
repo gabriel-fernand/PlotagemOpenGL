@@ -1003,6 +1003,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 // Adicionar dados ao DataTable
                 AlteraBD.GravaEvento(seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi);
                 GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB, minSat, posi);
+                Canais.ajustaIniFimEx();
+
 
                 // Exportar DataTable para Excel
                 string excelFilePath = @"C:\Teste\Teste";

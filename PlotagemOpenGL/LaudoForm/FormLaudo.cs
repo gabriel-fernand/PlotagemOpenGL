@@ -11329,7 +11329,8 @@ namespace PlotagemOpenGL.LaudoForm
         public static string FormataTempoMin(int valor)
         {
             // Supondo que valor representa minutos, você pode ajustar:
-            return valor + " min"; // ou uma formatação mais elaborada
+            float minut = valor / 60;
+            return  minut.ToString("F1") + " min";
         }
 
         private static void s_resumo_CPAP()
