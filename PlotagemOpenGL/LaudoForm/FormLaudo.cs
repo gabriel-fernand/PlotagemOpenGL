@@ -157,7 +157,7 @@ namespace PlotagemOpenGL.LaudoForm
             PreparaOsArrays();
             gl = openglHipno.OpenGL;
             try {
-            Desenha();
+                Desenha();
             }
             catch
             {
@@ -179,6 +179,7 @@ namespace PlotagemOpenGL.LaudoForm
             comentarios();
             CarregarArquivosNoComboBox();
             CalculaResumoMultiplaLatencia();
+            AjustaTbl_ResumoExame();
         }
         private void CarregarArquivosNoComboBox()
         {
@@ -4062,90 +4063,68 @@ namespace PlotagemOpenGL.LaudoForm
         }
         public void CalculaCargaHipoxica()
         {
-            string arq = @"C:\Temp\Retorno\Dessat.txt";
-            using (StreamWriter writer = new StreamWriter(arq, false, Encoding.Default))
+            double carga = 0.0;
+            double acum = 0.0;
+            int ini = 0;
+            int fim = 0;
+            int dur = 0;
+            int num = 0;
+
+            // Ordenar eventos por NumPag e filtrar CodEvento == 17
+            DataTable eventos = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 17).OrderBy(row => row.Field<int>("NumPag")).CopyToDataTable();// ("CodEvento = 17", "NumPag ASC");
+
+            if (eventos == null)
+                return;
+
+            string pathSaida = Path.Combine(@"C:\Temp", @"Retorno\Dessat.txt");
+            //if (File.Exists(pathSaida)) File.Delete(pathSaida);
+            Directory.CreateDirectory(Path.GetDirectoryName(pathSaida));
+
+            using (StreamWriter sw = new StreamWriter(pathSaida, false, System.Text.Encoding.UTF8))
             {
-                // Leitura/Gravação no INI
-                IniFile ini = new IniFile(@"C:\Temp\Config.ini");
-                string cargaHipo = ini.Read("CARGAHIPO", "DIRETORIOS");
-                if (string.IsNullOrWhiteSpace(cargaHipo))
+                // Antes do laço principal:
+                ini = int.MinValue; // Melhor garantir que não seja zero válido
+                fim = 0;
+                dur = 0;
+                acum = 0;
+
+                for (int i = 0; i < eventos.Rows.Count;)
                 {
-                    ini.Write("CARGAHIPO", "1", "DIRETORIOS");
-                }
+                    int seqAtual = Convert.ToInt32(eventos.Rows[i]["Seq"]);
+                    ini = 0;
+                    dur = 0;
 
-                double carga = 0;
-                double acum = 0;
-                //string sql = "SELECT * FROM tbl_Eventos WHERE CodEvento = 17 ORDER BY NumPag";
-                var eventosQuery = GlobVar.eventos.AsEnumerable()
-                    .Where(row => row.Field<int>("CodEvento") == 17)
-                    .OrderBy(row => row.Field<int>("NumPag"));
-
-                DataTable eventos = eventosQuery.Any() ? eventosQuery.CopyToDataTable() : GlobVar.eventos.Clone(); // ou new DataTable()
-                if (eventos.Rows.Count > 0)
-                {
-                    int idx = 0;
-                    int dur = 0;
-                    int iniValor = 0;
-                    int fim = 0;
-
-                    while (idx < eventos.Rows.Count)
+                    while (i < eventos.Rows.Count && Convert.ToInt32(eventos.Rows[i]["Seq"]) == seqAtual)
                     {
-                        int num = Convert.ToInt32(eventos.Rows[idx]["seq"]);
-
-                        // Reset antes de processar o grupo
-                        iniValor = 0;
-                        dur = 0;
-
-                        while (idx < eventos.Rows.Count && Convert.ToInt32(eventos.Rows[idx]["seq"]) == num)
-                        {
-                            int numPag = Convert.ToInt32(eventos.Rows[idx]["NumPag"]);
-                            int linhaSaturacao = GlobVar.codSelected.IndexOf(66);
-                            int ponteiro = numPag * 8;
-
-                            if (iniValor == 0)
-                            {
-                                // Primeiro valor do grupo (pegando página anterior)
-                                ponteiro = (numPag - 1) * 8;
-                                iniValor = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
-                            }
-                            else
-                            {
-                                fim = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
-                            }
-
-                            dur++;
-                            idx++;
-                        }
-
-                        if (iniValor != 0)
-                        {
-                            double calcCarga = 0.5 * (dur / 60.0) * Math.Abs(iniValor - fim);
-                            string linha = $"{iniValor} - {fim} - {dur} ====== {calcCarga:0.0000}";
-                            writer.WriteLine(linha);
-                            carga = calcCarga;
-                            acum += carga;
-                        }
-                    }
-                }
-
-                //sql = "SELECT * FROM tbl_Paginas";
-                //DataTable paginas = obj_dbconfig.ExecutaSQL(cnn_dbExame, sql);
-                int pags = GlobVar.tbl_Paginas.Rows.Count;
-                int totalMinutos = pags / 60;
-
-                //sql = "SELECT * FROM tbl_DadosExame";
-                //DataTable dadosExame = obj_dbconfig.ExecutaSQLParaAlteracao(cnn_dbExame, sql);
-                if (GlobVar.tbl_DadosExame != null)
-                {
-                    if (!GlobVar.tbl_DadosExame.Columns.Contains("CargaHipoxica"))
-                    {
-                        GlobVar.tbl_DadosExame.Columns.Add("CargaHipoxica", typeof(double)).DefaultValue = 0.0;
+                        int numPag = Convert.ToInt32(eventos.Rows[i]["NumPag"]);
+                        if (ini == 0)
+                            ini = Canais.F_Get1ValorDoCanalSAO2(numPag - 1);
+                        else 
+                            fim = Canais.F_Get1ValorDoCanalSAO2(numPag);
+                        dur++;
+                        i++;
                     }
 
-                    DataRow row = GlobVar.tbl_DadosExame.Rows[0];
-                    row["CargaHipoxica"] = (acum / totalMinutos) * 60;
-                    AlteraBD.SalvarAlteracoes(); // Método para alterar no Banco de Dados a tbl_DadosExame
+                    double cargaLocal = 0.5 * (dur / 60.0) * Math.Abs(ini - fim);
+                    string linha = $"{ini} - {fim} - {dur} ====== {cargaLocal:0.0000}";
+                    sw.WriteLine(linha);
+
+                    acum += cargaLocal;
+                    // num recebe o próximo, se houver, mas não é utilizado a partir daqui
+                    // dur e ini serão resetados no próximo laço
                 }
+            }
+
+            // Pega o número total de páginas
+            int pags = GlobVar.tbl_Paginas.Rows.Count;
+            int totalMinutos = pags / 60;
+
+            // Atualiza CargaHipoxica na primeira linha da tbl_DadosExame
+            if (GlobVar.tbl_DadosExame.Rows.Count > 0 && totalMinutos > 0)
+            {
+                DataRow rowDadosExame = GlobVar.tbl_DadosExame.Rows[0];
+                rowDadosExame["CargaHipoxica"] = (acum / totalMinutos) * 60.0; // conforme lógica original
+                AlteraBD.SalvarAlteracoes();
             }
         }
 
@@ -6737,30 +6716,30 @@ namespace PlotagemOpenGL.LaudoForm
                 tempo_ronco = tbl.Rows.Count == 0 ? 0 : Convert.ToInt32(tbl.Rows[0]["Dur_Total"]) / GlobVar.namos;
 
                 // Apneia e Hipopnéia com Dessaturação
-                 qtd_ap_cen_com_dessat = GetQtd("Cons_ApCen_Com_Dessat");
-                 qtd_ap_obs_com_dessat = GetQtd("Cons_ApObs_Com_Dessat");
-                 qtd_ap_mis_com_dessat = GetQtd("Cons_ApMis_Com_Dessat");
-                 qtd_hipop_com_dessat = GetQtd("Cons_Hipop_Com_Dessat");
+                qtd_ap_cen_com_dessat = GetQtd("Cons_ApCen_Com_Dessat");
+                qtd_ap_obs_com_dessat = GetQtd("Cons_ApObs_Com_Dessat");
+                qtd_ap_mis_com_dessat = GetQtd("Cons_ApMis_Com_Dessat");
+                qtd_hipop_com_dessat = GetQtd("Cons_Hipop_Com_Dessat");
 
                 // Com microdespertar
-                 qtd_ap_cen_com_mdesp = GetQtd("Cons_ApCen_Com_MDesp");
-                 qtd_ap_obs_com_mdesp = GetQtd("Cons_ApObs_Com_MDesp");
-                 qtd_ap_mis_com_mdesp = GetQtd("Cons_ApMis_Com_MDesp");
-                 qtd_hipop_com_mdesp = GetQtd("Cons_Hipop_Com_MDesp");
+                qtd_ap_cen_com_mdesp = GetQtd("Cons_ApCen_Com_MDesp");
+                qtd_ap_obs_com_mdesp = GetQtd("Cons_ApObs_Com_MDesp");
+                qtd_ap_mis_com_mdesp = GetQtd("Cons_ApMis_Com_MDesp");
+                qtd_hipop_com_mdesp = GetQtd("Cons_Hipop_Com_MDesp");
 
                 // Com Dessaturação e Microdespertar
-                 qtd_ap_cen_com_dessat_e_mdesp = GetQtdJoin("Cons_ApCen_Com_Dessat", "Cons_ApCen_Com_MDesp", "Cons_Eventos_ApCen");
-                 qtd_ap_obs_com_dessat_e_mdesp = GetQtdJoin("Cons_ApObs_Com_Dessat", "Cons_ApObs_Com_MDesp", "Cons_Eventos_ApObs");
-                 qtd_ap_mis_com_dessat_e_mdesp = GetQtdJoin("Cons_ApMis_Com_Dessat", "Cons_ApMis_Com_MDesp", "Cons_Eventos_ApMis");
-                 qtd_hipop_com_dessat_e_mdesp = GetQtdJoin("Cons_Hipop_Com_Dessat", "Cons_Hipop_Com_MDesp", "Cons_Eventos_Hipop");
+                qtd_ap_cen_com_dessat_e_mdesp = GetQtdJoin("Cons_ApCen_Com_Dessat", "Cons_ApCen_Com_MDesp", "Cons_Eventos_ApCen");
+                qtd_ap_obs_com_dessat_e_mdesp = GetQtdJoin("Cons_ApObs_Com_Dessat", "Cons_ApObs_Com_MDesp", "Cons_Eventos_ApObs");
+                qtd_ap_mis_com_dessat_e_mdesp = GetQtdJoin("Cons_ApMis_Com_Dessat", "Cons_ApMis_Com_MDesp", "Cons_Eventos_ApMis");
+                qtd_hipop_com_dessat_e_mdesp = GetQtdJoin("Cons_Hipop_Com_Dessat", "Cons_Hipop_Com_MDesp", "Cons_Eventos_Hipop");
 
                 // RERA
-                 qtd_RERA_com_dessat = GetQtd("Cons_RERA_Com_Dessat");
-                 qtd_RERA_com_mdesp = GetQtd("Cons_RERA_Com_MDesp");
-                 qtd_RERA_com_dessat_e_mdesp = GetQtdJoin("Cons_RERA_Com_Dessat", "Cons_RERA_Com_MDesp", "Cons_Eventos_RERA");
+                qtd_RERA_com_dessat = GetQtd("Cons_RERA_Com_Dessat");
+                qtd_RERA_com_mdesp = GetQtd("Cons_RERA_Com_MDesp");
+                qtd_RERA_com_dessat_e_mdesp = GetQtdJoin("Cons_RERA_Com_Dessat", "Cons_RERA_Com_MDesp", "Cons_Eventos_RERA");
 
                 // PLM
-                 qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
+                qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
 
                 // Funções auxiliares
                 int GetQtd(string table)
@@ -7085,13 +7064,13 @@ namespace PlotagemOpenGL.LaudoForm
                     Application.DoEvents();  // Atualiza visual
 
                     //'SubstituiVar("&(IND_APHIP_INT)&", "0.0")
-                    if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0){
-                    SubstituiVar("&(IND_APHIP_INT)&", "0.0");
+                    if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0) {
+                        SubstituiVar("&(IND_APHIP_INT)&", "0.0");
 
                     }//If tbl_ResumoExame!TTS = 0 Then
                     else
                     {
-                    SubstituiVar("&(IND_APHIP_INT)&", TimeSpan.FromSeconds((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                        SubstituiVar("&(IND_APHIP_INT)&", TimeSpan.FromSeconds((ev_ap.qtd + ev_hipop.qtd) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) / 3600)).ToString(@"hh\:mm\:ss"));
                     }
                     //'SubstituiVar("&(IND_AP_INT)&", "0.0")
                     SubstituiVar("&(IND_AP_INT)&", TimeSpan.FromSeconds(ev_ap.indice).ToString(@"hh\:mm\:ss"));
@@ -7100,16 +7079,16 @@ namespace PlotagemOpenGL.LaudoForm
                     //'SubstituiVar("&(IND_APHIP_REM_INT)&", "0.0")
                     if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
                     {
-                    SubstituiVar("&(IND_APHIP_REM_INT)&", "0.0");
-                    SubstituiVar("&(IND_AP_REM_INT)&", "0.0");
-                    SubstituiVar("&(IND_HIP_REM_INT)&", "0.0");
+                        SubstituiVar("&(IND_APHIP_REM_INT)&", "0.0");
+                        SubstituiVar("&(IND_AP_REM_INT)&", "0.0");
+                        SubstituiVar("&(IND_HIP_REM_INT)&", "0.0");
 
                     } //If tbl_ResumoExame!Est_5 = 0 Then
                     else
                     {
-                    SubstituiVar("&(IND_APHIP_REM_INT)&", TimeSpan.FromSeconds((ev_ap.qtd_rem + ev_hipop.qtd_rem) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
-                    SubstituiVar("&(IND_AP_REM_INT)&", TimeSpan.FromSeconds(ev_ap.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
-                    SubstituiVar("&(IND_HIP_REM_INT)&", TimeSpan.FromSeconds(ev_hipop.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                        SubstituiVar("&(IND_APHIP_REM_INT)&", TimeSpan.FromSeconds((ev_ap.qtd_rem + ev_hipop.qtd_rem) / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                        SubstituiVar("&(IND_AP_REM_INT)&", TimeSpan.FromSeconds(ev_ap.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
+                        SubstituiVar("&(IND_HIP_REM_INT)&", TimeSpan.FromSeconds(ev_hipop.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600)).ToString(@"hh\:mm\:ss"));
 
                     }
                     barraLoading.Value += 5; // ou += 10, etc.
@@ -7625,7 +7604,7 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(SAT_MEDIA)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"]) * 100 / sao2).ToString("0"));
                     SubstituiVar("&(MAIOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"]) * 100 / sao2).ToString("0"));
                     SubstituiVar("&(MENOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"]) * 100 / sao2).ToString("0"));
-                    
+
                     SubstituiVar("&(SAT90)&", ttr == 0 ? "0.0" :
                         TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])).ToString(@"hh\:mm\:ss") +
                         $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr):0.0} %)");
@@ -7701,10 +7680,10 @@ namespace PlotagemOpenGL.LaudoForm
 
             sql = "SELECT * FROM tbl_PosEstagio";
             rs = ExecutaSQL(cnn_dbExame, sql);
-            
-            if(rs != null)
+
+            if (rs != null)
             {
-                foreach(DataRow rw in rs.Rows)
+                foreach (DataRow rw in rs.Rows)
                 {
                     if (Convert.ToInt32(rw["Estagio"]) > 0)
                     {
@@ -7952,7 +7931,7 @@ namespace PlotagemOpenGL.LaudoForm
             SubstituiVar("&(QTD_REM_APNEIA)&", ev_ap.qtd_rem.ToString("0"));
 
             // IND_REM_APNEIA
-            if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"])== 0)
+            if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) == 0)
                 SubstituiVar("&(IND_REM_APNEIA)&", "0.0");
             else
                 SubstituiVar("&(IND_REM_APNEIA)&", (ev_ap.qtd_rem / (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Est_5"]) / 3600.0)).ToString("0.0"));
@@ -8585,8 +8564,8 @@ namespace PlotagemOpenGL.LaudoForm
                 }
                 else
                 {
-                    SubstituiVar("&(QH_PLM_INT)&", (GetQtdEvento(cnn_dbExame,12) / (tts / 3600)).ToString("0.0"));
-                    SubstituiVar("&(QTD_MDESP_INT)&", GetQtdEvento(cnn_dbExame,8).ToString("0.0"));
+                    SubstituiVar("&(QH_PLM_INT)&", (GetQtdEvento(cnn_dbExame, 12) / (tts / 3600)).ToString("0.0"));
+                    SubstituiVar("&(QTD_MDESP_INT)&", GetQtdEvento(cnn_dbExame, 8).ToString("0.0"));
                 }
             }
             else
@@ -8626,7 +8605,7 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(PORC_TEMPO_RONCO)&", tts == 0 ? "0.0" : (tempo_ronco * 100 / tts).ToString("0.0"));
                 SubstituiVar("&(QTD_DESP)&", qtd_desp.ToString("0"));
 
-                int qtd_mdesp = GetQtdEvento(cnn_dbExame,8);
+                int qtd_mdesp = GetQtdEvento(cnn_dbExame, 8);
                 SubstituiVar("&(QTD_MDESP)&", qtd_mdesp.ToString());
 
                 int qtd_idr_sem_mdesp = qtd_mdesp - qtd_hipop_com_mdesp - qtd_ap_cen_com_mdesp - qtd_ap_obs_com_mdesp - qtd_ap_mis_com_mdesp - qtd_RERA_com_mdesp;
@@ -8635,21 +8614,21 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(IND_MDESP)&", tts == 0 ? "0.0" : (qtd_mdesp / (tts / 3600)).ToString("0.0"));
                 SubstituiVar("&(IND_DESP)&", tts == 0 ? "0.0" : (qtd_desp / (tts / 3600)).ToString("0.0"));
 
-                int qtd_movperna = GetQtdEvento(cnn_dbExame,22);
+                int qtd_movperna = GetQtdEvento(cnn_dbExame, 22);
                 SubstituiVar("&(QTD_MOVPERNA)&", qtd_movperna.ToString());
 
                 double qh_movperna = tts == 0 ? 0.0 : (qtd_movperna / (tts / 3600));
                 SubstituiVar("&(QH_MOVPERNA)&", qh_movperna.ToString("0.0"));
                 SubstituiVar("&(IND_MOVPERNA)&", qh_movperna.ToString("0.0"));
 
-                int qtd_plm = GetQtdEvento(cnn_dbExame,12);
+                int qtd_plm = GetQtdEvento(cnn_dbExame, 12);
                 SubstituiVar("&(QTD_PLM)&", qtd_plm.ToString());
 
                 double qh_plm = tts == 0 ? 0.0 : (qtd_plm / (tts / 3600));
                 SubstituiVar("&(QH_PLM)&", qh_plm.ToString("0.0"));
                 SubstituiVar("&(IND_PLM)&", qh_plm.ToString("0.0"));
 
-                int qtd_ronco = GetQtdEvento(cnn_dbExame,13);
+                int qtd_ronco = GetQtdEvento(cnn_dbExame, 13);
                 double qh_ronco = tts == 0 ? 0.0 : (qtd_ronco / (tts / 3600));
                 SubstituiVar("&(QH_RONCO)&", qh_ronco.ToString("0.0"));
                 SubstituiVar("&(QTD_RONCO)&", qtd_ronco.ToString());
@@ -8906,32 +8885,32 @@ namespace PlotagemOpenGL.LaudoForm
                 // EST_7 (C)
                 SubstituiVar("&(EST_7)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"])).ToString(@"hh\:mm\:ss"));
                 SubstituiVar("&(EST_7_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"])));
-                SubstituiVar("&(TTR_EST_7)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
+                SubstituiVar("&(TTR_EST_7)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
-                SubstituiVar("&(TTS_EST_7)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
+                SubstituiVar("&(TTS_EST_7)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_7"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
 
                 // EST_8 (A)
                 SubstituiVar("&(EST_8)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"])).ToString(@"hh\:mm\:ss"));
                 SubstituiVar("&(EST_8_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"])));
-                SubstituiVar("&(TTR_EST_8)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
+                SubstituiVar("&(TTR_EST_8)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
-                SubstituiVar("&(TTS_EST_8)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
+                SubstituiVar("&(TTS_EST_8)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_8"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
 
                 // EST_9 (I)
                 SubstituiVar("&(EST_9)&", TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"])).ToString(@"hh\:mm\:ss"));
                 SubstituiVar("&(EST_9_MIN)&", FormataTempoMin(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"])));
-                SubstituiVar("&(TTR_EST_9)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
+                SubstituiVar("&(TTR_EST_9)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
-                SubstituiVar("&(TTS_EST_9)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
+                SubstituiVar("&(TTS_EST_9)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_9"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
 
                 // QTD_MT
                 SubstituiVar("&(QTD_MT)&", (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_6"]) / 30).ToString("0")));
@@ -8944,9 +8923,9 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(TTR_EST_3)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
                     ? "0.0"
                     : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
-                SubstituiVar("&(TTR_EST_4)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
+                SubstituiVar("&(TTR_EST_4)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTR"])).ToString("0.0")));
 
                 // TTS_EST_3 e TTS_EST_34
                 if (Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0)
@@ -8956,20 +8935,20 @@ namespace PlotagemOpenGL.LaudoForm
                 }
                 else
                 {
-                    string valorTTS3 = (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0"));
+                    string valorTTS3 = (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0"));
                     SubstituiVar("&(TTS_EST_3)&", valorTTS3);
                     SubstituiVar("&(TTS_EST_34)&", valorTTS3);
                 }
 
                 // EST_34
-                est3 =Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
-                est4 =Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
+                est3 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_3"]);
+                est4 = Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]);
                 SubstituiVar("&(EST_34)&", TimeSpan.FromSeconds(est3 + est4).ToString(@"hh\:mm\:ss"));
 
                 // TTS_EST_4
-                SubstituiVar("&(TTS_EST_4)&",Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
+                SubstituiVar("&(TTS_EST_4)&", Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"]) == 0
                     ? "0.0"
-                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]) * 100 /Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
+                    : (Convert.ToDouble(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Est_4"]) * 100 / Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["TTS"])).ToString("0.0")));
 
             }
         }
@@ -8993,7 +8972,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             int pos_c_r = 0, pos_b_r = 0, pos_d_r = 0, pos_e_r = 0;
 
-            int pos_c_n = 0 , pos_b_n = 0, pos_d_n = 0, pos_e_n = 0;
+            int pos_c_n = 0, pos_b_n = 0, pos_d_n = 0, pos_e_n = 0;
 
             double calculo = 0;
 
@@ -9003,9 +8982,9 @@ namespace PlotagemOpenGL.LaudoForm
             sql = "SELECT * FROM tbl_PosEstagio";
             rs = ExecutaSQL(cnn_dbExame, sql);
 
-            if(rs != null)
+            if (rs != null)
             {
-                foreach(DataRow rw in rs.Rows)
+                foreach (DataRow rw in rs.Rows)
                 {
                     if (Convert.ToInt32(rw["Estagio"]) == 5)
                     {
@@ -9029,7 +9008,7 @@ namespace PlotagemOpenGL.LaudoForm
             sql = "SELECT * FROM Cons_Eventos_ApCen WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ")";
             rs = ExecutaSQL(cnn_dbExame, sql);
 
-            if(rs != null)
+            if (rs != null)
             {
                 foreach (DataRow rw in rs.Rows)
                 {
@@ -9069,9 +9048,9 @@ namespace PlotagemOpenGL.LaudoForm
             sql = "SELECT * FROM Cons_Eventos_ApObs WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ")";
             rs = ExecutaSQL(cnn_dbExame, sql);
 
-            if(rs != null)
+            if (rs != null)
             {
-                foreach(DataRow rw in rs.Rows)
+                foreach (DataRow rw in rs.Rows)
                 {
                     int estagio = Convert.ToInt32(rw["Estagio"]);
                     int duracao = Convert.ToInt32(rw["Duracao"]);
@@ -9262,7 +9241,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             //'QTDE_APNEIA_CENTRAL
             CalculoC = 0;
-            for(int i = 1; i <  5; i++)
+            for (int i = 1; i < 5; i++)
             {
                 CalculoC = CalculoC + AC_C_Q[i];
             }
@@ -9306,27 +9285,27 @@ namespace PlotagemOpenGL.LaudoForm
 
             //'QTDE_APNEIA_OBSTRUTIVA
             CalculoC = 0;
-            for (int i = 1; i < 5; i++) 
+            for (int i = 1; i < 5; i++)
             {
-            CalculoC = CalculoC + AO_C_Q[i];
+                CalculoC = CalculoC + AO_C_Q[i];
             }
 
             CalculoB = 0;
             for (int i = 1; i < 5; i++)
             {
-            CalculoB = CalculoB + AO_B_Q[i];
+                CalculoB = CalculoB + AO_B_Q[i];
             }
 
             CalculoD = 0;
             for (int i = 1; i < 5; i++)
             {
-            CalculoD = CalculoD + AO_D_Q[i];
+                CalculoD = CalculoD + AO_D_Q[i];
             }
 
             CalculoE = 0;
             for (int i = 1; i < 5; i++)
             {
-            CalculoE = CalculoE + AO_E_Q[i];
+                CalculoE = CalculoE + AO_E_Q[i];
             }
 
             SubstituiVar("&(AO_N_C)&", CalculoC.ToString("F0", new CultureInfo("pt-BR")));
@@ -9351,22 +9330,22 @@ namespace PlotagemOpenGL.LaudoForm
             // 'QTDE_APNEIA_MISTA
 
             CalculoC = 0;
-            for (int i = 1; i < 5; i++) {CalculoC = CalculoC + AM_C_Q[i]; }
-            
+            for (int i = 1; i < 5; i++) { CalculoC = CalculoC + AM_C_Q[i]; }
+
             CalculoB = 0;
-            for (int i = 1; i < 5; i++) {CalculoB = CalculoB + AM_B_Q[i]; }
-            
+            for (int i = 1; i < 5; i++) { CalculoB = CalculoB + AM_B_Q[i]; }
+
             CalculoD = 0;
-            for (int i = 1; i < 5; i++) {CalculoD = CalculoD + AM_D_Q[i]; }
-            
+            for (int i = 1; i < 5; i++) { CalculoD = CalculoD + AM_D_Q[i]; }
+
             CalculoE = 0;
-            for (int i = 1; i < 5; i++) {CalculoE = CalculoE + AM_E_Q[i]; }                
+            for (int i = 1; i < 5; i++) { CalculoE = CalculoE + AM_E_Q[i]; }
 
             SubstituiVar("&(AM_N_C)&", CalculoC.ToString("F0", new CultureInfo("pt-BR")));
             SubstituiVar("&(AM_N_B)&", CalculoB.ToString("F0", new CultureInfo("pt-BR")));
             SubstituiVar("&(AM_N_D)&", CalculoD.ToString("F0", new CultureInfo("pt-BR")));
             SubstituiVar("&(AM_N_E)&", CalculoE.ToString("F0", new CultureInfo("pt-BR")));
-   
+
             SubstituiVar("&(AM_R_C)&", AM_C_Q[5].ToString("F0", new CultureInfo("pt-BR")));
             SubstituiVar("&(AM_R_B)&", AM_B_Q[5].ToString("F0", new CultureInfo("pt-BR")));
             SubstituiVar("&(AM_R_D)&", AM_D_Q[5].ToString("F0", new CultureInfo("pt-BR")));
@@ -9728,11 +9707,11 @@ namespace PlotagemOpenGL.LaudoForm
 
             sql = "SELECT * FROM Cons_Eventos_Dessat";
             rs = ExecutaSQL(cnn_dbExame, sql);
-            if(rs != null)
+            if (rs != null)
             {
                 CalculoC = 0; CalculoB = 0; CalculoD = 0; CalculoE = 0;
 
-                foreach(DataRow rw in rs.Rows)
+                foreach (DataRow rw in rs.Rows)
                 {
                     if (rw["Posicao"].ToString().Equals(".")) { CalculoC++; }
                     if (rw["Posicao"].ToString().Equals("C")) { CalculoC++; }
@@ -9797,15 +9776,15 @@ namespace PlotagemOpenGL.LaudoForm
             DataTable tbl = new DataTable();
             int[] apn_cen_est = new int[9];
 
-            for(int i = 0; i < apn_cen_est.Length; i ++)
+            for (int i = 0; i < apn_cen_est.Length; i++)
             {
                 apn_cen_est[i] = 0;
             }
 
             tbl = ExecutaSQL(cnn_dbExame, "SELECT * FROM Cons_Eventos_ApCen");
-            if(tbl != null)
+            if (tbl != null)
             {
-                foreach(DataRow rw in tbl.Rows)
+                foreach (DataRow rw in tbl.Rows)
                 {
                     int estagio = Convert.ToInt32(rw["Estagio"]);
                     apn_cen_est[estagio]++;
@@ -10560,7 +10539,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             SubstituiVar("&(DUR_MAX_REM_APNEIA_CEN)&", dur_max_rem_ap_cen.ToString("0.0"));
             SubstituiVar("&(DUR_MED_REM_APNEIA_CEN)&", dur_med_rem_ap_cen.ToString("0.0"));
-            SubstituiVar("&(DUR_TOT_REM_APNEIA_CEN)&",  TimeSpan.FromSeconds(dur_tot_rem_ap_cen).ToString(@"hh\:mm\:ss"));
+            SubstituiVar("&(DUR_TOT_REM_APNEIA_CEN)&", TimeSpan.FromSeconds(dur_tot_rem_ap_cen).ToString(@"hh\:mm\:ss"));
 
             // APNEIA CENTRAL - NREM
             sql = "SELECT * FROM Cons_Eventos_ApCen WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
@@ -10584,7 +10563,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             SubstituiVar("&(DUR_MAX_NREM_APNEIA_CEN)&", dur_max_nrem_ap_cen.ToString("0.0"));
             SubstituiVar("&(DUR_MED_NREM_APNEIA_CEN)&", dur_med_nrem_ap_cen.ToString("0.0"));
-            SubstituiVar("&(DUR_TOT_NREM_APNEIA_CEN)&",  TimeSpan.FromSeconds(dur_tot_nrem_ap_cen).ToString(@"hh\:mm\:ss"));
+            SubstituiVar("&(DUR_TOT_NREM_APNEIA_CEN)&", TimeSpan.FromSeconds(dur_tot_nrem_ap_cen).ToString(@"hh\:mm\:ss"));
 
             // APNEIA MISTA - REM
             sql = "SELECT * FROM Cons_Eventos_ApMis WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and Estagio = 5";
@@ -10661,7 +10640,7 @@ namespace PlotagemOpenGL.LaudoForm
 
             // APNEIA OBSTRUTIVA - NREM
             sql = "SELECT * FROM Cons_Eventos_ApObs WHERE (Pag_Ini >= " + pag_noite + " AND Pag_Ini <= " + pag_dia + ") and (Estagio > 0 and Estagio < 4)";
-            var eventosNremApObs = ExecutaSQL(cnn_dbExame,sql);
+            var eventosNremApObs = ExecutaSQL(cnn_dbExame, sql);
 
             j = eventosNremApObs.Rows.Count > 0 ? eventosNremApObs.Rows.Count : 1;
             dur_max = 0;
@@ -10855,16 +10834,16 @@ namespace PlotagemOpenGL.LaudoForm
             {
                 if (ExisteVar("&(RESUMO_EVENTOS)&"))
                 {
-                        // Eventos cardíacos
-                        sql = "SELECT * FROM tbl_EventoTipoCanal WHERE CodTipoCanal = 2";
-                        tbl = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(rw => rw.Field<int>("CodTipoCanal") == 2).CopyToDataTable();
-                        foreach (DataRow row in tbl.Rows)
-                        {
-                            eventosCardiacos += ((int)row["CodEvento"]).ToString("000") + "#";
-                        }
+                    // Eventos cardíacos
+                    sql = "SELECT * FROM tbl_EventoTipoCanal WHERE CodTipoCanal = 2";
+                    tbl = GlobVar.tbl_EventoTipoCanal.AsEnumerable().Where(rw => rw.Field<int>("CodTipoCanal") == 2).CopyToDataTable();
+                    foreach (DataRow row in tbl.Rows)
+                    {
+                        eventosCardiacos += ((int)row["CodEvento"]).ToString("000") + "#";
+                    }
 
-                        // Eventos cardíacos (estágio 0 permitido)
-                        sql = $@"SELECT CodEvento, COUNT(CodEvento) AS qtd_evento,
+                    // Eventos cardíacos (estágio 0 permitido)
+                    sql = $@"SELECT CodEvento, COUNT(CodEvento) AS qtd_evento,
                     SUM(Duracao) AS Dur_Total,
                     MAX(Duracao) AS Maior_Dur
              FROM Cons_EventosComEstag
@@ -10915,18 +10894,18 @@ namespace PlotagemOpenGL.LaudoForm
 
                     // Executa a junção com LINQ
                     var query2 = from a in GlobVar.tbl_RelatResumo.AsEnumerable()
-                                join b in GlobVar.tbl_RelatResumoItem.AsEnumerable()
-                                    on a.Field<int>("CodGrupo") equals b.Field<int>("CodGrupo")
-                                join c in GlobVar.tbl_CadEvento.AsEnumerable()
-                                    on b.Field<int>("CodEvento") equals c.Field<int>("CodEvento")
-                                orderby a.Field<int>("CodGrupo"), b.Field<int>("Ordem")
-                                select new
-                                {
-                                    CodGrupo = a.Field<int>("CodGrupo"),
-                                    DescrGrupo = a.Field<string>("DescrGrupo"),
-                                    CodEvento = b.Field<int>("CodEvento"),
-                                    DescrEvento = c.Field<string>("DescrEvento")
-                                };
+                                 join b in GlobVar.tbl_RelatResumoItem.AsEnumerable()
+                                     on a.Field<int>("CodGrupo") equals b.Field<int>("CodGrupo")
+                                 join c in GlobVar.tbl_CadEvento.AsEnumerable()
+                                     on b.Field<int>("CodEvento") equals c.Field<int>("CodEvento")
+                                 orderby a.Field<int>("CodGrupo"), b.Field<int>("Ordem")
+                                 select new
+                                 {
+                                     CodGrupo = a.Field<int>("CodGrupo"),
+                                     DescrGrupo = a.Field<string>("DescrGrupo"),
+                                     CodEvento = b.Field<int>("CodEvento"),
+                                     DescrEvento = c.Field<string>("DescrEvento")
+                                 };
 
                     // Preenche a DataTable com o resultado
                     foreach (var item in query)
@@ -10981,7 +10960,7 @@ namespace PlotagemOpenGL.LaudoForm
                             }
                             else
                             {
-                                
+
                                 DataRow ev = eventoResumo2[0];
                                 ObjExcel.Cells[linha, 1].Value = "     " + rowGrupo2["DescrEvento"].ToString();
                                 ObjExcel.Cells[linha, 2].Value = ev["qtd_evento"];
@@ -11018,7 +10997,7 @@ namespace PlotagemOpenGL.LaudoForm
                     {
                         Cola_Resumo_Eventos("&(SP_RESUMO_EVENTOS)&", 38, linha - 1);
                     }
-                    
+
                 }
 
 
@@ -11330,7 +11309,7 @@ namespace PlotagemOpenGL.LaudoForm
         {
             // Supondo que valor representa minutos, você pode ajustar:
             float minut = valor / 60;
-            return  minut.ToString("F1") + " min";
+            return minut.ToString("F1") + " min";
         }
 
         private static void s_resumo_CPAP()
@@ -11544,11 +11523,11 @@ namespace PlotagemOpenGL.LaudoForm
             string sql = "SELECT Estagio, Count(SumOfDuracao) AS qtd_PTT, Max(SumOfDuracao) AS Max_PTT, Sum(SumOfDuracao) AS Duracao_PTT From Cons_Eventos_PTT GROUP BY Estagio";
 
             tbl_EventosPTT = ExecutaSQL(cnn_dbExame, sql);
-            if(tbl_EventosPTT != null)
+            if (tbl_EventosPTT != null)
             {
-                for(int i = 0; i <= 9; i++)
+                for (int i = 0; i <= 9; i++)
                 {
-                    if(tbl_EventosPTT.AsEnumerable().Any(row => row.Field<int>("Estagio") == i))
+                    if (tbl_EventosPTT.AsEnumerable().Any(row => row.Field<int>("Estagio") == i))
                     {
                         DataRow rw_EventosPTT = tbl_EventosPTT.AsEnumerable().Where(row => row.Field<int>("Estagio") == i).FirstOrDefault();
 
@@ -11560,7 +11539,7 @@ namespace PlotagemOpenGL.LaudoForm
             }
             else
             {
-                for(int i = 0; i <= 9; i++)
+                for (int i = 0; i <= 9; i++)
                 {
                     SubstituiVar("&(QTD_PTT_" + i + ")&", "0");
                     SubstituiVar("&(MAIOR_PTT_" + i + ")&", "-");
@@ -11589,6 +11568,355 @@ namespace PlotagemOpenGL.LaudoForm
             return string.Join(" e ", partes);
         }
 
+        public static void AjustaTbl_ResumoExame()
+        {
+            int pag_noite = Canais.Get_BoaNoite();
+            pag_noite = pag_noite / 30 * 30;
+            int pag_dia = Canais.Get_BomDia();
+            pag_dia = pag_dia / 30 * 30 + 29;
+
+            int TTR = 0;
+            int TTS = 0;
+
+
+            int Est_0 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 0);
+            int Est_1 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 1);
+            int Est_2 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 2);
+            int Est_3 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 3);
+            int Est_4 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 4);
+            int Est_5 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 5);
+            int Est_6 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 6);
+            int Est_7 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 7);
+            int Est_8 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 8);
+            int Est_9 = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count(rw => rw.Field<int>("Estagio") == 9);
+
+            TTR = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") >= pag_noite && row.Field<int>("NumPag") <= pag_dia).Count();
+            TTS = Est_1 + Est_2 + Est_3 + Est_4 + Est_5 + Est_6 + Est_7 + Est_8 + Est_9;
+
+            int Dessat_Menor = 100;            
+            int Dessat_Maior = 0;
+            int Dessat_Media = 0;
+            int Dessat_Abaixo90 = 0;
+            int Dessat_Abaixo80 = 0;
+            int Dessat_Abaixo89 = 0;
+            int Dessat_Abaixo70 = 0;
+            DataTable DtDesprezar = new DataTable();
+            if (GlobVar.eventos.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 100))
+            {
+                DtDesprezar = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 100).CopyToDataTable();
+
+            }
+            var numsDesprezar = new HashSet<int>(DtDesprezar.AsEnumerable()
+                    .Select(row => row.Field<int>("NumPag")));
+
+            foreach (DataRow rw in GlobVar.tbl_Paginas.Rows)
+            {
+                int valorAtual = Convert.ToInt32(rw["SatBasal"]);
+                int numPagAtual = Convert.ToInt32(rw["NumPag"]);
+
+                if (!numsDesprezar.Contains(numPagAtual) && (numPagAtual > pag_noite && numPagAtual < pag_dia))
+                {
+                    Dessat_Media += valorAtual;
+                    if (valorAtual >= 20 && valorAtual < Dessat_Menor)
+                    {
+                        Dessat_Menor = valorAtual;
+                    }
+                    if (valorAtual >= 20 && valorAtual > Dessat_Maior)
+                    {
+                        Dessat_Maior = valorAtual;
+                    }
+
+                    if (!numsDesprezar.Contains(numPagAtual) && valorAtual <= 70)
+                    {
+                        Dessat_Abaixo70++;
+                    }
+                    if (!numsDesprezar.Contains(numPagAtual) && valorAtual <= 80)
+                    {
+                        Dessat_Abaixo80++;
+                    }
+                    if (!numsDesprezar.Contains(numPagAtual) && valorAtual <= 89)
+                    {
+                        Dessat_Abaixo89++;
+                    }
+                    if (!numsDesprezar.Contains(numPagAtual) && valorAtual <= 90)
+                    {
+                        Dessat_Abaixo90++;
+                    }
+                }
+
+            }
+            Dessat_Media /= (GlobVar.tbl_Paginas.Rows.Count - (Math.Abs(pag_dia - GlobVar.tbl_Paginas.Rows.Count))) - pag_noite;
+            DataTable DtREM = new DataTable();
+            if (GlobVar.tbl_Paginas.AsEnumerable().Any(row => row.Field<int>("Estagio") == 5))
+            {
+                DtREM = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("Estagio") == 5).CopyToDataTable();
+            }
+            var numsREM = new HashSet<int>(DtREM.AsEnumerable()
+                    .Select(row => row.Field<int>("NumPag")));
+
+            DataTable DtNREM = new DataTable();
+            if (GlobVar.tbl_Paginas.AsEnumerable().Any(row => row.Field<int>("Estagio") == 4))
+            {
+                DtNREM = GlobVar.eventos.AsEnumerable().Where(row => row.Field<int>("Estagio") == 4).CopyToDataTable();
+            }
+            var numsNREM = new HashSet<int>(DtNREM.AsEnumerable()
+                    .Select(row => row.Field<int>("NumPag")));
+
+            DataTable DtVigilia = new DataTable();
+            if (GlobVar.tbl_Paginas.AsEnumerable().Any(row => row.Field<int>("Estagio") == 0))
+            {
+                DtVigilia = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("Estagio") == 0).CopyToDataTable();
+            }
+            var numsVigilia = new HashSet<int>(DtVigilia.AsEnumerable()
+                    .Select(row => row.Field<int>("NumPag")));
+
+
+
+            int FC_Menor = 100;
+            int FC_Maior = 0;
+            int FC_Media = 0;
+
+            int FC_REM = 0;
+            int FC_REM_MEDIA = 0;
+            int FC_REM_MAIOR = 0;
+
+            int FC_NREM = 0;
+            int FC_NREM_MEDIA = 0;
+            int FC_NREM_MAIOR = 0;
+
+            int FC_VIGILIA = 0;
+            int FC_VIGILIA_MEDIA = 0;
+            int FC_VIGILIA_MAIOR = 0;
+
+            int v = pag_noite * 8;
+            int max = pag_dia * 8;
+            for (int i = v; i <= max; i += 7)
+            {
+                v = (int)GlobVar.fcValues[i];
+                int pag = (i + 1) / 8;
+                if (numsDesprezar.Contains(i)) continue;
+                if (v == 0) break;
+                FC_Media += v;
+                if (v < FC_Menor)
+                {
+                    FC_Menor = v;
+                }
+                if (v > FC_Maior)
+                {
+                    FC_Maior = v;
+                }
+                if (numsREM.Contains(pag))
+                {
+                    FC_REM++;
+                    FC_REM_MEDIA += v;
+                    if (FC_REM_MAIOR < v)
+                    {
+                        FC_REM_MAIOR = v;
+                    }
+                }
+                if (numsNREM.Contains(pag))
+                {
+                    FC_NREM++;
+                    FC_NREM_MEDIA += v;
+                    if (FC_NREM_MAIOR < v)
+                    {
+                        FC_NREM_MAIOR = v;
+                    }
+                }
+                if (numsVigilia.Contains(pag))
+                {
+                    FC_VIGILIA++;
+                    FC_VIGILIA_MEDIA += v;
+                    if (FC_VIGILIA_MAIOR < v)
+                    {
+                        FC_VIGILIA_MAIOR = v;
+                    }
+                }
+            }
+            if (FC_REM != 0) FC_REM_MEDIA /= FC_REM;
+            if (FC_NREM != 0) FC_NREM_MEDIA /= FC_NREM;
+            if (FC_VIGILIA != 0) FC_VIGILIA_MEDIA /= FC_VIGILIA;
+            FC_Media /= (Math.Abs(pag_dia - pag_noite));
+
+            DataTable DtDespertar = new DataTable();
+            if (GlobVar.eventosUpdate.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 8))
+            {
+                DtDespertar = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 8).CopyToDataTable();
+
+            }
+            var numsDespertar = new HashSet<int>(DtDespertar.AsEnumerable()
+                    .Select(row => row.Field<int>("Seq")));
+            int Qtd_Desp = numsDespertar.Count;
+
+            DataTable DtDessat = new DataTable();
+            if (GlobVar.eventosUpdate.AsEnumerable().Any(row => row.Field<int>("CodEvento") == 17))
+            {
+                DtDessat = GlobVar.eventosUpdate.AsEnumerable().Where(row => row.Field<int>("CodEvento") == 17).CopyToDataTable();
+
+            }
+            var numsDessat = new HashSet<int>(DtDessat.AsEnumerable()
+                    .Select(row => row.Field<int>("Seq")));
+
+            int Qtd_Dessat = numsDessat.Count;
+
+            int Ev_Rel = 0;
+
+            double Lat_E1 = CalcularLatencia(GlobVar.tbl_Paginas, 1);
+            double Lat_E2 = CalcularLatencia(GlobVar.tbl_Paginas, 2);
+            double Lat_E3 = CalcularLatencia(GlobVar.tbl_Paginas, 3);
+            double Lat_E4 = CalcularLatencia(GlobVar.tbl_Paginas, 4);
+
+            int Pos_C = 0;
+            int Pos_D = 0;
+            int Pos_E = 0;
+            int Pos_B = 0;
+            for (int i = 0; i < GlobVar.posiValues.Length; i += 7)
+            {
+                v = (int)GlobVar.posiValues[i];
+                if (v == 0) break;
+
+                if (v >= (GlobVar.PosCima - GlobVar.PosIncremento) && v <= (GlobVar.PosCima + GlobVar.PosIncremento)) // CIMA
+                {
+                    Pos_C++;
+                }
+                else if (v >= (GlobVar.PosDireita - GlobVar.PosIncremento) && v <= (GlobVar.PosDireita + GlobVar.PosIncremento)) // DIREITA
+                {
+                    Pos_D++;
+                }
+                else if (v >= (GlobVar.PosBaixo - GlobVar.PosIncremento) && v <= (GlobVar.PosBaixo + GlobVar.PosIncremento)) //BAIXO
+                {
+                    Pos_E++;
+                }
+                else if (v >= (GlobVar.PosEsquerda - GlobVar.PosIncremento) && v <= (GlobVar.PosEsquerda + GlobVar.PosIncremento)) // ESQUERDA
+                {
+                    Pos_B++;
+                }
+                else
+                {
+                    Pos_C++;
+                }
+
+            }
+
+            int Tipo = 0;
+
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_0"] = Est_0;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_1"] = Est_1;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_2"] = Est_2;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_3"] = Est_3;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_4"] = Est_4;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_5"] = Est_5;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_6"] = Est_6;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_7"] = Est_7;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_8"] = Est_8;
+            GlobVar.tbl_ResumoExame.Rows[0]["Est_9"] = Est_9;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"] = Dessat_Menor;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"] = Dessat_Maior;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"] = Dessat_Media;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"] = Dessat_Abaixo90;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo80"] = Dessat_Abaixo80;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_Menor"] = FC_Menor;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_Media"] = FC_Media;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_Maior"] = FC_Maior;
+            GlobVar.tbl_ResumoExame.Rows[0]["Qtd_Desp"] = Qtd_Desp;
+            GlobVar.tbl_ResumoExame.Rows[0]["Qtd_Dessat"] = Qtd_Dessat;
+            GlobVar.tbl_ResumoExame.Rows[0]["Ev_Rel"] = Ev_Rel;
+            GlobVar.tbl_ResumoExame.Rows[0]["Lat_E1"] = Lat_E1;
+            GlobVar.tbl_ResumoExame.Rows[0]["Lat_E2"] = Lat_E2;
+            GlobVar.tbl_ResumoExame.Rows[0]["Lat_E3"] = Lat_E3;
+            GlobVar.tbl_ResumoExame.Rows[0]["Lat_E4"] = Lat_E4;
+            GlobVar.tbl_ResumoExame.Rows[0]["Pos_C"] = Pos_C;
+            GlobVar.tbl_ResumoExame.Rows[0]["Pos_D"] = Pos_D;
+            GlobVar.tbl_ResumoExame.Rows[0]["Pos_E"] = Pos_E;
+            GlobVar.tbl_ResumoExame.Rows[0]["Pos_B"] = Pos_B;
+            GlobVar.tbl_ResumoExame.Rows[0]["Tipo"] = Tipo;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo70"] = Dessat_Abaixo70;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_REM_MEDIA"] = FC_REM_MEDIA;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_REM_MAIOR"] = FC_REM_MAIOR;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_NREM_MEDIA"] = FC_NREM_MEDIA;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_NREM_MAIOR"] = FC_NREM_MAIOR;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_VIGILIA_MEDIA"] = FC_VIGILIA_MEDIA;
+            GlobVar.tbl_ResumoExame.Rows[0]["FC_VIGILIA_MAIOR"] = FC_VIGILIA_MAIOR;
+            GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo89"] = Dessat_Abaixo89;
+
+            string sql = @"UPDATE tbl_ResumoExame SET
+    [Est_0] = ?, [Est_1] = ?, [Est_2] = ?, [Est_3] = ?, [Est_4] = ?, [Est_5] = ?, [Est_6] = ?,
+    [Est_7] = ?, [Est_8] = ?, [Est_9] = ?, [Dessat_Menor] = ?, [Dessat_Maior] = ?, [Dessat_Media] = ?, [Dessat_Abaixo90] = ?, 
+    [Dessat_Abaixo80] = ?, [FC_Menor] = ?, [FC_Maior] = ?, [FC_Media] = ?, [Qtd_Desp] = ?, [Qtd_Dessat] = ?, [Lat_E1] = ?, [Lat_E2] = ?,
+    [Lat_E3] = ?, [Lat_E4] = ?, [Pos_C] = ?, [Pos_D] = ?, [Pos_E] = ?, [Pos_B] = ?, [Tipo] = ?, [Dessat_Abaixo70] = ?, [FC_REM_MEDIA] = ?, [FC_REM_MAIOR] = ?,
+    [FC_NREM_MEDIA] = ?, [FC_NREM_MAIOR] = ?, [FC_VIGILIA_MEDIA] = ?, [FC_VIGILIA_MAIOR] = ?, [Dessat_Abaixo89] = ?";
+            using (var cmd = new OleDbCommand(sql, GlobVar.ConnectionBDdat))
+            {
+                cmd.Parameters.AddWithValue("?", Est_0);
+                cmd.Parameters.AddWithValue("?", Est_1);
+                cmd.Parameters.AddWithValue("?", Est_2);
+                cmd.Parameters.AddWithValue("?", Est_3);
+                cmd.Parameters.AddWithValue("?", Est_4);
+                cmd.Parameters.AddWithValue("?", Est_5);
+                cmd.Parameters.AddWithValue("?", Est_6);
+                cmd.Parameters.AddWithValue("?", Est_7);
+                cmd.Parameters.AddWithValue("?", Est_8);
+                cmd.Parameters.AddWithValue("?", Est_9);
+                cmd.Parameters.AddWithValue("?", Dessat_Menor);
+                cmd.Parameters.AddWithValue("?", Dessat_Maior);
+                cmd.Parameters.AddWithValue("?", Dessat_Media);
+                cmd.Parameters.AddWithValue("?", Dessat_Abaixo90);
+                cmd.Parameters.AddWithValue("?", Dessat_Abaixo80);
+                cmd.Parameters.AddWithValue("?", FC_Menor);
+                cmd.Parameters.AddWithValue("?", FC_Maior);
+                cmd.Parameters.AddWithValue("?", FC_Media);
+                cmd.Parameters.AddWithValue("?", Qtd_Desp);
+                cmd.Parameters.AddWithValue("?", Qtd_Dessat);
+                cmd.Parameters.AddWithValue("?", Convert.ToInt32(Lat_E1));
+                cmd.Parameters.AddWithValue("?", Convert.ToInt32(Lat_E2));
+                cmd.Parameters.AddWithValue("?", Convert.ToInt32(Lat_E3));
+                cmd.Parameters.AddWithValue("?", Convert.ToInt32(Lat_E4));
+                cmd.Parameters.AddWithValue("?", Pos_C);
+                cmd.Parameters.AddWithValue("?", Pos_D);
+                cmd.Parameters.AddWithValue("?", Pos_E);
+                cmd.Parameters.AddWithValue("?", Pos_B);
+                cmd.Parameters.AddWithValue("?", Tipo);
+                cmd.Parameters.AddWithValue("?", Dessat_Abaixo70);
+                cmd.Parameters.AddWithValue("?", FC_REM_MEDIA);
+                cmd.Parameters.AddWithValue("?", FC_REM_MAIOR);
+                cmd.Parameters.AddWithValue("?", FC_NREM_MEDIA);
+                cmd.Parameters.AddWithValue("?", FC_NREM_MAIOR);
+                cmd.Parameters.AddWithValue("?", FC_VIGILIA_MEDIA);
+                cmd.Parameters.AddWithValue("?", FC_VIGILIA_MAIOR);
+                cmd.Parameters.AddWithValue("?", Dessat_Abaixo89);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public static double CalcularLatencia(
+            DataTable tbl_Paginas,
+            int estagioAlvo,         // Ex: "N1 - 1", "N2 - 2", "N3 - 3", "N4- 4"
+            int segundosPorLinha = 1,   // Geralmente 1 segundo
+            int epochLength = 30        // Tamanho do bloco: 30 segundos
+            )
+        {
+            if (tbl_Paginas.Rows.Count == 0) return -1;
+            int totalLinhas = tbl_Paginas.Rows.Count;
+            int linhasPorEpoch = epochLength / segundosPorLinha;
+            int pag_noite = Canais.Get_BoaNoite();
+
+            int temp = 0;
+            for (int i = pag_noite; i < totalLinhas; i += linhasPorEpoch)
+            {
+                // Pega o valor do estágio do início do bloco
+                var valorEstagio = Convert.ToInt32(tbl_Paginas.Rows[i]["Estagio"]);
+                if (valorEstagio != null && valorEstagio == estagioAlvo)
+                {
+                    // O tempo é o índice do bloco * epochLength
+                    double tempoSegundos = temp; // Como cada linha é 1s, o índice já representa segundos
+                    double minutos = tempoSegundos / 60.0;
+                    return minutos;
+                }
+                temp += linhasPorEpoch;
+            }
+            return -1; // Não encontrado
+        }
     }
 }
 
