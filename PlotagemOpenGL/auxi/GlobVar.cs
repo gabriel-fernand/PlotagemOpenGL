@@ -223,8 +223,6 @@ namespace PlotagemOpenGL.auxi
         public static float[] StartY;
         public static int canal;
         public static float[] loc;
-        public static short[] fcValues;
-        public static short[] posiValues;        
 
         public static int XRedimension;
         public static float ponteiroRedimension;

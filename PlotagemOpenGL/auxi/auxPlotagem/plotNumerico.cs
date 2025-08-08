@@ -400,10 +400,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     }
                                     else if (posi >= (GlobVar.PosEsquerda - GlobVar.PosIncremento) && posi <= (GlobVar.PosEsquerda + GlobVar.PosIncremento)) // ESQUERDA
                                     {
-                                        txtEmTela = "â";                                    }
+                                        txtEmTela = "â";
+                                    }
                                     else
                                     {
                                         txtEmTela = "ã";
+
                                     }
                                     //txtEmTela = "ã";
                                     float writeX = (j - GlobVar.indiceNumero) * espacoEntreNumeros;

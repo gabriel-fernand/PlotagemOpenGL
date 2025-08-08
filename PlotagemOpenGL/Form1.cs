@@ -337,8 +337,6 @@ namespace PlotagemOpenGL
                     GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
                     GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
                     await Task.Delay(25);
-                    GlobVar.posiValues = LeituraEmMatrizTeste.Referencia(14);
-                    GlobVar.fcValues = LeituraEmMatrizTeste.Referencia(67);
                     telaLoad.AtualizarProgresso(90);
                     //GlobVar.ultimaPag = 2;
                     load();
