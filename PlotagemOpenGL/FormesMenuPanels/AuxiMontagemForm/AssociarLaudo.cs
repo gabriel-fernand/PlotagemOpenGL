@@ -15,7 +15,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiMontagemForm
 {
     public partial class AssociarLaudo : Form
     {
-        private const string DiretorioLaudos = @"C:\Temp\Laudos";
+        //string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+        // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+        //string DiretorioLaudos = Path.Combine(basePath, "Laudos");
+        //string filePath = "\Diretorios.txt";
+
+        private const string DiretorioLaudos = @".\Laudos";
 
         public AssociarLaudo()
         {
@@ -31,7 +37,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiMontagemForm
 
         private void PreencherListBoxComLaudos()
         {
-            string caminho = @"C:\Temp\Laudos";
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+            string caminho = Path.Combine(basePath, "Laudos");
+            //string filePath = "\Diretorios.txt";
+
+            //string caminho = "\Laudos";
             if (!Directory.Exists(caminho))
             {
                 return;
@@ -85,7 +97,13 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiMontagemForm
 
         private void CopiarBut_Click(object sender, EventArgs e)
         {
-            string caminho = @"C:\Temp\Laudos";
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+            string caminho = Path.Combine(basePath, "Laudos");
+            //string filePath = "\Diretorios.txt";
+
+            //string caminho = "\Laudos";
             string novoNome = NovoModeloDeLaudo.Text.Trim();
 
             // 1. Verificar se o campo do novo nome está preenchido

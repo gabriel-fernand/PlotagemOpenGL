@@ -18,11 +18,12 @@ namespace PlotagemOpenGL.auxi
 {
     public class GlobVar
     {
+        public static string basePath = AppDomain.CurrentDomain.BaseDirectory;
         public static string STRINGAO;
         public static Point DimXY;
         public static string textFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.dat";
         public static string bDataFile = @"C:\Users\dev_i\source\repos\Dat\01368_01.mdb";
-        public static string configBD = @"C:\Temp\Dat\Configuração.mdb";
+        public static string configBD = Path.Combine(basePath, "/Dat/Configuração.mdb");
         public static string cabecalho;
         public static int npagin; 
         public static string npag;
@@ -44,23 +45,23 @@ namespace PlotagemOpenGL.auxi
         public static int qtdImpressao = 0;
         public static int qtdPeriodos = 0;
 
-        public static string diretorioEstagioAtual0 = @"C:\Temp\Icones\IcoNumericos\IcoN0Select.png";
-        public static string diretorioEstagioAtual1 = @"C:\Temp\Icones\IcoNumericos\IcoN1Select.png";
-        public static string diretorioEstagioAtual2 = @"C:\Temp\Icones\IcoNumericos\IcoN2Select.png";
-        public static string diretorioEstagioAtual3 = @"C:\Temp\Icones\IcoNumericos\IcoN3Select.png";
-        public static string diretorioEstagioAtualR = @"C:\Temp\Icones\IcoNumericos\IcoNRSelect.png";
-        public static string diretorioEstagioAtualT = @"C:\Temp\Icones\IcoNumericos\IcoNTSelect.png";
-        public static string diretorioEstagioAtualN = @"C:\Temp\Icones\IcoNumericos\IcoNNSelect.png";
+        public static string diretorioEstagioAtual0 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN0Select.png");
+        public static string diretorioEstagioAtual1 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN1Select.png");
+        public static string diretorioEstagioAtual2 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN2Select.png");
+        public static string diretorioEstagioAtual3 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN3Select.png");
+        public static string diretorioEstagioAtualR = Path.Combine(basePath, "Icones/IcoNumericos/IcoNRSelect.png");
+        public static string diretorioEstagioAtualT = Path.Combine(basePath, "Icones/IcoNumericos/IcoNTSelect.png");
+        public static string diretorioEstagioAtualN = Path.Combine(basePath, "Icones/IcoNumericos/IcoNNSelect.png");
+        
 
-
-        public static string diretorioEstagioAnteriorProximoNada = @"C:\Temp\Icones\IcoNumericos\IcoNVazio.png";
-        public static string diretorioEstagioAnteriorProximo0 =    @"C:\Temp\Icones\IcoNumericos\IcoN0.png";
-        public static string diretorioEstagioAnteriorProximo1 =    @"C:\Temp\Icones\IcoNumericos\IcoN1.png";
-        public static string diretorioEstagioAnteriorProximo2 =    @"C:\Temp\Icones\IcoNumericos\IcoN2.png";
-        public static string diretorioEstagioAnteriorProximo3 =    @"C:\Temp\Icones\IcoNumericos\IcoN3.png";
-        public static string diretorioEstagioAnteriorProximoR =    @"C:\Temp\Icones\IcoNumericos\IcoNR.png";
-        public static string diretorioEstagioAnteriorProximoT = @"C:\Temp\Icones\IcoNumericos\IcoNT.png";
-        public static string diretorioEstagioAnteriorProximoN = @"C:\Temp\Icones\IcoNumericos\IcoNN.png";
+        public static string diretorioEstagioAnteriorProximoNada = Path.Combine(basePath, "Icones/IcoNumericos/IcoNVazio.png");
+        public static string diretorioEstagioAnteriorProximo0 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN0.png");
+        public static string diretorioEstagioAnteriorProximo1 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN1.png");
+        public static string diretorioEstagioAnteriorProximo2 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN2.png");
+        public static string diretorioEstagioAnteriorProximo3 = Path.Combine(basePath, "Icones/IcoNumericos/IcoN3.png");
+        public static string diretorioEstagioAnteriorProximoR = Path.Combine(basePath, "Icones/IcoNumericos/IcoNR.png");
+        public static string diretorioEstagioAnteriorProximoT = Path.Combine(basePath, "Icones/IcoNumericos/IcoNT.png");
+        public static string diretorioEstagioAnteriorProximoN = Path.Combine(basePath, "Icones/IcoNumericos/IcoNN.png");
 
 
         public static string g_Traducoes = "";

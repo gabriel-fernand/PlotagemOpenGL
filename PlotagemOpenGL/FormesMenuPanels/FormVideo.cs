@@ -17,7 +17,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         private bool isProgrammaticChange = false; // Flag para controlar alterações programáticas
         private double videoInitialPosition = 0.0; // Posição inicial do vídeo em segundos
         private string videoname;
-        private string locvideo = @"C:\Temp\Dat\";
+        private string locvideo = Path.Combine(GlobVar.basePath, "Exames/");
         private Rectangle vidi;
         private Size formOriginalSize;
         public static float locVideo;

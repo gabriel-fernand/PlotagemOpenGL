@@ -552,7 +552,13 @@ namespace PlotagemOpenGL
 
         void F_Idioma()
         {
-            string filename = @"C:\Temp\lngPortugues.txt";
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+            string filename = Path.Combine(basePath, "lngPortugues.txt");
+            //string filePath = "\Diretorios.txt";
+
+            //string filename = "lngPortugues.txt";
 
             if (File.Exists(filename))
             {
@@ -6430,7 +6436,7 @@ namespace PlotagemOpenGL
         public string getTitulo()
         {
             string text = "";
-            var ini = new IniFile(@"C:\Temp\Config.ini");
+            var ini = new IniFile("Config.ini");
 
             string retLen = ini.Read("LAUDO", "CABECALHO_PAGINA_TRACADO", "__NOT_FOUND__");
 
@@ -6520,7 +6526,7 @@ namespace PlotagemOpenGL
         public static bool ImprimeLogo = false;
         private void SalvarComoPDF(string caminhoArquivo, Bitmap imagem)
         {
-            var ini = new IniFile(@"C:\Temp\Config.ini");
+            var ini = new IniFile("Config.ini");
             // Conversão de mm para pontos
             double CmParaPontos(double cm) => cm * 28.3465;
             double mmParaPontos(double mm) => mm * 2.83465;
@@ -6689,7 +6695,7 @@ namespace PlotagemOpenGL
         }
         private void ImprimeTudo_Click(string caminhoArquivo)
         {
-            var ini = new IniFile(@"C:\Temp\Config.ini");
+            var ini = new IniFile("Config.ini");
             // Conversão de mm para pontos
             double CmParaPontos(double cm) => cm * 28.3465;
             double mmParaPontos(double mm) => mm * 2.83465;

@@ -15,7 +15,7 @@ public class AnaliseCO2
 
     public AnaliseCO2()
     {
-        _arquivoIni = @"C:\Temp\Config.ini";
+        _arquivoIni = Path.Combine(GlobVar.basePath, "Config.ini");
         _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
         _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
         _tblEventos = GlobVar.eventos.AsEnumerable().CopyToDataTable();
@@ -23,7 +23,7 @@ public class AnaliseCO2
 
     public static string AnaliseAutomatica()
     {
-        _arquivoIni = @"C:\Temp\Config.ini";
+        _arquivoIni = Path.Combine(GlobVar.basePath, "Config.ini");
         _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
         string _direct = Path.GetDirectoryName(GlobVar.textFile);
         _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
@@ -108,7 +108,7 @@ public class AnaliseCO2
 
     public static void GetPrimeiroCO2(string filename)
     {
-        _arquivoIni = @"C:\Temp\Config.ini";
+        _arquivoIni = Path.Combine(GlobVar.basePath, "Config.ini");
         _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
         _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
         _tblEventos = GlobVar.eventos.AsEnumerable().CopyToDataTable();

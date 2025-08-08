@@ -9,7 +9,11 @@ namespace PlotagemOpenGL.auxi
     {
         public static void LeituraDiretorio()
         {
-            string filePath = @"C:\Temp\Diretorios.txt";
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+            string filePath = Path.Combine(basePath, "Diretorios.txt");
+            //string filePath = "\Diretorios.txt";
 
             using (FileStream fl = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
@@ -23,10 +27,10 @@ namespace PlotagemOpenGL.auxi
                     //Separando os valores por vírgula
                     valoresStr = line.Split(',');
                     
-                    GlobVar.textFile = (valoresStr[0]);
-                    GlobVar.bDataFile = valoresStr[1];
+                    GlobVar.textFile = Path.Combine(basePath, valoresStr[0]);
+                    GlobVar.bDataFile = Path.Combine(basePath, valoresStr[1]);
 
-                    GlobVar.configBD = valoresStr[2];
+                    GlobVar.configBD = Path.Combine(basePath, valoresStr[2]);
 
                 }
 

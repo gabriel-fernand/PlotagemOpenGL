@@ -31,7 +31,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             this.MaximizeBox = false; // Desativa o botão de maximizar
             _formPai = formPai;
             CarregarDadosPaginacao();
-            CarregarArquivosDiretorio(@"C:\Temp\Dat\", $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}_tela");
+            CarregarArquivosDiretorio("Exames/", $"{Path.GetFileNameWithoutExtension(GlobVar.textFile)}_tela");
         }
 
         private void CarregarDadosPaginacao()
@@ -549,7 +549,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
         public string getTitulo()
         {
             string text = "";
-            var ini = new IniFile(@"C:\Temp\Config.ini");
+            var ini = new IniFile("Config.ini");
 
             string retLen = ini.Read("LAUDO", "CABECALHO_PAGINA_TRACADO", "__NOT_FOUND__");
 
@@ -850,7 +850,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
         private async void btnImprimir_Click(object sender, EventArgs e)
         {
-            var ini = new IniFile(@"C:\Temp\Config.ini");
+            var ini = new IniFile("Config.ini");
             PdfDocument document = new PdfDocument();
             document.Info.Title = "Relatório de Exames";
             bool montalterada = false;

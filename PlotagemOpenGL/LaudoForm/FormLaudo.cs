@@ -182,7 +182,7 @@ namespace PlotagemOpenGL.LaudoForm
         }
         private void CarregarArquivosNoComboBox()
         {
-            string diretorio = @"C:\Temp\Laudos";
+            string diretorio = Path.Combine(GlobVar.basePath, "Laudos");
 
             if (Directory.Exists(diretorio))
             {
@@ -201,7 +201,7 @@ namespace PlotagemOpenGL.LaudoForm
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string diretorio = @"C:\Temp\Laudos";
+            string diretorio = Path.Combine(GlobVar.basePath, "Laudos");
             string nomeSelecionado = comboBox1.SelectedItem.ToString();
 
 
@@ -4062,11 +4062,11 @@ namespace PlotagemOpenGL.LaudoForm
         }
         public void CalculaCargaHipoxica()
         {
-            string arq = @"C:\Temp\Retorno\Dessat.txt";
+            string arq = Path.Combine(GlobVar.basePath, "Retorno/Dessat.txt");
             using (StreamWriter writer = new StreamWriter(arq, false, Encoding.Default))
             {
                 // Leitura/Gravação no INI
-                IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+                IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));
                 string cargaHipo = ini.Read("CARGAHIPO", "DIRETORIOS");
                 if (string.IsNullOrWhiteSpace(cargaHipo))
                 {
@@ -4330,7 +4330,7 @@ namespace PlotagemOpenGL.LaudoForm
 
                 //Cursor.Current = Cursors.WaitCursor;
 
-                g_dir_laudos = @"C:\Temp\Laudos\";
+                g_dir_laudos = Path.Combine(GlobVar.basePath, "Laudos/");
                 string nomeOrigem = Path.Combine(g_dir_laudos, comboBox1.Text + ".doc");
                 nome_arq_temp = "TMP" + DateTime.Now.ToString("HHmmss");
                 string caminhoTemp = Path.Combine(g_dir_laudos, nome_arq_temp + ".doc");
@@ -4483,7 +4483,7 @@ namespace PlotagemOpenGL.LaudoForm
                         }
                         InicializaEvRespDOC();
 
-                        F_PreencheLaudoDOC(Path.Combine(@"C:\Temp\Dat\", comboBox1.Text + ".doc"));
+                        F_PreencheLaudoDOC(Path.Combine(Path.Combine(GlobVar.basePath, "Exames/", comboBox1.Text + ".doc")));
                     }
                 }
 
@@ -5738,7 +5738,7 @@ namespace PlotagemOpenGL.LaudoForm
             int freq_Valor = 0;
 
             // --- Abrir conexão com Relatorios.mdb ---
-            string relatorioPath = Path.Combine("C:/Temp/", "Relatorios.mdb");
+            string relatorioPath = Path.Combine("Relatorios.mdb");
             string connStringRelatorio = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={relatorioPath};Persist Security Info=False;";
 
             OleDbConnection cnn_dbRelatorio = new OleDbConnection(connStringRelatorio);

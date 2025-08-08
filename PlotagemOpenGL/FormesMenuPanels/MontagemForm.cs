@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -234,7 +235,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
             }
         }
 
-        public static IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+        public static IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));
 
         public void GetIniThings()
         {

@@ -112,7 +112,7 @@ namespace PlotagemOpenGL
                             //MessageBox.Show($"Diretório selecionado: {diretorioDat} {diretorioMdb}", "Informação");
 
                             // Caminho do arquivo
-                            string filePath = @"C:\Temp\Diretorios.txt";
+                            string filePath = Path.Combine(GlobVar.basePath, "Diretorios.txt");
 
                             if (File.Exists(filePath))
                             {
@@ -194,7 +194,7 @@ namespace PlotagemOpenGL
                 }
 
                 // Atualizar Diretorios.txt
-                string filePath = @"C:\Temp\Diretorios.txt";
+                string filePath = Path.Combine(GlobVar.basePath, "Diretorios.txt");
                 string[] diretorios = new string[2];
 
                 if (File.Exists(filePath))
@@ -260,7 +260,7 @@ namespace PlotagemOpenGL
             }
         }
 
-        IniFile ini = new IniFile(@"C:\Temp\Config.ini");
+        IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));
         private void AtualizarLabelsComArquivosRecentes()
         {
             int totalLabels = 5;
