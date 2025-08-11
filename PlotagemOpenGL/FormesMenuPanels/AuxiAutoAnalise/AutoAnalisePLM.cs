@@ -1,6 +1,6 @@
 ﻿using Accord.Audio;
 using Accord.Math;
-using ADODB;
+
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.auxi.auxPlotagem;
 using PlotagemOpenGL.Filtros;

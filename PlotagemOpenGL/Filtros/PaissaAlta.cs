@@ -3,7 +3,7 @@ using MathNet.Numerics;
 using MathNet.Filtering;
 using MathNet.Filtering.IIR;
 using MathNet.Numerics;
-using UnityEngine;
+
 
 namespace PlotagemOpenGL.Filtros
 {

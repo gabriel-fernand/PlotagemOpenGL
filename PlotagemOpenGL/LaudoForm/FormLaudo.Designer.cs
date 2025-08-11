@@ -31,6 +31,7 @@ namespace PlotagemOpenGL.LaudoForm
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLaudo));
             tabControl1 = new TabControl();
             Laudo = new TabPage();
             Laudos = new Label();
@@ -96,7 +97,7 @@ namespace PlotagemOpenGL.LaudoForm
             // Laudo
             // 
             Laudo.BackgroundImage = Properties.Resources.Fundo;
-            Laudo.BackgroundImageLayout = ImageLayout.None;
+            Laudo.BackgroundImageLayout = ImageLayout.Stretch;
             Laudo.Controls.Add(Laudos);
             Laudo.Controls.Add(Fechar);
             Laudo.Controls.Add(CriarLaudo);
@@ -476,8 +477,10 @@ namespace PlotagemOpenGL.LaudoForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1407, 789);
+            ClientSize = new System.Drawing.Size(1409, 789);
             Controls.Add(tabControl1);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "FormLaudo";
             Text = "FormLaudo";
             tabControl1.ResumeLayout(false);

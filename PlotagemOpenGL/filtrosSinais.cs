@@ -1,10 +1,4 @@
 ﻿using System;
-using Accord.Audio.Filters;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Numerics;
-using System.Text;
-using DSP;
 using PlotagemOpenGL.auxi;
 using Accord.Audio;
 using static OpenTK.Graphics.OpenGL.GL;

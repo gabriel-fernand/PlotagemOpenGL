@@ -90,8 +90,10 @@ namespace PlotagemOpenGL
                     // Configurações do diálogo
                     openFileDialog.Filter = "Arquivos DAT (*.dat)|*.dat"; // Filtra para arquivos .dat
                     openFileDialog.Title = "Selecione um arquivo .dat";
-                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Diretório inicial
-
+                    string pastaExames = Path.Combine(GlobVar.basePath, "Exames");
+                    if (!Directory.Exists(pastaExames))
+                        Directory.CreateDirectory(pastaExames); // Cria a pasta caso não exista
+                    openFileDialog.InitialDirectory = Path.Combine(GlobVar.basePath, "Exames");
                     // Exibe o diálogo de seleção
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -133,6 +135,7 @@ namespace PlotagemOpenGL
 
                                     // Escreve o conteúdo atualizado de volta no arquivo
                                     File.WriteAllText(filePath, updatedContent);
+                                    AtualizarArquivosRecentes(arquivoSelecionado);
 
 
                                     await exame.InitializeAsync(); // Aguarde a inicialização assíncrona
@@ -292,13 +295,13 @@ namespace PlotagemOpenGL
         }
         public void AtualizarArquivosRecentes(string novoArquivo)
         {
-            string iniPath = "config.ini";
+            string iniPath = "Config.ini";
             List<string> arquivos = new List<string>();
 
             // Carrega os arquivos atuais (ARQ_1 a ARQ_5)
             for (int i = 1; i <= 5; i++)
             {
-                string val = ini.Read("ARQUIVOS RECENTES", $"ARQ_{i}", iniPath);
+                string val = ini.Read("ARQUIVOS RECENTES", $"ARQ_{i}");
                 if (!string.IsNullOrWhiteSpace(val))
                     arquivos.Add(val);
             }

@@ -1,15 +1,10 @@
-﻿using SharpGL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
 using Point = System.Drawing.Point;
-using System.Text;
-using System.Data;
-using System.Data.Odbc;
 using Connection = ADODB.Connection;
 using System.IO;
-using PlotagemOpenGL.Filtros;
 using System.Data.OleDb;
 
 

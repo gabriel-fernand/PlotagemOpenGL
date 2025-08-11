@@ -1,4 +1,4 @@
-﻿using ADODB;
+﻿
 using PlotagemOpenGL.auxi.auxPlotagem;
 using System;
 using System.Collections.Generic;

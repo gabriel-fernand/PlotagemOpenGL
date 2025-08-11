@@ -5,6 +5,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 public class AnaliseCO2
 {
@@ -47,7 +48,7 @@ public class AnaliseCO2
         }
 
         // Lê o arquivo .CO2
-        string arquivoCo2 =Path.Combine(_direct + $"{_arquivoExame}.CO2");
+        string arquivoCo2 =Path.Combine(_direct, $"{_arquivoExame}.CO2");
         if (!File.Exists(arquivoCo2))
             throw new FileNotFoundException("Arquivo CO2 não encontrado.", arquivoCo2);
 
@@ -108,60 +109,56 @@ public class AnaliseCO2
 
     public static void GetPrimeiroCO2(string filename)
     {
-        _arquivoIni = Path.Combine(GlobVar.basePath, "Config.ini");
-        _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
-        _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
-        _tblEventos = GlobVar.eventos.AsEnumerable().CopyToDataTable();
-
-        // Leitura de dados da tabela tbl_DadosExame
-        int capnoLimiteInfValor, capnoLimiteInfAnal, capnoLimiteSupValor, capnoLimiteSupAnal;
-        var row = GlobVar.tbl_DadosExame.Rows[0];
-        capnoLimiteInfValor = Convert.ToInt32(row["CapnoEtCO2_LimiteInf_Valor"]);
-        capnoLimiteInfAnal = Convert.ToInt32(row["CapnoEtCO2_LimiteInf_Anal"]);
-        capnoLimiteSupValor = Convert.ToInt32(row["CapnoEtCO2_LimiteSup_Valor"]);
-        capnoLimiteSupAnal = Convert.ToInt32(row["CapnoEtCO2_LimiteSup_Anal"]);
-
-        string direct = Path.GetDirectoryName(GlobVar.textFile);
-        string co2File = Path.Combine(direct, Path.GetFileNameWithoutExtension(GlobVar.textFile) + ".CO2");
-        if (!File.Exists(co2File))
+        try
         {
-            int tipo_CO2 = 30;
+            _arquivoIni = Path.Combine(GlobVar.basePath, "Config.ini");
+            _arquivoExame = Path.GetFileNameWithoutExtension(GlobVar.textFile);
 
-            int tipo = 0;
-            bool achou = false;
-            int codCanal = 0;
-            foreach (DataRow rw in GlobVar.tbl_CanaisAdquiridos.Rows)
-            {
-                if (Convert.ToInt32(rw["CodTipoCanal"]) == tipo_CO2 || Convert.ToInt32(rw["CodTipoCanal"]) == 38)
-                {
-                    codCanal = Convert.ToInt32("CodCanal1");
-                    achou = true;
-                    break;
-                }
-            }
+            _tblPaginas = GlobVar.tbl_Paginas.AsEnumerable().CopyToDataTable();
+            _tblEventos = GlobVar.eventos.AsEnumerable().CopyToDataTable();
 
-            if (!achou)
+            int capnoLimiteInfValor, capnoLimiteInfAnal, capnoLimiteSupValor, capnoLimiteSupAnal;
+            var row = GlobVar.tbl_DadosExame.Rows[0];
+            capnoLimiteInfValor = Convert.ToInt32(row["CapnoEtCO2_LimiteInf_Valor"]);
+            capnoLimiteInfAnal = Convert.ToInt32(row["CapnoEtCO2_LimiteInf_Anal"]);
+            capnoLimiteSupValor = Convert.ToInt32(row["CapnoEtCO2_LimiteSup_Valor"]);
+            capnoLimiteSupAnal = Convert.ToInt32(row["CapnoEtCO2_LimiteSup_Anal"]);
+
+            string direct = Path.GetDirectoryName(GlobVar.textFile)!;
+            string co2File = Path.Combine(direct, Path.GetFileNameWithoutExtension(GlobVar.textFile) + ".CO2");
+
+            if (!File.Exists(co2File))
             {
+                Directory.CreateDirectory(direct); // Garante existência da pasta
+
+                int tipo_CO2 = 30;
+                int tipo = 0;
+                bool achou = false;
+                int codCanal = 0;
                 foreach (DataRow rw in GlobVar.tbl_CanaisAdquiridos.Rows)
                 {
-                    if (Convert.ToInt32(rw["CodTipoCanal"]) == 20)
+                    if (Convert.ToInt32(rw["CodTipoCanal"]) == tipo_CO2 || Convert.ToInt32(rw["CodTipoCanal"]) == 38)
                     {
                         codCanal = Convert.ToInt32(rw["CodCanal1"]);
+                        achou = true;
                         break;
                     }
                 }
-            }
+                if (!achou)
+                {
+                    foreach (DataRow rw in GlobVar.tbl_CanaisAdquiridos.Rows)
+                    {
+                        if (Convert.ToInt32(rw["CodTipoCanal"]) == 20)
+                        {
+                            codCanal = Convert.ToInt32(rw["CodCanal1"]);
+                            break;
+                        }
+                    }
+                }
+                string texto = "";
+                int indexCod = GlobVar.codCanal.IndexOf(codCanal);
+                int startCol = GlobVar.ponteiroI[indexCod];
 
-            string texto = "";
-
-            int indexCod = GlobVar.codCanal.IndexOf(codCanal);
-
-            // Pega os índices de início e fim uma vez
-            int startCol = GlobVar.ponteiroI[indexCod];
-
-
-            using (var sw = new StreamWriter(co2File, false))
-            {
                 for (int i = 0; i < GlobVar.size; i++)
                 {
                     if (tipo == tipo_CO2)
@@ -170,15 +167,36 @@ public class AnaliseCO2
                     }
                     else
                     {
-                        double valor_sao2 = - GlobVar.matrizCompleta[i, startCol];
+                        double valor_sao2 = -GlobVar.matrizCompleta[i, startCol];
                         valor_sao2 = capnoLimiteInfValor + Math.Abs(valor_sao2 - capnoLimiteInfAnal) / Math.Abs((capnoLimiteSupAnal - capnoLimiteInfAnal) / (capnoLimiteSupValor - capnoLimiteInfValor));
                         texto += ((int)Math.Round(valor_sao2)).ToString("D4");
                     }
                 }
 
-                sw.WriteLine(texto);
+                using (var sw = new StreamWriter(co2File, false))
+                {
+                    sw.WriteLine(texto);
+                }
             }
         }
+        catch (UnauthorizedAccessException)
+        {
+            MessageBox.Show(
+                "Permissão insuficiente para criar arquivo CO2.\nPor favor, execute o software como Administrador.",
+                "Permissão Negada",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+            throw; // Opcional: se quiser estourar o erro pro topo
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Erro ao criar arquivo CO2: {ex.Message}",
+                "Erro",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+        }
     }
-
 }

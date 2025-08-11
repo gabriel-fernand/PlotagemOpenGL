@@ -8,7 +8,7 @@ using Point = System.Drawing.Point;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using ADODB;
+
 using OpenTK.Mathematics;
 using System.Windows.Interop;
 using System.Collections.Generic;
