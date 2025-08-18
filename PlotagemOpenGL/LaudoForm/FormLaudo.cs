@@ -4072,79 +4072,126 @@ namespace PlotagemOpenGL.LaudoForm
                 {
                     ini.Write("CARGAHIPO", "1", "DIRETORIOS");
                 }
-
-                double carga = 0;
-                double acum = 0;
                 //string sql = "SELECT * FROM tbl_Eventos WHERE CodEvento = 17 ORDER BY NumPag";
                 var eventosQuery = GlobVar.eventos.AsEnumerable()
                     .Where(row => row.Field<int>("CodEvento") == 17)
                     .OrderBy(row => row.Field<int>("NumPag"));
-
-                DataTable eventos = eventosQuery.Any() ? eventosQuery.CopyToDataTable() : GlobVar.eventos.Clone(); // ou new DataTable()
-                if (eventos.Rows.Count > 0)
-                {
-                    int idx = 0;
-                    int dur = 0;
-                    int iniValor = 0;
-                    int fim = 0;
-
-                    while (idx < eventos.Rows.Count)
+                var eventosTestQuery = GlobVar.eventosUpdate.AsEnumerable()
+                    .Where(row => row.Field<int>("CodEvento") == 17)
+                    .OrderBy(row =>
                     {
-                        int num = Convert.ToInt32(eventos.Rows[idx]["seq"]);
+                        // 1. Lê a coluna como string
+                        string numPagStr = row.Field<string>("NumPag") ?? "";
 
-                        // Reset antes de processar o grupo
-                        iniValor = 0;
-                        dur = 0;
+                        // 2. Separa pelo delimitador "--"
+                        var partes = numPagStr.Split(new[] { "--" }, StringSplitOptions.None);
 
-                        while (idx < eventos.Rows.Count && Convert.ToInt32(eventos.Rows[idx]["seq"]) == num)
+                        // 3. Pega e limpa a primeira parte (antes do "--")
+                        string primeiraParte = partes[0].Trim();
+
+                        // 4. Tenta converter para int
+                        if (int.TryParse(primeiraParte, out int numero))
                         {
-                            int numPag = Convert.ToInt32(eventos.Rows[idx]["NumPag"]);
-                            int linhaSaturacao = GlobVar.codSelected.IndexOf(66);
-                            int ponteiro = numPag * 8;
-
-                            if (iniValor == 0)
-                            {
-                                // Primeiro valor do grupo (pegando página anterior)
-                                ponteiro = (numPag - 1) * 8;
-                                iniValor = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
-                            }
-                            else
-                            {
-                                fim = Convert.ToInt32(GlobVar.matrizCanal[linhaSaturacao, ponteiro]);
-                            }
-
-                            dur++;
-                            idx++;
+                            return numero;
                         }
-
-                        if (iniValor != 0)
+                        else
                         {
+                            // Define o que fazer se não for número válido. Aqui retorna 0.
+                            return 0;
+                        }
+                    });
+
+                DataTable eventos;
+                DataTable eventosTest;
+                if (eventosQuery.Any())
+                {
+                    eventos = eventosQuery.CopyToDataTable(); // ou new DataTable()
+                    eventosTest = eventosTestQuery.CopyToDataTable();
+
+                    // Pré-ordenar os eventos para garantir o agrupamento por seq (e ordem de páginas)
+                    DataView view = new DataView(eventos);
+                    view.Sort = "seq ASC, NumPag ASC";
+                    DataTable ev = view.ToTable();
+
+                    // Localizar o canal de SpO2 (código 66) e obter o ponteiro
+                    int linhaSaturacao = GlobVar.codCanal.IndexOf(66);
+                    if (linhaSaturacao < 0)
+                        throw new InvalidOperationException("Canal SpO2 (código 66) não encontrado em GlobVar.codCanal.");
+
+                    int ponteiro = GlobVar.ponteiroI[linhaSaturacao];
+
+                    // Limites da matriz para proteção
+                    int maxPag = GlobVar.matrizCompleta.GetLength(0) - 1;
+
+                    // Função auxiliar para obter o valor de SpO2 de forma segura
+                    int GetValorSao2(int numPag)
+                    {
+                        if (numPag < 0) numPag = 0;
+                        if (numPag > maxPag) numPag = maxPag;
+                        // Se sua matriz for double[,], ajuste o Convert conforme necessário
+                        return Convert.ToInt32(GlobVar.matrizCompleta[numPag, ponteiro]);
+                    }
+
+                    double acum = 0.0;
+                    double carga = 0.0;
+
+                    if (ev.Rows.Count > 0)
+                    {
+                        int idx = 0;
+
+                        while (idx < ev.Rows.Count)
+                        {
+                            int seqAtual = Convert.ToInt32(ev.Rows[idx]["seq"]);
+                            int dur = 0;
+                            int iniValor = 0;
+                            int fim = 0;
+
+                            // Percorre o grupo com o mesmo seq
+                            while (idx < ev.Rows.Count && Convert.ToInt32(ev.Rows[idx]["seq"]) == seqAtual)
+                            {
+                                int numPag = Convert.ToInt32(ev.Rows[idx]["NumPag"]);
+
+                                if (dur == 0)
+                                {
+                                    // Primeiro item do grupo: pega valor inicial na página anterior (NumPag - 1)
+                                    iniValor = GetValorSao2(numPag - 1);
+                                }
+
+                                // Atualiza 'fim' SEMPRE com o valor da página atual (garante correto mesmo com grupo de 1 item)
+                                fim = GetValorSao2(numPag);
+
+                                dur++;
+                                idx++;
+                            }
+
+                            // Calcula carga igual ao VB6 (divisão em double)
                             double calcCarga = 0.5 * (dur / 60.0) * Math.Abs(iniValor - fim);
-                            string linha = $"{iniValor} - {fim} - {dur} ====== {calcCarga:0.0000}";
-                            writer.WriteLine(linha);
+
+                            // Escreve a linha no mesmo formato
+                            writer.WriteLine($"{iniValor} - {fim} - {dur} ====== {calcCarga:0.0000}");
+
                             carga = calcCarga;
                             acum += carga;
                         }
                     }
-                }
+                    //sql = "SELECT * FROM tbl_Paginas";
+                    //DataTable paginas = obj_dbconfig.ExecutaSQL(cnn_dbExame, sql);
+                    int pags = GlobVar.tbl_Paginas.Rows.Count;
+                    int totalMinutos = pags / 60;
 
-                //sql = "SELECT * FROM tbl_Paginas";
-                //DataTable paginas = obj_dbconfig.ExecutaSQL(cnn_dbExame, sql);
-                int pags = GlobVar.tbl_Paginas.Rows.Count;
-                int totalMinutos = pags / 60;
-
-                //sql = "SELECT * FROM tbl_DadosExame";
-                //DataTable dadosExame = obj_dbconfig.ExecutaSQLParaAlteracao(cnn_dbExame, sql);
-                if (GlobVar.tbl_DadosExame != null)
-                {
-                    if (!GlobVar.tbl_DadosExame.Columns.Contains("CargaHipoxica"))
+                    //sql = "SELECT * FROM tbl_DadosExame";
+                    //DataTable dadosExame = obj_dbconfig.ExecutaSQLParaAlteracao(cnn_dbExame, sql);
+                    if (GlobVar.tbl_DadosExame != null)
                     {
-                        GlobVar.tbl_DadosExame.Columns.Add("CargaHipoxica", typeof(double)).DefaultValue = 0.0;
-                    }
+                        if (!GlobVar.tbl_DadosExame.Columns.Contains("CargaHipoxica"))
+                        {
+                            GlobVar.tbl_DadosExame.Columns.Add("CargaHipoxica", typeof(double)).DefaultValue = 0.0;
+                        }
 
-                    DataRow row = GlobVar.tbl_DadosExame.Rows[0];
-                    row["CargaHipoxica"] = (acum / totalMinutos) * 60;
-                    AlteraBD.SalvarAlteracoes(); // Método para alterar no Banco de Dados a tbl_DadosExame
+                        DataRow row = GlobVar.tbl_DadosExame.Rows[0];
+                        row["CargaHipoxica"] = (acum / totalMinutos) * 60;
+                        AlteraBD.SalvarAlteracoes(); // Método para alterar no Banco de Dados a tbl_DadosExame
+                    }
                 }
             }
         }
