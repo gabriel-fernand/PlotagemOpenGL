@@ -4091,7 +4091,7 @@ namespace PlotagemOpenGL.LaudoForm
 
                         // 4. Tenta converter para int
                         if (int.TryParse(primeiraParte, out int numero))
-                        {
+                        { 
                             return numero;
                         }
                         else
@@ -4156,14 +4156,11 @@ namespace PlotagemOpenGL.LaudoForm
                                     // Primeiro item do grupo: pega valor inicial na página anterior (NumPag - 1)
                                     iniValor = GetValorSao2(numPag - 1);
                                 }
-
                                 // Atualiza 'fim' SEMPRE com o valor da página atual (garante correto mesmo com grupo de 1 item)
                                 fim = GetValorSao2(numPag);
-
                                 dur++;
                                 idx++;
                             }
-
                             // Calcula carga igual ao VB6 (divisão em double)
                             double calcCarga = 0.5 * (dur / 60.0) * Math.Abs(iniValor - fim);
 
@@ -6853,7 +6850,6 @@ namespace PlotagemOpenGL.LaudoForm
                     {
                         s_resumo_BPAP();
                     }
-
                     s_ResumoHipoVentilacao();
                 }
 
@@ -7672,7 +7668,8 @@ namespace PlotagemOpenGL.LaudoForm
                     SubstituiVar("&(SAT_MEDIA)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Media"]) * 100 / sao2).ToString("0"));
                     SubstituiVar("&(MAIOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Maior"]) * 100 / sao2).ToString("0"));
                     SubstituiVar("&(MENOR_SAT)&", sao2 == 0 ? "0" : (Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Menor"]) * 100 / sao2).ToString("0"));
-                    
+                    SubstituiVar("&(CARGA_HIPOXICA)&", $"{GlobVar.tbl_DadosExame.Rows[0]["CargaHipoxica"]:0.00}");
+
                     SubstituiVar("&(SAT90)&", ttr == 0 ? "0.0" :
                         TimeSpan.FromSeconds(Convert.ToInt32(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"])).ToString(@"hh\:mm\:ss") +
                         $" ({(Convert.ToDouble(GlobVar.tbl_ResumoExame.Rows[0]["Dessat_Abaixo90"]) * 100 / ttr):0.0} %)");
