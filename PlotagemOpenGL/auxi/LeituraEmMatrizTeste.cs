@@ -10,6 +10,7 @@ using System.Linq;
 using PlotagemOpenGL.Filtros;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 
 namespace PlotagemOpenGL.auxi
@@ -30,7 +31,8 @@ namespace PlotagemOpenGL.auxi
 
             int ntotal = 0;
             string[] dadoscanal = new string[47];
-            byte[] buffer0 = new byte[395];
+            byte[] WATec = new byte[19];
+            byte[] buffer0;// = new byte[376];
             byte[] buffer1 = new byte[8];
             byte[] buffer2 = new byte[8];
             byte[] buffer3 = new byte[47];
@@ -48,15 +50,35 @@ namespace PlotagemOpenGL.auxi
 
             using (FileStream fs = new FileStream(GlobVar.textFile, FileMode.Open, FileAccess.Read))
             {
+                fs.Read(WATec, 0, WATec.Length);
+
+                string tipo = (Encoding.UTF8.GetString(WATec));
+                // Remove nulos e espaços no fim para evitar pegar '\0'
+                tipo = tipo.TrimEnd('\0', ' ', '\t', '\r', '\n');
+
+                char o = tipo.Length > 0 ? tipo[tipo.Length - 1] : '\0';
+
+                if (o == 'O') // use char, não string
+                {
+                    buffer0 = new byte[387];
+                }
+                else
+                {
+                    buffer0 = new byte[376];
+                }
+
                 fs.Read(buffer0, 0, buffer0.Length);
 
+                
                 GlobVar.cabecalho = (Encoding.UTF8.GetString(buffer0));
 
                 fs.Read(buffer1, 0, buffer1.Length);
 
                 string npag1 = (Encoding.UTF8.GetString(buffer1));
 
-                GlobVar.npagin = Convert.ToInt32(npag1);
+                var match = Regex.Match(npag1 ?? string.Empty, @"\d+");
+                // Converte de forma segura (sem exception). Se não tiver número, fica 0 (ajuste se quiser outro padrão).
+                GlobVar.npagin = int.TryParse(match.Value, out var numero) ? numero : 0;
 
                 GlobVar.npag = npag1.Replace(" ", "");
 
@@ -66,7 +88,8 @@ namespace PlotagemOpenGL.auxi
 
                 GlobVar.tipocanais = tipocanais1.Replace(" ", "");
 
-                int ncanint = Convert.ToInt32(tipocanais1.Replace(" ", "")); //Int32.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
+                match = Regex.Match(tipocanais1 ?? string.Empty, @"\d+");
+                int ncanint = int.TryParse(match.Value, out numero) ? numero : 0; //Int32.Parse(tipocanais, System.Globalization.NumberStyles.HexNumber);
                 GlobVar.qtdCanais = new string[ncanint];
                 int txPorSeg = 0;
                 for (int ich = 0; ich < ncanint; ich++)
@@ -78,7 +101,7 @@ namespace PlotagemOpenGL.auxi
                     string cod = dadoscanal[ich].Substring(0, 2);
                     GlobVar.qtdCanais[ich] = cod;
                     string phrase = dadoscanal[ich];
-                    GlobVar.codCanal[ich] = Convert.ToInt16(phrase.Substring(0, 3).Trim()); //Faz a leitura do codigo do canal
+                    GlobVar.codCanal[ich] = Convert.ToInt16(phrase.Substring(0, 3)); //Faz a leitura do codigo do canal
                     GlobVar.nomeCanais[ich] = phrase.Substring(11, 10).Trim(); //Faz a leitura dos nomes de cada canal e armazena em um array
                     GlobVar.amos = Convert.ToInt32(phrase.Substring(8, 4));
                     string sizesample3 = phrase.Substring(8, 4);

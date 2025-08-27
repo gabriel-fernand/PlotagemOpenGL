@@ -264,6 +264,8 @@ namespace PlotagemOpenGL
                     telaLoad.AtualizarProgresso(20);
                     LeituraBanco.BancoRead();
 
+                    //if()
+
                     await Task.Delay(45);
                     telaLoad.AtualizarProgresso(30);
                     LeituraBanco.AlteraTable();

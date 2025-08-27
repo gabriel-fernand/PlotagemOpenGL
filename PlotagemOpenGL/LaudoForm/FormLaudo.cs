@@ -89,6 +89,9 @@ namespace PlotagemOpenGL.LaudoForm
         public static EventoResumo ev_hipop_cen = new EventoResumo();
         public static EventoResumo ev_hipop_mis = new EventoResumo();
 
+        //Despertar
+        public static EventoResumo ev_desp = new EventoResumo();
+
         // RERA
         public static EventoResumo ev_rera = new EventoResumo();
         public static System.Collections.Generic.Dictionary<int, CPAPRelat> cpapRelatDict = new System.Collections.Generic.Dictionary<int, CPAPRelat>();
@@ -99,6 +102,8 @@ namespace PlotagemOpenGL.LaudoForm
         public static DataTable tbl_HipnoLaudo = new DataTable();
 
         private static TaskCompletionSource<bool> tcsTabIndexChanged;
+
+        public static bool ExameTemVideo = false;
 
         public static double CPAP_Min = 0;
         public static double CPAP_Max = 0;
@@ -4834,12 +4839,13 @@ namespace PlotagemOpenGL.LaudoForm
         {
 
             // Zera os eventos
-            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_rera };
+            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_desp, ev_rera };
             foreach (var ev in eventos)
             {
                 ev.indice = 0;
                 ev.maior = 0;
                 ev.media = 0;
+                ev.durtotal = 0;
                 ev.qtd = 0;
                 ev.qtd_rem = 0;
                 ev.qtd_nrem = 0;
@@ -4861,6 +4867,7 @@ namespace PlotagemOpenGL.LaudoForm
                     destino.indice = Convert.ToDouble(row["QtdHora"]);
                     destino.maior = Convert.ToDouble(row["MaiorDuracao"]);
                     destino.media = Convert.ToDouble(row["DuracaoMedia"]);
+                    destino.durtotal = Convert.ToDouble(row["DuracaoTotal"]);
                     destino.qtd_rem = Convert.ToInt32(row["QtdREM"]);
                     destino.qtd_nrem = Convert.ToInt32(row["QtdNREM"]);
                     destino.qtd_pos_c = Convert.ToInt32(row["QtdPosC"]);
@@ -4898,6 +4905,8 @@ namespace PlotagemOpenGL.LaudoForm
             ev_hipop.qtd_pos_c = ev_hipop_cen.qtd_pos_c + ev_hipop_obs.qtd_pos_c + ev_hipop_mis.qtd_pos_c;
             ev_hipop.qtd_pos_x = ev_hipop_cen.qtd_pos_x + ev_hipop_obs.qtd_pos_x + ev_hipop_mis.qtd_pos_x;
 
+            //Despertar
+            Preenche(ev_desp, 8);
             // RERA
             Preenche(ev_rera, 101);
 
@@ -6806,6 +6815,41 @@ namespace PlotagemOpenGL.LaudoForm
                 // PLM
                  qtd_PLM_com_mdesp = GetQtd("Cons_PLM_Com_MDesp");
 
+                //Resumo de Eventos
+                //Central
+                SubstituiVar("&(QTD_APNEIA)&", ev_ap_cen.qtd.ToString("0"));
+                SubstituiVar("&(DUR_APNEIA)&", TimeSpan.FromSeconds(ev_ap_cen.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_APNEIA)&", TimeSpan.FromSeconds(ev_ap_cen.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_APNEIA)&", TimeSpan.FromSeconds(ev_ap_cen.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(QTD_HR_APNEIA)&", TimeSpan.FromSeconds(ev_ap_cen.indice).ToString(@"hh\:mm\:ss"));
+
+                //Obstrutiva
+                SubstituiVar("&(QTD_APNEIA_OBS)&", ev_ap_obs.qtd.ToString("0"));
+                SubstituiVar("&(DUR_APNEIA_OBS)&", TimeSpan.FromSeconds(ev_ap_obs.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_APNEIA_OBS)&", TimeSpan.FromSeconds(ev_ap_obs.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_APNEIA_OBS)&", TimeSpan.FromSeconds(ev_ap_obs.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(QTD_HR_APNEIA_OBS)&", TimeSpan.FromSeconds(ev_ap_obs.indice).ToString(@"hh\:mm\:ss"));
+
+                //Hipo
+                SubstituiVar("&(QTD_HIPOPNEIA)&", ev_hipop.qtd.ToString("0"));
+                SubstituiVar("&(DUR_HIPOPNEIA)&", TimeSpan.FromSeconds(ev_hipop.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_HIPOPNEIA)&", TimeSpan.FromSeconds(ev_hipop.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_HIPOPNEIA)&", TimeSpan.FromSeconds(ev_hipop.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(QTD_HR_HIPOPNEIA)&", TimeSpan.FromSeconds(ev_hipop.indice).ToString(@"hh\:mm\:ss"));
+
+                //Despertar
+                SubstituiVar("&(QTD_DESPERTAR)&", ev_desp.qtd.ToString("0"));
+                SubstituiVar("&(DUR_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(QTD_HR_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.indice).ToString(@"hh\:mm\:ss"));
+
+
+
+                if (GlobVar.tbl_ArqVideo.Rows.Count != 0)
+                { SubstituiVar("&(simVideo)&", "X"); SubstituiVar("&(naoVideo)&", ""); }
+                else { SubstituiVar("&(simVideo)&", ""); SubstituiVar("&(naoVideo)&", "X"); }
+
                 // Funções auxiliares
                 int GetQtd(string table)
                 {
@@ -7970,6 +8014,8 @@ namespace PlotagemOpenGL.LaudoForm
             SubstituiVar("&(QTD_RERA_DESSAT)&", qtd_RERA_com_dessat.ToString("0"));
             SubstituiVar("&(QTD_RERA_MDESP)&", qtd_RERA_com_mdesp.ToString("0"));
             SubstituiVar("&(QTD_RERA_MDESP_DESSAT)&", qtd_RERA_com_dessat_e_mdesp.ToString("0"));
+
+            SubstituiVar("&(QTD_PLM_MDESP)&", qtd_PLM_com_mdesp.ToString("0"));
 
             // APNEIA
             if (ev_ap.qtd + ev_hipop.qtd == 0)
@@ -11642,6 +11688,7 @@ public class EventoResumo
     public double indice;
     public double maior;
     public double media;
+    public double durtotal;
     public int qtd_rem;
     public int qtd_nrem;
     public int qtd_pos_c;
