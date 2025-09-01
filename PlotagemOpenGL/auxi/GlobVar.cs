@@ -145,6 +145,8 @@ namespace PlotagemOpenGL.auxi
         public static DataTable tbl_DadosClinica = new DataTable();
         public static DataTable Cons_Eventos = new DataTable();
 
+        public static DataTable grd_HipoVent = new DataTable();
+
         public static int CodJanela;
 
         public static int ultimaPag;

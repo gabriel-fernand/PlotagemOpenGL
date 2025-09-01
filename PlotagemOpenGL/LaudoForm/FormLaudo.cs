@@ -11679,6 +11679,158 @@ namespace PlotagemOpenGL.LaudoForm
             return string.Join(" e ", partes);
         }
 
+        public static void F_AnaliseHipoventilacao()
+        {
+            int pag_ini_eve = 0;
+            int pag_fim_eve = 0;
+            string hora_ini_eve = "";
+            string hora_fim_eve = "";
+            int tempo_rem_eve = 0;
+            int tempo_nRem_eve = 0;
+            int menor_sat_rem = 0;
+            int menor_sat_nRem = 0;
+            int tempototal;
+            int Sat_Estagio = 0;
+            int pag_ini = Canais.Get_BoaNoite();
+            int pag_fim = Canais.Get_BomDia();
+            int Sat_DesprezarAbaixo = 40;
+            bool novoevento = false;
+
+            if (GlobVar.tbl_ParametrosParaAnalisar.Rows != null)
+            {
+                Sat_DesprezarAbaixo = Convert.ToInt32(GlobVar.tbl_ParametrosParaAnalisar.Rows[0]["Sat_DesprezarAbaixo"]);
+            }
+
+            int despreza = Sat_DesprezarAbaixo;
+
+            List<int> PagDesprezadas = new List<int>();
+
+            DataTable filt = GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 100).Where(rw => rw.Field<int>("CodCanal1") == 66).CopyToDataTable();
+
+            foreach(DataRow rw in filt.Rows)
+            {
+                PagDesprezadas.Add(Convert.ToInt32(rw["NumPag"]));
+            }
+            filt = GlobVar.eventos.AsEnumerable().Where(rw => rw.Field<int>("CodEvento") == 8).CopyToDataTable();
+            foreach (DataRow rw in filt.Rows)
+            {
+                PagDesprezadas.Add(Convert.ToInt32(rw["NumPag"]));
+            }
+
+            for(int i = pag_ini; i < pag_fim; i++)
+            {
+                var rowTbl_Pagina = GlobVar.tbl_Paginas.Rows[i];
+                int valor = Canais.F_Get1ValorDoCanalSAO2(i);
+                if(valor > despreza && valor <= 100)
+                {
+                    if (!PagDesprezadas.Contains(i))
+                    {
+                        Sat_Estagio = Convert.ToInt32(rowTbl_Pagina["Estagio"]);
+                        if ((Sat_Estagio > 0 && Sat_Estagio <= 9) && valor <= 88)
+                        {
+                            if (!novoevento)
+                            {
+                                pag_ini_eve = i;
+                                hora_ini_eve = rowTbl_Pagina["horario"].ToString();
+                                tempo_rem_eve = 0;
+                                tempo_nRem_eve = 0;
+                                menor_sat_rem = 0;
+                                menor_sat_nRem = 0;
+                                novoevento = true;
+                            }
+                            if (Sat_Estagio == 5)
+                            {
+                                tempo_rem_eve += 1;
+                                if (menor_sat_rem == 0 || valor < menor_sat_rem)
+                                {
+                                    menor_sat_rem = valor;
+                                }
+                            }
+                            else
+                            {
+                                tempo_nRem_eve += 1;
+                                if(menor_sat_nRem == 0 || valor < menor_sat_nRem)
+                                {
+                                    menor_sat_nRem = valor;
+                                }
+                            }
+                            novoevento = true;
+                        }
+                        else
+                        {
+                            // ... DENTRO DO ELSE, dentro do for, substituindo o bloco de VB:
+                            if (novoevento)
+                            {
+                                pag_fim_eve = i;
+                                // MovePrevious em VB busca a linha anterior; então:
+                                var prevRowTbl_Pagina = GlobVar.tbl_Paginas.Rows[i - 1];
+                                hora_fim_eve = prevRowTbl_Pagina["horario"].ToString();
+                                novoevento = false;
+
+                                DateTime dtHoraIniEve = DateTime.Parse(hora_ini_eve);
+                                DateTime dtHoraFimEve = DateTime.Parse(hora_fim_eve);
+
+                                if (dtHoraFimEve < dtHoraIniEve)
+                                {
+                                    TimeSpan ateFimDia = DateTime.Parse("23:59:59") - dtHoraIniEve;
+                                    TimeSpan desdeMeiaNoite = dtHoraFimEve - DateTime.Parse("00:00:00");
+                                    tempototal = (int)ateFimDia.TotalSeconds + 1 + (int)desdeMeiaNoite.TotalSeconds;
+                                }
+                                else
+                                {
+                                    tempototal = (int)(dtHoraFimEve - dtHoraIniEve).TotalSeconds;
+                                }
+
+                                if (tempototal > 300)
+                                {
+                                    // Se for grid, exemplo usando DataTable como fonte:
+                                    DataRow linha;
+                                    // Supondo DataTable grd_HipoVent:
+                                    linha = GlobVar.grd_HipoVent.NewRow();
+                                    linha[0] = hora_ini_eve;
+                                    linha[1] = hora_fim_eve;
+                                    linha[2] = FormataTempo(tempototal, false);
+                                    if (menor_sat_rem > 0)
+                                        linha[3] = (menor_sat_nRem < menor_sat_rem) ? menor_sat_nRem : menor_sat_rem;
+                                    else
+                                        linha[3] = menor_sat_nRem;
+
+                                    if (tempo_rem_eve > 0)
+                                    {
+                                        linha[4] = FormataTempo(tempo_rem_eve, false);
+                                        linha[5] = menor_sat_rem;
+                                    }
+                                    if (tempo_nRem_eve > 0)
+                                    {
+                                        linha[6] = FormataTempo(tempo_nRem_eve - 1, false);
+                                        linha[7] = menor_sat_nRem;
+                                    }
+                                    linha[8] = pag_ini_eve;
+                                    linha[9] = pag_fim_eve;
+
+                                    GlobVar.grd_HipoVent.Rows.Add(linha);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string FormataTempo(int segundos, bool mostraSinal)
+        {
+            // Evite valores negativos, a não ser que deseje sinal explícito
+            bool negativo = segundos < 0;
+            segundos = Math.Abs(segundos);
+
+            TimeSpan tempo = TimeSpan.FromSeconds(segundos);
+
+            string formatado = $"{(int)tempo.TotalHours:00}:{tempo.Minutes:00}:{tempo.Seconds:00}";
+            if (mostraSinal && negativo)
+                return "-" + formatado;
+            else
+                return formatado;
+        }
     }
 }
 
