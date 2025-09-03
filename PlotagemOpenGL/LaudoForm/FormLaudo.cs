@@ -138,12 +138,14 @@ namespace PlotagemOpenGL.LaudoForm
 
         public FormLaudo()
         {
+
             // Obtém as dimensões da tela principal
             int larguraTela = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
             int alturaTela = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
 
             InitializeComponent();
 
+           
             foreach (DataRow roow in GlobVar.tbl_JanelaResumo.Rows)
             {
                 HipnoMostrando.Items.Add(roow["DescrJanela"].ToString());
@@ -1933,466 +1935,479 @@ namespace PlotagemOpenGL.LaudoForm
         public void legenda(int pontoZero, int topPonto, int codGrupo, int maxlegendx, int endX = 0)
         {
             DataTable dt = new DataTable();
-            dt = GlobVar.tbl_HipnoGrupos.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
-            DataTable dtResumo = MontagemJanela.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
-            DataTable dtSubGrupo = new DataTable();
-            bool linhahorario = LinhasHorarios.Checked;
 
-            int espaco = Math.Abs(topPonto - pontoZero);
-            if (codGrupo == 21)
+            // 1. Verifica se a coluna existe:
+            if (GlobVar.tbl_HipnoGrupos.Columns.Contains("CodGrupo"))
             {
-                int espacamento = Math.Abs(topPonto - pontoZero);
-                int meiohor = espacamento / 2;
-                meiohor += pontoZero;
-
-                int horarioAchado = 0;
-                int indexHoraio = 0;
-
-                for (int i = maxlegendx; i < endX; i++)
+                // 2. Faz o filtro:
+                var filteredRows = GlobVar.tbl_HipnoGrupos.AsEnumerable()
+                    .Where(row => row.Field<int>("CodGrupo") == codGrupo);
+                // 3. Verifica se o resultado tem linhas:
+                if (filteredRows.Any())
                 {
-                    // Obtém o valor da coluna "Horario"
-                    string horarioString = GlobVar.tbl_Paginas.Rows[indexHoraio]["Horario"].ToString();
+                    dt = filteredRows.CopyToDataTable();
+                    //dt = GlobVar.tbl_HipnoGrupos.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
+                    DataTable dtResumo = MontagemJanela.AsEnumerable().Where(row => row.Field<int>("CodGrupo") == codGrupo).CopyToDataTable();
+                    DataTable dtSubGrupo = new DataTable();
+                    bool linhahorario = LinhasHorarios.Checked;
 
-                    // Tenta converter o valor para DateTime
-                    if (DateTime.TryParse(horarioString, out DateTime horario))
+                    int espaco = Math.Abs(topPonto - pontoZero);
+                    if (codGrupo == 21)
                     {
-                        // Verifica se o minuto e segundo são zero
-                        if (horario.Minute == 0 && horario.Second == 0)
+                        int espacamento = Math.Abs(topPonto - pontoZero);
+                        int meiohor = espacamento / 2;
+                        meiohor += pontoZero;
+
+                        int horarioAchado = 0;
+                        int indexHoraio = 0;
+
+                        for (int i = maxlegendx; i < endX; i++)
                         {
-                            // Formata o DateTime para string no formato HH:mm:ss
-                            string escreve = (horario.ToString("HH:mm"));
-                            // Adiciona a linha ao DataTable de resultado
-                            gl.Begin(OpenGL.GL_2D);
-                            int writeX = 0;
-                            int writeY = 0;
-                            int font = CalcularTamanhoFonteIdeal();
-                            System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
-                            SizeF tamanhostring = CalcularTamanhoString(escreve, fonte);
-                            ConvertToScreenCoordinates(i, 0, out writeX, out writeY);
-                            int alo = font - 2;
-                            writeX = (int)(writeX - (tamanhostring.Width / 4));
-                            writeY = meiohor;
-                            gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", alo, "");
-                            gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, escreve);
+                            // Obtém o valor da coluna "Horario"
+                            string horarioString = GlobVar.tbl_Paginas.Rows[indexHoraio]["Horario"].ToString();
 
-                            gl.End();
-                            gl.Flush();
-
-                            if (linhahorario)
+                            // Tenta converter o valor para DateTime
+                            if (DateTime.TryParse(horarioString, out DateTime horario))
                             {
-                                gl.Color(0.5f, 0.5f, 0.5f);
-                                // Ativar o estilo de linha pontilhada
-                                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                                // Verifica se o minuto e segundo são zero
+                                if (horario.Minute == 0 && horario.Second == 0)
+                                {
+                                    // Formata o DateTime para string no formato HH:mm:ss
+                                    string escreve = (horario.ToString("HH:mm"));
+                                    // Adiciona a linha ao DataTable de resultado
+                                    gl.Begin(OpenGL.GL_2D);
+                                    int writeX = 0;
+                                    int writeY = 0;
+                                    int font = CalcularTamanhoFonteIdeal();
+                                    System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+                                    SizeF tamanhostring = CalcularTamanhoString(escreve, fonte);
+                                    ConvertToScreenCoordinates(i, 0, out writeX, out writeY);
+                                    int alo = font - 2;
+                                    writeX = (int)(writeX - (tamanhostring.Width / 4));
+                                    writeY = meiohor;
+                                    gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", alo, "");
+                                    gl.DrawText(writeX, meiohor, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, escreve);
 
+                                    gl.End();
+                                    gl.Flush();
+
+                                    if (linhahorario)
+                                    {
+                                        gl.Color(0.5f, 0.5f, 0.5f);
+                                        // Ativar o estilo de linha pontilhada
+                                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                                        // Iniciar o desenho da linha
+                                        gl.Begin(OpenGL.GL_LINES);
+                                        gl.Vertex(i, 0);
+                                        gl.Vertex(i, openglHipno.Height);
+                                        gl.End();
+                                        gl.Flush();
+                                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+                                    }
+                                }
+                            }
+
+                            indexHoraio++;
+                        }
+                    }
+                    else if (codGrupo == 6 || codGrupo == 12 || codGrupo == 11 || codGrupo == 18 || codGrupo == 39)
+                    {
+                        string li = dtResumo.Rows[0]["LI"].ToString();
+                        string ls = dtResumo.Rows[0]["LS"].ToString();
+
+                        int dif = Math.Abs(Convert.ToInt32(dtResumo.Rows[0]["LI"]) - Convert.ToInt32(dtResumo.Rows[0]["LS"]));
+
+                        int font = CalcularTamanhoFonteIdeal(12, 14);
+                        int fontalo = font - 2;
+                        System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+
+                        // Calculando tamanho do texto
+                        SizeF tamanhoLi = CalcularTamanhoString(li, fonte);
+                        SizeF tamanhoLs = CalcularTamanhoString(ls, fonte);
+
+                        // Coordenadas do ponto final
+                        int writeX = 0, writeY = 0;
+                        ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
+
+                        // Calculando o ponto inicial para escrita de trás para frente
+                        float startXLi = writeX - (tamanhoLi.Width / 2);
+                        float startXLs = writeX - (tamanhoLs.Width / 2);
+
+                        int startYLs = (int)(topPonto - (tamanhoLs.Height / 2));
+                        gl.Begin(OpenGL.GL_2D);
+                        gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                        gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, li);
+                        gl.End();
+                        gl.Flush();
+
+                        gl.Color(0.7f, 0.7f, 0.7f);
+                        // Ativar o estilo de linha pontilhada
+                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                        // Iniciar o desenho da linha
+                        gl.Begin(OpenGL.GL_LINES);
+                        gl.Vertex(maxlegendx, pontoZero + (tamanhoLi.Height / 4));
+                        gl.Vertex(endX, pontoZero + (tamanhoLi.Height / 4));
+                        gl.End();
+                        gl.Flush();
+                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+                        gl.Color(0, 0, 0);
+                        gl.Begin(OpenGL.GL_2D);
+                        gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                        gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, ls);
+                        gl.End();
+                        gl.Flush();
+
+                        gl.Color(0.7f, 0.7f, 0.7f);
+                        // Ativar o estilo de linha pontilhada
+                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
+
+                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+
+                        // Iniciar o desenho da linha
+                        gl.Begin(OpenGL.GL_LINES);
+                        gl.Vertex(maxlegendx, startYLs + (tamanhoLs.Height / 4));
+                        gl.Vertex(endX, startYLs + (tamanhoLs.Height / 4));
+                        gl.End();
+                        gl.Flush();
+                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
+
+                        gl.Color(0, 0, 0);
+                        int divsleg = Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]);
+                        if (divsleg != 0 && Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]) < dif)
+                        {
+                            int alo = dif / divsleg;
+                            int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                            int espacodiv = espaco / alo;
+                            int legdiv = Convert.ToInt32(dtResumo.Rows[0]["LI"]) + divsleg;
+                            SizeF tamanhoDiv = CalcularTamanhoString(legdiv.ToString(), fonte);
+                            float startXDiv = writeX - (tamanhoLi.Width / 2);
+
+                            while (legdiv < Convert.ToInt32(dtResumo.Rows[0]["LS"]))
+                            {
+                                gl.Begin(OpenGL.GL_2D);
+                                gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
+                                gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, legdiv.ToString());
+                                gl.End();
+                                gl.Flush();
+                                locdivs += espacodiv;
+                                legdiv += divsleg;
+                            }
+                        }
+
+                        int linhasint = Convert.ToInt32(dtResumo.Rows[0]["LinhasInternas"]);
+                        if (codGrupo == 11 || codGrupo == 18)
+                        {
+                            if (linhasint != 0 && linhasint < dif)
+                            {
+                                int alo = dif / linhasint;
+                                int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                                int espacodiv = espaco / alo;
+
+                                gl.Color(0.7f, 0.7f, 0.7f);
+                                gl.Enable(OpenGL.GL_LINE_STIPPLE);
                                 // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
                                 gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-
-                                // Iniciar o desenho da linha
+                                                           // Iniciar o desenho da linha
                                 gl.Begin(OpenGL.GL_LINES);
-                                gl.Vertex(i, 0);
-                                gl.Vertex(i, openglHipno.Height);
+                                for (int i = 0; i < Convert.ToInt32(ls); i++)
+                                {
+                                    // Ativar o estilo de linha pontilhada
+                                    gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
+                                    gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
+                                    locdivs += (int)(espacodiv);
+                                }
                                 gl.End();
                                 gl.Flush();
                                 gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                                gl.Color(0, 0, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (linhasint != 0 && linhasint < dif)
+                            {
+                                int alo = dif / linhasint;
+                                int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
+                                int espacodiv = espaco / alo;
 
+                                gl.Color(0.7f, 0.7f, 0.7f);
+                                gl.Enable(OpenGL.GL_LINE_STIPPLE);
+                                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
+                                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
+                                                           // Iniciar o desenho da linha
+                                gl.Begin(OpenGL.GL_LINES);
+
+                                while (locdivs < topPonto)
+                                {
+                                    // Ativar o estilo de linha pontilhada
+                                    gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
+                                    gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
+                                    locdivs += (int)(espacodiv);
+                                }
+                                gl.End();
+                                gl.Flush();
+                                gl.Disable(OpenGL.GL_LINE_STIPPLE);
+                                gl.Color(0, 0, 0);
                             }
                         }
                     }
 
-                    indexHoraio++;
-                }
-            }
-            else if (codGrupo == 6 || codGrupo == 12 || codGrupo == 11 || codGrupo == 18 || codGrupo == 39)
-            {
-                string li = dtResumo.Rows[0]["LI"].ToString();
-                string ls = dtResumo.Rows[0]["LS"].ToString();
-
-                int dif = Math.Abs(Convert.ToInt32(dtResumo.Rows[0]["LI"]) - Convert.ToInt32(dtResumo.Rows[0]["LS"]));
-
-                int font = CalcularTamanhoFonteIdeal(12, 14);
-                int fontalo = font - 2;
-                System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
-
-                // Calculando tamanho do texto
-                SizeF tamanhoLi = CalcularTamanhoString(li, fonte);
-                SizeF tamanhoLs = CalcularTamanhoString(ls, fonte);
-
-                // Coordenadas do ponto final
-                int writeX = 0, writeY = 0;
-                ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
-
-                // Calculando o ponto inicial para escrita de trás para frente
-                float startXLi = writeX - (tamanhoLi.Width / 2);
-                float startXLs = writeX - (tamanhoLs.Width / 2);
-
-                int startYLs = (int)(topPonto - (tamanhoLs.Height / 2));
-                gl.Begin(OpenGL.GL_2D);
-                gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
-                gl.DrawText((int)startXLi, pontoZero + 2, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, li);
-                gl.End();
-                gl.Flush();
-
-                gl.Color(0.7f, 0.7f, 0.7f);
-                // Ativar o estilo de linha pontilhada
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-
-                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
-                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-
-                // Iniciar o desenho da linha
-                gl.Begin(OpenGL.GL_LINES);
-                gl.Vertex(maxlegendx, pontoZero + (tamanhoLi.Height / 4));
-                gl.Vertex(endX, pontoZero + (tamanhoLi.Height / 4));
-                gl.End();
-                gl.Flush();
-                gl.Disable(OpenGL.GL_LINE_STIPPLE);
-
-                gl.Color(0, 0, 0);
-                gl.Begin(OpenGL.GL_2D);
-                gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
-                gl.DrawText((int)startXLs, startYLs + 1, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, ls);
-                gl.End();
-                gl.Flush();
-
-                gl.Color(0.7f, 0.7f, 0.7f);
-                // Ativar o estilo de linha pontilhada
-                gl.Enable(OpenGL.GL_LINE_STIPPLE);
-
-                // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
-                gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-
-                // Iniciar o desenho da linha
-                gl.Begin(OpenGL.GL_LINES);
-                gl.Vertex(maxlegendx, startYLs + (tamanhoLs.Height / 4));
-                gl.Vertex(endX, startYLs + (tamanhoLs.Height / 4));
-                gl.End();
-                gl.Flush();
-                gl.Disable(OpenGL.GL_LINE_STIPPLE);
-
-                gl.Color(0, 0, 0);
-                int divsleg = Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]);
-                if (divsleg != 0 && Convert.ToInt32(dtResumo.Rows[0]["DivisoesLegendas"]) < dif)
-                {
-                    int alo = dif / divsleg;
-                    int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
-                    int espacodiv = espaco / alo;
-                    int legdiv = Convert.ToInt32(dtResumo.Rows[0]["LI"]) + divsleg;
-                    SizeF tamanhoDiv = CalcularTamanhoString(legdiv.ToString(), fonte);
-                    float startXDiv = writeX - (tamanhoLi.Width / 2);
-
-                    while (legdiv < Convert.ToInt32(dtResumo.Rows[0]["LS"]))
+                    if (!dt.Rows[0]["Legenda"].Equals("") && !dt.Rows[0]["Legenda"].Equals("ESTAGIO") && !dt.Rows[0]["Legenda"].Equals("Posição") && codGrupo != 40)
                     {
-                        gl.Begin(OpenGL.GL_2D);
-                        gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", fontalo, "");
-                        gl.DrawText((int)startXDiv, locdivs, 0.0f, 0.0f, 0.0f, "Arial Narrow", font, legdiv.ToString());
-                        gl.End();
-                        gl.Flush();
-                        locdivs += espacodiv;
-                        legdiv += divsleg;
-                    }
-                }
-
-                int linhasint = Convert.ToInt32(dtResumo.Rows[0]["LinhasInternas"]);
-                if (codGrupo == 11 || codGrupo == 18)
-                {
-                    if (linhasint != 0 && linhasint < dif)
-                    {
-                        int alo = dif / linhasint;
-                        int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
-                        int espacodiv = espaco / alo;
-
-                        gl.Color(0.7f, 0.7f, 0.7f);
-                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
-                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
-                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-                                                   // Iniciar o desenho da linha
-                        gl.Begin(OpenGL.GL_LINES);
-                        for (int i = 0; i < Convert.ToInt32(ls); i++)
-                        {
-                            // Ativar o estilo de linha pontilhada
-                            gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
-                            gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
-                            locdivs += (int)(espacodiv);
-                        }
-                        gl.End();
-                        gl.Flush();
-                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
-                        gl.Color(0, 0, 0);
-                    }
-                }
-                else
-                {
-                    if (linhasint != 0 && linhasint < dif)
-                    {
-                        int alo = dif / linhasint;
-                        int locdivs = (int)(pontoZero + (espaco / alo)); // - (tamanhoLs.Height / 2));
-                        int espacodiv = espaco / alo;
-
-                        gl.Color(0.7f, 0.7f, 0.7f);
-                        gl.Enable(OpenGL.GL_LINE_STIPPLE);
-                        // Configurar o padrão de pontilhado (padrão de 16 bits e fator de repetição)
-                        gl.LineStipple(1, 0x00FF); // Fator 1, padrão 0x00FF (pontos alternados)
-                        // Iniciar o desenho da linha
-                        gl.Begin(OpenGL.GL_LINES);
-
-                        while (locdivs < topPonto)
-                        {
-                            // Ativar o estilo de linha pontilhada
-                            gl.Vertex(maxlegendx, locdivs + (tamanhoLi.Height / 4));
-                            gl.Vertex(endX, locdivs + (tamanhoLi.Height / 4));
-                            locdivs += (int)(espacodiv);
-                        }
-                        gl.End();
-                        gl.Flush();
-                        gl.Disable(OpenGL.GL_LINE_STIPPLE);
-                        gl.Color(0, 0, 0);
-                    }
-                }
-            }
-
-            if (!dt.Rows[0]["Legenda"].Equals("") && !dt.Rows[0]["Legenda"].Equals("ESTAGIO") && !dt.Rows[0]["Legenda"].Equals("Posição") && codGrupo != 40)
-            {
-                string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
-                int meioleg = espaco / 2;
-                meioleg += pontoZero;
-                string leg = dt.Rows[0]["Legenda"].ToString();
-
-                gl.Begin(OpenGL.GL_2D);
-                int writeX = 0;
-                int writeY = 0;
-
-                writeX += 4;
-                writeY = meioleg;
-                gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 13, "");
-                gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 15, leg);
-
-                gl.End();
-                gl.Flush();
-
-                if (MarcaDAgua.Checked)
-                {
-                    int locmarc = (int)(endX / 2);
-                    int font = CalcularTamanhoFonteIdeal(13, 15);
-                    int fontalo = font - 2;
-                    System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
-
-                    ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
-                    SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
-                    writeX = (int)(writeX - (tamanhoDiv.Width / 4));
-
-                    gl.Begin(OpenGL.GL_2D);
-
-                    gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
-                    gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
-
-                    gl.End();
-                    gl.Flush();
-
-                }
-
-            }
-            else
-            {
-                if (codGrupo == 7)
-                {
-                    string[] posicoes = new string[4];
-                    posicoes = ["Brucos", "Esquerda", "Direita", "Supino"];
-
-                    int qt = posicoes.Length;
-
-                    int espacosub = Math.Abs(pontoZero - topPonto);
-                    int locLeg = espacosub / qt;
-
-                    int meioleg = locLeg / 2;
-                    meioleg += pontoZero;
-                    int aoi = 0;
-                    for (int ao = 0; ao < qt; ao++)
-                    {
-                        string leg = posicoes[aoi];
-
-                        gl.Begin(OpenGL.GL_2D);
-                        int writeX = 0;
-                        int writeY = 0;
-
-                        writeX += 12;
-                        writeY = meioleg;
-                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
-                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
-
-                        gl.End();
-                        gl.Flush();
-
-                        meioleg += locLeg;
-                        aoi++;
-                    }
-
-                    string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
-                    if (MarcaDAgua.Checked)
-                    {
-                        meioleg = espaco / 2;
+                        string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
+                        int meioleg = espaco / 2;
                         meioleg += pontoZero;
+                        string leg = dt.Rows[0]["Legenda"].ToString();
+
+                        gl.Begin(OpenGL.GL_2D);
                         int writeX = 0;
                         int writeY = 0;
 
-                        int font = CalcularTamanhoFonteIdeal(13, 15);
-                        int fontalo = font - 2;
-                        System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
-
-                        int locmarc = (int)(endX / 2);
-                        ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
-                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
-                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
-                        gl.Begin(OpenGL.GL_2D);
-
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
+                        writeX += 4;
+                        writeY = meioleg;
+                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 13, "");
+                        gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 15, leg);
 
                         gl.End();
                         gl.Flush();
-                    }
 
-                }
-                else if (codGrupo == 9)
-                {
-                    var dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
-                    if (Tela_Plotagem.AdInf.Equals("A"))
-                    {
-                        dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                        if (MarcaDAgua.Checked)
+                        {
+                            int locmarc = (int)(endX / 2);
+                            int font = CalcularTamanhoFonteIdeal(13, 15);
+                            int fontalo = font - 2;
+                            System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+
+                            ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                            SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                            writeX = (int)(writeX - (tamanhoDiv.Width / 4));
+
+                            gl.Begin(OpenGL.GL_2D);
+
+                            gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
+                            gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
+
+                            gl.End();
+                            gl.Flush();
+
+                        }
 
                     }
                     else
                     {
-                        dte = GlobVar.tbl_EstagiosInfatil.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
-                    }
+                        if (codGrupo == 7)
+                        {
+                            string[] posicoes = new string[4];
+                            posicoes = ["Brucos", "Esquerda", "Direita", "Supino"];
 
-                    int qt = dte.Rows.Count;
-                    locyEstagio = new int[qt];
-                    int font = CalcularTamanhoFonteIdeal(12, 14);
-                    System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+                            int qt = posicoes.Length;
 
-                    int espacosub = Math.Abs(pontoZero - topPonto);
-                    int locLeg = espacosub / qt;
+                            int espacosub = Math.Abs(pontoZero - topPonto);
+                            int locLeg = espacosub / qt;
 
-                    int meioleg = locLeg / 2;
-                    meioleg += pontoZero;
-                    int aoi = 0;
-                    for (int ao = 0; ao < qt; ao++, aoi++, meioleg += locLeg)
-                    {
-                        string leg = dte.Rows[aoi]["Legenda"].ToString();
-                        locyEstagio[ao] = meioleg;
+                            int meioleg = locLeg / 2;
+                            meioleg += pontoZero;
+                            int aoi = 0;
+                            for (int ao = 0; ao < qt; ao++)
+                            {
+                                string leg = posicoes[aoi];
+
+                                gl.Begin(OpenGL.GL_2D);
+                                int writeX = 0;
+                                int writeY = 0;
+
+                                writeX += 12;
+                                writeY = meioleg;
+                                gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
+                                gl.DrawText(writeX + 1, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
+
+                                gl.End();
+                                gl.Flush();
+
+                                meioleg += locLeg;
+                                aoi++;
+                            }
+
+                            string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
+                            if (MarcaDAgua.Checked)
+                            {
+                                meioleg = espaco / 2;
+                                meioleg += pontoZero;
+                                int writeX = 0;
+                                int writeY = 0;
+
+                                int font = CalcularTamanhoFonteIdeal(13, 15);
+                                int fontalo = font - 2;
+                                System.Drawing.Font fonte = new System.Drawing.Font("Arial Narrow", font);
+
+                                int locmarc = (int)(endX / 2);
+                                ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                                SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                                writeX = (int)(writeX - (tamanhoDiv.Width / 4));
+                                gl.Begin(OpenGL.GL_2D);
+
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
+
+                                gl.End();
+                                gl.Flush();
+                            }
+
+                        }
+                        else if (codGrupo == 9)
+                        {
+                            var dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                            if (Tela_Plotagem.AdInf.Equals("A"))
+                            {
+                                dte = GlobVar.tbl_Estagios.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+
+                            }
+                            else
+                            {
+                                dte = GlobVar.tbl_EstagiosInfatil.AsEnumerable().OrderByDescending(row => row.Field<int>("Ordem")).CopyToDataTable();
+                            }
+
+                            int qt = dte.Rows.Count;
+                            locyEstagio = new int[qt];
+                            int font = CalcularTamanhoFonteIdeal(12, 14);
+                            System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+
+                            int espacosub = Math.Abs(pontoZero - topPonto);
+                            int locLeg = espacosub / qt;
+
+                            int meioleg = locLeg / 2;
+                            meioleg += pontoZero;
+                            int aoi = 0;
+                            for (int ao = 0; ao < qt; ao++, aoi++, meioleg += locLeg)
+                            {
+                                string leg = dte.Rows[aoi]["Legenda"].ToString();
+                                locyEstagio[ao] = meioleg;
 
 
-                        gl.Begin(OpenGL.GL_2D);
+                                gl.Begin(OpenGL.GL_2D);
 
-                        float[] color = new float[3];
+                                float[] color = new float[3];
 
-                        color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(dte.Rows[ao]["Cor"]));
-                        // Calculando o ponto inicial para escrita de trás para frente
-                        SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
-                        // Coordenadas do ponto final
-                        int writeX = 0, writeY = 0;
-                        ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
+                                color = plotGrafico.ObterComponentesRGB(Convert.ToInt32(dte.Rows[ao]["Cor"]));
+                                // Calculando o ponto inicial para escrita de trás para frente
+                                SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
+                                // Coordenadas do ponto final
+                                int writeX = 0, writeY = 0;
+                                ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
 
-                        // Calculando o ponto inicial para escrita de trás para frente
-                        float startXdiv = writeX - (tamanhoLi.Width / 2);
-                        if (startXdiv < 0) { startXdiv = 0; }
-                        writeY = meioleg;
+                                // Calculando o ponto inicial para escrita de trás para frente
+                                float startXdiv = writeX - (tamanhoLi.Width / 2);
+                                if (startXdiv < 0) { startXdiv = 0; }
+                                writeY = meioleg;
 
-                        gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 12, "");
-                        gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 14, leg);
+                                gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 12, "");
+                                gl.DrawText((int)startXdiv, meioleg, color[0], color[1], color[2], "Arial Narrow", 14, leg);
 
-                        gl.Color(0, 0, 0);
-                        gl.End();
-                        gl.Flush();
-                    }
+                                gl.Color(0, 0, 0);
+                                gl.End();
+                                gl.Flush();
+                            }
 
-                    string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
-                    if (MarcaDAgua.Checked)
-                    {
-                        meioleg = espaco / 2;
-                        meioleg += pontoZero;
-                        int writeX = 0;
-                        int writeY = 0;
+                            string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
+                            if (MarcaDAgua.Checked)
+                            {
+                                meioleg = espaco / 2;
+                                meioleg += pontoZero;
+                                int writeX = 0;
+                                int writeY = 0;
 
-                        font = CalcularTamanhoFonteIdeal(13, 15);
-                        int fontalo = font - 2;
-                        fonte = new System.Drawing.Font("Arial Narrow", font);
+                                font = CalcularTamanhoFonteIdeal(13, 15);
+                                int fontalo = font - 2;
+                                fonte = new System.Drawing.Font("Arial Narrow", font);
 
-                        int locmarc = (int)(endX / 2);
-                        ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
-                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
-                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
+                                int locmarc = (int)(endX / 2);
+                                ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                                SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                                writeX = (int)(writeX - (tamanhoDiv.Width / 4));
 
-                        gl.Begin(OpenGL.GL_2D);
+                                gl.Begin(OpenGL.GL_2D);
 
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
 
-                        gl.End();
-                        gl.Flush();
-                    }
-                }
-                else
-                {
-                    dtSubGrupo = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
-                        .Where(row => row.Field<int>("CodGrupo") == codGrupo)
-                        .OrderByDescending(row => row.Field<int>("Evento"))
-                        .CopyToDataTable();
+                                gl.End();
+                                gl.Flush();
+                            }
+                        }
+                        else
+                        {
+                            dtSubGrupo = GlobVar.tbl_HipnoSubGrupos.AsEnumerable()
+                                .Where(row => row.Field<int>("CodGrupo") == codGrupo)
+                                .OrderByDescending(row => row.Field<int>("Evento"))
+                                .CopyToDataTable();
 
-                    int qt = dtSubGrupo.Rows.Count;
+                            int qt = dtSubGrupo.Rows.Count;
 
-                    int font = CalcularTamanhoFonteIdeal(12, 14);
-                    System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
+                            int font = CalcularTamanhoFonteIdeal(12, 14);
+                            System.Drawing.Font fonte = new System.Drawing.Font("Arial", font);
 
-                    int espacosub = Math.Abs(pontoZero - topPonto);
-                    int locLeg = espacosub / qt;
+                            int espacosub = Math.Abs(pontoZero - topPonto);
+                            int locLeg = espacosub / qt;
 
-                    int meioleg = locLeg / 2;
-                    meioleg += pontoZero;
-                    foreach (DataRow rw in dtSubGrupo.Rows)
-                    {
-                        string leg = rw["DescrSubGrupo"].ToString();
-                        SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
-                        // Coordenadas do ponto final
-                        int writeX = 0, writeY = 0;
-                        ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
+                            int meioleg = locLeg / 2;
+                            meioleg += pontoZero;
+                            foreach (DataRow rw in dtSubGrupo.Rows)
+                            {
+                                string leg = rw["DescrSubGrupo"].ToString();
+                                SizeF tamanhoLi = CalcularTamanhoString(leg, fonte);
+                                // Coordenadas do ponto final
+                                int writeX = 0, writeY = 0;
+                                ConvertToScreenCoordinates(maxlegendx, 0, out writeX, out writeY);
 
-                        // Calculando o ponto inicial para escrita de trás para frente
-                        float startXdiv = writeX - (tamanhoLi.Width / 2);
-                        if (startXdiv < 0) { startXdiv = 0; }
+                                // Calculando o ponto inicial para escrita de trás para frente
+                                float startXdiv = writeX - (tamanhoLi.Width / 2);
+                                if (startXdiv < 0) { startXdiv = 0; }
 
-                        gl.Begin(OpenGL.GL_2D);
-                        writeY = meioleg;
-                        gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
-                        gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
-                        gl.End();
-                        gl.Flush();
-                        meioleg += locLeg;
-                    }
-                    string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
-                    if (MarcaDAgua.Checked)
-                    {
-                        meioleg = espaco / 2;
-                        meioleg += pontoZero;
-                        int writeX = 0;
-                        int writeY = 0;
+                                gl.Begin(OpenGL.GL_2D);
+                                writeY = meioleg;
+                                gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 12, "");
+                                gl.DrawText((int)startXdiv, meioleg, 0.0f, 0.0f, 0.0f, "Arial Narrow", 14, leg);
+                                gl.End();
+                                gl.Flush();
+                                meioleg += locLeg;
+                            }
+                            string legMarcDAgua = dt.Rows[0]["LabelMenu"].ToString();
+                            if (MarcaDAgua.Checked)
+                            {
+                                meioleg = espaco / 2;
+                                meioleg += pontoZero;
+                                int writeX = 0;
+                                int writeY = 0;
 
-                        font = CalcularTamanhoFonteIdeal(13, 15);
-                        int fontalo = font - 2;
-                        fonte = new System.Drawing.Font("Arial Narrow", font);
+                                font = CalcularTamanhoFonteIdeal(13, 15);
+                                int fontalo = font - 2;
+                                fonte = new System.Drawing.Font("Arial Narrow", font);
 
-                        int locmarc = (int)(endX / 2);
-                        ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
-                        SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
-                        writeX = (int)(writeX - (tamanhoDiv.Width / 4));
+                                int locmarc = (int)(endX / 2);
+                                ConvertToScreenCoordinates(locmarc, 0, out writeX, out writeY);
+                                SizeF tamanhoDiv = CalcularTamanhoString(legMarcDAgua.ToString(), fonte);
+                                writeX = (int)(writeX - (tamanhoDiv.Width / 4));
 
-                        gl.Begin(OpenGL.GL_2D);
+                                gl.Begin(OpenGL.GL_2D);
 
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
-                        gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 13, "");
+                                gl.DrawText(writeX, meioleg, 0.5f, 0.5f, 0.5f, "Arial Narrow", 15, legMarcDAgua);
 
-                        gl.End();
-                        gl.Flush();
+                                gl.End();
+                                gl.Flush();
+                            }
+                        }
                     }
                 }
             }

@@ -4906,10 +4906,10 @@ namespace PlotagemOpenGL
 
 
                         case Keys.N:
-                            if (AdInf.Equals("B") || AdInf.Equals("C") || AdInf.Equals("I")) N.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) N.PerformClick();
                             break;
                         case Keys.T:
-                            if (AdInf.Equals("B") || AdInf.Equals("C") || AdInf.Equals("I")) T.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) T.PerformClick();
                             break;
 
                     }
