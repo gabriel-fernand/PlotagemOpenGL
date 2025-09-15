@@ -10,6 +10,7 @@ using System.Windows.Markup;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Accord.Math;
+using System.Data.OleDb;
 
 public class LeituraBanco
 {
@@ -98,16 +99,21 @@ public class LeituraBanco
             System.Windows.Forms.MessageBox.Show($"Erro geral:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
+    public static string connec = "Conexão nao sucedida! 1 ";
+    public static string partParad = "";
     public static void BancoConifg()
     {
         try
         {
             string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
             using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
-
+            connec = "Conexão nao sucedida! 2";
             connectionConfigBd.Open();
+            //string connectionStringConfigBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};Persist Security Info=False;";
+            //using var connectionConfigBd = new OleDbConnection(connectionStringConfigBd);
+            //connectionConfigBd.Open();
             //System.Windows.Forms.MessageBox.Show("Conexão bem-sucedida!");
-
+            connec = "Conexão bem-sucedida!";
 
             string queryConfig = "SELECT * FROM tbl_CadCanal";
             string queryTbl_MontCanal = "SELECT * FROM tbl_MontCanal";
@@ -130,6 +136,8 @@ public class LeituraBanco
             string queryTbl_HipnoLaudos = "SELECT * FROM tbl_HipnoLaudos";
             string queryTbl_EstagioInf = "SELECT * FROM tbl_Estagios_Infantil";
 
+            partParad = "Querys";
+
             using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
             using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
             using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
@@ -150,6 +158,8 @@ public class LeituraBanco
             using var commandTbl_DadosClinica = new OdbcCommand(queryTbl_DadosClinica, connectionConfigBd);
             using var commandTbl_EstagiosInf = new OdbcCommand(queryTbl_EstagioInf, connectionConfigBd);
 
+            partParad = "Comandos";
+
             using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
             using var adapterConfig = new OdbcDataAdapter(commandConfig);
             using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
@@ -169,6 +179,7 @@ public class LeituraBanco
             using var adaptertbl_HipnoLaudo = new OdbcDataAdapter(commandTbl_HipnoLaudos);
             using var adaptertbl_DadosClinica = new OdbcDataAdapter(commandTbl_DadosClinica);
             using var adapterTbl_EstagiosInf = new OdbcDataAdapter(commandTbl_EstagiosInf);
+            partParad = "Adapter";
 
             adapterTbl_EstagiosInf.Fill(GlobVar.tbl_EstagiosInfatil);
             adaptertbl_DadosClinica.Fill(GlobVar.tbl_DadosClinica);
@@ -190,12 +201,14 @@ public class LeituraBanco
             adapterJanelaResumo.Fill(GlobVar.tbl_JanelaResumo);
             adapterTbl_Estagios.Fill(GlobVar.tbl_Estagios);
             adaptertbl_ParametrosParaAnalise.Fill(GlobVar.tbl_ParametrosParaAnalisar);
+            partParad = "Adapter Fill";
+
             connectionConfigBd.Close();
 
         }
         catch (OdbcException ex)
         {
-            System.Windows.Forms.MessageBox.Show($"Erro ODBC:\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            System.Windows.Forms.MessageBox.Show($"Erro ODBC:\n{ex.Message} " + connec + "\n" + partParad, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {

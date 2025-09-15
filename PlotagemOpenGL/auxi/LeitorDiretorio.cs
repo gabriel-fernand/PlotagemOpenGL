@@ -1,6 +1,7 @@
 ﻿using Accord.Math;
 using System;
 using System.IO;
+using System.Windows;
 using Tensorflow.Operations.Activation;
 
 namespace PlotagemOpenGL.auxi
@@ -9,31 +10,38 @@ namespace PlotagemOpenGL.auxi
     {
         public static void LeituraDiretorio()
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-
-            // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
-            string filePath = Path.Combine(basePath, "Diretorios.txt");
-            //string filePath = "\Diretorios.txt";
-
-            using (FileStream fl = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            try
             {
-                string[] lines = File.ReadAllLines(filePath);
-                string[] valoresStr;
-                
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
+                GlobVar.configBD = Path.Combine(basePath, "Configuração.mdb");
 
-                // Iterando sobre as linhas do arquivo
-                foreach (string line in lines)
+                // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
+                string filePath = Path.Combine(basePath, "Diretorios.txt");
+                //string filePath = "\Diretorios.txt";
+
+                using (FileStream fl = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    //Separando os valores por vírgula
-                    valoresStr = line.Split(',');
-                    
-                    GlobVar.textFile = Path.Combine(basePath, valoresStr[0]);
-                    GlobVar.bDataFile = Path.Combine(basePath, valoresStr[1]);
+                    string[] lines = File.ReadAllLines(filePath);
+                    string[] valoresStr;
 
-                    GlobVar.configBD = Path.Combine(basePath, valoresStr[2]);
+
+                    // Iterando sobre as linhas do arquivo
+                    foreach (string line in lines)
+                    {
+                        //Separando os valores por vírgula
+                        valoresStr = line.Split(',');
+
+                        GlobVar.textFile = Path.Combine(basePath, valoresStr[0]);
+                        GlobVar.bDataFile = Path.Combine(basePath, valoresStr[1]);
+
+
+                    }
 
                 }
-
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message + "Erro na Leitura");
             }
         }
     }

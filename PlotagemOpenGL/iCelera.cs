@@ -24,24 +24,35 @@ namespace PlotagemOpenGL
 
         public iCelera()
         {
+            try
+            {
+                InitializeComponent();
+                RestartAsAdmin();
+                //LeitorDiretorio.LeituraDiretorio();
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
+                GlobVar.configBD = Path.Combine(basePath, "Configuracao.mdb");
+                IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));
+                string configdir = ini.Read("MDB_CONFIG", "ARQUIVO");
+                GlobVar.configBD = Path.Combine(basePath, configdir);
 
-            InitializeComponent();
-            RestartAsAdmin();
-            LeitorDiretorio.LeituraDiretorio();
-            LeituraBanco.BancoConifg();
-            AtualizarLabelsComArquivosRecentes();
-            groupBox1.Paint += GroupBox1_Paint;
-            groupBox2.Paint += GroupBox1_Paint;
-            ConfigurarMouseEventosParaLabels();
-            exame = new Tela_Plotagem();
-            telinha = new FormVideo();
-            telinha.Owner = this;
-            telinha.TopMost = true;
-            this.FormClosing += ICelera_FormClosing;
+                LeituraBanco.BancoConifg();
+                AtualizarLabelsComArquivosRecentes();
+                groupBox1.Paint += GroupBox1_Paint;
+                groupBox2.Paint += GroupBox1_Paint;
+                ConfigurarMouseEventosParaLabels();
+                exame = new Tela_Plotagem();
+                telinha = new FormVideo();
+                telinha.Owner = this;
+                telinha.TopMost = true;
+                this.FormClosing += ICelera_FormClosing;
 
-            // Bloqueia a maximização do formulário
-            this.MaximizeBox = false; // Remove o botão de maximizar
-            this.FormBorderStyle = FormBorderStyle.FixedSingle; // Define um estilo fixo
+                // Bloqueia a maximização do formulário
+                this.MaximizeBox = false; // Remove o botão de maximizar
+                this.FormBorderStyle = FormBorderStyle.FixedSingle; // Define um estilo fixo
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex + "" + "\nDiretorio Confi.Mdb - " + GlobVar.configBD);
+            }
         }
 
         private void ICelera_FormClosing(object sender, FormClosingEventArgs e)

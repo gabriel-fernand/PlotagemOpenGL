@@ -89,8 +89,21 @@ namespace PlotagemOpenGL.LaudoForm
         public static EventoResumo ev_hipop_cen = new EventoResumo();
         public static EventoResumo ev_hipop_mis = new EventoResumo();
 
+        //Dessaturacao
+        public static EventoResumo ev_dessat = new EventoResumo();
+
         //Despertar
         public static EventoResumo ev_desp = new EventoResumo();
+
+        //Bruxismo
+        public static EventoResumo ev_brux_fas = new EventoResumo();
+
+        //Ronco
+        public static EventoResumo ev_ronco = new EventoResumo();
+
+        //Perna
+        public static EventoResumo ev_plm = new EventoResumo();
+        public static EventoResumo ev_mov_perna = new EventoResumo();
 
         // RERA
         public static EventoResumo ev_rera = new EventoResumo();
@@ -4854,7 +4867,7 @@ namespace PlotagemOpenGL.LaudoForm
         {
 
             // Zera os eventos
-            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_desp, ev_rera };
+            var eventos = new[] { ev_ap, ev_ap_obs, ev_ap_cen, ev_ap_mis, ev_hipop, ev_hipop_obs, ev_dessat, ev_desp, ev_rera, ev_brux_fas, ev_ronco, ev_plm, ev_mov_perna };
             foreach (var ev in eventos)
             {
                 ev.indice = 0;
@@ -4924,6 +4937,19 @@ namespace PlotagemOpenGL.LaudoForm
             Preenche(ev_desp, 8);
             // RERA
             Preenche(ev_rera, 101);
+
+            //Dessat - 17 
+            Preenche(ev_dessat, 17);
+
+            //Bruxismo - 9
+            Preenche(ev_brux_fas, 9);
+
+            //Ronco - 13
+            Preenche(ev_ronco, 13);
+
+            //Perna - plm - 12 - mov perna - 22
+            Preenche(ev_plm, 12);
+            Preenche(ev_mov_perna, 22);
 
         }
         public void CalculaResumoMultiplaLatencia()
@@ -6859,6 +6885,33 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(MAIOR_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.maior).ToString(@"hh\:mm\:ss"));
                 SubstituiVar("&(QTD_HR_DESPERTAR)&", TimeSpan.FromSeconds(ev_desp.indice).ToString(@"hh\:mm\:ss"));
 
+                //Dessaturacao
+                SubstituiVar("&(QTD_DESSAT)&", ev_dessat.qtd.ToString("0"));
+                SubstituiVar("&(DUR_DESSAT)&", TimeSpan.FromSeconds(ev_dessat.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_DESSAT)&", TimeSpan.FromSeconds(ev_dessat.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_DESSAT)&", TimeSpan.FromSeconds(ev_dessat.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(IND_DESSAT)&", TimeSpan.FromSeconds(ev_dessat.indice).ToString(@"hh\:mm\:ss"));
+
+                //Ronco
+                SubstituiVar("&(QTD_RONCO)&", ev_ronco.qtd.ToString("0"));
+                SubstituiVar("&(DUR_RONCO)&", TimeSpan.FromSeconds(ev_ronco.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_RONCO)&", TimeSpan.FromSeconds(ev_ronco.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_RONCO)&", TimeSpan.FromSeconds(ev_ronco.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(IND_RONCO)&", TimeSpan.FromSeconds(ev_ronco.indice).ToString(@"hh\:mm\:ss"));
+
+                //Bruxismo
+                SubstituiVar("&(QTD_PLM)&", ev_plm.qtd.ToString("0"));
+                SubstituiVar("&(DUR_PLM)&", TimeSpan.FromSeconds(ev_plm.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_PLM)&", TimeSpan.FromSeconds(ev_plm.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_PLM)&", TimeSpan.FromSeconds(ev_plm.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(IND_PLM)&", TimeSpan.FromSeconds(ev_plm.indice).ToString(@"hh\:mm\:ss"));
+
+                //Perna
+                SubstituiVar("&(QTD_MOVPERNA)&", ev_mov_perna.qtd.ToString("0"));
+                SubstituiVar("&(DUR_MOVPERNA)&", TimeSpan.FromSeconds(ev_mov_perna.durtotal).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MED_MOVPERNA)&", TimeSpan.FromSeconds(ev_mov_perna.media).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(MAIOR_MOVPERNA)&", TimeSpan.FromSeconds(ev_mov_perna.maior).ToString(@"hh\:mm\:ss"));
+                SubstituiVar("&(IND_MOVPERNA)&", TimeSpan.FromSeconds(ev_mov_perna.indice).ToString(@"hh\:mm\:ss"));
 
 
                 if (GlobVar.tbl_ArqVideo.Rows.Count != 0)
@@ -10955,7 +11008,8 @@ namespace PlotagemOpenGL.LaudoForm
             DataTable tbl;
             DataTable tblResumoEventos2, tblGrupoEventos2;
             DataTable tblResumoEventos, tblGrupoEventos;
-
+            // AQ
+            /*
             try
             {
                 if (ExisteVar("&(RESUMO_EVENTOS)&"))
@@ -11242,7 +11296,7 @@ namespace PlotagemOpenGL.LaudoForm
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao gerar resumo de eventos: " + ex.Message);
-            }
+            }*/
         }
         public static Bitmap CaptureOpenGLControl()
         {
