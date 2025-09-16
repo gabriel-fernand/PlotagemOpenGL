@@ -234,6 +234,9 @@
     <None Update="Laudos\Laudo Multipla Latencia.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Laudos\Laudo Respiratório com Carga Hipoxica.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Laudos\Laudo Respiratório.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
