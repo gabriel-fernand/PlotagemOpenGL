@@ -28,7 +28,7 @@ namespace PlotagemOpenGL
             {
                 InitializeComponent();
                 RestartAsAdmin();
-                //LeitorDiretorio.LeituraDiretorio();
+                LeitorDiretorio.LeituraDiretorio();
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 GlobVar.configBD = Path.Combine(basePath, "Configuração.mdb");
                 IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));

@@ -13,6 +13,7 @@ namespace PlotagemOpenGL.auxi
             try
             {
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
                 GlobVar.configBD = Path.Combine(basePath, "Configuração.mdb");
 
                 // Se o arquivo está na raiz do projeto (copiado para o bin/Debug ou bin/Release):
