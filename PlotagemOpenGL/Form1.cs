@@ -451,6 +451,11 @@ namespace PlotagemOpenGL
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
                     GlobVar.ConnectionBDdat.Open();
 
+                    if (GlobVar.tbl_ResumoExame != null && GlobVar.tbl_ResumoExame.Rows.Count == 0)
+                    {
+                        DataRow row = GlobVar.tbl_ResumoExame.NewRow();
+                        GlobVar.tbl_ResumoExame.Rows.Add(row);
+                    }
 
                     Canais.ajustaIniFimEx();
                 }
