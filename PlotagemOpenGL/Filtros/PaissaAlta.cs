@@ -55,7 +55,7 @@ namespace PlotagemOpenGL.Filtros
             previousOutput = 0.0f;
 
 
-            float[] outputData = new float[data.Length];
+            //float[] outputData = new float[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
 
@@ -64,12 +64,12 @@ namespace PlotagemOpenGL.Filtros
                 previousOutput = output;
 
 
-                outputData[i] = output;
+                data[i] = output;
 
             }
             Tela_Plotagem.cronometroAlta.Stop();
 
-            return outputData;
+            return data;
         }
     }
 }

@@ -280,6 +280,7 @@ namespace PlotagemOpenGL
                     LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
                     await Task.Delay(45);
 
+                    GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
                     LeituraEmMatrizTeste.LeituraDat();
                     LeituraBanco.ArrumaTbl_Paginas();
 
@@ -337,7 +338,6 @@ namespace PlotagemOpenGL
                     GlobVar.locScale.X = scalaLb1.Location.X;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                     GlobVar.Amplitude = [5, 25, 50, 75, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
-                    GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(90);
                     //GlobVar.ultimaPag = 2;
@@ -8854,9 +8854,9 @@ namespace PlotagemOpenGL
             int novoCodCanal2 = Convert.ToInt32(rowNumerico["CodCanal2"]);
 
             // Chamar o método para atualizar a matriz com o novo valor de CodCanal2
-            GlobVar.matrizCanal.SetRow<short>(
+            GlobVar.matrizCanal.SetRow<float>(
                 GlobVar.codSelected.IndexOf(codCanal1),
-                LeituraEmMatrizTeste.SetReferencia(codCanal1, novoCodCanal2));
+                LeituraEmMatrizTeste.FloatToShort(LeituraEmMatrizTeste.SetReferencia(codCanal1, novoCodCanal2)));
 
             var cadCanal = GlobVar.tbl_CadCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == Tela_Plotagem.tagCodCanal).CopyToDataTable();
             var cadCanal2 = GlobVar.tbl_CadCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == Convert.ToInt32(rowNumerico["CodCanal2"])).CopyToDataTable();
@@ -8887,8 +8887,8 @@ namespace PlotagemOpenGL
                     else
                     {
                         hertzSelect = Convert.ToInt32(rowNumerico["PassaBaixa"]);
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
-                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
+                        (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
                     }
                 }
                 else
@@ -8897,15 +8897,15 @@ namespace PlotagemOpenGL
                     filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
                     if (rowNumerico["PassaBaixa"] == DBNull.Value)
                     {
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
-                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
+                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
+                            (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
 
                     }
                     else
                     {
                         hertzSelect = Convert.ToInt32(rowNumerico["PassaBaixa"]);
-                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
-                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))),
+                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
+                       (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))),
                         (float)hertzSelect,
                         (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
 
@@ -8915,8 +8915,8 @@ namespace PlotagemOpenGL
                 if (rowNumerico["Notch"] != DBNull.Value)
                 {
                     float NotchHertz = Convert.ToInt32(rowNumerico["Notch"]);
-                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
-                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))),
+                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])),
+                    (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(rowNumerico["CodCanal1"])))),
                         (float)NotchHertz,
                         10,
                         GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[Tela_Plotagem.index])])));
@@ -10041,8 +10041,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                                 }
@@ -10058,8 +10058,8 @@ namespace PlotagemOpenGL
                                         float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
 
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
@@ -10078,8 +10078,8 @@ namespace PlotagemOpenGL
                                     {
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = DBNull.Value;
 
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10094,8 +10094,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                                 }
@@ -10111,8 +10111,8 @@ namespace PlotagemOpenGL
                                         float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
 
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
@@ -10143,8 +10143,8 @@ namespace PlotagemOpenGL
                                     {
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = DBNull.Value;
 
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10159,8 +10159,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                    (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                                 }
@@ -10175,8 +10175,8 @@ namespace PlotagemOpenGL
                                     {
                                         float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaBaixa"] = hertzSelect;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                        (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, (float)hertzSelectH, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                     }
@@ -10187,8 +10187,8 @@ namespace PlotagemOpenGL
                         if (GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != DBNull.Value)
                         {
                             float NotchHertz = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
+                            GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
                                 NotchHertz,
                                 10,
                                 GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
@@ -10235,8 +10235,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                        LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10261,8 +10261,8 @@ namespace PlotagemOpenGL
                                             hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         }
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10279,8 +10279,8 @@ namespace PlotagemOpenGL
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = DBNull.Value;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10295,8 +10295,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10321,8 +10321,8 @@ namespace PlotagemOpenGL
                                             hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         }
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10340,8 +10340,8 @@ namespace PlotagemOpenGL
                                     if (clickedItem.Text.Equals("Nenhum"))
                                     {
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = DBNull.Value;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10356,8 +10356,8 @@ namespace PlotagemOpenGL
                                                 if (float.TryParse(inputValue, out float hertzSelect))
                                                 {
                                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                        LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                        (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                                     openglControl1.DoRender();
                                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10382,8 +10382,8 @@ namespace PlotagemOpenGL
                                             hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                         }
                                         GlobVar.tbl_MontagemSelecionada.Rows[index]["PassaAlta"] = hertzSelect;
-                                        GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                            LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                        GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                            (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectL, (float)hertzSelect, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                         openglControl1.DoRender();
                                         plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
@@ -10394,8 +10394,8 @@ namespace PlotagemOpenGL
                         if (GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] != DBNull.Value)
                         {
                         float NotchHertz = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"]);
-                            GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
+                            GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))),
                                 NotchHertz,
                                 10,
                                 GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
@@ -10494,8 +10494,8 @@ namespace PlotagemOpenGL
                                             if (float.TryParse(inputValue, out float hertzSelect))
                                             {
                                                 GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                 openglControl1.DoRender();
                                                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                             }
@@ -10510,8 +10510,8 @@ namespace PlotagemOpenGL
                                 {
                                     float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -10523,8 +10523,8 @@ namespace PlotagemOpenGL
                             {
                                 int selec = GlobVar.grafSelected.IndexOf(index);
                                 filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(PaissaBaixa.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (PaissaBaixa.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
 
                                 if (clickedItem.Text.Equals("Nenhum"))
@@ -10543,8 +10543,8 @@ namespace PlotagemOpenGL
                                             if (float.TryParse(inputValue, out float hertzSelect))
                                             {
                                                 GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                 openglControl1.DoRender();
                                                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                             }
@@ -10559,8 +10559,8 @@ namespace PlotagemOpenGL
                                 {
                                     float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -10573,8 +10573,8 @@ namespace PlotagemOpenGL
                             {
                                 int selec = GlobVar.grafSelected.IndexOf(index);
                                 filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(PaissaAlta.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (PaissaAlta.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
 
                                 if (clickedItem.Text.Equals("Nenhum"))
@@ -10593,8 +10593,8 @@ namespace PlotagemOpenGL
                                             if (float.TryParse(inputValue, out float hertzSelect))
                                             {
                                                 GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                 openglControl1.DoRender();
                                                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                             }
@@ -10609,8 +10609,8 @@ namespace PlotagemOpenGL
                                 {
                                     float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }
@@ -10623,8 +10623,8 @@ namespace PlotagemOpenGL
                             {
                                 int selec = GlobVar.grafSelected.IndexOf(index);
                                 filtrosSinais.VoltaMatriz((short)GlobVar.codSelected[selec]);
-                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelectLow, (float)hertzSelectHigh, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
 
                                 if (clickedItem.Text.Equals("Nenhum"))
                                 {
@@ -10642,8 +10642,8 @@ namespace PlotagemOpenGL
                                             if (float.TryParse(inputValue, out float hertzSelect))
                                             {
                                                 GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                                LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                                (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                                 openglControl1.DoRender();
                                                 plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                             }
@@ -10658,8 +10658,8 @@ namespace PlotagemOpenGL
                                 {
                                     float hertzSelect = Convert.ToInt32(clickedItem.Text.Substring(0, 3));
                                     GlobVar.tbl_MontagemSelecionada.Rows[index]["Notch"] = hertzSelect;
-                                    GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
-                                    LeituraEmMatrizTeste.ShortToFloat(Notch.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
+                                    GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])),
+                                    (Notch.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.codSelected.IndexOf(Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["CodCanal1"])))), (float)hertzSelect, 10, GlobVar.txPorCanal[GlobVar.codCanal.IndexOf(GlobVar.codSelected[index])])));
                                     openglControl1.DoRender();
                                     plotagem.DesenhaGrafico((int)openglControl1.Height, qtdGrafics);
                                 }

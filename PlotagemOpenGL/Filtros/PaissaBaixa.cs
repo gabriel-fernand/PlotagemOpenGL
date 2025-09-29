@@ -58,15 +58,15 @@ namespace PlotagemOpenGL.Filtros
             _prevOutput7 = _prevOutput8 = _prevOutput9 = 0;
             _prevOutput10 = 0;
 
-            float[] output = new float[input.Length];
+            //float[] output = new float[input.Length];
 
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = Apply(input[i]);
+                input[i] = Apply(input[i]);
             }
 
             Tela_Plotagem.cronometroBaixa.Stop();
-            return output;
+            return input;
         }
     }
 }

@@ -1139,7 +1139,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             for(int i = inicio; i <= fim; i++)
             {
-                int valor = GlobVar.matrizCanal[index, i];
+                int valor = (int)GlobVar.matrizCanal[index, i];
 
                 valores += $"{valor}, ";
             }

@@ -430,7 +430,7 @@ namespace PlotagemOpenGL.Hipnograma
                                 if (h < tamanho)
                                 {
                                     // Acumula os valores correspondentes
-                                    SA02[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                                    SA02[h] = (int)(int)GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
                                 }            
                                 h++;
                             }
@@ -447,7 +447,7 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             if (h < tamanho)
                             {
-                                FreqCard[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                                FreqCard[h] = (int)GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
                             }
                             h++;
                             g += GlobVar.namosNumerico;
@@ -460,8 +460,8 @@ namespace PlotagemOpenGL.Hipnograma
                         codindex = GlobVar.codSelected.IndexOf(codcanal);
                         media = new int[512];
                         // Aplica o filtro band-pass nos dados
-                        //float[] linhaFiltrada = LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
-                        float[] linhaFiltrada = BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
+                        //float[] linhaFiltrada = (GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
+                        float[] linhaFiltrada = BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
                         //linhaFiltrada = PaissaBaixa.ApplyFilter(linhaFiltrada, 40f, 1);
 
                         double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
@@ -684,7 +684,7 @@ namespace PlotagemOpenGL.Hipnograma
                         {
                             if (h < tamanho)
                             {
-                                posicao[h] += (GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g] * -1);
+                                posicao[h] += (int)(GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g] * -1);
                             }
                             h++;
                             g += GlobVar.namosNumerico;
@@ -3192,7 +3192,7 @@ namespace PlotagemOpenGL.Hipnograma
                             if (h < tamanho)
                             {
                                 // Acumula os valores correspondentes
-                                SA02[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                                SA02[h] = (int)GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
                             }
                             h++;
                         }
@@ -3209,7 +3209,7 @@ namespace PlotagemOpenGL.Hipnograma
                     {
                         if (h < tamanho)
                         {
-                            FreqCard[h] = GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
+                            FreqCard[h] = (int)GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g];
                         }
                         h++;
                         g += GlobVar.namosNumerico;
@@ -3222,8 +3222,8 @@ namespace PlotagemOpenGL.Hipnograma
                     codindex = GlobVar.codSelected.IndexOf(codcanal);
                     media = new int[GlobVar.namos];
                     // Aplica o filtro band-pass nos dados
-                    //float[] linhaFiltrada = LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
-                    float[] linhaFiltrada = BandPass.ApplyFilter(LeituraEmMatrizTeste.FloatToShort(GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
+                    //float[] linhaFiltrada = (GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex]));
+                    float[] linhaFiltrada = BandPass.ApplyFilter((GlobVar.matrizCanal.GetRow(GlobVar.grafSelected[codindex])), 40f, 120f, 512);
                     //linhaFiltrada = PaissaBaixa.ApplyFilter(linhaFiltrada, 40f, 1);
 
                     double scala = GlobVar.scale[GlobVar.grafSelected[codindex]];
@@ -3462,7 +3462,7 @@ namespace PlotagemOpenGL.Hipnograma
                     {
                         if (h < tamanho)
                         {
-                            posicao[h] += (GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g] * -1);
+                            posicao[h] += (int)(GlobVar.matrizCanal[GlobVar.grafSelected[codindex], g] * -1);
                         }
                         h++;
                         g += GlobVar.namosNumerico;

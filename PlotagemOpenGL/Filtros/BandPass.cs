@@ -35,7 +35,7 @@ namespace PlotagemOpenGL.Filtros
             float altaPrevOut = 0;
             float altaPrevIn = 0;
 
-            float[] output = new float[input.Length];
+            //float[] output = new float[input.Length];
 
             for (int i = 0; i < input.Length; i++)
             {
@@ -44,11 +44,11 @@ namespace PlotagemOpenGL.Filtros
                 baixaPrevOut = passaBaixa; // Atualiza a saída anterior
 
                 // Aplica o filtro passa-alta sobre a saída do passa-baixa
-                output[i] = altaAlpha * (altaPrevOut + passaBaixa - altaPrevIn);
-                altaPrevOut = output[i]; // Atualiza saída anterior
+                input[i] = altaAlpha * (altaPrevOut + passaBaixa - altaPrevIn);
+                altaPrevOut = input[i]; // Atualiza saída anterior
                 altaPrevIn = passaBaixa; // Atualiza entrada anterior
             }
-            return output;
+            return input;
         }
     }
 }

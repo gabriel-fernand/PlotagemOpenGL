@@ -95,7 +95,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                 {
                                     //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                     //else
-                                    int valormatriz = verTx ? GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                                    int valormatriz = verTx ? (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
 
                                     // Valores mínimo e máximo possíveis para valormatriz (ajuste conforme necessário)
                                     int minVal = -16887 - 2110; // Exemplo: ajuste conforme os limites reais dos dados
@@ -167,7 +167,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                             {
                                 //if (h < 0 || h >= GlobVar.matrizCanal.GetLength(1)) gl.Vertex(h - 1, desenhoLoc[des]); // Define cada ponto do gráfico
                                 //else
-                                int valormatriz = verTx ? GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                                int valormatriz = verTx ? (int)(int)GlobVar.matrizCanal[GlobVar.grafSelected[i], h] : (int) GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
 
                                 // Valores mínimo e máximo possíveis para valormatriz (ajuste conforme necessário)
                                 int minVal = GlobVar.PosBaixo - GlobVar.PosIncremento; // Exemplo: ajuste conforme os limites reais dos dados

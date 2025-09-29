@@ -86,7 +86,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     for (int g = j; g < j + GlobVar.namosNumerico;)
                                     {
                                         //if(GlobVar.matrizCanal[GlobVar.grafSelected[i], g] < 0) { GlobVar.matrizCanal[GlobVar.grafSelected[i], g] *= -1;  }
-                                        aux += GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
+                                        aux += (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], g];
                                         g += GlobVar.namosNumerico;
                                     }
                                     if(GlobVar.codSelected[i] == 66)
@@ -377,12 +377,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         }
                                     }
 
-                                    int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * -1;
+                                    int posi = (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], j] * -1;
                                     int[] aloa = new int[8];
                                     int aoba = 0;
                                     for(int ao  = j; aoba < 8; ao++)
                                     {
-                                        aloa[aoba] = GlobVar.matrizCanal[GlobVar.grafSelected[i], ao];
+                                        aloa[aoba] = (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], ao];
                                         aoba++;
                                     }
 
@@ -465,7 +465,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                         }
                                     }
 
-                                    int posi = GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
+                                    int posi = (int)GlobVar.matrizCanal[GlobVar.grafSelected[i], j];
 
                                     txtEmTela = $"{posi}";
 

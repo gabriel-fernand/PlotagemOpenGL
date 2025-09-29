@@ -65,7 +65,7 @@ namespace PlotagemOpenGL
             int codCanal2 = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[(GlobVar.codSelected.IndexOf(select))]["CodCanal2"]);
             if (codCanal2 != -1)
             {
-                GlobVar.matrizCanal.SetRow<short>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2));
+                GlobVar.matrizCanal.SetRow<float>(GlobVar.codSelected.IndexOf(codCanal1), LeituraEmMatrizTeste.FloatToShort(LeituraEmMatrizTeste.SetReferencia(codCanal1, codCanal2)));
             }
             /*for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
             {
