@@ -533,8 +533,8 @@ namespace PlotagemOpenGL
             Cpap.Name = "Move para o início do CPAP";
             ProximoDes.Name = "Move para a dessaturação seguinte";
             AnteriorDes.Name = "Move para a dessaturação anterior";
-            BaNotche.Name = "Move para o Boa Noite";
-            BaDia.Name = "Move para o Bom Dia";
+            BaNotche.Name = "Move para o Bom Dia";
+            BaDia.Name = "Move para o Boa Noite";
             ProximoComentario.Name = "Move para o comentário seguinte";
             AnteriorComentario.Name = "Move para o comentário anterior";
             ProximoRonco.Name = "Move para o evento de ronco seguinte";
@@ -7081,6 +7081,11 @@ namespace PlotagemOpenGL
                     default: return GlobVar.diretorioEstagioAnteriorProximoNada; // Caso o valor seja nulo ou não mapeado, usar a imagem "Nada"
                 }
             }
+            GlobVar.tbl_Paginas = GlobVar.tbl_Paginas
+                .AsEnumerable()
+                .OrderBy(rw => rw.Field<int>("NumPag"))
+                .CopyToDataTable();
+            GlobVar.tbl_Paginas.AcceptChanges();
 
             // Atualizar imagens dos botões "Anteriores"
             for (int i = 1; i <= 4; i++)

@@ -3805,6 +3805,7 @@ namespace PlotagemOpenGL
             JanelaPrincipal.Name = "JanelaPrincipal";
             JanelaPrincipal.Size = new System.Drawing.Size(330, 26);
             JanelaPrincipal.Text = "Visualizar na janela principal";
+            JanelaPrincipal.Visible = false;
             // 
             // JanelaSeparada
             // 
