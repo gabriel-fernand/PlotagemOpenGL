@@ -5617,12 +5617,14 @@ namespace PlotagemOpenGL
                         bt.Location = new Point(189, 1);
 
                         bt.Visible = true;
+                        bt.Tag = 5;
                     }
                     else if (Convert.ToInt32(bt.Tag) == -1)
                     {
                         bt.Location = new Point(242, 1);
 
                         bt.Visible = true;
+                        bt.Tag = -1;
                     }
                     else
                     {
@@ -5651,15 +5653,15 @@ namespace PlotagemOpenGL
                     (bt => ObterTag(bt) == 3 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(330, 1);    bt.Visible = true; }),
 
                     // Tag==5 (supondo R significa Tag 5)
-                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(377, 1);    bt.Visible = true; }),
-                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(424, 1);    bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(377, 1);    bt.Visible = true;  bt.Tag = 5; }),
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(424, 1);    bt.Visible = true; bt.Tag = 5; }),
 
                     // Diferenças
                     (bt => ContemNome(bt, "anterior diferente"), bt => { bt.Location = new Point(471, 1);    bt.Visible = true; }),
                     (bt => ContemNome(bt, "seguinte diferente"),  bt => { bt.Location = new Point(518, 1);    bt.Visible = true; }),
 
                     // Tag==-1
-                    (bt => ObterTag(bt) == -1, bt => { bt.Location = new Point(571, 1); bt.Visible = true; }),
+                    (bt => ObterTag(bt) == -1, bt => { bt.Location = new Point(571, 1); bt.Visible = true;  bt.Tag = -1;}),
                 };
 
                 foreach (Button bt in PainelMarcaAntProx.Controls.OfType<Button>())
@@ -5712,13 +5714,13 @@ namespace PlotagemOpenGL
                     else if (Convert.ToInt32(bt.Tag) == 5)
                     {
                         bt.Location = new Point(189, 1);
-
+                        bt.Tag = 5;
                         bt.Visible = true;
                     }
                     else if (Convert.ToInt32(bt.Tag) == 4)
                     {
                         bt.Location = new Point(236, 1);
-
+                        bt.Tag = 4;
                         bt.Visible = true;
                     }
                     else if (Convert.ToInt32(bt.Tag) == -1)
@@ -5754,11 +5756,11 @@ namespace PlotagemOpenGL
                     (bt => ObterTag(bt) == 3 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(330, 1);    bt.Visible = true; }),
 
                     // Tag==5 (supondo R significa Tag 5)
-                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(377, 1);    bt.Visible = true; }),
-                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(424, 1);    bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "anterior"), bt => { bt.Location = new Point(377, 1);    bt.Visible = true; bt.Tag = 5; }),
+                    (bt => ObterTag(bt) == 5 && ContemNome(bt, "seguinte"),  bt => { bt.Location = new Point(424, 1);    bt.Visible = true; bt.Tag = 5; }),
                     // Tag 4
-                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "anterior"), bt =>{ bt.Location = new Point(471, 1); bt.Visible = true; }),
-                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "seguinte"), bt => { bt.Location = new Point(518, 1); bt.Visible = true; }),
+                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "anterior"), bt =>{ bt.Location = new Point(471, 1); bt.Visible = true; bt.Tag = 4; }),
+                    (bt => ObterTag(bt) == 4 && ContemNome(bt, "seguinte"), bt => { bt.Location = new Point(518, 1); bt.Visible = true; bt.Tag = 4; }),
 
                     // Diferenças
                     (bt => ContemNome(bt, "anterior diferente"), bt => { bt.Location = new Point(565, 1);    bt.Visible = true; }),
@@ -5802,18 +5804,18 @@ namespace PlotagemOpenGL
                     else if (Convert.ToInt32(bt.Tag) == 5)
                     {
                         bt.Location = new Point(48, 1);
-                        bt.Visible = true;
+                        bt.Visible = true; bt.Tag = 5;
                     }
                     else if (Convert.ToInt32(bt.Tag) == 4)
                     {
                         bt.Location = new Point(95, 1);
-
+                         bt.Tag = 4;
                         bt.Visible = true;
                     }
                     else if (Convert.ToInt32(bt.Tag) == 6)
                     {
                         bt.Location = new Point(142, 1);
-
+                        bt.Tag = 6;
                         bt.Visible = true;
                     }
                     else if (Convert.ToInt32(bt.Tag) == -1)
