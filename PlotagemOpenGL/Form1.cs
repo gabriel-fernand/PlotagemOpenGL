@@ -842,21 +842,23 @@ namespace PlotagemOpenGL
 
         private void Tela_Plotagem_FormClosed(object sender, FormClosingEventArgs e)
         {
+            Task.Run(() => BD.AlteraBD.atualizaTbl_Paginas());
+
             GlobVar.ultimaPag = Convert.ToInt32(ptsEmTela.Text);
 
             string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
 
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            using (GlobVar.ConnectionBDdat)
             {
-                connection.Open();
+                //connection.Open();
 
-                OleDbTransaction transaction = connection.BeginTransaction();
+                OleDbTransaction transaction = GlobVar.ConnectionBDdat.BeginTransaction();
                 try
                 {
                     // Adicione uma condição WHERE para atualizar uma linha específica
                     string sql = "UPDATE tbl_DadosExame SET Ultima_Pagina = @ultimaPag WHERE CodPaciente = @CodPaciente";
 
-                    using (OleDbCommand command = new OleDbCommand(sql, connection, transaction))
+                    using (OleDbCommand command = new OleDbCommand(sql, GlobVar.ConnectionBDdat, transaction))
                     {
                         command.Parameters.Add("@ultimaPag", OleDbType.Integer).Value = GlobVar.ultimaPag + 1;
                         command.Parameters.Add("@CodPaciente", OleDbType.Integer).Value = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["CodPaciente"]);
@@ -4909,7 +4911,6 @@ namespace PlotagemOpenGL
                             if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar3.PerformClick();
                             break;
 
-
                         case Keys.N:
                             if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) N.PerformClick();
                             break;
@@ -5102,7 +5103,7 @@ namespace PlotagemOpenGL
                     camera.X = 0;
                 }
                 if (GlobVar.indiceNumero < 0)
-                {
+                { //AQUI ARROMBADO
                     GlobVar.indiceNumero = 0;
                     GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
                 }
@@ -5112,6 +5113,48 @@ namespace PlotagemOpenGL
 
                 int alturaTela = (int)openglControl1.Height;
                 lastScroll = (int)e.NewValue;
+
+
+                int inicio = (GlobVar.indice / GlobVar.namos);
+                TimeSpan tempo = TimeSpan.FromSeconds(inicio);
+                string segundosI = tempo.Seconds.ToString().PadLeft(2, '0');
+
+                if (Convert.ToInt32(segundosI) != 30 && Convert.ToInt32(segundosI) != 0)
+                {
+                    if (GlobVar.indice > 0)
+                    {
+                        int vezesAndar = (Convert.ToInt32(segundosI) > 30) ? Math.Abs((Convert.ToInt32(segundosI) - 30)) : Convert.ToInt32(segundosI);
+
+                        int VoltaUmSegundo = GlobVar.namos * vezesAndar;
+                        int VoltaUmSegundoNumerico = GlobVar.numeroAmos * vezesAndar;
+
+                        camera.X -= VoltaUmSegundo;
+
+                        GlobVar.indiceNumero -= (int)VoltaUmSegundoNumerico;
+                        GlobVar.maximaNumero -= (int)VoltaUmSegundoNumerico;
+                        if (GlobVar.indiceNumero < 0)
+                        {
+                            GlobVar.indiceNumero = 0;
+                            GlobVar.maximaNumero = VoltaUmSegundoNumerico;
+                        }
+                        calcPont = Math.Abs(GlobVar.ponteiroVideo - GlobVar.indice);
+
+                        GlobVar.maximaVect -= (int)VoltaUmSegundo;
+                        GlobVar.indice -= (int)VoltaUmSegundo;
+
+                        if (GlobVar.indice < 0)
+                        {
+                            GlobVar.indice = 0;
+                            GlobVar.maximaVect = (int)VoltaUmSegundo;
+                            camera.X = 0;
+                        }
+                        GlobVar.ponteiroVideo = GlobVar.indice + calcPont;
+                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+
+                    }
+
+                }
+
 
                 TelaClearAndReload();
                 UpdateInicioTela();
@@ -5430,12 +5473,21 @@ namespace PlotagemOpenGL
             // Soma todas as quantidades de agrupamento
             GlobVar.qtdImpressao = agrupado.Count();
         }
-        public void UpdateInicioTela()
+        public async void UpdateInicioTela()
         {
             if (this.InvokeRequired)
             {
                 this.Invoke(new Action(UpdateInicioTela));
                 return;
+            }
+
+            if (GlobVar.hipnoOpen)
+            {
+                if(Janela != null)
+                {
+                    //Janela.PreparaOsArrays();
+                    Janela.Desenha();
+                }
             }
 
             string nome = GlobVar.tbl_DadosExame.Rows[0]["Nome"].ToString();
@@ -5526,7 +5578,9 @@ namespace PlotagemOpenGL
             
             Atual.BackgroundImage = GetEstagioImage(estagioAtual);
             Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            if(GlobVar.tbl_SelImpressao != null)
+            atualizaButAntProx();
+
+            if (GlobVar.tbl_SelImpressao != null)
             {
                 var dt = GlobVar.tbl_SelImpressao.AsEnumerable()
                 .GroupBy(r => r.Field<int>("CodImpressao"))
@@ -5545,7 +5599,6 @@ namespace PlotagemOpenGL
                 hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
                 isScroll = true;
             }
-            atualizaButAntProx();
             //CalcularQtdImpressao();
             if (videoIni)
             {
@@ -7153,12 +7206,13 @@ namespace PlotagemOpenGL
                 }
             }
         }
+        List<(int numPag, int estagio)> updates = new List<(int numPag, int estagio)>();
         private void Marcar_Click(object sender, EventArgs e)
         {
             if (GlobVar.maximaVect > GlobVar.matrizCanal.GetLength(1))
                 return;
 
-            Button botao = sender as Button;
+            var botao = sender as Button;
             if (botao == null)
                 return;
 
@@ -7171,17 +7225,37 @@ namespace PlotagemOpenGL
                 int totalRows = GlobVar.tbl_Paginas.Rows.Count;
                 int limite = Math.Min(rowIndex + 30, totalRows);
 
-                List<Tuple<int, int>> updates = PrepareUpdates(rowIndex, limite, newEstagio);
+                // Pode ser útil um Stopwatch aqui para medir:
+                //var sw = System.Diagnostics.Stopwatch.StartNew();
 
-                ExecuteDatabaseUpdate(updates);
+                PrepareUpdates(rowIndex, limite, newEstagio); // já faz update in-memory
+                //BD.AlteraBD.AlteraEstagioDaEpoca(updates); // otimize esse método para batch!
+
+                //sw.Stop();
+                //Console.WriteLine($"Atualização levou {sw.ElapsedMilliseconds} ms");
             }
+            else
+            {
+                // log ou feedback para debugging
+            }
+
+            AtualizaInterface(paginaCoerente, rowIndex);
+        }
+
+        private void AtualizaInterface(int paginaCoerente, int rowIndex)
+        {
+            var row = GlobVar.tbl_Paginas.Rows[rowIndex];
+            int estagioAtual = Convert.ToInt32(row["Estagio"]);
+
+            Atual.BackgroundImage = GetEstagioImage(estagioAtual);
+            Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            atualizaButAntProx();
 
             UpdateGlobVarStates();
             UpdateInterface();
-        }
-        /// <summary>
-        /// Encontra o índice da linha no DataTable com base no número da página coerente.
-        /// </summary>
+        }        /// <summary>
+                 /// Encontra o índice da linha no DataTable com base no número da página coerente.
+                 /// </summary>
         private int FindRowIndex(int paginaCoerente)
         {
             return GlobVar.tbl_Paginas.AsEnumerable()
@@ -7192,26 +7266,16 @@ namespace PlotagemOpenGL
         /// <summary>
         /// Prepara as atualizações a serem feitas no DataTable e no banco de dados.
         /// </summary>
-        private List<Tuple<int, int>> PrepareUpdates(int start, int limit, int newEstagio)
+        private void PrepareUpdates(int start, int limit, int newEstagio)
         {
-            List<Tuple<int, int>> updates = new List<Tuple<int, int>>();
 
             for (int i = start; i < limit; i++)
             {
                 GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
                 int numPag = GlobVar.tbl_Paginas.Rows[i].Field<int>("NumPag");
-                updates.Add(new Tuple<int, int>(numPag, newEstagio));
+                //updates.Add(new Tuple<int, int>(numPag, newEstagio));
             }
-
-            return updates;
-        }
-
-        /// <summary>
-        /// Executa as atualizações no banco de dados.
-        /// </summary>
-        private void ExecuteDatabaseUpdate(List<Tuple<int, int>> updates)
-        {
-            BD.AlteraBD.AlteraEstagioDaEpoca(updates);
+                        
         }
 
         /// <summary>

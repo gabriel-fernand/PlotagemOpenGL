@@ -12,6 +12,8 @@ using System.Data.OleDb;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Accord.Math.Geometry;
+using System.Threading.Tasks;
+using Tensorflow.Common.Types;
 
 namespace PlotagemOpenGL.BD
 {
@@ -286,7 +288,7 @@ namespace PlotagemOpenGL.BD
             }
         }
 
-        public static void AlteraEstagioDaEpoca(List<Tuple<int, int>> updates)
+        public static async Task AlteraEstagioDaEpoca(List<(int numPag, int estagio)> updates)
         {
             try
             {
@@ -330,6 +332,43 @@ namespace PlotagemOpenGL.BD
             {
                 System.Windows.Forms.MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
             }
+        }
+
+        public static async Task atualizaTbl_Paginas()
+        {
+            // Exclui todos os registros da tabela
+            using (var cmd = new OleDbCommand("DELETE FROM tbl_Paginas", GlobVar.ConnectionBDdat))
+            {
+                //GlobVar.ConnectionBDdat.Open();
+                cmd.ExecuteNonQuery();
+                //GlobVar.ConnectionBDdat.Close();
+            }
+
+            // Agora, insere todas as linhas novamente:
+            //GlobVar.ConnectionBDdat.Open();
+            using (var transaction = GlobVar.ConnectionBDdat.BeginTransaction())
+            {
+                foreach (DataRow row in GlobVar.tbl_Paginas.Rows)
+                {
+                    // Sempre siga a ordem dos parâmetros igual ao comando SQL!
+                    using (var insertCmd = new OleDbCommand(
+                        "INSERT INTO tbl_Paginas (NumPag, Horario, CodAtribGrav, Estagio, FreqFoto, SatBasal, TickIni) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        GlobVar.ConnectionBDdat, transaction))
+                    {
+                        insertCmd.Parameters.AddWithValue("@NumPag", row["NumPag"]);
+                        insertCmd.Parameters.AddWithValue("@Horario", row["Horario"]);
+                        insertCmd.Parameters.AddWithValue("@CodAtribGrav", row["CodAtribGrav"]);
+                        insertCmd.Parameters.AddWithValue("@Estagio", row["Estagio"]);
+                        insertCmd.Parameters.AddWithValue("@FreqFoto", row["FreqFoto"]);
+                        insertCmd.Parameters.AddWithValue("@SatBasal", row["SatBasal"]);
+                        insertCmd.Parameters.AddWithValue("@TickIni", row["TickIni"]);
+
+                        insertCmd.ExecuteNonQuery();
+                    }
+                }
+                transaction.Commit();
+            }
+            //GlobVar.ConnectionBDdat.Close();
         }
 
         public static void AdicionarLinhasNoBancoDeDados(DataTable telaSelect, int attSeq)

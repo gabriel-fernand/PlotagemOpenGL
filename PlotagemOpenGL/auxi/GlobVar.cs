@@ -35,6 +35,7 @@ namespace PlotagemOpenGL.auxi
         public static bool MatrizCompleta;
         public static bool FiltroCompleto;
         public static int areaCarregadaAltMont;
+        public static bool hipnoOpen = false;
 
         public static string estagioAtual = "0";
         public static int qtdImpressao = 0;

@@ -96,8 +96,17 @@ namespace PlotagemOpenGL.Hipnograma
             string name = rw["DescrJanela"].ToString();
 
             this.Text = name;
+            GlobVar.hipnoOpen = true;
+
+            this.FormClosing += HipnogramaForm_FormClosing;
+        }
+
+        private void HipnogramaForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            GlobVar.hipnoOpen = false;
 
         }
+
         private void resize_Control(Control c, Rectangle r)
         {
             // Define o novo tamanho e posição com base no tamanho atual do formulário
@@ -772,6 +781,7 @@ namespace PlotagemOpenGL.Hipnograma
         }
         public void Desenha()
         {
+            PreparaOsArrays();
             // Defina a cor de fundo com os valores RGB normalizados
             gl.ClearColor(1, 1, 1, 1); // A última variável é o alpha (opacidade), 1.0f para opaco
 

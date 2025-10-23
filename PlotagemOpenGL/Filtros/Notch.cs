@@ -62,7 +62,7 @@ namespace PlotagemOpenGL.Filtros
             Tela_Plotagem.cronometroNotch.Start();
 
             Notch notchFilter = new Notch(notchFrequency, 2, samplingRate);
-            //float[] output = new float[input.Length];
+            // float[] output = new float[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
                 input[i] = notchFilter.Apply(input[i]);
