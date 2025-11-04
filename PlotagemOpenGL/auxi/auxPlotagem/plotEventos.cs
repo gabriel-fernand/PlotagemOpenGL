@@ -180,10 +180,12 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
                     minSaturacao(numPagInicio, numPagTermino);
                     int minSat = GlobVar.minSat.Min();
-                    string posi = Posicao(numPagInicio, numPagTermino);                    
+                    string posi = Posicao(numPagInicio, numPagTermino);
 
                     // Adicionar dados ao DataTable
-                    AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    //AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    GlobVar.GravEvent.Add((seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi));
+
                     GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.CodCanal, inicio, termino, minSat, posi);
                     // Exportar DataTable para Excel
                     string excelFilePath = @"C:\Teste\Teste";
@@ -216,7 +218,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             int Inicio = (int)inicio / 512;
             int numPagTermino = (int)termino / 512;
-            AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+            //AlteraBD.GravaEvento(seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+
+            GlobVar.GravEvent.Add((seq, Inicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi));
+
             GlobVar.eventosUpdate.Rows.Add(seq, GlobVar.NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
             //GlobVar.eventosUpdate.Rows.Remove(row => row.Field<int>("Seq") == seq);
         }
@@ -249,7 +254,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     string posi = row["Posicao"].ToString();
 
                     string NumPagEvent = row["NumPag"].ToString();
-                    AlteraBD.GravaEvento(seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    //AlteraBD.GravaEvento(seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+
+                    GlobVar.GravEvent.Add((seq, Inicio, codEvento, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi));
+
                     GlobVar.eventosUpdate.Rows.Add(seq, NumPagEvent, codEvento, codCanal, inicio, termino, minSat, posi);
 
 
@@ -1001,7 +1009,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 string posi = Posicao(numPagInicio, numPagTermino);
 
                 // Adicionar dados ao DataTable
-                AlteraBD.GravaEvento(seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi);
+                //AlteraBD.GravaEvento(seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi);
+
+                GlobVar.GravEvent.Add((seq, numPagInicio, codEvento, -1, -1, inicioBCB, finalBCB, GlobVar.namos, numPagTermino, minSat, posi));
+
                 GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, -1, inicioBCB, finalBCB, minSat, posi);
                 Canais.ajustaIniFimEx();
 

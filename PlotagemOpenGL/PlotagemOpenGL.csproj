@@ -94,9 +94,15 @@
     <PackageReference Include="SharpGLforWinForms" Version="2.4.0" />
     <PackageReference Include="SharpGLforWPF" Version="2.4.0" />
     <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
-    <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+    <PackageReference Include="System.Data.OleDb" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0-preview.1.21102.12" />
     <PackageReference Include="Unity.Container" Version="5.11.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GravaMDB">
+      <HintPath>BD\GravaMDB.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -129,6 +135,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="BD\GravaMDB.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="BD\GravaMDB.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ClassesBDNano.DLL">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

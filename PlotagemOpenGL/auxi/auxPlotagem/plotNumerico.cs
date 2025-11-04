@@ -92,13 +92,16 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                                     if(GlobVar.codSelected[i] == 66)
                                     {
                                         int pag = j / GlobVar.namosNumerico;
-                                        var row = GlobVar.tbl_Paginas.AsEnumerable().Where(row => row.Field<int>("NumPag") == pag).FirstOrDefault();
-                                        //aux = row["SatBasal"];
-                                        if (row["SatBasal"] != null)
+                                        var row = GlobVar.tbl_Paginas.AsEnumerable().FirstOrDefault(row => row.Field<int>("NumPag") == pag);
+
+                                        if (row != null && row["SatBasal"] != DBNull.Value)
                                         {
                                             aux = Convert.ToInt32(row["SatBasal"]);
                                         }
-                                        else { aux = 0; }
+                                        else
+                                        {
+                                            aux = 0;
+                                        }
                                     }
                                     me = aux;
                                     txtEmTela = $" {aux} ";

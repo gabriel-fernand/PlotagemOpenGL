@@ -343,10 +343,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int posY =  alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
                     Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
                     // Primeira chamada para preparar o OpenGL para o texto
-                    gl.DrawText(0, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
+                    gl.DrawText(0, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
 
                     // Segunda chamada para realmente desenhar o texto
-                    gl.DrawText(posX, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+                    gl.DrawText(posX, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
 
                     // Finalizar a renderização do OpenGL
                     gl.End();
@@ -394,10 +394,10 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);
 
                         // Primeira chamada para preparar o OpenGL para o texto
-                        gl.DrawText(0, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, "");
+                        gl.DrawText(0, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, "");
 
                         // Segunda chamada para realmente desenhar o texto
-                        gl.DrawText(posX, posY, 1.0f, 0.6117f, 0.6117f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+                        gl.DrawText(posX, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
                     }
 
                     gl.End();

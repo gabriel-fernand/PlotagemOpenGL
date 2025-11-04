@@ -488,7 +488,10 @@ namespace PlotagemOpenGL.FormesMenuPanels.AuxiAutoAnalise
                 inicio = inicio * 512;
                 termino = termino * 512;
                 // Adicionar dados ao DataTable
-                AlteraBD.GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                //AlteraBD.GravaEvento(seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+
+                GlobVar.GravEvent.Add((seq, numPagInicio, codEvento, codcanal1, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi));
+
                 GlobVar.eventosUpdate.Rows.Add(seq, numPag, codEvento, codcanal1, inicio, termino, minSat, posi);
                 // Exportar DataTable para Excel
                 string excelFilePath = @"C:\Teste\Teste";

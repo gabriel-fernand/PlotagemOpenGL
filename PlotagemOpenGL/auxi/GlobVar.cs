@@ -6,6 +6,7 @@ using Point = System.Drawing.Point;
 using Connection = ADODB.Connection;
 using System.IO;
 using System.Data.OleDb;
+using System.Drawing;
 
 
 
@@ -233,5 +234,9 @@ namespace PlotagemOpenGL.auxi
 
         public static OleDbConnection ConnectionBDdat;
         public static OleDbConnection ConnectionConfig;
+
+        public static Dictionary<string, Image> imagensEstagio = new Dictionary<string, Image>();
+        public static List<(int numPag, int estagio)> Atualizados = new List<(int numPag, int estagio)>();
+        public static List<(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int? MenorSat, string? Posicao)> GravEvent = new List<(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int? MenorSat, string? Posicao)>();
     }
 }

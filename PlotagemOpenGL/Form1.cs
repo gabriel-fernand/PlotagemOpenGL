@@ -38,14 +38,18 @@ using PlotagemOpenGL.BD;
 using System.Threading;
 using PlotagemOpenGL.Hipnograma;
 using PlotagemOpenGL.LaudoForm;
-using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 //using KeyCode = UnityEngine.KeyCode;
-
+using PlotagemOpenGL;
+using Tensorflow;
 
 namespace PlotagemOpenGL
 {
     public partial class Tela_Plotagem : Form
     {
+        static System.Windows.Forms.Timer attAntProx = new System.Windows.Forms.Timer();
+        static System.Windows.Forms.Timer AttBanco = new System.Windows.Forms.Timer();
+        static bool attAntProxRuning = false;
         public static OpenGL gl;
         public static Plotagem plotagem;
         public static Canais canais;
@@ -204,8 +208,13 @@ namespace PlotagemOpenGL
         // Constantes Win32
         private const int WM_SYSCOMMAND = 0x0112;
         private const int SC_MAXIMIZE = 0xF030;
+        public static GravaMDB grava;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
+
+        //GravaMDB. a dll tam com os metodos privados
+       
+
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         // Chame este método para maximizar como se fosse o usuário clicando no botão!
@@ -222,6 +231,7 @@ namespace PlotagemOpenGL
         {
             try
             {
+
                 // Obtém as dimensões da tela principal
                 int larguraTela = 1920;
                 int alturaTela = 1080;
@@ -280,6 +290,10 @@ namespace PlotagemOpenGL
                     LeituraBanco.AjustaCadEvent(); // Esta ajustando os valores das teclas rapida para -1 caso o valor seja null, pois estava atrapalhando quando era null
                     await Task.Delay(45);
 
+                    if(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"] == DBNull.Value)
+                    {
+                        GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"] = 1;
+                    }
                     GlobVar.ultimaPag = Convert.ToInt32(GlobVar.tbl_DadosExame.Rows[0]["Ultima_Pagina"]) - 1; //ERROO ESTA AQ
                     LeituraEmMatrizTeste.LeituraDat();
                     LeituraBanco.ArrumaTbl_Paginas();
@@ -303,6 +317,7 @@ namespace PlotagemOpenGL
                     this.Resize += panelLb_Resiz;
                     this.Resize += DownPainel_Resiz;
                     this.Controls.Add(openglControl1);
+                    this.KeyDown += Tela_Plotagem_KeyDown;
                     painelExames.Paint += painelExames_Paint;
                     toolTip1 = new CustomToolTip();
                     await Task.Delay(45);
@@ -333,6 +348,13 @@ namespace PlotagemOpenGL
                     GlobVar.sizeLabelExams.Y = label1.Height;
                     GlobVar.sizePanelLb.X = panel1.Width;
                     GlobVar.sizePanelLb.Y = panel1.Height;
+
+                    attAntProx.Interval = 30;
+                    attAntProx.Tick += AttAntProx_Tick;
+
+                    AttBanco.Interval = 1200;
+                    AttBanco.Tick += AttBanco_Tick;
+                    
 
                     GlobVar.locBut.X = plusLb1.Location.X;
                     GlobVar.locScale.X = scalaLb1.Location.X;
@@ -451,6 +473,11 @@ namespace PlotagemOpenGL
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
                     GlobVar.ConnectionBDdat.Open();
 
+                    PlotagemOpenGL.GravaMDB.ConnectionBDdat = GlobVar.ConnectionBDdat;
+
+
+                    grava = new GravaMDB(GlobVar.bDataFile);
+
                     if (GlobVar.tbl_ResumoExame != null && GlobVar.tbl_ResumoExame.Rows.Count == 0)
                     {
                         DataRow row = GlobVar.tbl_ResumoExame.NewRow();
@@ -458,6 +485,9 @@ namespace PlotagemOpenGL
                     }
 
                     Canais.ajustaIniFimEx();
+                    InicializaCacheImagens();
+                    this.Focus();
+                    AttBanco.Start();
                 }
             }
             catch (Exception e)
@@ -468,6 +498,109 @@ namespace PlotagemOpenGL
 
             }
         }
+
+        private void AttBanco_Tick(object sender, EventArgs e)
+        {
+            if(GlobVar.GravEvent != null && GlobVar.GravEvent.Count > 0)
+            {
+                for (int i = GlobVar.GravEvent.Count - 1; i >= 0; i--)
+                {
+                    var evento = GlobVar.GravEvent[i];
+                    PlotagemOpenGL.GravaMDB.GravaEvento(
+                        evento.seq, evento.NumPag, evento.CodEvento, evento.CodCanal1, evento.CodCanal2,
+                        evento.Inicio, evento.duracao, evento.sizepag, evento.LasPag, evento.MenorSat, evento.Posicao
+                    );
+
+                    GlobVar.GravEvent.RemoveAt(i);
+                }
+            }
+
+            if (GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
+            {
+                PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados);
+                GlobVar.Atualizados.Clear();
+            }
+
+        }
+
+        private void Tela_Plotagem_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                switch (e.KeyData)
+                {
+                    case Keys.NumPad0:
+                        MarcaEstagio(0);
+                        break;
+                    case Keys.D0:
+                        MarcaEstagio(0);
+                        break;
+                    case Keys.NumPad5:
+                        MarcaEstagio(5);
+                        break;
+                    case Keys.D5:
+                        MarcaEstagio(5);
+                        break;
+                    case Keys.R:
+                        MarcaEstagio(5);
+                        break;
+
+                    case Keys.NumPad1:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
+                        break;
+                    case Keys.D1:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
+                        break;
+                    case Keys.NumPad2:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
+                        break;
+                    case Keys.D2:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
+                        break;
+                    case Keys.NumPad3:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
+                        break;
+                    case Keys.D3:
+                        if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
+                        break;
+
+                    case Keys.N:
+                        if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(4);
+                        break;
+                    case Keys.T:
+                        if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(6);
+                        break;
+                }
+                foiencontradoumUltimo = false;
+                foiencontradoumUltimo = false;
+
+                int alturaTela = (int)openglControl1.Height;
+                TelaClearAndReload();
+                UpdateInicioTela();
+
+            }
+            catch { }
+
+        }
+
+        private void AttAntProx_Tick(object sender, EventArgs e)
+        {
+            //COLOCA AQUI FDP
+
+            attAntProxRuning = true;
+
+            int paginaCoerente = GlobVar.indice / GlobVar.namos;
+            int rowIndex = FindRowIndex(paginaCoerente);
+
+            var row = GlobVar.tbl_Paginas.Rows[rowIndex];
+            int estagioAtual = Convert.ToInt32(row["Estagio"]);
+
+            Atual.BackgroundImage = GetEstagioImage(estagioAtual);
+            Atual.BackgroundImageLayout = ImageLayout.Stretch;
+            atualizaButAntProx();
+
+        }
+
         private void TimerAposAbrir_Tick(object sender, EventArgs e)
         {
 
@@ -726,62 +859,175 @@ namespace PlotagemOpenGL
                 //iCelera.telinha.videoCarregado();
             }
         }
+
+        
         public void falsoClick()
         {
-            keyChecker = new KeyChecker();
+                if (keyChecker == null)
+                {
+                    keyChecker = new KeyChecker();
 
-            // Ação para a tecla Left
-            keyChecker.LeftKeyPressed += () =>
-            {
-                tecla = "Seta esquerda.";
-                // Adicione aqui a lógica para simular o clique no botão A
-                var enterKeyEvent = new KeyEventArgs(Keys.A); // '\r' representa o Enter
+                    keyChecker.FormIsFocused = this.Focused;
+                    this.Activated += (s, e) => keyChecker.FormIsFocused = true;
+                    this.Deactivate += (s, e) => keyChecker.FormIsFocused = false;
+                    this.GotFocus += (s, e) => keyChecker.FormIsFocused = true;
+                    this.LostFocus += (s, e) => keyChecker.FormIsFocused = false;
+                }
 
-                //var fakeScroll = new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120);
-                //OpenglControl1_MouseWheel(openglControl1, fakeScroll);
 
-                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
-                TelaClearAndReload();
+                // Ação para a tecla Left
+                keyChecker.LeftKeyPressed += () =>
+                {
+                    var enterKeyEvent = new KeyEventArgs(Keys.A); // '\r' representa o Enter
+                    TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                };
 
-            };
+                // Ação para a tecla Right
+                keyChecker.RightKeyPressed += () =>
+                {
+                    var enterKeyEvent = new KeyEventArgs(Keys.D); // '\r' representa o Enter
+                    TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                };
+                // Ação para a tecla Cima
+                keyChecker.UpKeyPressed += () =>
+                {
+                    var enterKeyEvent = new KeyEventArgs(Keys.W); // '\r' representa o Enter
+                    TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                };
 
-            // Ação para a tecla Right
-            keyChecker.RightKeyPressed += () =>
-            {
-                tecla = "Seta direita.";
-                // Adicione aqui a lógica para simular o clique no botão D
-                var enterKeyEvent = new KeyEventArgs(Keys.D); // '\r' representa o Enter
+                // Ação para a tecla Baixo
+                keyChecker.DownKeyPressed += () =>
+                {
+                    var enterKeyEvent = new KeyEventArgs(Keys.S); // '\r' representa o Enter
+                    TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
+                };
+            /*
+                // Ação para a tecla 0
+                keyChecker.NumPad0 += () =>
+                {
+                    MarcaEstagio(0);
+                };
+                keyChecker.D0 += () =>
+                {
+                    MarcaEstagio(0);
+                };
 
-                //var fakeScroll = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120);
-                //OpenglControl1_MouseWheel(openglControl1, fakeScroll);
+                // Ação para a tecla 5 - R
+                keyChecker.NumPad5 += () =>
+                {
+                    MarcaEstagio(5);
+                };
+                keyChecker.D5 += () =>
+                {
+                    MarcaEstagio(5);
+                };
+                keyChecker.R += () =>
+                {
+                    MarcaEstagio(5);
+                };
 
-                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
-                TelaClearAndReload();  
-            };
-            // Ação para a tecla Left
-            keyChecker.UpKeyPressed += () =>
-            {
-                tecla = "Seta esquerda.";
-                // Adicione aqui a lógica para simular o clique no botão A
-                var enterKeyEvent = new KeyEventArgs(Keys.W); // '\r' representa o Enter
+                string adInf = AdInf?.ToUpper() ?? "";
 
-                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
-                TelaClearAndReload();
+                // Ação para a tecla 1
+                keyChecker.NumPad1 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(1);
+                    }
+                };
+                keyChecker.D1 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(1);
+                    }
+                };
 
-            };
+                // Ação para a tecla 2
+                keyChecker.NumPad2 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(2);
+                    }
+                };
+                keyChecker.D2 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(2);
+                    }
+                };
 
-            // Ação para a tecla Right
-            keyChecker.DownKeyPressed += () =>
-            {
-                tecla = "Seta direita.";
-                // Adicione aqui a lógica para simular o clique no botão D
-                var enterKeyEvent = new KeyEventArgs(Keys.S); // '\r' representa o Enter
+                // Ação para a tecla 3
+                keyChecker.NumPad3 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(3);
+                    }
+                };
+                keyChecker.D3 += () =>
+                {
+                    if (adInf == "A" || adInf == "I")
+                    {
+                        MarcaEstagio(3);
+                    }
+                };
 
-                TelaPlotagem_KeyDown(openglControl1, enterKeyEvent);
-                TelaClearAndReload();
-            };
+                // Ação para a tecla N
+                keyChecker.N += () =>
+                {
+                    if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I"))
+                    {
+                        MarcaEstagio(4);
+                    }
 
+                };
+                // Ação para a tecla T
+                keyChecker.T += () =>
+                {
+                    if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I"))
+                    {
+                        MarcaEstagio(6);
+                    }
+                };
+            
+            */
         }
+
+        // Exemplo para qualquer botão
+        async void MarcaEstagio(int est)
+        {
+            if (GlobVar.maximaVect > GlobVar.matrizCanal.GetLength(1))
+                return;
+            if (MarcarR.Enabled)
+            {
+                int newEstagio = est;
+                int paginaCoerente = GlobVar.indice / GlobVar.namos;
+                int rowIndex = FindRowIndex(paginaCoerente);
+
+                if (rowIndex >= 0)
+                {
+                    int totalRows = GlobVar.tbl_Paginas.Rows.Count;
+                    int limite = Math.Min(rowIndex + 30, totalRows);
+                    PrepareUpdates(rowIndex, limite, newEstagio); // já faz update in-memory
+                    
+                }
+                else
+                {
+                    // log ou feedback para debugging
+                }
+
+                Atual.BackgroundImage = GetEstagioImage(newEstagio);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+                atualizaButAntProx();
+
+                AtualizaInterface(paginaCoerente, rowIndex);
+            }
+        }
+
         public void abreUltimaPaginaFechada()
         {
             int pagina = GlobVar.ultimaPag;
@@ -839,11 +1085,29 @@ namespace PlotagemOpenGL
             UpdateInicioTela();
 
         }
-
         private void Tela_Plotagem_FormClosed(object sender, FormClosingEventArgs e)
         {
-            Task.Run(() => BD.AlteraBD.atualizaTbl_Paginas());
+            /*
+            if(GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
+            {
+                AlteraBD.AlteraEstagioDaEpoca(GlobVar.Atualizados).GetAwaiter(); 
+                //Task.Delay(500);
+                GlobVar.Atualizados.Clear();
+            }
 
+            if (GlobVar.GravEvent != null && GlobVar.GravEvent.Count > 0)
+            {
+                foreach (var arr in GlobVar.GravEvent)
+                {
+                    AlteraBD.GravaEvento(
+                        arr.seq, arr.NumPag, arr.CodEvento, arr.CodCanal1, arr.CodCanal2,
+                        arr.Inicio, arr.duracao, arr.sizepag, arr.LasPag, arr.MenorSat, arr.Posicao
+                    ).GetAwaiter();
+                    //Task.Delay(500);
+                }
+                GlobVar.GravEvent.Clear();
+            }
+            */
             GlobVar.ultimaPag = Convert.ToInt32(ptsEmTela.Text);
 
             string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};Persist Security Info=False;";
@@ -4621,6 +4885,11 @@ namespace PlotagemOpenGL
                 }
                 else
                 {
+                    if (!attAntProxRuning)
+                    {
+                        //attAntProx.Start();
+                    }
+
                     if (e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
                     {
                         crtlAtivo = true;
@@ -4876,48 +5145,49 @@ namespace PlotagemOpenGL
                             }
                             break;
 
+                          /*
                         case Keys.NumPad0:
-                            Marcar0.PerformClick();
+                            MarcaEstagio(0);
                             break;
                         case Keys.D0:
-                            Marcar0.PerformClick();
+                            MarcaEstagio(0);
                             break;
                         case Keys.NumPad5:
-                            MarcarR.PerformClick();
+                            MarcaEstagio(5);
                             break;
                         case Keys.D5:
-                            MarcarR.PerformClick();
+                            MarcaEstagio(5);
                             break;
                         case Keys.R:
-                            MarcarR.PerformClick();
+                            MarcaEstagio(5);
                             break;
 
                         case Keys.NumPad1:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar1.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
                             break;
                         case Keys.D1:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar1.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
                             break;
                         case Keys.NumPad2:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar2.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
                             break;
                         case Keys.D2:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar2.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
                             break;
                         case Keys.NumPad3:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar3.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
                             break;
                         case Keys.D3:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) Marcar3.PerformClick();
+                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
                             break;
 
                         case Keys.N:
-                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) N.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(4);
                             break;
                         case Keys.T:
-                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) T.PerformClick();
+                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(6);
                             break;
-
+                             */
                     }
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
@@ -5046,6 +5316,11 @@ namespace PlotagemOpenGL
                                 }
                             }
                         }
+                    }
+                    if (attAntProxRuning)
+                    {
+                        attAntProx.Stop();
+                        attAntProxRuning = false;
                     }
 
                     if (e.KeyValue == 162 || e.KeyValue == 163 || e.KeyValue == 131072 || e.KeyValue == 17)
@@ -7116,96 +7391,90 @@ namespace PlotagemOpenGL
                 indexProximo = rowIndex + 30 * i;
             }
         }
-        public static void atualizaButAntProx()
+        public static async Task atualizaButAntProx()
         {
+            // Assuma que a DataTable já está ordenada por "NumPag"
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
-            var rowIndex = GlobVar.tbl_Paginas.AsEnumerable().ToList().FindIndex(row => row.Field<int>("NumPag") == paginaCoerente);
 
-            // Função auxiliar para definir a imagem correta com base no valor do "Estagio"
-            string GetImageByEstagio(int? estagio)
+            // Busca binária ou simples, pois DataTable já está ordenada (opcional: se for muito grande)
+            int rowIndex = -1;
+            for (int i = 0; i < GlobVar.tbl_Paginas.Rows.Count; i++)
             {
-                switch (estagio)
+                if (Convert.ToInt32(GlobVar.tbl_Paginas.Rows[i]["NumPag"]) == paginaCoerente)
                 {
-                    case 0: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo0; 
-                    case 1: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo1; 
-                    case 2: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo2; 
-                    case 3: GlobVar.estagioAtual = estagio.ToString(); return GlobVar.diretorioEstagioAnteriorProximo3; 
-                    case 5: GlobVar.estagioAtual = "R"; return GlobVar.diretorioEstagioAnteriorProximoR;
-                    case 4: GlobVar.estagioAtual = "N"; return GlobVar.diretorioEstagioAnteriorProximoN;
-                    case 6: GlobVar.estagioAtual = "T"; return GlobVar.diretorioEstagioAnteriorProximoT;
-                    default: return GlobVar.diretorioEstagioAnteriorProximoNada; // Caso o valor seja nulo ou não mapeado, usar a imagem "Nada"
+                    rowIndex = i;
+                    break;
                 }
             }
-            GlobVar.tbl_Paginas = GlobVar.tbl_Paginas
-                .AsEnumerable()
-                .OrderBy(rw => rw.Field<int>("NumPag"))
-                .CopyToDataTable();
-            GlobVar.tbl_Paginas.AcceptChanges();
-
-            // Atualizar imagens dos botões "Anteriores"
-            for (int i = 1; i <= 4; i++)
+            if (rowIndex == -1) return; // Não achou
+            // Função auxiliar: busca no cache de imagens!
+            Image GetImageByEstagio(int? estagio)
             {
-                var indexAnterior = rowIndex - 30 * i;
-                if (indexAnterior >= 0) // Verifica se o índice é válido
+                string key = estagio switch
                 {
-                    var rowAnterior = GlobVar.tbl_Paginas.Rows[indexAnterior];
-                    int estagioAnterior = Convert.ToInt32(rowAnterior["Estagio"]);
-                    string imagePathAnterior = GetImageByEstagio(estagioAnterior);
+                    0 => "estagio0",
+                    1 => "estagio1",
+                    2 => "estagio2",
+                    3 => "estagio3",
+                    5 => "estagioR",
+                    4 => "estagioN",
+                    6 => "estagioT",
+                    _ => "estagioNada"
+                };
+                GlobVar.estagioAtual = key.Replace("estagio", ""); // Ajuste conforme necessário
+                return GlobVar.imagensEstagio.ContainsKey(key) ? GlobVar.imagensEstagio[key] : null;
+            }
 
-                    // Definir imagem nos botões anteriores
-                    switch (i)
-                    {
-                        case 1: UmaAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
-                        case 2: DuasAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
-                        case 3: TresAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
-                        case 4: QuatroAnterior.BackgroundImage = Image.FromFile(imagePathAnterior); break;
-                    }
+            // Referências aos botões em arrays  
+            var anteriores = new[] { UmaAnterior, DuasAnterior, TresAnterior, QuatroAnterior };
+            var proximos = new[] { UmaProxima, DuasProxima, TresProxima, QuatroProxima };
+
+            // Atualizar anteriores
+            for (int i = 0; i < 4; i++)
+            {
+                int idx = (rowIndex - 30 * (i + 1)) + 1;
+                if (idx >= 0)
+                {
+                    int estagio = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[idx]["Estagio"]);
+                    anteriores[i].BackgroundImage = GetImageByEstagio(estagio);
                 }
                 else
                 {
-                    // Se o índice for inválido (fora do range), usa a imagem "Nada"
-                    switch (i)
-                    {
-                        case 1: UmaAnterior.BackgroundImage = null; break;
-                        case 2: DuasAnterior.BackgroundImage = null; break;
-                        case 3: TresAnterior.BackgroundImage = null; break;
-                        case 4: QuatroAnterior.BackgroundImage = null; break;
-                    }
+
+                    anteriores[i].BackgroundImage = null;
                 }
             }
 
-            // Atualizar imagens dos botões "Próximos"
-            for (int i = 1; i <= 4; i++)
+            // Atualizar próximos
+            for (int i = 0; i < 4; i++)
             {
-                var indexProximo = rowIndex + 30 * i;
-                if (indexProximo < GlobVar.tbl_Paginas.Rows.Count) // Verifica se o índice é válido
+                int idx = rowIndex + 30 * (i + 1);
+                if (idx < GlobVar.tbl_Paginas.Rows.Count)
                 {
-                    var rowProxima = GlobVar.tbl_Paginas.Rows[indexProximo];
-                    int estagioProximo = Convert.ToInt32(rowProxima["Estagio"]);
-                    string imagePathProxima = GetImageByEstagio(estagioProximo);
-
-                    // Definir imagem nos botões próximos
-                    switch (i)
-                    {
-                        case 1: UmaProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
-                        case 2: DuasProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
-                        case 3: TresProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
-                        case 4: QuatroProxima.BackgroundImage = Image.FromFile(imagePathProxima); break;
-                    }
+                    int estagio = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[idx]["Estagio"]);
+                    proximos[i].BackgroundImage = GetImageByEstagio(estagio);
                 }
                 else
                 {
-                    // Se o índice for inválido (fora do range), usa a imagem "Nada"
-                    switch (i)
-                    {
-                        case 1: UmaProxima.BackgroundImage = null; break;
-                        case 2: DuasProxima.BackgroundImage = null; break;
-                        case 3: TresProxima.BackgroundImage = null; break;
-                        case 4: QuatroProxima.BackgroundImage = null; break;
-                    }
+                    proximos[i].BackgroundImage = null;
                 }
             }
         }
+        public static async void InicializaCacheImagens()
+        {
+            GlobVar.imagensEstagio = new Dictionary<string, Image>
+            {
+                ["estagio0"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximo0),
+                ["estagio1"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximo1),
+                ["estagio2"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximo2),
+                ["estagio3"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximo3),
+                ["estagioR"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoR),
+                ["estagioN"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoN),
+                ["estagioT"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoT),
+                ["estagioNada"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada)
+            };
+        }
+
         List<(int numPag, int estagio)> updates = new List<(int numPag, int estagio)>();
         private void Marcar_Click(object sender, EventArgs e)
         {
@@ -7225,37 +7494,35 @@ namespace PlotagemOpenGL
                 int totalRows = GlobVar.tbl_Paginas.Rows.Count;
                 int limite = Math.Min(rowIndex + 30, totalRows);
 
-                // Pode ser útil um Stopwatch aqui para medir:
-                //var sw = System.Diagnostics.Stopwatch.StartNew();
+                // Atualiza imediatamente a linha atual (linha do botão)
+                GlobVar.tbl_Paginas.Rows[rowIndex]["Estagio"] = newEstagio;
 
-                PrepareUpdates(rowIndex, limite, newEstagio); // já faz update in-memory
-                //BD.AlteraBD.AlteraEstagioDaEpoca(updates); // otimize esse método para batch!
+                // Atualiza a interface imediatamente
+                Atual.BackgroundImage = GetEstagioImage(newEstagio);
+                Atual.BackgroundImageLayout = ImageLayout.Stretch;
+                atualizaButAntProx();
 
-                //sw.Stop();
-                //Console.WriteLine($"Atualização levou {sw.ElapsedMilliseconds} ms");
+                // Dispara processamento paralelo para as demais linhas (se necessário)
+                if (limite > rowIndex + 1) // Se tem mais para atualizar
+                    Task.Run(() => PrepareUpdates(rowIndex + 1, limite, newEstagio));
+
             }
             else
             {
-                // log ou feedback para debugging
+                // feedback/log
             }
-
             AtualizaInterface(paginaCoerente, rowIndex);
         }
 
         private void AtualizaInterface(int paginaCoerente, int rowIndex)
         {
-            var row = GlobVar.tbl_Paginas.Rows[rowIndex];
-            int estagioAtual = Convert.ToInt32(row["Estagio"]);
-
-            Atual.BackgroundImage = GetEstagioImage(estagioAtual);
-            Atual.BackgroundImageLayout = ImageLayout.Stretch;
-            atualizaButAntProx();
-
             UpdateGlobVarStates();
             UpdateInterface();
-        }        /// <summary>
-                 /// Encontra o índice da linha no DataTable com base no número da página coerente.
-                 /// </summary>
+        }
+
+        /// <summary>
+        /// Encontra o índice da linha no DataTable com base no número da página coerente.
+        /// </summary>
         private int FindRowIndex(int paginaCoerente)
         {
             return GlobVar.tbl_Paginas.AsEnumerable()
@@ -7266,16 +7533,39 @@ namespace PlotagemOpenGL
         /// <summary>
         /// Prepara as atualizações a serem feitas no DataTable e no banco de dados.
         /// </summary>
-        private void PrepareUpdates(int start, int limit, int newEstagio)
+        private Task PrepareUpdates(int start, int limit, int newEstagio)
         {
-
-            for (int i = start; i < limit; i++)
+            List<PaginaUpdate> list;
+            lock (GlobVar.tbl_Paginas)
             {
-                GlobVar.tbl_Paginas.Rows[i]["Estagio"] = newEstagio;
-                int numPag = GlobVar.tbl_Paginas.Rows[i].Field<int>("NumPag");
-                //updates.Add(new Tuple<int, int>(numPag, newEstagio));
+                list = GlobVar.tbl_Paginas.Rows
+                    .Cast<DataRow>()
+                    .Skip(start)
+                    .Take(limit - start)
+                    .Select((row, idx) => new PaginaUpdate
+                    {
+                        Index = start + idx,
+                        NumPag = Convert.ToInt32(row["NumPag"])
+                    })
+                    .ToList();
             }
-                        
+
+            return Task.Run(() =>
+            {
+                var atualizadosLocal = new ConcurrentBag<(int, int)>();
+
+                Parallel.ForEach(list, item =>
+                {
+                    lock (GlobVar.tbl_Paginas)
+                    {
+                        GlobVar.tbl_Paginas.Rows[item.Index]["Estagio"] = newEstagio;
+                    }
+                    atualizadosLocal.Add((item.NumPag, newEstagio));
+                });
+
+                foreach (var a in atualizadosLocal)
+                    GlobVar.Atualizados.Add(a);
+            });
         }
 
         /// <summary>
@@ -7298,9 +7588,17 @@ namespace PlotagemOpenGL
         private void UpdateInterface()
         {
             camera.X += GlobVar.saltoTelas;
-            hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+            InvokeIfRequired(() => hScrollBar1.Value = GlobVar.indice / GlobVar.namos);
+            //hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
             UpdateInicioTela();
             TelaClearAndReload();
+        }
+        public void InvokeIfRequired(Action action)
+        {
+            if (InvokeRequired)
+                Invoke(action);
+            else
+                action();
         }
         private void Proximo_Click(object sender, EventArgs e)
         {
@@ -10866,3 +11164,9 @@ namespace PlotagemOpenGL
 }
 
 
+// DTO temporário
+public class PaginaUpdate
+{
+    public int Index { get; set; }
+    public int NumPag { get; set; }
+}

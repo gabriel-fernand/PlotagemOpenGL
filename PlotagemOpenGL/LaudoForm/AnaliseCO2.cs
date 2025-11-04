@@ -151,9 +151,14 @@ public class AnaliseCO2
                         if (Convert.ToInt32(rw["CodTipoCanal"]) == 20)
                         {
                             codCanal = Convert.ToInt32(rw["CodCanal1"]);
+                            achou = true;
                             break;
                         }
                     }
+                }
+                if (!achou)
+                {
+                    return;
                 }
                 string texto = "";
                 int indexCod = GlobVar.codCanal.IndexOf(codCanal);

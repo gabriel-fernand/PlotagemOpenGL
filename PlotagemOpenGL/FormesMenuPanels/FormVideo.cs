@@ -236,7 +236,9 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
                 Tela_Plotagem.ConvertToOpenGLCoordinates(Xinicial, Yinicial, out outX, out outY);
 
-                if (outX >= GlobVar.ponteiroVideo - 10 && outX <= GlobVar.ponteiroVideo + 10)
+                int board = GlobVar.segundos / 3;
+
+                if (outX >= GlobVar.ponteiroVideo - board && outX <= GlobVar.ponteiroVideo + board)
                 {
                     sim = true;
                 }

@@ -2,26 +2,15 @@
 using System;
 using System.Data;
 using System.Data.Odbc;
-using System.IO;
 using System.Linq;
-using System.Net.Mail;
-using System.Windows;
-using System.Windows.Markup;
-using PlotagemOpenGL.auxi.auxPlotagem;
 using System.Data.OleDb;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using Accord.Math.Geometry;
-using System.Threading.Tasks;
-using Tensorflow.Common.Types;
 
 namespace PlotagemOpenGL.BD
 {
     internal class AlteraBD
     {
-        static DataTable sele = new DataTable();
-        private static string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-        private static string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
+        public static string ConnectionAlterarStringDatBd = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Caminho\\seuarquivo.mdb;";
 
         public static int ExcluiEvento(int Seq)
         {
@@ -30,6 +19,10 @@ namespace PlotagemOpenGL.BD
                 //connectionDatBd.Open();
 
                 string queryDelete = $"DELETE FROM tbl_Eventos WHERE Seq = {Seq};";
+                if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
+                {
+                    GlobVar.ConnectionBDdat.Open();
+                }
 
                 using var DeleteCommand = new OleDbCommand(queryDelete, GlobVar.ConnectionBDdat);
 
@@ -37,36 +30,70 @@ namespace PlotagemOpenGL.BD
 
                 // Exclui do DataTable
                 DataRow[] rows = GlobVar.eventosUpdate.Select($"Seq = {Seq}");
-                foreach (DataRow row in rows)
-                {
-                    GlobVar.eventosUpdate.Rows.Remove(row);
-                }
 
+                // Verifica se encontrou algum registro antes de tentar remover
+                if (rows.Length > 0)
+                {
+                    foreach (DataRow row in rows)
+                    {
+                        int seq = row.Field<int?>("seq") ?? 0;                        
+
+                        // Verifica se já existe essa combinação na tabela eventosUpdate
+                        bool alreadyExists = GlobVar.eventosUpdate.AsEnumerable().Any(evRow =>
+                            evRow.Field<int>("seq") == seq);
+
+                        if (alreadyExists)
+                        {
+                            GlobVar.eventosUpdate.Rows.Remove(row);
+                        }
+                    }
+                }
                 // Se quiser garantir atualização visual de DataGridView vinculado, pode chamar AcceptChanges se necessário:
                 GlobVar.eventosUpdate.AcceptChanges();
 
-
+                if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
+                {
+                    GlobVar.ConnectionBDdat.Close();
+                }
                 return i;
             }
             catch { int i = 0; return i; }
         }
-        public static long GravaEvento(int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2, int Inicio, int duracao, int sizepag, int LasPag, int MenorSat = 0, string Posicao = ".")
+        public static void GravaEvento(
+            int seq, int NumPag, int CodEvento, int CodCanal1, int CodCanal2,
+            int Inicio, int duracao, int sizepag, int LasPag,
+            int MenorSat = 0, string Posicao = ".")
         {
-            try
-            {
-                long seq_aux;
-                int codret = 0;
-                //string Posicao = ".";
-                duracao = (duracao - Inicio);// / LasPag;
-                int auxInicio = Inicio / sizepag;
-                Inicio = Inicio - (auxInicio * sizepag);
-
-
-                string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
-
-                // Cria e abre o DataAdapter
-                using (OleDbDataAdapter adapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
+            //await Task.Run(() =>
+            //{
+                try
                 {
+                    int seqOriginal = seq;
+                    int NumPagOriginal = NumPag;
+                    int CodEventoOriginal = CodEvento;
+                    int CodCanal1Original = CodCanal1;
+                    int InicioOriginal = Inicio;
+                    int duracaoOriginal = duracao;
+                    int sizepagOriginal = sizepag;
+                    int LasPagOriginal = LasPag;
+                    int MenorSatOriginal = MenorSat;
+                    string PosicaoOriginal = Posicao;
+
+                    long seq_aux;
+                    int codret = 0;
+                    duracao = (duracao - Inicio);
+                    int auxInicio = Inicio / sizepag;
+                    Inicio = Inicio - (auxInicio * sizepag);
+
+                    string strSQL = $"SELECT * FROM tbl_Eventos WHERE Seq = {seq}";
+
+                    if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
+                    {
+                        GlobVar.ConnectionBDdat.Open();
+                    }
+
+                    OleDbDataAdapter adapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat);
+                    
                     DataTable rs = new DataTable();
                     adapter.Fill(rs);
 
@@ -89,14 +116,15 @@ namespace PlotagemOpenGL.BD
                             else
                             {
                                 seq_aux = (long)rs_seq.Rows[0]["ProxSeqEvento"];
-                                using (OleDbCommand cmdUpdate = new OleDbCommand("UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", GlobVar.ConnectionBDdat))
+                                using (OleDbCommand cmdUpdate = new OleDbCommand(
+                                    "UPDATE tbl_SeqEvento SET ProxSeqEvento = ProxSeqEvento + 1", GlobVar.ConnectionBDdat))
                                 {
                                     cmdUpdate.ExecuteNonQuery();
                                 }
                             }
                         }
 
-                        // Verifica se não existe um evento idêntico ao que está sendo incluído
+                        // Verifica se não existe um evento idêntico incluído
                         strSQL = $"SELECT * FROM tbl_Eventos WHERE CodEvento = {CodEvento} AND CodCanal1 = {CodCanal1} AND CodCanal2 = {CodCanal2} AND NumPag = {NumPag} AND Inicio = {Inicio}";
                         DataTable rs_aux = new DataTable();
                         using (OleDbDataAdapter auxAdapter = new OleDbDataAdapter(strSQL, GlobVar.ConnectionBDdat))
@@ -113,7 +141,8 @@ namespace PlotagemOpenGL.BD
                         seq_aux = seq;
                         if (rs.Rows.Count > 0)
                         {
-                            if (MenorSat != null) {
+                            if (MenorSat != 0)
+                            {
                                 MenorSat = Convert.ToInt32(rs.Rows[0]["MenorSat"]);
                             }
                             Posicao = rs.Rows[0]["Posicao"].ToString();
@@ -154,25 +183,17 @@ namespace PlotagemOpenGL.BD
                     OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
                     adapter.Update(rs);
 
-                    string connectionStringDatBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-                    //using var connectionDatBd = new OdbcConnection(connectionStringDatBd);
-
-                    string query = "SELECT * FROM tbl_Eventos";
-                    using var command = new OleDbCommand(query, GlobVar.ConnectionBDdat);
-                    using var adapterEventosDtNormal = new OleDbDataAdapter(command);
-                    GlobVar.eventos.Clear();
-                    adapterEventosDtNormal.Fill(GlobVar.eventos);
-                    //connectionDatBd.Close();
-
+                    if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
+                    {
+                        GlobVar.ConnectionBDdat.Close();
+                    }
+                    GlobVar.eventosUpdate.Rows.Add(seqOriginal, NumPagOriginal, CodEventoOriginal, CodCanal1Original, InicioOriginal, duracaoOriginal, MenorSatOriginal, PosicaoOriginal);
                 }
-
-                return seq_aux;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-                return -1;
-            }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao gravar evento: {ex.Message}");
+                }
+            //});
         }
         public static int ExcluiComentario(int Seq)
         {
@@ -193,7 +214,6 @@ namespace PlotagemOpenGL.BD
             }
             catch { int i = 0; return i; }
         }
-
         public static long GravaComentario(int seq,  string Comentario, int CodMontagem, int NumPag, int xi, int yi, int DuracaoX, int DuracaoY)
         {
             try
@@ -287,90 +307,56 @@ namespace PlotagemOpenGL.BD
                 return -1;
             }
         }
-
-        public static async Task AlteraEstagioDaEpoca(List<(int numPag, int estagio)> updates)
+        public static void AlteraEstagioDaEpoca(List<(int numPag, int estagio)> updates)
         {
-            try
-            {
-                //string connectionString = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.bDataFile};Uid=Admin;Pwd=;";
-
-                //connection.Open();
-
-                // Inicia uma transação
-                OleDbTransaction transaction = GlobVar.ConnectionBDdat.BeginTransaction();
-
+            //Task.Run(() =>
+            //{
                 try
                 {
-                    string sql = "UPDATE tbl_Paginas SET Estagio = @NovoEstagio WHERE NumPag = @NumPag";
+                // Crie uma conexão nova a cada operação!
+                if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
+                {
+                    GlobVar.ConnectionBDdat.Open();
+                }
 
-                    using (OleDbCommand command = new OleDbCommand(sql, GlobVar.ConnectionBDdat, transaction))
+                using (var transaction = GlobVar.ConnectionBDdat.BeginTransaction())
                     {
-                        command.Parameters.Add("@NovoEstagio", OleDbType.Integer);
-                        command.Parameters.Add("@NumPag", OleDbType.Integer);
-
-                        // Executa todas as atualizações em uma transação
-                        foreach (var update in updates)
+                        try
                         {
-                            command.Parameters["@NovoEstagio"].Value = update.Item2; // Novo Estagio
-                            command.Parameters["@NumPag"].Value = update.Item1; // NumPag
-                            command.ExecuteNonQuery();
+                            string sql = "UPDATE tbl_Paginas SET Estagio = @NovoEstagio WHERE NumPag = @NumPag";
+                            var command = new OleDbCommand(sql, GlobVar.ConnectionBDdat, transaction);
+                            
+                                command.Parameters.Add("@NovoEstagio", OleDbType.Integer);
+                                command.Parameters.Add("@NumPag", OleDbType.Integer);
+
+                                foreach (var update in updates)
+                                {
+                                    command.Parameters["@NovoEstagio"].Value = update.estagio;
+                                    command.Parameters["@NumPag"].Value = update.numPag;
+                                    command.ExecuteNonQuery();
+                                }
+                            
+                            transaction.Commit();
+                            GlobVar.Atualizados.Clear();
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                            throw;
                         }
                     }
-
-                    // Confirma a transação
-                    transaction.Commit();
-                }
-                catch (Exception)
+                if (GlobVar.ConnectionBDdat.State == ConnectionState.Closed)
                 {
-                    // Reverte a transação se algo der errado
-                    transaction.Rollback();
-                    throw;
+                    GlobVar.ConnectionBDdat.Close();
                 }
-                
+
             }
             catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
-            }
-        }
-
-        public static async Task atualizaTbl_Paginas()
-        {
-            // Exclui todos os registros da tabela
-            using (var cmd = new OleDbCommand("DELETE FROM tbl_Paginas", GlobVar.ConnectionBDdat))
-            {
-                //GlobVar.ConnectionBDdat.Open();
-                cmd.ExecuteNonQuery();
-                //GlobVar.ConnectionBDdat.Close();
-            }
-
-            // Agora, insere todas as linhas novamente:
-            //GlobVar.ConnectionBDdat.Open();
-            using (var transaction = GlobVar.ConnectionBDdat.BeginTransaction())
-            {
-                foreach (DataRow row in GlobVar.tbl_Paginas.Rows)
                 {
-                    // Sempre siga a ordem dos parâmetros igual ao comando SQL!
-                    using (var insertCmd = new OleDbCommand(
-                        "INSERT INTO tbl_Paginas (NumPag, Horario, CodAtribGrav, Estagio, FreqFoto, SatBasal, TickIni) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        GlobVar.ConnectionBDdat, transaction))
-                    {
-                        insertCmd.Parameters.AddWithValue("@NumPag", row["NumPag"]);
-                        insertCmd.Parameters.AddWithValue("@Horario", row["Horario"]);
-                        insertCmd.Parameters.AddWithValue("@CodAtribGrav", row["CodAtribGrav"]);
-                        insertCmd.Parameters.AddWithValue("@Estagio", row["Estagio"]);
-                        insertCmd.Parameters.AddWithValue("@FreqFoto", row["FreqFoto"]);
-                        insertCmd.Parameters.AddWithValue("@SatBasal", row["SatBasal"]);
-                        insertCmd.Parameters.AddWithValue("@TickIni", row["TickIni"]);
-
-                        insertCmd.ExecuteNonQuery();
-                    }
+                    System.Windows.Forms.MessageBox.Show($"Erro ao atualizar o banco de dados: {ex.Message}");
                 }
-                transaction.Commit();
-            }
-            //GlobVar.ConnectionBDdat.Close();
+            //});
         }
-
         public static void AdicionarLinhasNoBancoDeDados(DataTable telaSelect, int attSeq)
         {
             // String de conexão com o banco de dados Access
@@ -425,8 +411,6 @@ namespace PlotagemOpenGL.BD
                 //System.Windows.Forms.MessageBox.Show($"Erro ao inserir dados no banco de dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        public static string ConnectionAlterarStringDatBd = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Caminho\\seuarquivo.mdb;";
-
         public static void SalvarAlteracoes()
         {
             if (GlobVar.tbl_DadosExame == null || GlobVar.tbl_DadosExame.Rows.Count == 0)
@@ -498,6 +482,5 @@ namespace PlotagemOpenGL.BD
             // Fallback
             return "TEXT";
         }
-
     }
 }
