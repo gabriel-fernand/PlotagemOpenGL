@@ -183,7 +183,14 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     string posi = Posicao(numPagInicio, numPagTermino);
 
                     // Adicionar dados ao DataTable
+                    GlobVar.ConnectionBDdat.Close();
+
                     //AlteraBD.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi);
+                    //PlotagemOpenGL.GravaMDB.GravaEvento(seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi, GlobVar.bDataFile);
+
+                    GlobVar.ConnectionBDdat.Open();
+
+
                     GlobVar.GravEvent.Add((seq, numPagInicio, (int)GlobVar.lastEvent, GlobVar.CodCanal, -1, inicio, termino, GlobVar.namos, numPagTermino, minSat, posi));
 
                     GlobVar.eventosUpdate.Rows.Add(seq, numPag, GlobVar.lastEvent, GlobVar.CodCanal, inicio, termino, minSat, posi);
@@ -797,6 +804,7 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                     int inicio = firstRow.Field<int>("Inicio");
                     int termino = firstRow.Field<int>("Duracao");
                     int codEvento = firstRow.Field<int>("CodEvento");
+                    double temp = (double)(((double)termino - (double)inicio) / 512);
                     if (GlobVar.codSelected.Contains(codCanal1First))
                     {
                         var rowInfoEvento = GlobVar.tbl_CadEvento.AsEnumerable()
@@ -805,8 +813,8 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                         color = plotGrafico.ObterComponentesRGB(rgbDex);
                         colorLinha = plotGrafico.ObterComponentesRGB(Convert.ToInt32(rowInfoEvento.Rows[0]["CorTexto"]));
 
-                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString();
-
+                        string tipoCanal = rowInfoEvento.Rows[0]["DescrEvento"].ToString() + " - " + temp.ToString("F2") + "Seg";
+                        
 
                         int YAdjusted = 0;
 

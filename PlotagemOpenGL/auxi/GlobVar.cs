@@ -231,6 +231,8 @@ namespace PlotagemOpenGL.auxi
         public static int novaLarguraOpenGL;
         public static int larguraMinimaOpenGL;
         public static int larguraMinimaPainel;
+        public static int TipoCanalAlt;
+        public static int IndexCanal;
 
         public static OleDbConnection ConnectionBDdat;
         public static OleDbConnection ConnectionConfig;

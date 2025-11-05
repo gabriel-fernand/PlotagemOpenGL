@@ -319,7 +319,7 @@ namespace PlotagemOpenGL
                     this.Controls.Add(openglControl1);
                     this.KeyDown += Tela_Plotagem_KeyDown;
                     painelExames.Paint += painelExames_Paint;
-                    toolTip1 = new CustomToolTip();
+                    //toolTip1 = new CustomToolTip();
                     await Task.Delay(45);
                     telaLoad.AtualizarProgresso(60);
 
@@ -432,7 +432,7 @@ namespace PlotagemOpenGL
                     await Task.Delay(25);
                     telaLoad.AtualizarProgresso(93);
 
-                    toolTip1.SetToolTip(openglControl1, "Teste");
+                    //toolTip1.SetToolTip(openglControl1, "Teste");
                     this.KeyPreview = true; // Necessário para capturar as teclas no nível do formulário.
 
                     Play_OpenGl();
@@ -505,14 +505,15 @@ namespace PlotagemOpenGL
             {
                 for (int i = GlobVar.GravEvent.Count - 1; i >= 0; i--)
                 {
+                    
                     var evento = GlobVar.GravEvent[i];
                     PlotagemOpenGL.GravaMDB.GravaEvento(
                         evento.seq, evento.NumPag, evento.CodEvento, evento.CodCanal1, evento.CodCanal2,
                         evento.Inicio, evento.duracao, evento.sizepag, evento.LasPag, evento.MenorSat, evento.Posicao
-                    );
-
+                    , GlobVar.bDataFile);
+                    
                     GlobVar.GravEvent.RemoveAt(i);
-                }
+                } 
             }
 
             if (GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
@@ -1087,14 +1088,31 @@ namespace PlotagemOpenGL
         }
         private void Tela_Plotagem_FormClosed(object sender, FormClosingEventArgs e)
         {
-            /*
-            if(GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
+            using (GlobVar.ConnectionBDdat)
             {
-                AlteraBD.AlteraEstagioDaEpoca(GlobVar.Atualizados).GetAwaiter(); 
-                //Task.Delay(500);
-                GlobVar.Atualizados.Clear();
-            }
+                if (GlobVar.GravEvent != null && GlobVar.GravEvent.Count > 0)
+                {
+                    for (int i = GlobVar.GravEvent.Count - 1; i >= 0; i--)
+                    {
 
+                        var evento = GlobVar.GravEvent[i];
+                        PlotagemOpenGL.GravaMDB.GravaEvento(
+                            evento.seq, evento.NumPag, evento.CodEvento, evento.CodCanal1, evento.CodCanal2,
+                            evento.Inicio, evento.duracao, evento.sizepag, evento.LasPag, evento.MenorSat, evento.Posicao
+                        , GlobVar.bDataFile);
+
+                        GlobVar.GravEvent.RemoveAt(i);
+                    }
+                }
+
+                if (GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
+                {
+                    PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados);
+                    //Task.Delay(500);
+                    GlobVar.Atualizados.Clear();
+                }
+            }
+            /*
             if (GlobVar.GravEvent != null && GlobVar.GravEvent.Count > 0)
             {
                 foreach (var arr in GlobVar.GravEvent)
@@ -1114,14 +1132,14 @@ namespace PlotagemOpenGL
 
             using (GlobVar.ConnectionBDdat)
             {
-                //connection.Open();
+                GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
+                GlobVar.ConnectionBDdat.Open();
 
                 OleDbTransaction transaction = GlobVar.ConnectionBDdat.BeginTransaction();
                 try
                 {
                     // Adicione uma condição WHERE para atualizar uma linha específica
                     string sql = "UPDATE tbl_DadosExame SET Ultima_Pagina = @ultimaPag WHERE CodPaciente = @CodPaciente";
-
                     using (OleDbCommand command = new OleDbCommand(sql, GlobVar.ConnectionBDdat, transaction))
                     {
                         command.Parameters.Add("@ultimaPag", OleDbType.Integer).Value = GlobVar.ultimaPag + 1;
@@ -3074,7 +3092,7 @@ namespace PlotagemOpenGL
             {
                 if (this.Cursor == Cursors.SizeAll)
                 {
-                    toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
+                    //toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
                     return;
                 }
             }
@@ -3437,7 +3455,7 @@ namespace PlotagemOpenGL
                     GlobVar.rightClickSave = e.Location;
                     isDrawing = false;
                     ConvertToOpenGLCoordinates(e.X, e.Y, out Plotagem.endX, out Plotagem.endY);
-                    toolTip1.RemoveAll();
+                    //toolTip1.RemoveAll();
 
                 }
             }
@@ -3497,10 +3515,27 @@ namespace PlotagemOpenGL
                     }
                     GlobVar.drawBordenInAnEvent = this.isAnEvent;
 
+                    var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == GlobVar.CodCanal).CopyToDataTable();
+                    GlobVar.TipoCanalAlt = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
+                    int? rowIndex = null;
+                    for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count; i++)
+                    {
+                        if (GlobVar.tbl_MontagemSelecionada.Rows[i].Field<int>("CodCanal1") == GlobVar.CodCanal)
+                        {
+                            rowIndex = i;
+                            break;
+                        }
+                    }
+                    if (rowIndex != null)
+                    {
+                        GlobVar.IndexCanal = (int)rowIndex;
+                    }
+
                     if (!isAnEvent && (!this.isAnStartEvent && !this.isAnEndEvent) && !isThereAComment && (!isThereAXSartComment && !isThereAXEndComment && !isThereAYStartComment && !isThereAYEndComment) && (!isThereX0Y0Comment && !isThereX0Y1Comment && !isThereX1Y0Comment && !isThereX1Y1Comment) && !isThereVideoPonteiro)
                     {
                         if (!isMouseDown)
                         {
+
                             if (e.X >= 0 - 5 && e.X <= 0 + 5)
                             {
                                 this.Cursor = Cursors.SizeWE;
@@ -3521,7 +3556,7 @@ namespace PlotagemOpenGL
                                 }
                             }
                         }
-                        toolTip1.RemoveAll();
+                        //toolTip1.RemoveAll();
                         if (isDrawing)
                         {
                             timerClick.Start();
@@ -4066,7 +4101,7 @@ namespace PlotagemOpenGL
                             this.Cursor = Cursors.SizeAll;
                             openglControl1.DoRender();
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
-                            toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
+                            //toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
                             Stringao.Text = GlobVar.AtualEvento + " - " + $"{GlobVar.DuracaoEvent:F2}" + " Seg";
                         }
                         else
@@ -4109,7 +4144,7 @@ namespace PlotagemOpenGL
                             this.Cursor = Cursors.SizeWE;
                             openglControl1.DoRender();
                             plotEventos.DrawBordenInAnEvent(GlobVar.drawBordenInAnEvent, gl, GlobVar.desenhoLoc);
-                            toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
+                            //toolTip1.SetToolTip(openglControl1, GlobVar.Event + "\nINICIO : 10min e 32 segundos\nDuração : 14 segundos\nValor dessaturação : 87%");
                             Stringao.Text = "";
 
                         }
@@ -4117,7 +4152,7 @@ namespace PlotagemOpenGL
 
                         if (isDrawing)
                         {
-                            toolTip1.RemoveAll();
+                            //toolTip1.RemoveAll();
                             timerClick.Start();
 
                             float outX = 0;
@@ -4222,7 +4257,7 @@ namespace PlotagemOpenGL
                         }
                         if (isDrawing)
                         {
-                            toolTip1.RemoveAll();
+                            //toolTip1.RemoveAll();
                             timerClick.Start();
 
                             float outX = 0;
@@ -4403,6 +4438,7 @@ namespace PlotagemOpenGL
 
                             openglControl1.DoRender();
                             plotEventos.DesenhaEventos(GlobVar.tbl_MontagemSelecionada.Rows.Count, gl, GlobVar.desenhoLoc);
+
 
                         }
 
@@ -4874,6 +4910,287 @@ namespace PlotagemOpenGL
                             }
                         }
                     }
+
+                    switch (e.KeyData)
+                    {
+                        case Keys.W:
+                            if (GlobVar.indice > 0)
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.namos;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+                                camera.X -= GlobVar.namos * GlobVar.SPEED;
+                                GlobVar.indiceNumero -= (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.namosNumerico;
+                                }
+
+                                GlobVar.maximaVect -= (int)GlobVar.namos * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                                if (GlobVar.indice < 0)
+                                {
+                                    GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.namos;
+                                    camera.X = 0;
+                                }
+
+                                GlobVar.inicioTela -= ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.namos / (int)GlobVar.namos;
+                                }
+                                GlobVar.ponteiroVideo -= (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                                if (!conc) LeituraEmMatrizTeste.Resume();
+
+                            }
+                            break;
+                        case Keys.S:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
+                                camera.X += GlobVar.namos * GlobVar.SPEED;
+                                GlobVar.indiceNumero += (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.namosNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.namos * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.namos * (int)GlobVar.SPEED) / GlobVar.namos;
+                                LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo += (int)GlobVar.namos * (int)GlobVar.SPEED;
+
+                            }
+
+                            break;
+                        case Keys.D:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
+                                camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+                                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                if (hScrollBar1.InvokeRequired)
+                                {
+                                    hScrollBar1.Invoke(new Action(() =>
+                                    {
+                                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                    }));
+                                }
+                                else
+                                {
+                                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                }
+
+                            }
+                            break;
+                        case Keys.PageDown:
+                            if (GlobVar.maximaVect <= GlobVar.matrizCanal.GetLength(1))
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(4, newLoc);
+                                    }
+                                }
+
+                                camera.X += GlobVar.saltoTelas * GlobVar.SPEED;
+
+                                GlobVar.indiceNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero += (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+
+                                GlobVar.maximaVect += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                GlobVar.inicioTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela += ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                //UpdateInicioTela();
+                                //TelaClearAndReload();
+                                LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo += (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            }
+
+                            break;
+                        case Keys.A:
+                            if (GlobVar.indice > 0)
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+                                camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+                                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                                }
+
+                                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                if (GlobVar.indice < 0)
+                                {
+                                    GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                                    camera.X = 0;
+                                }
+
+                                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                                }
+                                if (!conc) LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                if (hScrollBar1.InvokeRequired)
+                                {
+                                    hScrollBar1.Invoke(new Action(() =>
+                                    {
+                                        hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                    }));
+                                }
+                                else
+                                {
+                                    hScrollBar1.Value = GlobVar.indice / GlobVar.namos;
+                                }
+
+                            }
+                            break;
+                        case Keys.PageUp:
+                            if (GlobVar.indice > 0)
+                            {
+                                if (!conc)
+                                {
+                                    int newLoc = GlobVar.indice - (int)GlobVar.saltoTelas;
+                                    if (newLoc > GlobVar.areaCarregadaAltMont || newLoc < GlobVar.indice)
+                                    {
+                                        LeituraEmMatrizTeste.Pause();
+                                        await LeituraEmMatrizTeste.CarregamentoMontagemRapido(3, newLoc);
+                                    }
+                                }
+
+                                camera.X -= GlobVar.saltoTelas * GlobVar.SPEED;
+
+                                GlobVar.indiceNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                GlobVar.maximaNumero -= (int)GlobVar.tmpEmTelaNumerico * (int)GlobVar.SPEED;
+                                if (GlobVar.indiceNumero < 0)
+                                {
+                                    GlobVar.indiceNumero = 0;
+                                    GlobVar.maximaNumero = GlobVar.tmpEmTelaNumerico;
+                                }
+
+                                GlobVar.maximaVect -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+                                GlobVar.indice -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                                if (GlobVar.indice < 0)
+                                {
+                                    GlobVar.indice = 0;
+                                    GlobVar.maximaVect = (int)GlobVar.saltoTelas;
+                                    camera.X = 0;
+                                }
+
+                                GlobVar.inicioTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                GlobVar.finalTela -= ((int)GlobVar.saltoTelas * (int)GlobVar.SPEED) / GlobVar.namos;
+                                if (GlobVar.inicioTela < 0)
+                                {
+                                    GlobVar.inicioTela = 0;
+                                    GlobVar.finalTela = (int)GlobVar.saltoTelas / (int)GlobVar.namos;
+                                }
+                                //UpdateInicioTela();
+                                //TelaClearAndReload();
+                                if (!conc) LeituraEmMatrizTeste.Resume();
+                                GlobVar.ponteiroVideo -= (int)GlobVar.saltoTelas * (int)GlobVar.SPEED;
+
+                            }
+                            break;
+
+                        case Keys.Add:
+                            if (GlobVar.TipoCanalAlt == 20 || GlobVar.TipoCanalAlt == 21 || GlobVar.TipoCanalAlt == 23 || GlobVar.TipoCanalAlt == 24 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 16 || GlobVar.TipoCanalAlt == 28 || GlobVar.TipoCanalAlt == 29 || GlobVar.TipoCanalAlt == 32 || GlobVar.TipoCanalAlt == 31 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 30 || GlobVar.TipoCanalAlt == 12 || GlobVar.TipoCanalAlt == 38)
+                            {
+
+                            }
+                            else
+                            {
+                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
+
+                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                            }
+                            break;
+                        case Keys.Subtract:
+                            if (GlobVar.TipoCanalAlt == 20 || GlobVar.TipoCanalAlt == 21 || GlobVar.TipoCanalAlt == 23 || GlobVar.TipoCanalAlt == 24 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 16 || GlobVar.TipoCanalAlt == 28 || GlobVar.TipoCanalAlt == 29 || GlobVar.TipoCanalAlt == 32 || GlobVar.TipoCanalAlt == 31 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 30 || GlobVar.TipoCanalAlt == 12 || GlobVar.TipoCanalAlt == 38)
+                            {
+                                buttonForm.HideOverlay();
+                            }
+                            else
+                            {
+                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
+
+                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                            }
+                            break;
+
+                    }
+
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
 
@@ -5144,50 +5461,82 @@ namespace PlotagemOpenGL
 
                             }
                             break;
+                        case Keys.Add:
+                            if (GlobVar.TipoCanalAlt == 20 || GlobVar.TipoCanalAlt == 21 || GlobVar.TipoCanalAlt == 23 || GlobVar.TipoCanalAlt == 24 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 16 || GlobVar.TipoCanalAlt == 28 || GlobVar.TipoCanalAlt == 29 || GlobVar.TipoCanalAlt == 32 || GlobVar.TipoCanalAlt == 31 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 30 || GlobVar.TipoCanalAlt == 12 || GlobVar.TipoCanalAlt == 38)
+                            {
 
-                          /*
-                        case Keys.NumPad0:
-                            MarcaEstagio(0);
-                            break;
-                        case Keys.D0:
-                            MarcaEstagio(0);
-                            break;
-                        case Keys.NumPad5:
-                            MarcaEstagio(5);
-                            break;
-                        case Keys.D5:
-                            MarcaEstagio(5);
-                            break;
-                        case Keys.R:
-                            MarcaEstagio(5);
-                            break;
+                            }
+                            else
+                            {
+                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
 
-                        case Keys.NumPad1:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
+                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                            }
                             break;
-                        case Keys.D1:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
-                            break;
-                        case Keys.NumPad2:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
-                            break;
-                        case Keys.D2:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
-                            break;
-                        case Keys.NumPad3:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
-                            break;
-                        case Keys.D3:
-                            if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
+                        case Keys.Subtract:
+                            if (GlobVar.TipoCanalAlt == 20 || GlobVar.TipoCanalAlt == 21 || GlobVar.TipoCanalAlt == 23 || GlobVar.TipoCanalAlt == 24 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 16 || GlobVar.TipoCanalAlt == 28 || GlobVar.TipoCanalAlt == 29 || GlobVar.TipoCanalAlt == 32 || GlobVar.TipoCanalAlt == 31 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 30 || GlobVar.TipoCanalAlt == 12 || GlobVar.TipoCanalAlt == 38)
+                            {
+                                buttonForm.HideOverlay();
+                            }
+                            else
+                            {
+                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
+
+                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                            }
                             break;
 
-                        case Keys.N:
-                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(4);
-                            break;
-                        case Keys.T:
-                            if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(6);
-                            break;
-                             */
+                            /*
+                          case Keys.NumPad0:
+                              MarcaEstagio(0);
+                              break;
+                          case Keys.D0:
+                              MarcaEstagio(0);
+                              break;
+                          case Keys.NumPad5:
+                              MarcaEstagio(5);
+                              break;
+                          case Keys.D5:
+                              MarcaEstagio(5);
+                              break;
+                          case Keys.R:
+                              MarcaEstagio(5);
+                              break;
+
+                          case Keys.NumPad1:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
+                              break;
+                          case Keys.D1:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(1);
+                              break;
+                          case Keys.NumPad2:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
+                              break;
+                          case Keys.D2:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(2);
+                              break;
+                          case Keys.NumPad3:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
+                              break;
+                          case Keys.D3:
+                              if (AdInf.Equals("A") || AdInf.Equals("I")) MarcaEstagio(3);
+                              break;
+
+                          case Keys.N:
+                              if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(4);
+                              break;
+                          case Keys.T:
+                              if (AdInf.Equals("B") || AdInf.Equals("B") || AdInf.Equals("I")) MarcaEstagio(6);
+                              break;
+                               */
                     }
                     foiencontradoumUltimo = false;
                     foiencontradoumUltimo = false;
@@ -11140,7 +11489,6 @@ namespace PlotagemOpenGL
             if (rowIndex != null)
             {
                 index = (int)rowIndex;
-
             }
             timer1.Stop();
         }

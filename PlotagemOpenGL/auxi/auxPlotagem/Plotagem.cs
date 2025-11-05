@@ -186,6 +186,88 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
                 currentY += dashLength + spaceLength;
             }
             gl.End();
+            if (Tela_Plotagem.MarcaDAguaAtiva)
+            {
+                int pagina = (GlobVar.indice / GlobVar.namos) + 1;
+                Tela_Plotagem.estagioatutxt = GlobVar.tbl_Paginas.Rows[pagina]["Estagio"].ToString();
+                int tempoEmTela = GlobVar.segundos / 30;
+                //Marca apenas uma vez
+                if (tempoEmTela == 1)
+                {
+                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+                    int tamanhoFonte = (int)(alturaTela * 0.8f);
+                    // Calcular o tamanho da fonte com base em 80% da altura da tela
+                    Font font = new Font("Arial Narrow", tamanhoFonte);
+
+                    // Aqui você pode ajustar manualmente o fator para centralizar o texto
+                    // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
+                    int posX = ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2))) / 2 - 5;  // Ajuste para centralizar horizontalmente
+                    int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
+                    Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
+                    // Primeira chamada para preparar o OpenGL para o texto
+                    gl.DrawText(0, posY, 0.8219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
+
+                    // Segunda chamada para realmente desenhar o texto
+                    gl.DrawText(posX, posY, 0.8219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+
+                    // Finalizar a renderização do OpenGL
+                    gl.End();
+                    gl.Flush();
+                }
+                else
+                {
+                    Tela_Plotagem.retornaOsValoresDosOutrosEstagios();
+                    string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
+                    int alturaTela = Tela_Plotagem.openglControl1.Height;
+                    float tamanhoFonte = (tempoEmTela == 2) ? alturaTela * 0.8f : (tempoEmTela > 2 && tempoEmTela <= 4) ? alturaTela * 0.6f : alturaTela * 0.4f;
+
+                    // Calcular o tamanho da fonte com base em 80% da altura da tela
+
+                    for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
+                    {
+                        gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
+
+                        gl.Begin(OpenGL.GL_LINE_STRIP);
+                        gl.Vertex(i, 0);
+                        gl.Vertex(i, GlobVar.sizeOpenGl.Y);
+                        gl.End();
+
+                        i += GlobVar.namos * 30;
+                    }
+                    int lasPosiX;
+                    // Distribuir as instâncias horizontalmente
+                    for (int i = 0; i < tempoEmTela; i++)
+                    {
+                        texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
+                        Font font = new Font("Arial Narrow", tamanhoFonte);
+
+                        SizeF tamanhoTxt;
+                        using (Graphics g = Tela_Plotagem.openglControl1.CreateGraphics())
+                        {
+                            // Agora você pode usar o contexto gráfico `g`
+                            tamanhoTxt = g.MeasureString(texto, font);
+
+                        }
+                        // Aqui, distribui o X uniformemente pela largura da tela
+                        int posX = ((larguraTela / tempoEmTela) * i) + ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2))) / 2;  // Distribuir na largura da tela
+
+                        // Ajuste o Y para manter o texto na mesma linha
+                        int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);
+
+                        // Primeira chamada para preparar o OpenGL para o texto
+                        gl.DrawText(0, posY, 0.8219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, "");
+
+                        // Segunda chamada para realmente desenhar o texto
+                        gl.DrawText(posX, posY, 0.8219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
+                    }
+
+                    gl.End();
+                    gl.Flush();
+                }
+            }
 
 
             if (Tela_Plotagem.redimensionando)
@@ -322,88 +404,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
 
             //plotEventos.DesenhaEventos(qtdGraf, gl, desenhoLoc);
 
-            if (Tela_Plotagem.MarcaDAguaAtiva)
-            {
-                int pagina = (GlobVar.indice / GlobVar.namos) + 1;
-                Tela_Plotagem.estagioatutxt = GlobVar.tbl_Paginas.Rows[pagina]["Estagio"].ToString();
-                int tempoEmTela = GlobVar.segundos / 30;
-                //Marca apenas uma vez
-                if(tempoEmTela == 1)
-                {
-                    string texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
-                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
-                    int alturaTela = Tela_Plotagem.openglControl1.Height;
-                    int tamanhoFonte = (int)(alturaTela * 0.8f);
-                    // Calcular o tamanho da fonte com base em 80% da altura da tela
-                    Font font = new Font("Arial Narrow", tamanhoFonte);
-
-                    // Aqui você pode ajustar manualmente o fator para centralizar o texto
-                    // Ex: 20% da largura total da tela para que o texto fique no centro horizontalmente
-                    int posX =  ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2))) / 2 - 5;  // Ajuste para centralizar horizontalmente
-                    int posY =  alturaTela / 2 - (int)(tamanhoFonte / 3);  // Centro vertical
-                    Color res = Color.FromArgb(1, 255 / 255, 156 / 255, 156 / 255);
-                    // Primeira chamada para preparar o OpenGL para o texto
-                    gl.DrawText(0, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, ""); // Prepara o OpenGL
-
-                    // Segunda chamada para realmente desenhar o texto
-                    gl.DrawText(posX, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
-
-                    // Finalizar a renderização do OpenGL
-                    gl.End();
-                    gl.Flush();
-                }
-                else
-                {                
-                    Tela_Plotagem.retornaOsValoresDosOutrosEstagios();
-                    string texto = Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
-                    int larguraTela = Tela_Plotagem.openglControl1.Width; // openGLControl.Width;
-                    int alturaTela = Tela_Plotagem.openglControl1.Height;
-                    float tamanhoFonte = (tempoEmTela == 2) ? alturaTela * 0.8f : (tempoEmTela > 2 && tempoEmTela <= 4) ? alturaTela * 0.6f : alturaTela * 0.4f;
-
-                    // Calcular o tamanho da fonte com base em 80% da altura da tela
-
-                    for (int i = GlobVar.indice; i < GlobVar.maximaVect;)
-                    {
-                        gl.Color(0.5f, 0.5f, 0.5f); // Define a cor das linhas (preto)
-
-                        gl.Begin(OpenGL.GL_LINE_STRIP);
-                        gl.Vertex(i, 0);
-                        gl.Vertex(i, GlobVar.sizeOpenGl.Y);
-                        gl.End();
-
-                        i += GlobVar.namos * 30;
-                    }
-                    int lasPosiX;
-                    // Distribuir as instâncias horizontalmente
-                    for (int i = 0; i < tempoEmTela; i++)
-                    {
-                        texto = Tela_Plotagem.estagioatutxt.Equals("5") ? "R" : Tela_Plotagem.estagioatutxt.Equals("4") ? "N" : Tela_Plotagem.estagioatutxt.Equals("6") ? "T" : Tela_Plotagem.estagioatutxt;  // O texto que você deseja exibir
-                        Font font = new Font("Arial Narrow", tamanhoFonte);
-
-                        SizeF tamanhoTxt;
-                        using (Graphics g = Tela_Plotagem.openglControl1.CreateGraphics())
-                        {
-                            // Agora você pode usar o contexto gráfico `g`
-                            tamanhoTxt = g.MeasureString(texto, font);
-
-                        }
-                        // Aqui, distribui o X uniformemente pela largura da tela
-                        int posX = ((larguraTela / tempoEmTela) * i) + ((larguraTela / (tempoEmTela) - ((int)tamanhoFonte / 2) )) / 2 ;  // Distribuir na largura da tela
-
-                        // Ajuste o Y para manter o texto na mesma linha
-                        int posY = alturaTela / 2 - (int)(tamanhoFonte / 3);
-
-                        // Primeira chamada para preparar o OpenGL para o texto
-                        gl.DrawText(0, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte - 8, "");
-
-                        // Segunda chamada para realmente desenhar o texto
-                        gl.DrawText(posX, posY, 0.4219f, 1.0f, 1.0f, "Bookman Old Style Leve", (int)tamanhoFonte, texto);
-                    }
-
-                    gl.End();
-                    gl.Flush();
-                }
-            }
 
             if (Tela_Plotagem.MarcaDAguaNaTelaAtiva)
             {
