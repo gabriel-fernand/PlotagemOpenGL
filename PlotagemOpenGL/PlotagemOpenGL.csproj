@@ -243,6 +243,9 @@
     <None Update="Laudos\Laudo Infantil.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Laudos\Laudo ISO de Osasco 1.doc">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Laudos\Laudo Multipla Latencia.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

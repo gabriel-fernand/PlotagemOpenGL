@@ -463,7 +463,24 @@ public class LeituraBanco
 
             GlobVar.eventosUpdate.Rows.Add(newRow);
         }
+        // Ordena usando LINQ
+        var linhasOrdenadas = GlobVar.tbl_Paginas.AsEnumerable()
+            .OrderBy(r => r.Field<int>("NumPag"));
 
+        // Clona a estrutura da tabela
+        DataTable tabelaOrdenada = GlobVar.tbl_Paginas.Clone();
+
+        // Adiciona as linhas ordenadas
+        foreach (var linha in linhasOrdenadas)
+        {
+            tabelaOrdenada.ImportRow(linha);
+        }
+
+        // Substitui a tabela global
+        GlobVar.tbl_Paginas = tabelaOrdenada;
+
+        // Aceita alterações só para remover o estado de edição (opcional neste caso)
+        GlobVar.tbl_Paginas.AcceptChanges();
     }
     public static void ArrumaTbl_Paginas()
     {

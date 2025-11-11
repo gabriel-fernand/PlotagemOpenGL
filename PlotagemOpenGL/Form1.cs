@@ -318,6 +318,7 @@ namespace PlotagemOpenGL
                     this.Resize += DownPainel_Resiz;
                     this.Controls.Add(openglControl1);
                     this.KeyDown += Tela_Plotagem_KeyDown;
+                    this.KeyUp += Tela_Plotagem_KeyUp;
                     painelExames.Paint += painelExames_Paint;
                     //toolTip1 = new CustomToolTip();
                     await Task.Delay(45);
@@ -482,6 +483,12 @@ namespace PlotagemOpenGL
                     {
                         DataRow row = GlobVar.tbl_ResumoExame.NewRow();
                         GlobVar.tbl_ResumoExame.Rows.Add(row);
+
+                        foreach(DataRow rw in GlobVar.tbl_ResumoExame.Rows)
+                        {
+                            rw["TTR"] = 0;
+                            rw["TTS"] = 0;
+                        }
                     }
 
                     Canais.ajustaIniFimEx();
@@ -498,6 +505,7 @@ namespace PlotagemOpenGL
 
             }
         }
+
 
         private void AttBanco_Tick(object sender, EventArgs e)
         {
@@ -518,18 +526,64 @@ namespace PlotagemOpenGL
 
             if (GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
             {
-                PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados);
+                PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados, GlobVar.ConnectionBDdat);
                 GlobVar.Atualizados.Clear();
             }
 
+        }
+        private void Tela_Plotagem_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                switch (e.KeyValue)
+                {
+                    case 16:
+                        GlobVar.shiftactive = false;
+                        break;
+                }
+                switch (e.KeyData)
+                {
+                    case Keys.LShiftKey:
+                        GlobVar.shiftactive = false;
+                        break;
+                    case Keys.RShiftKey:
+                        GlobVar.shiftactive = false;
+                        break;
+                    case Keys.Shift:
+                        GlobVar.shiftactive = false;
+                        break;
+                    case Keys.ShiftKey:
+                        GlobVar.shiftactive = false;
+                        break;
+                }
+            }
+            catch { }
         }
 
         private void Tela_Plotagem_KeyDown(object sender, KeyEventArgs e)
         {
             try
             {
+                switch (e.KeyValue)
+                {
+                    case 16:
+                        GlobVar.shiftactive = true;
+                        break;
+                }
                 switch (e.KeyData)
                 {
+                    case Keys.LShiftKey:
+                        GlobVar.shiftactive = true;
+                        break;
+                    case Keys.RShiftKey:
+                        GlobVar.shiftactive = true;
+                        break;
+                    case Keys.Shift:
+                        GlobVar.shiftactive = true;
+                        break;
+                    case Keys.ShiftKey:
+                        GlobVar.shiftactive = true;
+                        break;
                     case Keys.NumPad0:
                         MarcaEstagio(0);
                         break;
@@ -1013,8 +1067,15 @@ namespace PlotagemOpenGL
                 {
                     int totalRows = GlobVar.tbl_Paginas.Rows.Count;
                     int limite = Math.Min(rowIndex + 30, totalRows);
-                    PrepareUpdates(rowIndex, limite, newEstagio); // já faz update in-memory
-                    
+                    PrepareUpdates(paginaCoerente, limite, newEstagio); // já faz update in-memory
+
+                    //AlteraBD.AlteraEstagioDaEpoca(GlobVar.Atualizados);
+
+                    GlobVar.tbl_Paginas.AsEnumerable().OrderBy(r => r.Field<int>("NumPag"));
+                    GlobVar.tbl_Paginas.AcceptChanges();
+
+                    //var linhasOrdenadas = GlobVar.tbl_Paginas.AsEnumerable().OrderBy(r => r.Field<int>("NumPag")).CopyToDataTable();
+                    //GlobVar.tbl_Paginas = linhasOrdenadas.Clone();
                 }
                 else
                 {
@@ -1107,7 +1168,7 @@ namespace PlotagemOpenGL
 
                 if (GlobVar.Atualizados != null && GlobVar.Atualizados.Count > 0)
                 {
-                    PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados);
+                    PlotagemOpenGL.GravaMDB.AlteraEstagioDaEpoca(GlobVar.Atualizados, GlobVar.ConnectionBDdat);
                     //Task.Delay(500);
                     GlobVar.Atualizados.Clear();
                 }
@@ -4804,13 +4865,44 @@ namespace PlotagemOpenGL
 
                 //timer1.Start();
 
-                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
-                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
-                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
-                GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
-                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+                if (GlobVar.shiftactive)
+                {
+                    List<int> auxa = new List<int>();
 
-                GlobVar.scale[index] = scala;
+                    var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == tagCodCanal).CopyToDataTable();
+                    var TipoCanalAlt = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
+
+
+                    for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count - 1; i++)
+                    {
+                        if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == TipoCanalAlt)
+                        {
+                            auxa.add(i);
+                        }
+                    }
+                    int amplia = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                    int indexAmplia = GlobVar.Amplitude.IndexOf(amplia) - 1;
+                    int newAmplia = Convert.ToInt32(GlobVar.Amplitude[indexAmplia]);
+
+                    for (int a = 0; a < auxa.Count; a++)
+                    {
+                        GlobVar.tbl_MontagemSelecionada.Rows[auxa[a]]["AmplitudeMin"] = newAmplia;
+                        float scalaa = (float)(newAmplia) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(auxa[a]));
+                        GlobVar.scale[auxa[a]] = scalaa;
+                    }
+
+                }
+                else
+                {
+                    int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                    int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+
+                    GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
+                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+
+                    GlobVar.scale[index] = scala;
+                }
 
                 UpdateInicioTela();
 
@@ -4826,17 +4918,43 @@ namespace PlotagemOpenGL
         {
             try
             {
-                //UpdateSelected(sender);
-                //timer1.Start();
-                int alturaTela = (int)openglControl1.Height;
+                if (GlobVar.shiftactive)
+                {
+                    List<int> auxa = new List<int>();
+                    var CodTipoCanal = GlobVar.tbl_TipoCanal.AsEnumerable().Where(row => row.Field<int>("CodCanal") == tagCodCanal).CopyToDataTable();
+                    var TipoCanalAlt = Convert.ToInt32(CodTipoCanal.Rows[0]["CodTipo"]);
 
-                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
-                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
-                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
-                GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
-                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
 
-                GlobVar.scale[index] = scala;
+                    for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count - 1; i++)
+                    {
+                        if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == TipoCanalAlt)
+                        {
+                            auxa.add(i);
+                        }
+                    }
+                    int amplia = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                    int indexAmplia = GlobVar.Amplitude.IndexOf(amplia) + 1;
+                    int newAmplia = Convert.ToInt32(GlobVar.Amplitude[indexAmplia]);
+
+                    for (int a = 0; a < auxa.Count; a++)
+                    {
+                        GlobVar.tbl_MontagemSelecionada.Rows[auxa[a]]["AmplitudeMin"] = newAmplia;
+                        float scalaa = (float)(newAmplia) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(auxa[a]));
+                        GlobVar.scale[auxa[a]] = scalaa;
+                    }
+                }
+
+                else
+                {
+
+                    int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"]);
+                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                    int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                    GlobVar.tbl_MontagemSelecionada.Rows[index]["AmplitudeMin"] = newAmpli;
+                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(index));
+
+                    GlobVar.scale[index] = scala;
+                }
 
                 UpdateInicioTela();
 
@@ -4887,7 +5005,61 @@ namespace PlotagemOpenGL
         {
             try
             {
-                //tecla = e.KeyCode.ToString();
+                switch (e.KeyValue)
+                {
+                    case 16:
+                        GlobVar.shiftactive = true;
+                        break;
+                }
+
+                if (GlobVar.shiftactive)
+                {
+                    if (e.KeyValue == 109)
+                    {
+                        List<int> auxa = new List<int>();
+                        for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count - 1; i++)
+                        {
+                            if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == GlobVar.TipoCanalAlt)
+                            {
+                                auxa.add(i);
+                            }
+                        }
+                        int amplia = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                        int indexAmplia = GlobVar.Amplitude.IndexOf(amplia) + 1;
+                        int newAmplia = Convert.ToInt32(GlobVar.Amplitude[indexAmplia]);
+
+                        for (int a = 0; a < auxa.Count; a++)
+                        {
+                            GlobVar.tbl_MontagemSelecionada.Rows[auxa[a]]["AmplitudeMin"] = newAmplia;
+                            float scalaa = (float)(newAmplia) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(auxa[a]));
+                            GlobVar.scale[auxa[a]] = scalaa;
+                        }
+                    }
+                    if (e.KeyValue == 107)
+                    {
+                        List<int> aux = new List<int>();
+                        for (int i = 0; i < GlobVar.tbl_MontagemSelecionada.Rows.Count - 1; i++)
+                        {
+                            if (Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[i]["CodTipoCanal"]) == GlobVar.TipoCanalAlt)
+                            {
+                                aux.add(i);
+                            }
+                        }
+                        int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                        int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                        int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+
+                        for (int a = 0; a < aux.Count; a++)
+                        {
+                            GlobVar.tbl_MontagemSelecionada.Rows[aux[a]]["AmplitudeMin"] = newAmpli;
+                            float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(aux[a]));
+                            GlobVar.scale[aux[a]] = scala;
+                        }
+                    }
+
+                }
+
+                    //tecla = e.KeyCode.ToString();
                 if (isAnEvent || isAnEndEvent || isAnStartEvent)
                 {
                     if (e.KeyValue == 46)
@@ -5163,29 +5335,41 @@ namespace PlotagemOpenGL
                             }
                             else
                             {
-                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
-                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
-                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
-                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
-                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
+                                if (GlobVar.shiftactive)
+                                {
+                                }
+                                else
+                                {
+                                    int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) - 1;
+                                    int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                    GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
 
-                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                                    GlobVar.scale[GlobVar.IndexCanal] = scala;
+                                }
                             }
                             break;
                         case Keys.Subtract:
                             if (GlobVar.TipoCanalAlt == 20 || GlobVar.TipoCanalAlt == 21 || GlobVar.TipoCanalAlt == 23 || GlobVar.TipoCanalAlt == 24 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 16 || GlobVar.TipoCanalAlt == 28 || GlobVar.TipoCanalAlt == 29 || GlobVar.TipoCanalAlt == 32 || GlobVar.TipoCanalAlt == 31 || GlobVar.TipoCanalAlt == 15 || GlobVar.TipoCanalAlt == 30 || GlobVar.TipoCanalAlt == 12 || GlobVar.TipoCanalAlt == 38)
                             {
-                                buttonForm.HideOverlay();
+
                             }
                             else
                             {
-                                int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
-                                int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
-                                int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
-                                GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
-                                float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
+                                if (GlobVar.shiftactive)
+                                {
+                                }
+                                else
+                                {
+                                    int ampli = Convert.ToInt32(GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"]);
+                                    int indexAmpli = GlobVar.Amplitude.IndexOf(ampli) + 1;
+                                    int newAmpli = Convert.ToInt32(GlobVar.Amplitude[indexAmpli]);
+                                    GlobVar.tbl_MontagemSelecionada.Rows[GlobVar.IndexCanal]["AmplitudeMin"] = newAmpli;
+                                    float scala = (float)(newAmpli) / LeituraEmMatrizTeste.Ampli(LeituraEmMatrizTeste.CodTipo(GlobVar.IndexCanal));
 
-                                GlobVar.scale[GlobVar.IndexCanal] = scala;
+                                    GlobVar.scale[GlobVar.IndexCanal] = scala;
+                                }
                             }
                             break;
 
@@ -5646,6 +5830,14 @@ namespace PlotagemOpenGL
             {
                 if (e != null)
                 {
+                    switch (e.KeyValue)
+                    {
+                        case 16:
+                            GlobVar.shiftactive = false;
+                            break;
+                    }
+
+
                     if (isAnEvent || isAnEndEvent || isAnStartEvent)
                     {
                         if (e.KeyValue == 46)
@@ -7746,16 +7938,19 @@ namespace PlotagemOpenGL
             int paginaCoerente = GlobVar.indice / GlobVar.namos;
 
             // Busca binária ou simples, pois DataTable já está ordenada (opcional: se for muito grande)
-            int rowIndex = -1;
-            for (int i = 0; i < GlobVar.tbl_Paginas.Rows.Count; i++)
+            int rowIndex = paginaCoerente;
+
+            /*for (int i = 0; i < GlobVar.tbl_Paginas.Rows.Count; i++)
             {
                 if (Convert.ToInt32(GlobVar.tbl_Paginas.Rows[i]["NumPag"]) == paginaCoerente)
                 {
                     rowIndex = i;
                     break;
                 }
-            }
+            }*/
+
             if (rowIndex == -1) return; // Não achou
+
             // Função auxiliar: busca no cache de imagens!
             Image GetImageByEstagio(int? estagio)
             {
@@ -7781,7 +7976,7 @@ namespace PlotagemOpenGL
             // Atualizar anteriores
             for (int i = 0; i < 4; i++)
             {
-                int idx = (rowIndex - 30 * (i + 1)) + 1;
+                int idx = (rowIndex - 30 * (i + 1));
                 if (idx >= 0)
                 {
                     int estagio = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[idx]["Estagio"]);
@@ -7797,7 +7992,7 @@ namespace PlotagemOpenGL
             // Atualizar próximos
             for (int i = 0; i < 4; i++)
             {
-                int idx = rowIndex + 30 * (i + 1);
+                int idx = rowIndex + 29 * (i + 1);
                 if (idx < GlobVar.tbl_Paginas.Rows.Count)
                 {
                     int estagio = Convert.ToInt32(GlobVar.tbl_Paginas.Rows[idx]["Estagio"]);
@@ -7823,8 +8018,6 @@ namespace PlotagemOpenGL
                 ["estagioNada"] = Image.FromFile(GlobVar.diretorioEstagioAnteriorProximoNada)
             };
         }
-
-        List<(int numPag, int estagio)> updates = new List<(int numPag, int estagio)>();
         private void Marcar_Click(object sender, EventArgs e)
         {
             if (GlobVar.maximaVect > GlobVar.matrizCanal.GetLength(1))
@@ -7847,14 +8040,16 @@ namespace PlotagemOpenGL
                 GlobVar.tbl_Paginas.Rows[rowIndex]["Estagio"] = newEstagio;
 
                 // Atualiza a interface imediatamente
+
+                // Dispara processamento paralelo para as demais linhas (se necessário)
+                if (limite > rowIndex + 1) // Se tem mais para atualizar
+                    PrepareUpdates(rowIndex, limite, newEstagio);
+
                 Atual.BackgroundImage = GetEstagioImage(newEstagio);
                 Atual.BackgroundImageLayout = ImageLayout.Stretch;
                 atualizaButAntProx();
 
-                // Dispara processamento paralelo para as demais linhas (se necessário)
-                if (limite > rowIndex + 1) // Se tem mais para atualizar
-                    Task.Run(() => PrepareUpdates(rowIndex + 1, limite, newEstagio));
-
+                //AlteraBD.AlteraEstagioDaEpoca(GlobVar.Atualizados);
             }
             else
             {
@@ -7882,41 +8077,17 @@ namespace PlotagemOpenGL
         /// <summary>
         /// Prepara as atualizações a serem feitas no DataTable e no banco de dados.
         /// </summary>
-        private Task PrepareUpdates(int start, int limit, int newEstagio)
+        private void PrepareUpdates(int start, int limit, int newEstagio)
         {
-            List<PaginaUpdate> list;
-            lock (GlobVar.tbl_Paginas)
+            for(int a = start; a < limit; a++)
             {
-                list = GlobVar.tbl_Paginas.Rows
-                    .Cast<DataRow>()
-                    .Skip(start)
-                    .Take(limit - start)
-                    .Select((row, idx) => new PaginaUpdate
-                    {
-                        Index = start + idx,
-                        NumPag = Convert.ToInt32(row["NumPag"])
-                    })
-                    .ToList();
+                GlobVar.tbl_Paginas.Rows[a]["Estagio"] = newEstagio;
+                GlobVar.Atualizados.Add((a, newEstagio));
+
             }
-
-            return Task.Run(() =>
-            {
-                var atualizadosLocal = new ConcurrentBag<(int, int)>();
-
-                Parallel.ForEach(list, item =>
-                {
-                    lock (GlobVar.tbl_Paginas)
-                    {
-                        GlobVar.tbl_Paginas.Rows[item.Index]["Estagio"] = newEstagio;
-                    }
-                    atualizadosLocal.Add((item.NumPag, newEstagio));
-                });
-
-                foreach (var a in atualizadosLocal)
-                    GlobVar.Atualizados.Add(a);
-            });
+            GlobVar.tbl_Paginas.AcceptChanges();
+            
         }
-
         /// <summary>
         /// Atualiza os estados das variáveis globais.
         /// </summary>
@@ -11511,10 +11682,3 @@ namespace PlotagemOpenGL
     }
 }
 
-
-// DTO temporário
-public class PaginaUpdate
-{
-    public int Index { get; set; }
-    public int NumPag { get; set; }
-}

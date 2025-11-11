@@ -37,6 +37,8 @@ namespace PlotagemOpenGL.auxi
         public static bool FiltroCompleto;
         public static int areaCarregadaAltMont;
         public static bool hipnoOpen = false;
+        public static string FileName = "";
+
 
         public static string estagioAtual = "0";
         public static int qtdImpressao = 0;
@@ -60,6 +62,10 @@ namespace PlotagemOpenGL.auxi
         public static string diretorioEstagioAnteriorProximoT = Path.Combine(basePath, "Icones/IcoNumericos/IcoNT.png");
         public static string diretorioEstagioAnteriorProximoN = Path.Combine(basePath, "Icones/IcoNumericos/IcoNN.png");
 
+        public static int Pos_C = 0;
+        public static int Pos_D = 0;
+        public static int Pos_E = 0;
+        public static int Pos_B = 0;
 
         public static string g_Traducoes = "";
 
@@ -88,6 +94,7 @@ namespace PlotagemOpenGL.auxi
         public static string posiCanal;
         public static int[] minSat;
         public static int[] minPosi;
+        public static bool shiftactive = false;
 
         //variaveis pasra mexer nos coimentasrios
         public static Point XiYi;

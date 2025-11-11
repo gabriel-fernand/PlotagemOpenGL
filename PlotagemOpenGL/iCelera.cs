@@ -1,4 +1,5 @@
-﻿using PdfSharp.Quality;
+﻿using Microsoft.Win32;
+using PdfSharp.Quality;
 using PlotagemOpenGL.auxi;
 using PlotagemOpenGL.FormesMenuPanels;
 using System;
@@ -96,35 +97,21 @@ namespace PlotagemOpenGL
         {
             try
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                using(SelecionarAquivo arq = new SelecionarAquivo())
                 {
-                    // Configurações do diálogo
-                    openFileDialog.Filter = "Arquivos DAT (*.dat)|*.dat"; // Filtra para arquivos .dat
-                    openFileDialog.Title = "Selecione um arquivo .dat";
-                    string pastaExames = Path.Combine(GlobVar.basePath, "Exames");
-                    if (!Directory.Exists(pastaExames))
-                        Directory.CreateDirectory(pastaExames); // Cria a pasta caso não exista
-                    openFileDialog.InitialDirectory = Path.Combine(GlobVar.basePath, "Exames");
-                    // Exibe o diálogo de seleção
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    if (arq.ShowDialog() == DialogResult.OK)
                     {
-                        string nomeArquivo = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                        string nomeArquivo = Path.GetFileNameWithoutExtension(GlobVar.FileName);
                         // Obtém o caminho completo do arquivo selecionado
-                        string arquivoSelecionado = openFileDialog.FileName;
+                        string arquivoSelecionado = GlobVar.FileName;
                         // Exibe o diretório do arquivo
                         string diretorioArquivo = Path.GetDirectoryName(arquivoSelecionado);
                         string diretorioDatMdb = diretorioArquivo + "\\" + nomeArquivo + ".mdb";
-
-                        //MessageBox.Show($"Arquivo selecionado: {arquivoSelecionado}\nDiretório: {diretorioArquivo}\nmdb diretorio: {diretorioDatMdb}");
 
                         // Retorna ou utiliza o diretório conforme necessário
                         await Task.Run(() => ProcessarArquivo(arquivoSelecionado));
                         if (!string.IsNullOrEmpty(arquivoSelecionado))
                         {
-                            // Exibe os diretórios selecionados
-                            //MessageBox.Show($"Diretório selecionado: {diretorioDat} {diretorioMdb}", "Informação");
-
-                            // Caminho do arquivo
                             string filePath = Path.Combine(GlobVar.basePath, "Diretorios.txt");
 
                             if (File.Exists(filePath))
@@ -169,10 +156,6 @@ namespace PlotagemOpenGL
                         {
                             MessageBox.Show("A tag do Label está vazia ou não foi definida.", "Aviso");
                         }
-
-                    }
-                    else
-                    {
                     }
                 }
             }
