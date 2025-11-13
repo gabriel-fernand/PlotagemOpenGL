@@ -435,6 +435,23 @@ namespace PlotagemOpenGL.auxi
             return SA02;
         }
 
+        public static int F_GetTipoCanal(string Tipo)
+        {
+            if (!string.IsNullOrWhiteSpace(Tipo))
+            {
+                // Filtra linhas da tabela onde Sigla = Tipo
+                var row = GlobVar.tbl_CadTipoCanal
+                    .AsEnumerable()
+                    .FirstOrDefault(r => r.Field<string>("Sigla") == Tipo);
 
+                if (row != null)
+                {
+                    // Retorna o valor da coluna codtipo
+                    return row.Field<int>("codtipo");
+                }
+            }
+
+            return -1;
+        }
     }
 }

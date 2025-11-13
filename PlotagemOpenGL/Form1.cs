@@ -472,6 +472,7 @@ namespace PlotagemOpenGL
 
 
                     GlobVar.ConnectionBDdat = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.bDataFile};");
+                    GlobVar.cnn_dbRelatorio = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.dbRelatorio};");
                     GlobVar.ConnectionBDdat.Open();
 
                     PlotagemOpenGL.GravaMDB.ConnectionBDdat = GlobVar.ConnectionBDdat;

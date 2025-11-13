@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,14 +18,13 @@ namespace PlotagemOpenGL.FormesMenuPanels
 {
     public partial class SelecionarAquivo : Form
     {
-        string extensao = "";
+        string extensao = ".Dat";
         string path;
 
         public SelecionarAquivo()
         {
             InitializeComponent();
-            TiposExames.TextChanged += comboBoxTiposExames_SelectedIndexChanged;
-
+            this.StartPosition = FormStartPosition.Manual;
             Discos.Items.Clear();
 
             // Obtém todos os drives disponíveis
@@ -44,24 +44,36 @@ namespace PlotagemOpenGL.FormesMenuPanels
             if (Discos.Items.Count > 0)
                 Discos.SelectedIndex = 0;
 
-            // Supondo dataGridView1 já presente no seu form:
+            // Limpa as colunas existentes
             Exames.Columns.Clear();
+            // Remove a coluna de seleção padrão (cabeçalho de linhas)
+            Exames.RowHeadersVisible = false;
+            // Adiciona colunas
             Exames.Columns.Add("Arquivo", "Arquivo");
             Exames.Columns.Add("Data", "Data");
             Exames.Columns.Add("Tamanho", "Tamanho");
             Exames.Columns.Add("Paciente", "Paciente");
 
+            // Define o tamanho de cada coluna
+            Exames.Columns["Arquivo"].Width = 73;
+            Exames.Columns["Data"].Width = 66;
+            Exames.Columns["Tamanho"].Width = 76;
+            Exames.Columns["Paciente"].Width = 231;
+
+            // Define o tamanho da fonte das células
+            Exames.DefaultCellStyle.Font = new Font("Arial", 8);
+            // Define o tamanho da fonte do cabeçalho
+            Exames.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10, FontStyle.Bold);
             // Deixe a seleção apenas "FullRowSelect", por boas práticas
             Exames.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
 
-            PreencherTiposExames();
-
             CarregarDiretorioRaiz();
+
             Diretorios.BeforeExpand += treeView1_BeforeExpand;
-            if (TiposExames.Items.Count > 0) TiposExames.SelectedIndex = 0;
             Diretorios.AfterSelect += Diretorios_AfterSelect;
 
+            TreeViewScrollHelper.ScrollTreeViewToRight(Diretorios);
             //path = Diretorios.SelectedNode.FullPath;
         }
 
@@ -100,27 +112,30 @@ namespace PlotagemOpenGL.FormesMenuPanels
             }
             catch (UnauthorizedAccessException)
             {
-                MessageBox.Show(
+                /*MessageBox.Show(
                     "Acesso negado ao diretório:\n" + path,
                     "Erro de Permissão",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
-                );
+                );*/
                 return; // Sai do método para evitar erro
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                /*MessageBox.Show(
                     "Erro ao acessar o diretório:\n" + path + "\n\n" + ex.Message,
                     "Erro",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
-                );
+                );*/
                 return;
             }
         }
-        private void CarregarDiretorioRaiz()
+        /*private void CarregarDiretorioRaiz()
         {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string texto = Path.Combine(basePath, "Nano64", "Exames");
+
             string caminhoRaiz = $@"{Discos.Text}";
             TreeNode raiz = new TreeNode(caminhoRaiz)
             {
@@ -129,6 +144,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             Diretorios.Nodes.Add(raiz);
             AdicionarSubDiretorios(raiz);
         }
+        */
+
         private void AdicionarSubDiretorios(TreeNode node)
         {
             string path = node.Tag.ToString();
@@ -148,6 +165,8 @@ namespace PlotagemOpenGL.FormesMenuPanels
             }
             catch { /* Tratamento de exceção */ }
         }
+
+
         private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             // Só carrega se ainda não carregou
@@ -157,39 +176,89 @@ namespace PlotagemOpenGL.FormesMenuPanels
                 AdicionarSubDiretorios(e.Node);
             }
         }
-        // Exemplos dos tipos de exames
-        private void PreencherTiposExames()
+
+        private void CarregarDiretorioRaiz()
         {
-            TiposExames.Items.Clear();
-            TiposExames.Items.Add("iCelera Tecnologia (*.dat)");
-            TiposExames.Items.Add("EDF 1 (*.edf)");
-            TiposExames.Items.Add("EDF 2 (*.rec)");
-            TiposExames.Items.Add("Todos Arquivos (*.*)");
-        }
-        // Quando o usuário selecionar uma opção
-        private void comboBoxTiposExames_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string textoSelecionado = TiposExames.SelectedItem.ToString();
-            extensao = ExtrairExtensao(textoSelecionado);
-        }
-        // Função para extrair o texto entre parênteses
-        private string ExtrairExtensao(string texto)
-        {
-            var match = Regex.Match(texto, @"\(([^)]*)\)");
-            if (match.Success)
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string texto = Path.Combine(basePath, "Exames");
+            string caminhoRaiz = $@"{Discos.Text}";
+
+            TreeNode raiz = new TreeNode(caminhoRaiz)
             {
-                string entreParenteses = match.Groups[1].Value; // Ex: "*.dat" ou "*.*"
-                                                                // Caso seja "*.*", retorna somente "."
-                if (entreParenteses == "*.*")
-                    return ".";
-                // Caso normal: pega o ponto e o restante
-                int posPonto = entreParenteses.IndexOf('.');
-                if (posPonto >= 0)
-                    return entreParenteses.Substring(posPonto); // Ex: ".dat"
-                                                                // Fallback
-                return entreParenteses;
+                Tag = caminhoRaiz
+            };
+
+            Diretorios.Nodes.Clear();                // Limpa nós anteriores, se necessário
+            Diretorios.Nodes.Add(raiz);
+
+            AdicionarSubDiretorios(raiz);
+            raiz.Expand();                           // <<< ESSA LINHA É IMPORTANTE!
+
+            ExpandirAteDiretorio(raiz, texto);       // texto é o caminho que você quer expandir
+                                                     // Opcional: selecionar e garantir visibilidade
+            TreeNode nodeAlvo = EncontrarNodePorCaminho(raiz, texto);
+            if (nodeAlvo != null)
+                Diretorios.SelectedNode = nodeAlvo;
+        }
+        // Função que navega e expande para cada nível do caminho
+        private void ExpandirAteDiretorio(TreeNode no, string caminhoAlvo)
+        {
+            // Remove possíveis barras do final
+            string caminhoNo = (no.Tag as string)?.TrimEnd(Path.DirectorySeparatorChar);
+            caminhoAlvo = caminhoAlvo.TrimEnd(Path.DirectorySeparatorChar);
+
+            foreach (TreeNode filho in no.Nodes)
+            {
+                string caminhoFilho = (filho.Tag as string)?.TrimEnd(Path.DirectorySeparatorChar);
+
+                // Verifica se o caminho do nó filho é prefixo do caminho alvo ou igual
+                if (caminhoAlvo.StartsWith(caminhoFilho, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Garante que os subdiretórios desse filho estão carregados (igual ao BeforeExpand)
+                    if (filho.Nodes.Count == 1 && filho.Nodes[0].Text == "")
+                    {
+                        filho.Nodes.Clear();
+                        AdicionarSubDiretorios(filho);
+                    }
+
+                    filho.Expand();
+                    ExpandirAteDiretorio(filho, caminhoAlvo); // Avança para o próximo nível
+                    break; // Só expande UM ramo do tree (evita recursões desnecessárias)
+                }
             }
-            return string.Empty;
+        }
+
+        // Função para encontrar, dado um caminho, o TreeNode correspondente
+        private TreeNode EncontrarNodePorCaminho(TreeNode raiz, string caminhoCompleto)
+        {
+            // Divide o caminho de acordo com os separadores de diretório
+            var partes = caminhoCompleto.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Começa do nó raiz
+            TreeNode atual = raiz;
+
+            // Percorre cada parte do caminho (ignorando o caminho base, se necessário)
+            foreach (var parte in partes)
+            {
+                if (parte.Equals("C:")) continue;
+                bool achou = false;
+
+                foreach (TreeNode filho in atual.Nodes)
+                {
+                    // Aqui considera-se que node.Text == nome do diretório
+                    if (string.Equals(filho.Text, parte, StringComparison.OrdinalIgnoreCase))
+                    {
+                        atual = filho;
+                        achou = true;
+                        break;
+                    }
+                }
+
+                // Se não achou em algum ponto, retorna null
+                if (!achou) return null;
+            }
+
+            return atual;
         }
         public static string[] DadosDat(string diretorio)
         {
@@ -429,5 +498,25 @@ namespace PlotagemOpenGL.FormesMenuPanels
         }
 
 
+    }
+}
+
+public class TreeViewScrollHelper
+{
+    // Constantes do Win32
+    private const int WM_HSCROLL = 0x0114;
+    private const int SB_THUMBPOSITION = 4;
+    private const int SB_RIGHT = 7;
+    private const int SB_ENDSCROLL = 8;
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+    public static void ScrollTreeViewToRight(TreeView treeView)
+    {
+        // Move a barra de rolagem horizontal para a extrema direita
+        SendMessage(treeView.Handle, WM_HSCROLL, (IntPtr)SB_RIGHT, IntPtr.Zero);
+        // Garante que o scroll seja finalizado
+        SendMessage(treeView.Handle, WM_HSCROLL, (IntPtr)SB_ENDSCROLL, IntPtr.Zero);
     }
 }

@@ -482,5 +482,65 @@ namespace PlotagemOpenGL.BD
             // Fallback
             return "TEXT";
         }
+
+        public static void ExecutaSQLParaAlteracao(OleDbConnection odbc, string tabela, string updateSQL, string insertSQL)
+        {
+            bool precisaFechar = false;
+            if (odbc.State != ConnectionState.Open)
+            {
+                odbc.Open();
+                precisaFechar = true;
+            }
+
+            // 1. Verificar se a tabela tem pelo menos uma linha
+            bool temLinha = false;
+            var cmd = new OleDbCommand($"SELECT COUNT(*) FROM {tabela}", odbc);
+            
+            var result = cmd.ExecuteScalar();
+            temLinha = Convert.ToInt32(result) > 0;
+            
+            // 2. Se não tiver linha, faz o INSERT
+            if (!temLinha)
+            {
+                cmd = new OleDbCommand(insertSQL, odbc);
+                
+                cmd.ExecuteNonQuery();
+                
+            }
+            // 3. Executa o UPDATE (apenas se existir algum registro, após inserir se necessário)
+            else
+            {
+                cmd = new OleDbCommand(updateSQL, odbc);
+
+                cmd.ExecuteNonQuery();
+
+            }
+            if (precisaFechar)
+                odbc.Close();
+        }
+        public static DataTable ExecutaSQL(OleDbConnection conexao, string comandoSQL)
+        {
+            bool precisaFechar = false;
+            if (conexao.State != ConnectionState.Open)
+            {
+                conexao.Open();
+                precisaFechar = true;
+            }
+
+            using (OleDbCommand cmd = new OleDbCommand(comandoSQL, conexao))
+            {
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(cmd))
+                {
+                    DataTable tbl = new DataTable();
+                    adapter.Fill(tbl);
+                    return tbl;
+                    // Fecha caso tenha aberto dentro do método
+                    if (precisaFechar)
+                        conexao.Close();
+
+                }
+            }
+
+        }
     }
 }

@@ -47,3 +47,5 @@ namespace PlotagemOpenGL.auxi
         }
     }
 }
+
+

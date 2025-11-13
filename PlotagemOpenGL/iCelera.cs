@@ -99,7 +99,18 @@ namespace PlotagemOpenGL
             {
                 using(SelecionarAquivo arq = new SelecionarAquivo())
                 {
-                    if (arq.ShowDialog() == DialogResult.OK)
+                    // Pegue o formulário atual (pai), normalmente o 'this' é o formulário chamador.
+                    var parentForm = this;
+
+                    // Calcula o centro do formulário pai para abrir o filho ao centro dele:
+                    int x = parentForm.Location.X + (parentForm.Width - arq.Width) / 2;
+                    int y = parentForm.Location.Y + (parentForm.Height - arq.Height) / 2;
+
+                    // Define a posição manualmente:
+                    arq.Location = new Point(Math.Max(0, x), Math.Max(0, y));
+
+                    // Mostra o diálogo
+                    if (arq.ShowDialog(parentForm) == DialogResult.OK)
                     {
                         string nomeArquivo = Path.GetFileNameWithoutExtension(GlobVar.FileName);
                         // Obtém o caminho completo do arquivo selecionado

@@ -30,7 +30,6 @@
         {
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             Abrir = new System.Windows.Forms.Button();
             Renomear = new System.Windows.Forms.Button();
@@ -38,7 +37,6 @@
             Excluir = new System.Windows.Forms.Button();
             Fechar = new System.Windows.Forms.Button();
             Exames = new System.Windows.Forms.DataGridView();
-            TiposExames = new System.Windows.Forms.ComboBox();
             Discos = new System.Windows.Forms.ComboBox();
             Diretorios = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)Exames).BeginInit();
@@ -61,15 +59,6 @@
             label2.Size = new System.Drawing.Size(53, 15);
             label2.TabIndex = 1;
             label2.Text = "Diretório";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(10, 222);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(84, 15);
-            label3.TabIndex = 2;
-            label3.Text = "Tipo de Exame";
             // 
             // label4
             // 
@@ -151,15 +140,6 @@
             Exames.TabIndex = 9;
             Exames.CellDoubleClick += Exames_CellDoubleClick;
             // 
-            // TiposExames
-            // 
-            TiposExames.FormattingEnabled = true;
-            TiposExames.Location = new System.Drawing.Point(10, 239);
-            TiposExames.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            TiposExames.Name = "TiposExames";
-            TiposExames.Size = new System.Drawing.Size(171, 23);
-            TiposExames.TabIndex = 10;
-            // 
             // Discos
             // 
             Discos.FormattingEnabled = true;
@@ -184,7 +164,6 @@
             ClientSize = new System.Drawing.Size(467, 481);
             Controls.Add(Diretorios);
             Controls.Add(Discos);
-            Controls.Add(TiposExames);
             Controls.Add(Exames);
             Controls.Add(Fechar);
             Controls.Add(Excluir);
@@ -192,7 +171,6 @@
             Controls.Add(Renomear);
             Controls.Add(Abrir);
             Controls.Add(label4);
-            Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -208,7 +186,6 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button Abrir;
         private System.Windows.Forms.Button Renomear;
@@ -216,7 +193,6 @@
         private System.Windows.Forms.Button Excluir;
         private System.Windows.Forms.Button Fechar;
         private System.Windows.Forms.DataGridView Exames;
-        private System.Windows.Forms.ComboBox TiposExames;
         private System.Windows.Forms.ComboBox Discos;
         private System.Windows.Forms.TreeView Diretorios;
     }

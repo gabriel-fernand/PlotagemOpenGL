@@ -40,7 +40,7 @@ public class LeituraBanco
             string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
             string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
             string queryTbl_CanaisAdquiridos = "SELECT * FROM tbl_CanaisAdquiridos";
-
+            string queryTbl_PosEstagio = "SELECT * FROM tbl_PosEstagio";
             string queryCons_Eventos = "SELECT * FROM Cons_Eventos";
 
             using var command = new OdbcCommand(query, connectionDatBd);
@@ -54,8 +54,7 @@ public class LeituraBanco
             using var commandTbl_SeqEvento = new OdbcCommand(queryTbl_SeqEvento, connectionDatBd);
             using var commandTbl_ArqVideo = new OdbcCommand(queryTbl_ArqVideo, connectionDatBd);
             using var commandTbl_CanaisAdquiridos = new OdbcCommand(queryTbl_CanaisAdquiridos, connectionDatBd);
-
-
+            using var commandtbl_PosEstagio = new OdbcCommand(queryTbl_PosEstagio, connectionDatBd);
             using var commandCons_Eventos = new OdbcCommand(queryCons_Eventos, connectionDatBd);
 
             using var adapterTbl_ArqVideo = new OdbcDataAdapter(commandTbl_ArqVideo);
@@ -70,9 +69,11 @@ public class LeituraBanco
             using var adapterTbl_SelImpressao = new OdbcDataAdapter(commanfTbl_SelImpressao);
             using var adapterTbl_SeqEvento = new OdbcDataAdapter(commandTbl_SeqEvento);
             using var adapterTbl_CanaisAdquiridos = new OdbcDataAdapter(commandTbl_CanaisAdquiridos);
-
+            using var adapterTbl_PosEstagio = new OdbcDataAdapter(commandtbl_PosEstagio);
             using var adapterCons_Eventos = new OdbcDataAdapter(commandCons_Eventos);
+
             // Preenche o DataTable com os dados retornados pela consulta
+            adapterTbl_PosEstagio.Fill(GlobVar.tbl_PosEstagio);
             adapterTbl_ArqVideo.Fill(GlobVar.tbl_ArqVideo);
             adapterTbl_SeqEvento.Fill(GlobVar.tbl_SeqEvento);
             adapterTbl_SelImpressao.Fill(GlobVar.tbl_SelImpressao);
