@@ -40,6 +40,13 @@ public class LeituraBanco
             string queryTbl_SeqEvento = "SELECT * FROM tbl_SeqEvento";
             string queryTbl_ArqVideo = "SELECT * FROM tbl_ArqVideo";
             string queryTbl_CanaisAdquiridos = "SELECT * FROM tbl_CanaisAdquiridos";
+
+            if (!TableExists(connectionDatBd, "tbl_PosEstagio")) 
+            { 
+                CreateTableIfNotExists(connectionDatBd, "tbl_PosEstagio", @"CREATE TABLE tbl_PosEstagio (Estagio INT, Cima INT, Baixo INT, Direita INT, Esquerda INT)"); 
+            }
+
+
             string queryTbl_PosEstagio = "SELECT * FROM tbl_PosEstagio";
             string queryCons_Eventos = "SELECT * FROM Cons_Eventos";
 
@@ -530,4 +537,30 @@ public class LeituraBanco
             }
         }
     }
+
+    public static bool TableExists(OdbcConnection connection, string tableName)
+    {
+        if (connection.State != ConnectionState.Open)
+            connection.Open();
+
+        // Buscar todas as tabelas do banco
+        DataTable schema = connection.GetSchema("Tables");
+
+        foreach (DataRow row in schema.Rows)
+        {
+            // Access salva as tabelas em maiúsculas, por precaução use ignore case
+            if (string.Equals(row["TABLE_NAME"].ToString(), tableName, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+        return false;
+    }
+    public static void CreateTableIfNotExists(OdbcConnection connection, string tableName, string createTableSql)
+    {
+        if (!TableExists(connection, tableName))
+        {
+            using var cmd = new OdbcCommand(createTableSql, connection);
+            cmd.ExecuteNonQuery();
+        }
+    }
+
 }

@@ -356,7 +356,7 @@ namespace PlotagemOpenGL.auxi
 
         public static int Get_BoaNoite()
         {
-            int boaNoite = 0;
+            int boaNoite = 1;
             using (var cmd = GlobVar.ConnectionBDdat.CreateCommand())
             {
                 cmd.CommandText = "SELECT TOP 1 NumPag FROM tbl_Eventos WHERE CodEvento = 18";
@@ -372,7 +372,7 @@ namespace PlotagemOpenGL.auxi
         }
         public static int Get_BomDia()
         {
-            int bomDia = 0;
+            int bomDia = 1;
 
             // Pega o maior NumPag da tabela tbl_Paginas
             using (var cmd = GlobVar.ConnectionBDdat.CreateCommand())
