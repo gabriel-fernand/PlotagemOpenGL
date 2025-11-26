@@ -8429,7 +8429,7 @@ namespace PlotagemOpenGL.LaudoForm
             else
             {
                 SubstituiVar("&(IND_PC_APNEIA_OBS)&", (ev_ap_obs.qtd_pos_c / (tts / 3600)).ToString("0.0"));
-                SubstituiVar("&(IND_PC_APNEIA_OBS_TTS)&", (ev_ap_obs.qtd_pos_c / (pos_c / 3600)).ToString("0.0"));
+                SubstituiVar("&(IND_PC_APNEIA_OBS_TTS)&", (ev_ap_obs.qtd_pos_c / (double)(pos_c / 3600)).ToString("0.0"));
             }
 
             SubstituiVar("&(PORC_PC_APNEIA_OBS)&", totalApHipop == 0 ? "0.0" : (ev_ap_obs.qtd_pos_c / totalApHipop * 100).ToString("0.0"));
@@ -8675,7 +8675,7 @@ namespace PlotagemOpenGL.LaudoForm
             SubstituiVar("&(QTD_PC_APNEIA_HIPOP)&", (ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c).ToString("0"));
 
             // IND_PC_APNEIA_HIPOP e IND_PC_APNEIA_HIPOP_TTS
-            int qtdPosC = ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c;
+            int qtdPosC = (int)(ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c);
             if (qtdPosC == 0 || TTS == 0)
             {
                 SubstituiVar("&(IND_PC_APNEIA_HIPOP)&", "0.0");
@@ -8708,7 +8708,7 @@ namespace PlotagemOpenGL.LaudoForm
             SubstituiVar("&(QTD_PNC_APNEIA_HIPOP)&", (ev_ap.qtd_pos_x + ev_hipop.qtd_pos_x).ToString("0"));
 
             // IND_PNC_APNEIA_HIPOP e IND_PNC_APNEIA_HIPOP_TTS
-            int qtdPosX = ev_ap.qtd_pos_x + ev_hipop.qtd_pos_x;
+            int qtdPosX = (int)(ev_ap.qtd_pos_x + ev_hipop.qtd_pos_x);
             if (qtdPosX == 0 || TTS == 0)
             {
                 SubstituiVar("&(IND_PNC_APNEIA_HIPOP)&", "0.0");
@@ -8772,7 +8772,7 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(IND_REM_RERA)&", est5 == 0 ? "0.0" :
                     (ev_rera.qtd_rem / (est5 / 3600)).ToString("0.0"));
 
-                int qtdNrem = ev_rera.qtd_nrem;
+                int qtdNrem = (int)ev_rera.qtd_nrem;
                 SubstituiVar("&(QTD_NREM_RERA)&", qtdNrem.ToString("0"));
 
                 double totalNrem = Convert.ToDouble(tblResumoExame["Est_1"]) + Convert.ToDouble(tblResumoExame["Est_2"]) +
@@ -8848,7 +8848,7 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(QTD_IDR_MDESP_DESSAT)&", totalNrem == 0 ? "0" :
                     (qtd_hipop_com_dessat_e_mdesp + qtd_ap_cen_com_dessat_e_mdesp + qtd_ap_obs_com_dessat_e_mdesp + qtd_ap_mis_com_dessat_e_mdesp + qtd_RERA_com_dessat_e_mdesp).ToString("0"));
 
-                int qtdPosC_IDR = ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c + ev_rera.qtd_pos_c;
+                int qtdPosC_IDR = (int)(ev_ap.qtd_pos_c + ev_hipop.qtd_pos_c + ev_rera.qtd_pos_c);
                 SubstituiVar("&(QTD_PC_IDR)&", qtdPosC_IDR.ToString("0"));
 
                 if (qtdPosC_IDR == 0 || tts == 0)
@@ -10332,7 +10332,7 @@ namespace PlotagemOpenGL.LaudoForm
                 SubstituiVar("&(ADULTO)&", GlobVar.tbl_DadosExame.Rows[0]["Adulto"].ToString().Equals("A") ? "Adulto" : "Infantil");
                 SubstituiVar("&(MONTAGEM)&", Tela_Plotagem.MontagemBox.Text);
 
-                for (int i = 0; i <= 9; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     string texto2 = GlobVar.g_dados_fc_separada.Substring(i * 9, 9);
                     SubstituiVar($"&(Est_{i}_Media)&", int.Parse(texto2.Substring(0, 3)).ToString());
@@ -12890,10 +12890,10 @@ public class EventoResumo
     public double maior;
     public double media;
     public double durtotal;
-    public int qtd_rem;
-    public int qtd_nrem;
-    public int qtd_pos_c;
-    public int qtd_pos_x;
+    public double qtd_rem;
+    public double qtd_nrem;
+    public double qtd_pos_c;
+    public double qtd_pos_x;
 }
 
 public class NapResumo

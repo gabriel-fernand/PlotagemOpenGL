@@ -113,9 +113,8 @@ public class LeituraBanco
     {
         try
         {
-            string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
-            using var connectionConfigBd = new OdbcConnection(connectionStringConfigBd);
-            connec = "Conexão nao sucedida! 2";
+            //string connectionStringConfigBd = $@"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={GlobVar.configBD};Uid=Admin;Pwd=;";
+            using var connectionConfigBd = new OleDbConnection($@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};");
             connectionConfigBd.Open();
             //string connectionStringConfigBd = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={GlobVar.configBD};Persist Security Info=False;";
             //using var connectionConfigBd = new OleDbConnection(connectionStringConfigBd);
@@ -146,47 +145,47 @@ public class LeituraBanco
 
             partParad = "Querys";
 
-            using var commandTbl_CadTipoCanal = new OdbcCommand(queryCadTipoCanal, connectionConfigBd);
-            using var commandConfig = new OdbcCommand(queryConfig, connectionConfigBd);
-            using var commandTbl_MontCanal = new OdbcCommand(queryTbl_MontCanal, connectionConfigBd);
-            using var commandTbl_Montagem = new OdbcCommand(queryTbl_Montagem, connectionConfigBd);
-            using var commandTbl_TipoExam = new OdbcCommand(quaryTbl_TipoExame, connectionConfigBd);
-            using var commandCadEvento = new OdbcCommand(queryCadEvento, connectionConfigBd);
-            using var commandEventTipCanal = new OdbcCommand(queryEventTipCanal, connectionConfigBd);
-            using var commandTipoCanal = new OdbcCommand(queryTipoCanal, connectionConfigBd);
-            using var commandtbl_ParametrosParaAnalise = new OdbcCommand(querytbl_ParametrosParaAnalise, connectionConfigBd);
-            using var commandtbl_RelatResumo = new OdbcCommand(queryTbl_RelatResumo, connectionConfigBd);
-            using var commandtbl_RelatResumoItem = new OdbcCommand(queryTbl_RelatResumoItem, connectionConfigBd);
-            using var commandHipnoGruos = new OdbcCommand(queryTbl_HipnoGrupos, connectionConfigBd);
-            using var commandSubHipnoGrupos = new OdbcCommand(queryTbl_HipnoSubGrupos, connectionConfigBd);
-            using var commandItensJanela = new OdbcCommand(queryTbl_JanelaResumoItens, connectionConfigBd);
-            using var commandJanelaResumo = new OdbcCommand(queryTbl_JanelaResumo, connectionConfigBd);
-            using var commandTbl_Estagios = new OdbcCommand(queryTbl_Estagios, connectionConfigBd);
-            using var commandTbl_HipnoLaudos = new OdbcCommand(queryTbl_HipnoLaudos, connectionConfigBd);
-            using var commandTbl_DadosClinica = new OdbcCommand(queryTbl_DadosClinica, connectionConfigBd);
-            using var commandTbl_EstagiosInf = new OdbcCommand(queryTbl_EstagioInf, connectionConfigBd);
+            using var commandTbl_CadTipoCanal = new OleDbCommand(queryCadTipoCanal, connectionConfigBd);
+            using var commandConfig = new OleDbCommand(queryConfig, connectionConfigBd);
+            using var commandTbl_MontCanal = new OleDbCommand(queryTbl_MontCanal, connectionConfigBd);
+            using var commandTbl_Montagem = new OleDbCommand(queryTbl_Montagem, connectionConfigBd);
+            using var commandTbl_TipoExam = new OleDbCommand(quaryTbl_TipoExame, connectionConfigBd);
+            using var commandCadEvento = new OleDbCommand(queryCadEvento, connectionConfigBd);
+            using var commandEventTipCanal = new OleDbCommand(queryEventTipCanal, connectionConfigBd);
+            using var commandTipoCanal = new OleDbCommand(queryTipoCanal, connectionConfigBd);
+            using var commandtbl_ParametrosParaAnalise = new OleDbCommand(querytbl_ParametrosParaAnalise, connectionConfigBd);
+            using var commandtbl_RelatResumo = new OleDbCommand(queryTbl_RelatResumo, connectionConfigBd);
+            using var commandtbl_RelatResumoItem = new OleDbCommand(queryTbl_RelatResumoItem, connectionConfigBd);
+            using var commandHipnoGruos = new OleDbCommand(queryTbl_HipnoGrupos, connectionConfigBd);
+            using var commandSubHipnoGrupos = new OleDbCommand(queryTbl_HipnoSubGrupos, connectionConfigBd);
+            using var commandItensJanela = new OleDbCommand(queryTbl_JanelaResumoItens, connectionConfigBd);
+            using var commandJanelaResumo = new OleDbCommand(queryTbl_JanelaResumo, connectionConfigBd);
+            using var commandTbl_Estagios = new OleDbCommand(queryTbl_Estagios, connectionConfigBd);
+            using var commandTbl_HipnoLaudos = new OleDbCommand(queryTbl_HipnoLaudos, connectionConfigBd);
+            using var commandTbl_DadosClinica = new OleDbCommand(queryTbl_DadosClinica, connectionConfigBd);
+            using var commandTbl_EstagiosInf = new OleDbCommand(queryTbl_EstagioInf, connectionConfigBd);
 
             partParad = "Comandos";
 
-            using var adapterTbl_CadTipoCanal = new OdbcDataAdapter(commandTbl_CadTipoCanal);
-            using var adapterConfig = new OdbcDataAdapter(commandConfig);
-            using var adapterTbl_MontCanal = new OdbcDataAdapter(commandTbl_MontCanal);
-            using var adapterTbl_Montagem = new OdbcDataAdapter(commandTbl_Montagem);
-            using var adapterTbl_TipeExam = new OdbcDataAdapter(commandTbl_TipoExam);
-            using var adapterCadExame = new OdbcDataAdapter(commandCadEvento);
-            using var adapterEventTipCanal = new OdbcDataAdapter(commandEventTipCanal);
-            using var adapterTipoCanal = new OdbcDataAdapter(commandTipoCanal);
-            using var adaptertbl_RelatResumoItem = new OdbcDataAdapter(commandtbl_RelatResumoItem);
-            using var adaptertbl_RelatResumo = new OdbcDataAdapter(commandtbl_RelatResumo);
-            using var adapterHipnoGrupos = new OdbcDataAdapter(commandHipnoGruos);
-            using var adapterSubHipno = new OdbcDataAdapter(commandSubHipnoGrupos);
-            using var adapterItensJanela = new OdbcDataAdapter(commandItensJanela);
-            using var adapterJanelaResumo = new OdbcDataAdapter(commandJanelaResumo);
-            using var adapterTbl_Estagios = new OdbcDataAdapter(commandTbl_Estagios);
-            using var adaptertbl_ParametrosParaAnalise = new OdbcDataAdapter(commandtbl_ParametrosParaAnalise);
-            using var adaptertbl_HipnoLaudo = new OdbcDataAdapter(commandTbl_HipnoLaudos);
-            using var adaptertbl_DadosClinica = new OdbcDataAdapter(commandTbl_DadosClinica);
-            using var adapterTbl_EstagiosInf = new OdbcDataAdapter(commandTbl_EstagiosInf);
+            using var adapterTbl_CadTipoCanal = new OleDbDataAdapter(commandTbl_CadTipoCanal);
+            using var adapterConfig = new OleDbDataAdapter(commandConfig);
+            using var adapterTbl_MontCanal = new OleDbDataAdapter(commandTbl_MontCanal);
+            using var adapterTbl_Montagem = new OleDbDataAdapter(commandTbl_Montagem);
+            using var adapterTbl_TipeExam = new OleDbDataAdapter(commandTbl_TipoExam);
+            using var adapterCadExame = new OleDbDataAdapter(commandCadEvento);
+            using var adapterEventTipCanal = new OleDbDataAdapter(commandEventTipCanal);
+            using var adapterTipoCanal = new OleDbDataAdapter(commandTipoCanal);
+            using var adaptertbl_RelatResumoItem = new OleDbDataAdapter(commandtbl_RelatResumoItem);
+            using var adaptertbl_RelatResumo = new OleDbDataAdapter(commandtbl_RelatResumo);
+            using var adapterHipnoGrupos = new OleDbDataAdapter(commandHipnoGruos);
+            using var adapterSubHipno = new OleDbDataAdapter(commandSubHipnoGrupos);
+            using var adapterItensJanela = new OleDbDataAdapter(commandItensJanela);
+            using var adapterJanelaResumo = new OleDbDataAdapter(commandJanelaResumo);
+            using var adapterTbl_Estagios = new OleDbDataAdapter(commandTbl_Estagios);
+            using var adaptertbl_ParametrosParaAnalise = new OleDbDataAdapter(commandtbl_ParametrosParaAnalise);
+            using var adaptertbl_HipnoLaudo = new OleDbDataAdapter(commandTbl_HipnoLaudos);
+            using var adaptertbl_DadosClinica = new OleDbDataAdapter(commandTbl_DadosClinica);
+            using var adapterTbl_EstagiosInf = new OleDbDataAdapter(commandTbl_EstagiosInf);
             partParad = "Adapter";
 
             adapterTbl_EstagiosInf.Fill(GlobVar.tbl_EstagiosInfatil);
@@ -537,7 +536,6 @@ public class LeituraBanco
             }
         }
     }
-
     public static bool TableExists(OdbcConnection connection, string tableName)
     {
         if (connection.State != ConnectionState.Open)

@@ -196,12 +196,12 @@ public class AnaliseCO2
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
-                $"Erro ao criar arquivo CO2: {ex.Message}",
-                "Erro",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
+            //MessageBox.Show(
+            //    $"Erro ao criar arquivo CO2: {ex.Message}",
+            //    "Erro",
+            //    MessageBoxButtons.OK,
+            //    MessageBoxIcon.Error
+            //);
         }
     }
 }

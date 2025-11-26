@@ -644,8 +644,6 @@ namespace PlotagemOpenGL.auxi.auxPlotagem
             */
             return voltaSapora;
         }
-
-
         /// <summary>
         /// Converte um valor decimal (int ou uint) que representa uma cor RGB (0xRRGGBB)
         /// para um vetor de 3 floats normalizados entre 0 e 1: [R, G, B].

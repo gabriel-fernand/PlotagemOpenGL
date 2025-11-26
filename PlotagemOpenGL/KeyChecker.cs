@@ -141,7 +141,7 @@ public class KeyChecker
                 {
                     T?.Invoke();
                 }
-                Thread.Sleep(1); // Evita sobrecarga de CPU
+                Thread.Sleep(10); // Evita sobrecarga de CPU
             }
         }
     }

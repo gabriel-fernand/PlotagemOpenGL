@@ -2832,11 +2832,13 @@ namespace PlotagemOpenGL
             // 
             // MarcaNoGraf
             // 
-            MarcaNoGraf.BackColor = System.Drawing.Color.LimeGreen;
+            MarcaNoGraf.BackColor = System.Drawing.Color.Lime;  // Cor original
             MarcaNoGraf.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaNoGraf.BackgroundImage");
             MarcaNoGraf.BackgroundImageLayout = ImageLayout.Stretch;
             MarcaNoGraf.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MarcaNoGraf.Location = new System.Drawing.Point(461, 1);
+            MarcaNoGraf.FlatAppearance.BorderSize = 1;
+            MarcaNoGraf.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             MarcaNoGraf.Name = "MarcaNoGraf";
             MarcaNoGraf.Size = new System.Drawing.Size(47, 47);
             MarcaNoGraf.TabIndex = 71;
@@ -2845,11 +2847,13 @@ namespace PlotagemOpenGL
             // 
             // MarcaDAguia
             // 
-            MarcaDAguia.BackColor = System.Drawing.Color.LimeGreen;
+            MarcaDAguia.BackColor = System.Drawing.Color.Lime;
             MarcaDAguia.BackgroundImage = (System.Drawing.Image)resources.GetObject("MarcaDAguia.BackgroundImage");
             MarcaDAguia.BackgroundImageLayout = ImageLayout.Stretch;
             MarcaDAguia.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             MarcaDAguia.Location = new System.Drawing.Point(415, 1);
+            MarcaDAguia.FlatAppearance.BorderSize = 1;
+            MarcaDAguia.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             MarcaDAguia.Name = "MarcaDAguia";
             MarcaDAguia.Size = new System.Drawing.Size(47, 47);
             MarcaDAguia.TabIndex = 67;

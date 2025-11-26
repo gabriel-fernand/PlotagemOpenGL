@@ -81,8 +81,54 @@ namespace PlotagemOpenGL.FormesMenuPanels
                     }
                 }
 
-                var pagSel = GlobVar.tbl_SelImpressao.AsEnumerable().OrderByDescending(row => row.Field<int>("CodImpressao")).First();
+                DataRow pagSel = null;
 
+                int codImpressao = 0;
+
+                if (GlobVar.tbl_SelImpressao != null)
+                {
+                    if (GlobVar.tbl_SelImpressao.Rows.Count > 0)
+                    {
+                        pagSel = GlobVar.tbl_SelImpressao
+                            .AsEnumerable()
+                            .OrderByDescending(row => row.Field<int>("CodImpressao"))
+                            .First();
+
+                        codImpressao = pagSel.Field<int>("CodImpressao");
+                    }
+                    else
+                    {
+                        // Cria nova row com todas as colunas preenchidas com 0
+                        DataRow newRow = GlobVar.tbl_SelImpressao.NewRow();
+
+                        foreach (DataColumn column in GlobVar.tbl_SelImpressao.Columns)
+                        {
+                            // Apenas preencher colunas numéricas com 0
+                            if (column.DataType == typeof(int) || column.DataType == typeof(long) || column.DataType == typeof(short) || column.DataType == typeof(byte))
+                            {
+                                newRow[column.ColumnName] = 0;
+                            }
+                            else if (column.DataType == typeof(decimal) || column.DataType == typeof(float) || column.DataType == typeof(double))
+                            {
+                                newRow[column.ColumnName] = 0.0;
+                            }
+                            // Se precisar preencher outros tipos, como string:
+                            // else if (column.DataType == typeof(string))
+                            // {
+                            //     newRow[column.ColumnName] = string.Empty;
+                            // }
+                        }
+
+                        GlobVar.tbl_SelImpressao.Rows.Add(newRow);
+                        codImpressao = 0; // Como não havia linha, mantém 0
+                    }
+                }
+                else
+                {
+                    // Opcional: pode instanciar a tabela se necessário
+                    // GlobVar.tbl_SelImpressao = new DataTable();
+                    codImpressao = 0;
+                }
                 // Obtém os horários de início e fim do exame
                 DateTime iniExame = resumoExame.Field<DateTime>("Ini_Exame");
                 DateTime fimExame = resumoExame.Field<DateTime>("Fim_Exame");
@@ -98,7 +144,7 @@ namespace PlotagemOpenGL.FormesMenuPanels
 
                 // Atribui a duração ao campo txtDuracao
                 txtDuracao.Text = duracao.ToString(@"hh\:mm\:ss");
-                PgparaImpressao.Text = Convert.ToString(pagSel[0]);
+                PgparaImpressao.Text = pagSel != null ? Convert.ToString(pagSel[0]) : "0";
 
                 bloqueio = true;
                 SetBloqueioRadioButtonsNoGroupBox(true); // Deslbloqueia todos do groupBox1

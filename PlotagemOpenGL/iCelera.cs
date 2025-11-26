@@ -33,6 +33,7 @@ namespace PlotagemOpenGL
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 GlobVar.configBD = Path.Combine(basePath, "Configuração.mdb");
                 IniFile ini = new IniFile(Path.Combine(GlobVar.basePath, "Config.ini"));
+                ini.Write("MDB_CONFIG", "ARQUIVO", GlobVar.configBD);
                 string configdir = ini.Read("MDB_CONFIG", "ARQUIVO");
                 GlobVar.configBD = Path.Combine(basePath, configdir);
 

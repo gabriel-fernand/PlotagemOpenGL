@@ -899,6 +899,9 @@ namespace PlotagemOpenGL.Hipnograma
 
             for (int i = 0; i < MontagemJanela.Rows.Count; i++)
             {
+                var query = GlobVar.tbl_HipnoGrupos.AsEnumerable().Any(row => row.Field<int>("CodGrupo") == Convert.ToInt32(MontagemJanela.Rows[i]["CodGrupo"]));
+
+                if (!query) i++;
 
                 porcent -= (int)(espacox * (porc[i] / 100));
                 pontoZero[i] = porcent;
