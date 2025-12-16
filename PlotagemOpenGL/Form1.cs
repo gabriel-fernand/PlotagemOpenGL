@@ -210,9 +210,9 @@ namespace PlotagemOpenGL
         private const int WM_SYSCOMMAND = 0x0112;
         private const int SC_MAXIMIZE = 0xF030;
         public static GravaMDB grava;
+        public static bool alreadOpen = false;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-
         //GravaMDB. a dll tam com os metodos privados
        
 
@@ -494,8 +494,9 @@ namespace PlotagemOpenGL
 
                     Canais.ajustaIniFimEx();
                     InicializaCacheImagens();
-                    this.Focus();
                     AttBanco.Start();
+                    this.Focus();
+                    this.Resize += PanelAdjust;
                 }
             }
             catch (Exception e)
@@ -507,6 +508,32 @@ namespace PlotagemOpenGL
             }
         }
 
+        private void PanelAdjust(object sender, EventArgs e)
+        {
+
+            //Testar Resiz aq dos panel
+            if (alreadOpen)
+            {
+                // Finaliza o redimensionamento
+                mouseIsDown = false;
+                isResizing = false;
+
+                foreach (Panel pn in painelExames.Controls)
+                {
+                    if(pn.Visible) movingPanel =  pn; break;
+                }
+                AdjustPanelsAfterResize(movingPanel);
+
+                // Atualiza a altura no DataTable após o redimensionamento
+                UpdatePanelHeightInDataTable();
+                AjustarFonteDosLabels();
+                AjustarBotoesMinusEPlus();
+                RepositionPanels();
+
+                TelaClearAndReload();
+            }
+            alreadOpen = true;
+        }
 
         private void AttBanco_Tick(object sender, EventArgs e)
         {
@@ -924,6 +951,7 @@ namespace PlotagemOpenGL
         
         public void falsoClick()
         {
+            this.Focus();
                 if (keyChecker == null)
                 {
                     keyChecker = new KeyChecker();
@@ -2924,8 +2952,6 @@ namespace PlotagemOpenGL
             painel_Resize_Control(panel21, pn21);
             painel_Resize_Control(panel22, pn22);
             painel_Resize_Control(panel23, pn23);
-
-            //painelComando.Size = new Size(this.Size.Width, this.Size.Height / 5);
         }
         private void panelLb_Resiz(object sender, EventArgs e)
         {
@@ -9845,26 +9871,15 @@ namespace PlotagemOpenGL
         // Evento para garantir que apenas números sejam inseridos
         private void PtsEmTela_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Obtém a última linha da tabela
-            var lastRow = GlobVar.tbl_Paginas.AsEnumerable().LastOrDefault();
-
-            // Se houver uma última linha, define o valor máximo possível baseado no campo "NumPag"
-            int maximoPossivel = lastRow != null ? Convert.ToInt32(lastRow["NumPag"]) : 0;
-
-            // Converte esse valor para o número de dígitos permitidos
-            int maxLength = maximoPossivel.ToString().Length;
-
-            // Verifica se a tecla pressionada não é um número ou backspace
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            // Permite apenas controle (backspace), dígitos e o sinal de menos no início
+            if (!char.IsControl(e.KeyChar) && !char.IsNumber(e.KeyChar))
             {
-                // Cancela a entrada se não for um número ou backspace
-                e.Handled = true;
-            }
-
-            // Verifica se o número de caracteres excedeu o limite definido por maxLength
-            if (ptsEmTela.Text.Length >= maxLength && !char.IsControl(e.KeyChar))
-            {
-                // Cancela a entrada se o limite de caracteres for atingido
+                // Permite o sinal de menos apenas como primeiro caractere
+                if (e.KeyChar == '-' && (sender as TextBox).SelectionStart == 0 &&
+                    !(sender as TextBox).Text.Contains("-"))
+                {
+                    return;
+                }
                 e.Handled = true;
             }
         }
@@ -9927,6 +9942,10 @@ namespace PlotagemOpenGL
                 UpdateInicioTela();
                 LeituraEmMatrizTeste.Resume();
             }
+        }
+        private void PtsEmTela_TextChanged(object sender, EventArgs e)
+        {
+
         }
         private void Tela_Plotagem_ResizeBegin(object sender, EventArgs e)
         {

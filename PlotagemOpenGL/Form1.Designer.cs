@@ -419,10 +419,10 @@ namespace PlotagemOpenGL
             // inicioTela
             // 
             inicioTela.Font = new System.Drawing.Font("Arial Narrow", 9F);
-            inicioTela.Location = new System.Drawing.Point(71, 14);
+            inicioTela.Location = new System.Drawing.Point(72, 14);
             inicioTela.Name = "inicioTela";
             inicioTela.ReadOnly = true;
-            inicioTela.Size = new System.Drawing.Size(56, 25);
+            inicioTela.Size = new System.Drawing.Size(59, 25);
             inicioTela.TabIndex = 3;
             inicioTela.Text = "00-00-00";
             inicioTela.TextAlign = HorizontalAlignment.Center;
@@ -2468,6 +2468,7 @@ namespace PlotagemOpenGL
             ptsEmTela.TextAlign = HorizontalAlignment.Center;
             ptsEmTela.KeyDown += PtsEmTela_KeyDown;
             ptsEmTela.KeyPress += PtsEmTela_KeyPress;
+            ptsEmTela.TextChanged += PtsEmTela_TextChanged;
             // 
             // PainelPerfil
             // 
